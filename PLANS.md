@@ -14,8 +14,10 @@ Baseline: `main` @ `3b4d1f89fed8c079cc3571aeff6276bfe5f04d92`
 | 05 — Data loading and offline hardening | COMPLETE | harness/build/05-data-and-offline.md | | |
 | 06 — Supabase/RPC/RLS security hardening | COMPLETE | harness/build/06-security.md | e950df3 | 4897fc0ac8b1171bfe3783ebd3f7a1732b139774 |
 | 07 — Reports, goals, exports and accessibility | COMPLETE | harness/build/07-reports-goals-accessibility.md | 4897fc0ac8b1171bfe3783ebd3f7a1732b139774 | 01108da07fe946b328fc705aa560832d0afadc4d |
-| 08 — Independent V1 release verification | COMPLETE | harness/build/08-release-verification.md | 01108da07fe946b328fc705aa560832d0afadc4d | 3020dafaefdad2f3f0e3100452add83a773ff576 |
-| 09 — External launch gates | EXTERNAL | harness/build/09-external-launch-gates.md | | |
+| 08 — Independent V1 release verification | BLOCKED | harness/build/08-release-verification.md | 01108da07fe946b328fc705aa560832d0afadc4d | 3020dafaefdad2f3f0e3100452add83a773ff576 |
+| 09 — External launch gates | EXTERNAL | harness/build/09-external-launch-gates.md | 152debde8d8e21bb22671905c126bacaf718250f | |
+
+Phase 08 is parked, not discarded. Its automated verification commit remains `3020daf`. Return to it for voice-quality, screen-reader, contrast, zoom, and clean-install evidence. Phase 09 does not wait on that return, and it cannot be marked resolved from the repository.
 
 Only one coding phase should be IN PROGRESS. Phase 09 stays EXTERNAL until the user or business decisions in that phase file exist.
 

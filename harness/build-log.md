@@ -196,3 +196,9 @@ No production deploy, paid provider call, or database reset.
 ## Handoff reconciled — 2026-10-16 — Cursor
 
 Git HEAD was already `3020dafaefdad2f3f0e3100452add83a773ff576`, the Phase 08 verification commit. The worktree was clean. `origin/work/cashnarra-v1` remained at `4897fc0`. No product code changed. Phase 09 stays EXTERNAL. Verdict remains `NOT V1 COMPLETE`.
+
+## Phase 09 register — 2026-10-16 — Cursor
+
+The user asked whether Phase 09 can continue while Phase 08 is parked. It can be documented. It cannot be resolved, and it does not replace the parked evidence.
+
+No product code, provider call, purchase, or deployment. Every launch gate remains unresolved. Phase 08 return items stay in `harness/build/08-release-verification.md`.
