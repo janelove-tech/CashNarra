@@ -66,6 +66,6 @@ Exact decimals, balanced journals, atomic commit, idempotent retry, unknown is n
 - Focused unit tests and `npm run test:db` pass, or failures are recorded honestly.
 - No rewrite of the workspace-commit model.
 
-## Context
+## Status
 
-Add `harness/context/01-financial-semantics.md` only if implementation discovers something a later session would otherwise have to rediscover.
+Implemented on `work/cashnarra-v1`. The event name is `credit_expense`. Read `harness/context/01-financial-semantics.md` before changing posting again. Do not run `supabase migration up` or `supabase db reset` on the local development database; its migration history table is incomplete.

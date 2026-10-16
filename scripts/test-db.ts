@@ -8,7 +8,7 @@ import {
   fixture,
   fixtureEvents,
 } from "../src/domain/fixture";
-import { applyBatch } from "../src/domain/ledger";
+import { applyBatch, ledger } from "../src/domain/ledger";
 import { prepareMove } from "../src/domain/move";
 import { updatePlanning } from "../src/domain/planning";
 import type { Workspace } from "../src/domain/types";
@@ -78,6 +78,21 @@ try {
       .rows[0].n,
     "0.00",
   );
+  const posted = (
+    await db.query(
+      "select record_id, account_key, amount::text as amount from public.journal_lines",
+    )
+  ).rows
+    .map((row) => ({
+      recordId: row.record_id,
+      account: row.account_key,
+      amount: row.amount,
+    }))
+    .sort((x, y) => JSON.stringify(x).localeCompare(JSON.stringify(y)));
+  const expected = ledger(w)
+    .map((line) => ({ ...line }))
+    .sort((x, y) => JSON.stringify(x).localeCompare(JSON.stringify(y)));
+  assert.deepEqual(posted, expected);
   assert.equal(
     (
       await db.query(
@@ -360,6 +375,83 @@ try {
   const savedPeople = await db.query("select state from public.workspaces where id=$1", [removedPerson.id]);
   assert.deepEqual(savedPeople.rows[0].state.contacts, []);
   assert.deepEqual(savedPeople.rows[0].state.records, recheck.records);
+  const bill = event(
+    "credit_expense",
+    "800.00",
+    "Electrician repaired the shop",
+    null,
+    { party: "Kofi Electrician", date: "2026-10-16" },
+  );
+  const incurred = applyBatch(removedPerson, {
+    requestId: "credit-expense",
+    revision: 0,
+    expectedVersion: removedPerson.version,
+    events: [bill],
+    replaceIds: [],
+    source: "Unpaid operating expense",
+    reason: "",
+    allowDuplicates: true,
+  });
+  updatePlanning(incurred, {
+    action: "debt_date",
+    recordId: bill.id,
+    date: "2026-10-23",
+  });
+  await commit(db, incurred, removedPerson.version, "credit-expense");
+  const expenseLines = await db.query(
+    "select account_key, amount::text as amount from public.journal_lines where record_id=$1 order by position",
+    [bill.id],
+  );
+  assert.deepEqual(expenseLines.rows, [
+    { account_key: "expense", amount: "800.00" },
+    { account_key: "payable:" + bill.id, amount: "-800.00" },
+  ]);
+  const withAccount = structuredClone(incurred);
+  withAccount.version++;
+  withAccount.records.push({
+    ...incurred.records.find((r) => r.id === bill.id)!,
+    id: "cash-credit-expense",
+    accountId: "bank",
+  });
+  await assert.rejects(
+    () => commit(db, withAccount, incurred.version, "credit-expense-cash"),
+    /do not move account money/,
+  );
+  const settled = applyBatch(incurred, {
+    requestId: "pay-electrician",
+    revision: 0,
+    expectedVersion: incurred.version,
+    events: [
+      event("payable_payment", "800.00", "Paid the electrician", "bank", {
+        obligationId: bill.id,
+        party: "Kofi Electrician",
+        date: "2026-10-23",
+      }),
+    ],
+    replaceIds: [],
+    source: "Payable settlement",
+    reason: "",
+    allowDuplicates: true,
+  });
+  await commit(db, settled, incurred.version, "pay-electrician");
+  assert.equal(
+    (
+      await db.query(
+        "select coalesce(sum(amount),0)::text n from public.journal_lines where account_key='expense' and record_id=$1",
+        [bill.id],
+      )
+    ).rows[0].n,
+    "800.00",
+  );
+  assert.equal(
+    (
+      await db.query(
+        "select coalesce(sum(amount),0)::text n from public.journal_lines where account_key=$1",
+        ["payable:" + bill.id],
+      )
+    ).rows[0].n,
+    "0.00",
+  );
   await user(db, b);
   await assert.rejects(
     () => moveRpc(move.from, move.to, "cross-user-move"),

@@ -4,66 +4,75 @@ Updated: 2026-10-16
 Updated by agent: Cursor
 Branch: work/cashnarra-v1
 Baseline SHA: 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
-Current HEAD: 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
-Current phase: 00 — Baseline, multi-agent harness and CI
-Current subtask: Commit Phase 00, then backfill the completion SHA
-Status: COMPLETE pending the Phase 00 commit and SHA backfill
+Current HEAD: cff81ec46544a10ec2805f44faf2a29560c28bbc
+Current phase: 01 — Financial semantics and posting parity
+Current subtask: Commit Phase 01, then backfill its SHA
+Status: COMPLETE pending the Phase 01 commit and SHA backfill
 
 ## Immediate objective
 
-Commit the harness, CI, and preserved audit file. Do not change product code in that commit. After the SHA is known, record it and start Phase 01.
+Commit the credit-expense work. Do not include `next-env.d.ts` if the dev server flipped it to `.next/dev/types`. After the commit SHA is known, record it and start Phase 02.
 
 ## Completed in current phase
 
-- Confirmed live `main` matches the audit SHA. No later commits. No `codex/cashnarra-v1-remediation` branch.
-- Created `work/cashnarra-v1`.
-- Added shared agent rules, goals, plans, phase files, context, and GitHub Actions CI.
-- Ran the baseline checks below. No financial behaviour was changed.
+- Added `credit_expense`: debit expense, credit payable, no cash account, person required.
+- Later payment stays `payable_payment` and does not create a second expense.
+- `credit_purchase` still debits stock.
+- Added a TypeScript template test for every event kind.
+- Database tests compare the fixture journal with `ledger()` and commit an electrician bill plus settlement.
+- Applied migration SQL to local Supabase with `psql`. 18 workspaces remained. Did not reset the database.
 
 ## Files changed
 
-- `AGENTS.md`
-- `GOALS.md`
+- `src/domain/types.ts`
+- `src/domain/ledger.ts`
+- `src/domain/planning.ts`
+- `src/components/record-form.tsx`
+- `src/components/ui.tsx`
+- `src/components/cashnarra.tsx`
+- `src/components/report-trace.tsx`
+- `src/server/ai.ts`
+- `supabase/migrations/202610160009_credit_expense.sql`
+- `tests/posting-parity.test.ts`
+- `tests/domain.test.ts`
+- `scripts/test-db.ts`
 - `PLANS.md`
-- `.github/workflows/ci.yml`
-- `harness/**`
-- `docs/Repository Audit Plan 1248pm 16th October.txt` (previously untracked; content not edited)
+- `harness/context/01-financial-semantics.md`
+- `harness/build/01-financial-semantics.md`
 
 ## Validation already executed
 
 | Command | Result | Notes |
 |---|---|---|
-| npm ci | PASS | First attempt FAIL: EPERM unlinking `next-swc.win32-x64-msvc.node` while Next dev on port 3100 and `next start` on port 3103 held it. Those CashNarra processes were stopped and `npm ci` then passed. 5 high-severity audit findings were reported and not changed. |
-| npm run doctor | PASS | Node 24.21.0. Local Supabase configured. AI and voice disabled. No secrets printed. |
-| npm run lint | PASS | Exit 0. Two existing warnings in `src/components/voice-capture.tsx` (ref cleanup, unused `e`). |
+| npm test | PASS | 14 files, 85 tests. Includes posting templates and the GH₵800 electrician case. |
+| npm run test:db | PASS | Disposable `cashnarra_test` only. Fixture journal matched TypeScript. Credit expense and settlement committed. |
+| npm run lint | PASS | Exit 0. Same two existing warnings in `src/components/voice-capture.tsx`. |
 | npm run typecheck | PASS | |
-| npm test | PASS | 13 files, 64 tests. |
-| npm run build | PASS | Next.js 16.4.0. |
-| npm run test:db | PASS | Isolated localhost `cashnarra_test` only. |
-| npm run test:supabase | PASS | Local API `127.0.0.1:58321` only. Synthetic user written to ignored `.local/auth-test-user.json`. |
-| npm run test:e2e | FAIL | 24 passed, 1 failed. `auth.spec.ts` timed out at 5s on “Let’s make sense of your money.” The page still showed “Opening your records…”. Cold dev-server start. |
-| npx playwright test tests/e2e/auth.spec.ts | PASS | Immediate rerun, 1 passed in 10.8s. The full-suite failure was the loading race, not a wrong heading. |
+| npm run build | NOT RUN | Not rerun after Phase 01. Phase 00 build passed before these edits. |
+| npm run test:supabase | NOT RUN | Not rerun after the SQL change. |
+| npm run test:e2e | NOT RUN | Not rerun. Manual browser check below. |
+| Browser manual record | PASS | Synthetic demo. Selected Unpaid operating expense, account cleared, review showed GH₵800, save confirmed. Balances stayed GH₵5,970.00. Money out stayed GH₵930.00. |
 
 ## Current worktree state
 
-Harness and CI are uncommitted on `work/cashnarra-v1`. Product source is unchanged from `3b4d1f89fed8c079cc3571aeff6276bfe5f04d92`.
-
-The pre-existing Next dev server on port 3100 and production server on port 3103 were stopped so `npm ci` could replace the locked SWC binary. Playwright started a temporary dev server for browser tests and exited.
+Phase 01 source is uncommitted on `work/cashnarra-v1`. Phase 00 commit is `cff81ec46544a10ec2805f44faf2a29560c28bbc`.
 
 ## Known incomplete or broken work
 
-`credit_expense` is not implemented. That is Phase 01.
+Local `schema_migrations` only lists migrations `202610130001` through `202610130003`, even though later functions already exist. `supabase migration up` and `supabase db reset` are unsafe on that database.
 
-The auth browser test can fail on a cold server because the loading heading stays up longer than the 5 second expect. The rerun passed. Do not treat that as a product regression from Phase 00.
+The synthetic Ama Works workspace used in the browser now contains the electrician record. It is local demo data.
 
-`npm audit` reported 5 high-severity issues after `npm ci`. They were not patched in this phase.
+The auth browser test can still time out on a cold server. See the Phase 00 log.
+
+`npm audit` still reports 5 high-severity findings. They were not changed.
 
 ## Material decisions made
 
-- Branch is `work/cashnarra-v1`.
-- Voice is required in V1, quality-gated, and uses the typed narration pipeline. It must not post automatically.
-- Default CI includes doctor, lint, typecheck, unit tests, disposable Postgres `test:db`, and build. Playwright stays out because it requires Microsoft Edge. Live Supabase CLI and provider evals stay out.
-- The forensic audit text file is preserved unchanged.
+- Event name: `credit_expense`. Label: “Unpaid operating expense”.
+- Payment reuses `payable_payment`. No new settlement kind.
+- Reports count the expense when it is incurred. The later cash payment is money out, not a second expense.
+- Historical migration `202610130001` was left unchanged. The new migration replaces the function.
 
 ## Blockers requiring user input
 
@@ -71,9 +80,9 @@ None.
 
 ## Exact next action
 
-1. Commit Phase 00.
-2. Put that commit SHA in `PLANS.md`, this file, and `harness/build-log.md`.
-3. Set the current phase to 01 and implement `credit_expense` plus posting parity, starting from `harness/build/01-financial-semantics.md`.
+1. Commit Phase 01, excluding a dev-server rewrite of `next-env.d.ts`.
+2. Record that commit SHA in `PLANS.md`, this file, and `harness/build-log.md`.
+3. Start Phase 02 from `harness/build/02-ai-and-narration.md`. Recheck current OpenAI model documentation before changing `OPENAI_MODEL`'s default. Then add the synthetic narration corpus. Do not call the live API without an existing opt-in key.
 
 ## Resume commands
 
@@ -83,4 +92,5 @@ git rev-parse HEAD
 git status
 git diff
 npm test
+npm run test:db
 ```

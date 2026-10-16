@@ -52,3 +52,37 @@ Not run:
 - `npm audit fix` — 5 high-severity findings reported by `npm ci` and left unchanged.
 
 Historical evidence in `docs/BUILD-STATUS.md` is not relabelled as PASS for this session.
+
+## Phase 00 complete
+
+Date: 2026-10-16
+Agent: Cursor
+Commit: `cff81ec46544a10ec2805f44faf2a29560c28bbc`
+Branch: `work/cashnarra-v1`
+
+## Phase 01 checkpoint
+
+Date: 2026-10-16
+Agent: Cursor
+Commit: pending the Phase 01 commit
+Start: `cff81ec46544a10ec2805f44faf2a29560c28bbc`
+
+Implemented:
+
+- `credit_expense` posts debit `expense` / credit `payable:<id>` with no cash movement.
+- Settlement uses `payable_payment` and does not add another expense.
+- `credit_purchase` still posts stock.
+- Template parity test covers every event kind. Database journal for the fixture matches `ledger()`.
+
+Executed:
+
+- `npm test` — PASS — 85 tests.
+- `npm run test:db` — PASS — isolated `cashnarra_test`.
+- `npm run lint` — PASS — 2 existing voice-capture warnings.
+- `npm run typecheck` — PASS.
+- Browser — PASS — synthetic demo review and save. Balances stayed GH₵5,970.00. Money out stayed GH₵930.00.
+
+Not run:
+
+- `npm run build`, `npm run test:supabase`, and `npm run test:e2e` after the Phase 01 edits.
+- `supabase migration up` — not used. Local migration history is incomplete. The new function was applied with `psql` and the 18 local workspaces were kept.

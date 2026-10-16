@@ -1262,6 +1262,7 @@ export default function CashNarra() {
                         <option value="out">Money out</option>
                         <option value="transfer">Transfers</option>
                         <option value="credit_sale">Credit sales</option>
+                        <option value="credit_expense">Unpaid expenses</option>
                       </select>
                       <Button primary onClick={() => manual()}>
                         <Plus size={17} />

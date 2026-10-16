@@ -95,6 +95,7 @@ export function updatePlanning(
       ![
         "credit_sale",
         "credit_purchase",
+        "credit_expense",
         "opening_receivable",
         "opening_payable",
         "opening_loan",

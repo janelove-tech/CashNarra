@@ -44,6 +44,9 @@ export default function ReportTrace({
             {["sale", "credit_sale"].includes(e.kind)
               ? " · Included in sales"
               : ""}
+            {["expense", "credit_expense", "interest"].includes(e.kind)
+              ? " · Included in expenses"
+              : ""}
           </p>
         </div>
       ))}

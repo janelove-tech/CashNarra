@@ -8,6 +8,7 @@ import {
 import {
   applyBatch,
   ledger,
+  posting,
   report,
   obligations,
   accountBalance,
@@ -205,6 +206,68 @@ describe("goals and private exports", () => {
       amount: "200.00",
     });
     expect(() => validateWorkspace(w)).toThrow();
+  });
+  it("records an operating expense on credit and does not expense the later payment", () => {
+    const w = emptyWorkspace("owner", "Shop", "Business");
+    w.accounts.push({
+      id: "cash",
+      name: "Cash",
+      type: "Cash",
+      currency: "GHS",
+      opening: "1000.00",
+      openingDate: "2026-10-01",
+    });
+    const bill = event(
+      "credit_expense",
+      "800.00",
+      "Electrician repaired the shop",
+      null,
+      { party: "Kofi", date: "2026-10-16" },
+    );
+    const stock = event(
+      "credit_purchase",
+      "100.00",
+      "Stock to pay later",
+      null,
+      { party: "Adjei", date: "2026-10-16" },
+    );
+    const incurred = applyBatch(w, batch(w, [bill, stock]));
+    expect(report(incurred, "2026-10-01", "2026-10-31")).toMatchObject({
+      expenses: "800.00",
+      paid: "0.00",
+      received: "0.00",
+      userOwes: "900.00",
+      profit: null,
+    });
+    expect(accountBalance(incurred, "cash", "2026-10-31")).toBe("1000.00");
+    expect(
+      obligations(incurred).find((o) => o.party === "Kofi")?.remaining,
+    ).toBe("800.00");
+    const paid = applyBatch(incurred, {
+      ...batch(incurred, [
+        event("payable_payment", "800.00", "Paid the electrician", "cash", {
+          obligationId: bill.id,
+          party: "Kofi",
+          date: "2026-10-20",
+        }),
+      ]),
+      expectedVersion: incurred.version,
+    });
+    expect(report(paid, "2026-10-01", "2026-10-31")).toMatchObject({
+      expenses: "800.00",
+      paid: "800.00",
+      userOwes: "100.00",
+    });
+    expect(accountBalance(paid, "cash", "2026-10-31")).toBe("200.00");
+    expect(obligations(paid).find((o) => o.party === "Kofi")?.remaining).toBe(
+      "0.00",
+    );
+    expect(() =>
+      posting(
+        event("credit_expense", "800.00", "Missing person", "cash"),
+        w.accounts,
+      ),
+    ).toThrow(/account|person/i);
   });
   it("neutralises formula text without altering exact numeric columns", () => {
     const w = fixture();

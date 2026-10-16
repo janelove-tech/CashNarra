@@ -8,6 +8,7 @@ export const kinds = [
   "transfer",
   "credit_sale",
   "credit_purchase",
+  "credit_expense",
   "receivable_payment",
   "payable_payment",
   "loan_received",

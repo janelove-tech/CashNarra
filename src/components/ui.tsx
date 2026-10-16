@@ -139,6 +139,7 @@ export function RecordRow({
     credit = [
       "credit_sale",
       "credit_purchase",
+      "credit_expense",
       "opening_payable",
       "opening_receivable",
     ].includes(record.kind);

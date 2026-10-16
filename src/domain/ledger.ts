@@ -18,6 +18,7 @@ export const labels: Record<EventInput["kind"], string> = {
   transfer: "Between your accounts",
   credit_sale: "Credit sale",
   credit_purchase: "Unpaid stock purchase",
+  credit_expense: "Unpaid operating expense",
   receivable_payment: "Old balance received",
   payable_payment: "Old balance paid",
   loan_received: "Loan received",
@@ -118,9 +119,16 @@ export function posting(e: EventInput, accounts: Account[]): Line[] {
       credit = e.kind === "credit_sale" ? "sales" : "equity";
       break;
     case "credit_purchase":
+      debit = "stock";
+      credit = "payable:" + e.id;
+      break;
+    case "credit_expense":
+      debit = "expense";
+      credit = "payable:" + e.id;
+      break;
     case "opening_payable":
     case "opening_loan":
-      debit = e.kind === "credit_purchase" ? "stock" : "equity";
+      debit = "equity";
       credit = "payable:" + e.id;
       break;
     case "loan_received":
@@ -141,6 +149,7 @@ export function posting(e: EventInput, accounts: Account[]): Line[] {
     [
       "credit_sale",
       "credit_purchase",
+      "credit_expense",
       "loan_received",
       "opening_receivable",
       "opening_payable",
@@ -190,6 +199,7 @@ export function obligations(w: Workspace): Obligation[] {
       [
         "credit_sale",
         "credit_purchase",
+        "credit_expense",
         "loan_received",
         "opening_receivable",
         "opening_payable",
