@@ -1,0 +1,4573 @@
+# Repository Audit Plan
+
+## User
+
+# CashNarra — Forensic Repository Audit, Vision Alignment Review, and Codex Completion Plan
+
+Act as a **principal software architect, senior full-stack engineer, financial-systems architect, AI application engineer, product strategist, UX auditor, security reviewer, QA lead, and technical program manager**.
+
+You are auditing a real product that has already been partially implemented.
+
+This is **not** a generic code review.
+
+Your job is to determine:
+
+1. What has actually been built.
+2. What is correct and should be preserved.
+3. What is incomplete.
+4. What has drifted from the agreed CashNarra vision.
+5. What has been implemented in a financially, technically, architecturally, visually, or product-wise incorrect way.
+6. What important requirements have been missed.
+7. What unnecessary features or complexity have been introduced.
+8. Exactly how Codex should continue from the present repository state and finish CashNarra properly.
+9. How Codex should preserve progress through **durable checkpoints** so work can resume safely if a session, context window, machine, or usage allowance interrupts the work.
+
+The final result must be sufficiently specific that I can hand your remediation plan to Codex and have it continue development with very little ambiguity.
+
+---
+
+# 1. Repository to audit
+
+The public repository is:
+
+**https://github.com/janelove-tech/CashNarra**
+
+You MUST inspect the repository itself.
+
+Do not base the audit on its README alone.
+
+Inspect the current default branch and establish:
+
+- repository name;
+- default branch;
+- current HEAD commit SHA;
+- latest meaningful commits;
+- directory structure;
+- package manifests and lockfiles;
+- framework/runtime versions;
+- environment/configuration files;
+- routes/pages;
+- components;
+- styling;
+- assets;
+- database schema and migrations;
+- authentication implementation;
+- Supabase integration;
+- server-side logic;
+- AI integration;
+- financial logic;
+- ledger/data models;
+- narration/extraction workflow;
+- review/confirmation workflow;
+- correction workflow;
+- debts/receivables/payables;
+- accounts/workspaces;
+- reports/Money Stories;
+- goals/forecasting;
+- offline/PWA functionality;
+- exports;
+- tests;
+- validation;
+- error handling;
+- accessibility;
+- privacy/security controls;
+- build/deployment configuration;
+- documentation;
+- existing AGENTS.md or other AI-agent instructions;
+- TODOs, stubs, mocks and hard-coded demo behaviour.
+
+Where useful, inspect commit history to determine how the project arrived at its current state.
+
+If GitHub supports permanent links, reference findings against the audited commit SHA rather than floating `main` links.
+
+If you cannot access the repository or a material part of it, state that clearly and STOP rather than pretending to have inspected it.
+
+---
+
+# 2. Canonical CashNarra sources
+
+Read the available CashNarra sources **completely before judging the repository**.
+
+At minimum, inspect:
+
+1. `Research CashNarra Concept.txt`
+2. `Recommend Technology Stack.txt`
+3. `Storyline handoff package.txt`
+4. `CashNarra_Design_Kit_v2.zip`
+
+For the ZIP, inspect its contents rather than treating the archive name as sufficient. In particular, inspect the current design guide, implementation brief, tokens, logo/assets, screen examples, interactive preview, README, and any relevant validation/check files.
+
+The coding repository may also contain copies of these materials. Compare versions and determine which is current.
+
+### Source precedence
+
+The discussions evolved.
+
+Therefore:
+
+- later explicit decisions supersede earlier brainstorming;
+- final agreed summaries supersede exploratory proposals;
+- the revised v2 design handoff supersedes the rejected first UI direction;
+- explicit technical decisions supersede speculative alternatives;
+- deferred features must not be treated as V1 requirements;
+- abandoned concepts must not be resurrected merely because they appear earlier in the discussions.
+
+Create a **source-of-truth decision inventory** before performing the gap analysis.
+
+Classify important items as:
+
+- FIXED / AGREED
+- V1 REQUIRED
+- LATER / DEFERRED
+- EXPLICITLY OUT OF SCOPE
+- DESIGN PROPOSAL
+- SUPERSEDED
+- UNRESOLVED
+- RESEARCH CLAIM REQUIRING CURRENT VERIFICATION
+
+Do not silently reconcile contradictions. Explain how you resolved them.
+
+---
+
+# 3. CashNarra's controlling product direction
+
+Use the source material to verify this rather than blindly trusting this summary, but expect the final direction to revolve around:
+
+## Product identity
+
+**CashNarra**
+
+**Tell Your Money Story. See the Numbers.**
+
+CashNarra is a **conversational financial memory and navigation system** that turns ordinary descriptions of money activity into trustworthy records, useful understanding, and realistic planning toward users' goals.
+
+Its structure is:
+
+**Record → Understand → Plan**
+
+Its experience principle is:
+
+**Serious money. Light interaction.**
+
+And the interaction should feel closer to:
+
+**Tell. Tap. Done.**
+
+The user should not have to think like an accountant.
+
+---
+
+# 4. Product behaviour that must be protected
+
+Pay particular attention to these principles.
+
+## Natural narration
+
+A person should be able to describe several financial events in one ordinary narration.
+
+CashNarra should:
+
+**understand → clarify only what materially matters → present a compact review → save correctly.**
+
+Core rule:
+
+**Don't confirm the obvious. Clarify the important.**
+
+## Financial meaning
+
+CashNarra must distinguish concepts such as:
+
+- income versus money received;
+- expenses versus every outgoing payment;
+- sales versus debt settlement;
+- loan proceeds versus revenue;
+- principal repayment versus expense;
+- owner contribution versus sales;
+- owner withdrawal versus operating expense;
+- transfer versus spending;
+- credit sale versus cash receipt;
+- stock purchase versus automatically recognised profit expense;
+- goal allocation versus actual expenditure.
+
+The UI may hide accounting jargon.
+
+The internal financial system must not hide accounting correctness.
+
+## AI boundary
+
+AI interprets language and can explain results.
+
+AI must **not** be the authoritative ledger or calculator.
+
+Expected conceptual flow:
+
+**Natural language 
+→ structured interpretation 
+→ deterministic/domain validation 
+→ necessary clarification 
+→ user review/confirmation 
+→ deterministic posting 
+→ ledger 
+→ deterministic calculations 
+→ AI explanation**
+
+Official totals, balances, posting, authorisation and forecasts must not depend on an LLM inventing arithmetic.
+
+## Trust
+
+Important numbers should be traceable to their underlying records.
+
+CashNarra should not claim certainty it does not possess.
+
+Examples:
+
+- don't call every inflow revenue;
+- don't call every outflow an expense;
+- don't claim profit if the available information cannot support profit;
+- don't imply an account is bank-verified when it is only manually recorded;
+- don't treat missing information as zero;
+- don't say something was saved until authoritative persistence actually succeeded.
+
+---
+
+# 5. V1 product scope to audit against
+
+Establish the exact scope from the sources, but specifically verify implementation of or preparation for:
+
+- personal and business workspaces;
+- Cash, Bank and MoMo accounts tracked manually;
+- opening balances;
+- text-first narration;
+- multiple events from one narration;
+- important clarification;
+- simple batch review/save;
+- income;
+- expenses;
+- transfers;
+- loans;
+- owner contributions;
+- owner withdrawals;
+- receivables;
+- payables;
+- partial/full debt settlements;
+- editable records;
+- conversational corrections;
+- splits/reclassification/movement where agreed;
+- trustworthy ledger;
+- provenance/traceability;
+- daily/weekly/monthly Money Stories;
+- basic reports;
+- consistency/review indicators;
+- forgiving catch-up;
+- simple goals;
+- deterministic current-pace goal scenarios;
+- transparent forecast assumptions;
+- PDF/CSV/spreadsheet exports;
+- mobile-first/PWA behaviour;
+- useful offline draft capture;
+- low-data/modest-device usability;
+- Ghana cedi and Ghana-relevant financial language.
+
+Determine which are truly V1 versus progressive additions from the source material.
+
+Do not mechanically mark everything listed above “missing” if the agreed build sequence intentionally places it in a later milestone.
+
+---
+
+# 6. Explicit V1 boundaries
+
+Flag the repository if it has drifted into unnecessary scope.
+
+CashNarra V1 is not supposed to become:
+
+- a wallet;
+- a bank;
+- a payment initiator;
+- a MoMo payment initiator;
+- a card issuer;
+- a lender;
+- an investment adviser;
+- a tax filing system;
+- an accountant replacement;
+- a full inventory system;
+- a POS;
+- payroll;
+- HR;
+- CRM;
+- ERP;
+- an automatic bank/MoMo aggregation platform.
+
+Receipt OCR, statement imports, richer integrations, collaboration, sophisticated forecasting and other conveniences should follow the agreed sequencing unless newer sources explicitly changed that.
+
+The product boundary is approximately:
+
+**CashNarra understands and organises money. It does not move the money.**
+
+---
+
+# 7. Agreed technical direction
+
+Verify the final stack decision against the source.
+
+The repository should broadly align with the final architecture unless there is a strong documented reason otherwise:
+
+- Next.js
+- React
+- TypeScript
+- Node.js
+- CSS Modules / agreed styling implementation
+- managed Supabase PostgreSQL
+- Supabase Auth
+- hidden double-entry or equivalent financially rigorous deterministic ledger
+- exact decimal money representation
+- atomic posting
+- idempotency/retry protection
+- traceable corrections
+- OpenAI through a small replaceable integration boundary
+- schema-constrained extraction PLUS financial/domain validation
+- IndexedDB/offline drafts
+- PWA behaviour
+- Resend or the agreed transactional email solution
+- CSV/PDF/spreadsheet exports
+- Vercel as the intended production host unless later evidence changed this
+
+Development was explicitly intended to begin with:
+
+- local development;
+- Supabase Free where appropriate;
+- migrations kept in source control;
+- synthetic/test data;
+- mocked AI for ordinary development;
+- limited real API use for evaluation.
+
+Do not criticise the repository merely for not using paid infrastructure during development.
+
+---
+
+# 8. Design/UI source of truth
+
+The **revised CashNarra Design Kit v2** is important.
+
+Do not audit the application against the rejected first design.
+
+Inspect the revised implementation brief, tokens, screen specifications and interactive preview.
+
+Check whether the actual application preserves:
+
+- the selected CashNarra identity;
+- current logo/mark where intended;
+- typography;
+- token system;
+- colour roles;
+- responsive hierarchy;
+- mobile navigation;
+- Today / Records / Money Stories / Plan structure where still agreed;
+- narration being prominent;
+- compact review;
+- financial numbers using the intended financial typography;
+- traceable number interactions;
+- important AI/financial states;
+- dark/light behaviour where implemented;
+- accessibility;
+- touch target sizes;
+- low-clutter layouts;
+- meaningful empty/loading/error/offline states.
+
+Do NOT merely ask:
+
+> “Does it look similar?”
+
+Ask:
+
+> “Does the implementation preserve the design principles, hierarchy, interaction model and reusable component system?”
+
+Also identify places where the implementation feels like generic AI-generated dashboard UI:
+
+- excessive cards;
+- repetitive bordered containers;
+- unnecessary gradients;
+- weak typography hierarchy;
+- meaningless charts;
+- too much explanatory copy;
+- poor spacing rhythm;
+- inconsistent components;
+- decoration without product meaning;
+- chat-first layouts that make users work;
+- desktop UI squeezed onto mobile.
+
+---
+
+# 9. Deep repository audit
+
+Perform a forensic review across the following dimensions.
+
+## A. Product alignment
+
+Map implemented behaviour against the canonical vision.
+
+Identify:
+
+- correct implementation;
+- partial implementation;
+- missing implementation;
+- incorrect implementation;
+- unnecessary implementation;
+- superseded implementation.
+
+## B. User journeys
+
+Actually trace the code paths for important journeys:
+
+1. first use;
+2. workspace/account setup;
+3. ordinary narration;
+4. narration with multiple events;
+5. ambiguous narration;
+6. clarification;
+7. batch review;
+8. atomic save;
+9. interrupted/retried save;
+10. editing before save;
+11. correcting a posted record;
+12. transfer;
+13. owner contribution/withdrawal;
+14. loan;
+15. credit sale;
+16. debt settlement;
+17. partial debt payment;
+18. Money Story;
+19. creating a goal;
+20. viewing a current-pace scenario;
+21. offline narration;
+22. reconnecting;
+23. export.
+
+Do not assume a screen means a workflow is implemented.
+
+Follow the actual data path.
+
+## C. Financial integrity
+
+This is a high-priority audit.
+
+Determine whether:
+
+- money uses exact decimal representation;
+- ledger entries balance;
+- transfers affect both accounts exactly once;
+- transfer does not inflate income/expense;
+- debt settlement does not double-count sales/revenue;
+- loan receipts are liabilities rather than sales;
+- owner money is distinct;
+- stock purchases are represented honestly;
+- corrections preserve integrity;
+- duplicate submissions are safe;
+- batch posting is atomic;
+- retries are idempotent;
+- concurrency is safe enough for scope;
+- official totals derive from structured records;
+- goals derive from deterministic calculations;
+- reports don't fabricate profit.
+
+Treat violations here as severe even if the UI looks good.
+
+## D. AI implementation
+
+Review:
+
+- prompts;
+- model integration;
+- structured outputs;
+- schemas;
+- validation;
+- clarification rules;
+- prompt injection boundaries;
+- database authority;
+- workspace access;
+- correction interpretation;
+- error/fallback handling;
+- test fixtures;
+- mocked versus production paths.
+
+Identify anywhere the LLM is being trusted with responsibilities that should belong to deterministic application/database logic.
+
+## E. Data model
+
+Assess:
+
+- user;
+- workspace;
+- membership if any;
+- accounts;
+- sources/narrations;
+- draft events;
+- posted financial events;
+- journal/posting representation;
+- categories;
+- counterparties;
+- receivables/payables/obligations;
+- settlement links;
+- correction/reversal links;
+- goals;
+- goal allocations;
+- reports/story derivation;
+- provenance;
+- timestamps;
+- statuses.
+
+Do not demand needless enterprise modelling.
+
+Recommend the **smallest model that is financially correct for CashNarra's actual scope**.
+
+## F. Supabase/security
+
+Inspect:
+
+- migrations;
+- RLS;
+- tenant/workspace isolation;
+- privileged operations;
+- service-role use;
+- auth;
+- session handling;
+- exposed tables/views/functions;
+- secret management;
+- storage if present;
+- raw financial data in logs;
+- unsafe client-side authority;
+- server/client boundaries.
+
+Any possibility of one user seeing or modifying another user's financial data is a P0 issue.
+
+## G. Offline/PWA
+
+Determine what is actually implemented versus merely advertised.
+
+Check:
+
+- manifest;
+- service worker;
+- IndexedDB;
+- unsynchronised drafts;
+- retry IDs;
+- status indicators;
+- logout/shared-device behaviour;
+- cache boundaries;
+- authenticated financial responses;
+- recovery from failed processing/saving.
+
+## H. UI/UX/design
+
+Compare code and rendered behaviour with Design Kit v2.
+
+Check 320px mobile behaviour and ordinary desktop.
+
+Pay attention to:
+
+- hierarchy;
+- spacing;
+- typography;
+- cedi symbol;
+- tabular numerals;
+- responsive behaviour;
+- tap targets;
+- keyboard navigation;
+- focus;
+- screen-reader semantics;
+- loading/error/offline states;
+- reduced motion where applicable.
+
+## I. Performance and complexity
+
+Look for:
+
+- unnecessary dependencies;
+- premature infrastructure;
+- giant components;
+- duplicated logic;
+- excessive client components;
+- avoidable network chatter;
+- over-fetching;
+- slow narration/review flow;
+- inappropriate caching;
+- bloated JavaScript;
+- speculative abstractions;
+- dead prototype code.
+
+CashNarra should remain understandable to one developer or a very small team.
+
+## J. Testing
+
+Determine what tests truly exist.
+
+Evaluate coverage of high-risk behaviour rather than raw test count.
+
+At minimum, the finished project needs confidence around:
+
+- transfer semantics;
+- debt settlement;
+- owner money;
+- loan handling;
+- decimal arithmetic;
+- atomic batch save;
+- repeated submission;
+- failed save;
+- corrections;
+- cross-workspace isolation;
+- forecast insufficiency;
+- goal allocations;
+- offline draft recovery;
+- important navigation flows.
+
+## K. Build health
+
+Run or inspect appropriate commands for:
+
+- install;
+- lint;
+- type-check;
+- tests;
+- production build;
+- migrations;
+- seed/demo setup.
+
+Do not mark something complete because source files merely exist.
+
+---
+
+# 10. Research current implementation facts when necessary
+
+This is a 2026 codebase.
+
+When framework/provider behaviour materially affects your conclusion, verify it against **current official documentation**.
+
+Examples:
+
+- Next.js;
+- React;
+- Supabase;
+- PostgreSQL;
+- OpenAI;
+- Vercel;
+- browser/PWA APIs.
+
+Use primary documentation where practical.
+
+Do not turn this into a new market-research exercise.
+
+The product source material remains authoritative for **what CashNarra is supposed to be**.
+
+External documentation is used to verify **how current technology behaves**, not to reinvent the product.
+
+---
+
+# 11. Classify every material finding
+
+Use this severity model.
+
+## P0 — Integrity / security blocker
+
+Examples:
+
+- cross-user data exposure;
+- financial corruption;
+- double-posting;
+- invalid authoritative totals;
+- secrets exposed;
+- AI given uncontrolled database authority;
+- destructive correction behaviour.
+
+## P1 — Core product blocker
+
+Examples:
+
+- central narration/review workflow broken;
+- incorrect financial semantics;
+- required V1 capability absent;
+- implementation fundamentally contradicts agreed product architecture.
+
+## P2 — Important quality gap
+
+Examples:
+
+- poor offline recovery;
+- accessibility failures;
+- incomplete error state;
+- design drift;
+- weak test coverage.
+
+## P3 — Polish / maintainability
+
+Examples:
+
+- small visual inconsistency;
+- naming cleanup;
+- non-blocking refactor.
+
+For each finding include:
+
+- ID;
+- severity;
+- category;
+- source requirement;
+- repository evidence;
+- why it matters;
+- current behaviour;
+- desired behaviour;
+- recommended action;
+- dependency;
+- test/verification needed.
+
+Do not use vague items such as:
+
+> “Improve architecture.”
+
+Be specific.
+
+---
+
+# 12. Distinguish KEEP / FIX / REPLACE / REMOVE / DEFER
+
+For every significant subsystem, classify it as:
+
+### KEEP
+Correct and aligned. Do not rewrite it.
+
+### KEEP + HARDEN
+Fundamentally correct but lacking tests, validation, security or recovery.
+
+### REFACTOR
+Valuable implementation exists but its structure is causing problems.
+
+### REPLACE
+Underlying approach conflicts with the agreed architecture badly enough that preserving it would cost more.
+
+### REMOVE
+Unnecessary, dangerous, duplicate, obsolete or explicitly out-of-scope.
+
+### DEFER
+Useful future feature implemented too early or not necessary for current completion.
+
+The goal is **not to rewrite the repository from scratch**.
+
+Preserve good work.
+
+---
+
+# 13. Produce a traceability matrix
+
+Create a table containing at least:
+
+| Requirement | Source/decision | Repository implementation | Status | Evidence | Gap | Priority | Codex action |
+|---|---|---|---|---|---|---|---|
+
+Cover all major V1 requirements and important architectural/design safeguards.
+
+This matrix should make it obvious where development diverged.
+
+---
+
+# 14. Give me the actual target architecture after remediation
+
+After inspecting what already exists, describe the recommended final V1 architecture.
+
+Do not design an imaginary greenfield application.
+
+Show how the current repo should evolve.
+
+Include:
+
+- client/server responsibilities;
+- Supabase responsibilities;
+- data model boundaries;
+- ledger/posting path;
+- AI interpretation boundary;
+- review/confirmation state;
+- reports;
+- goal calculations;
+- offline drafts;
+- exports;
+- auth/tenant isolation;
+- source provenance;
+- correction model.
+
+Use a simple diagram if useful.
+
+---
+
+# 15. Build a Codex remediation programme
+
+This is one of the most important outputs.
+
+Convert the audit into ordered implementation phases.
+
+Do not simply sort by feature name.
+
+Order work by **dependency and risk**.
+
+For example, if the ledger foundation is wrong, don't tell Codex to polish Money Stories first.
+
+For every phase specify:
+
+- purpose;
+- problems being fixed;
+- exact scope;
+- explicit non-goals;
+- likely files/subsystems involved;
+- prerequisites;
+- implementation requirements;
+- data migration implications;
+- acceptance criteria;
+- tests;
+- manual verification;
+- rollback/risk notes;
+- definition of complete.
+
+Keep phases small enough that a completed phase can be checkpointed and resumed independently.
+
+---
+
+# 16. Create a durable Codex checkpoint system
+
+I am specifically concerned about long work being interrupted by usage limits or a new session.
+
+Design the remediation programme so **the repository itself remembers the work**.
+
+Use a simple structure rather than excessive process.
+
+Recommend and provide the actual contents/templates for something approximately like:
+
+```text
+AGENTS.md
+GOALS.md
+PLANS.md
+
+harness/
+  build/
+    00-....md
+    01-....md
+    ...
+  context/
+    README.md
+    <phase context files created only when needed>
+  build-log.md
+```
+
+Adapt names if the repository already has an established equivalent.
+
+### Important ownership rules
+
+`AGENTS.md`
+
+Only durable repository-specific operating rules and non-negotiable CashNarra invariants.
+
+Do NOT turn it into a giant product specification.
+
+`GOALS.md`
+
+The frozen remediation outcome, success conditions, hard constraints and non-goals.
+
+`PLANS.md`
+
+Ordered phase sequence and status.
+
+`harness/build/<phase>.md`
+
+Exact scope, acceptance criteria and validation for that phase.
+
+`harness/context/<phase>.md`
+
+Only material discoveries, decisions, constraints and unresolved questions that a future Codex session would otherwise need to rediscover.
+
+`harness/build-log.md`
+
+Observed progress and verification evidence.
+
+It must say what actually happened, not what was planned.
+
+### Git is the primary checkpoint
+
+Tell Codex to work on a dedicated branch.
+
+Before implementation:
+
+- record baseline branch;
+- record baseline HEAD SHA;
+- ensure unrelated user changes are not destroyed.
+
+At every completed phase:
+
+1. run the phase validations;
+2. fix failures before proceeding;
+3. update phase context if necessary;
+4. update build-log with actual evidence;
+5. update plan status;
+6. inspect `git diff`;
+7. commit the completed phase with a descriptive commit;
+8. record the resulting commit SHA.
+
+Do not bundle several unrelated phases into one giant commit.
+
+### Interruption safety
+
+In addition to completed-phase commits, Codex must leave a recovery checkpoint after a meaningful atomic unit whenever substantial work is in progress.
+
+A checkpoint must state:
+
+- timestamp;
+- branch;
+- current HEAD;
+- current phase;
+- exact objective;
+- completed work;
+- files changed;
+- tests already run and results;
+- current working-tree status;
+- unfinished work;
+- known broken state if any;
+- blockers/questions;
+- exact next recommended action;
+- commands needed to resume;
+- assumptions made.
+
+Never record secrets.
+
+If an implementation is knowingly half-finished and does not pass validation, say so explicitly.
+
+Do not falsely mark it complete.
+
+### Resume protocol
+
+A new Codex session should be able to begin with something like:
+
+1. Read repository `AGENTS.md`.
+2. Read `GOALS.md`.
+3. Read `PLANS.md`.
+4. Read `harness/build-log.md`.
+5. Identify the current phase.
+6. Read only that phase's build file and relevant context.
+7. Check current branch, HEAD and worktree.
+8. Run a small sanity verification.
+9. Continue from the recorded next action.
+10. Do not repeat completed discovery unless repository evidence contradicts the checkpoint.
+
+Write the exact reusable **RESUME PROMPT**.
+
+---
+
+# 17. Do not let checkpointing create unnecessary bureaucracy
+
+The checkpoint system exists to prevent lost work, not to consume half the development effort.
+
+Follow these rules:
+
+- persistent instructions should be concise;
+- don't duplicate the same information across five files;
+- don't rewrite huge source documents into AGENTS.md;
+- link/reference source-of-truth files instead;
+- phase context should include only material information;
+- build-log should contain evidence and status, not copied code diffs;
+- Git commits remain the strongest durable checkpoint.
+
+---
+
+# 18. Produce the actual Codex prompts
+
+At the end, give me:
+
+## A. Master Codex remediation prompt
+
+A ready-to-paste prompt that tells Codex to execute the entire approved remediation plan phase by phase.
+
+It should instruct Codex to:
+
+- preserve correct existing work;
+- follow source precedence;
+- obey the phase plan;
+- stay inside scope;
+- run verification;
+- stop and repair failures before continuing;
+- checkpoint;
+- commit completed phases;
+- maintain the progress files;
+- continue autonomously through unblocked phases;
+- avoid asking me trivial implementation questions;
+- stop only for genuinely consequential decisions that cannot be resolved from the source material or repository evidence.
+
+## B. Resume-after-interruption prompt
+
+A short prompt I can paste into a fresh Codex session after a usage limit/reset.
+
+## C. Phase execution prompt
+
+A reusable prompt for:
+
+> “Continue with the next incomplete approved phase.”
+
+## D. Final verification prompt
+
+A Codex prompt that independently reviews whether the completed repository actually meets the CashNarra source-of-truth requirements.
+
+The final verification should not assume the implementation agent got everything right.
+
+---
+
+# 19. Definition of done
+
+Do not define done as:
+
+> “The app builds.”
+
+The remediation is done when evidence shows that:
+
+- core CashNarra V1 journeys work;
+- financial semantics are correct;
+- authoritative calculations are deterministic;
+- retries don't double-post;
+- corrections preserve integrity;
+- user/workspace isolation is enforced;
+- narration → clarification → review → save works;
+- important records remain traceable;
+- debts behave correctly;
+- transfers behave correctly;
+- goals use deterministic scenarios with honest assumptions;
+- offline drafts recover appropriately;
+- V2 design principles have been implemented coherently;
+- important accessibility requirements have been checked;
+- tests cover high-risk financial behaviour;
+- lint/typecheck/test/build succeed or any accepted exceptions are explicitly documented;
+- remaining deferred work is clearly separated from incomplete V1 work;
+- no major feature claims exceed actual implementation.
+
+---
+
+# 20. Required final response structure
+
+Return your audit in this exact broad order:
+
+## 1. Executive verdict
+
+Explain in plain language where the repository currently stands.
+
+Give an approximate answer to:
+
+> “How much of the actual CashNarra are we really looking at?”
+
+Do not invent a fake precise percentage if the evidence doesn't support one.
+
+## 2. Repository snapshot
+
+- audited branch;
+- HEAD SHA;
+- stack detected;
+- major directories;
+- test/build status.
+
+## 3. Source-of-truth decision inventory
+
+Fixed, V1, deferred, out-of-scope, superseded and unresolved decisions.
+
+## 4. What the repository got right
+
+Be explicit so Codex doesn't destroy good work.
+
+## 5. Where the repository has drifted
+
+The major divergences from the agreed CashNarra product.
+
+## 6. P0/P1 findings
+
+Financial integrity, security and core-product blockers first.
+
+## 7. P2/P3 findings
+
+Quality, UX, testing, performance and polish.
+
+## 8. Vision-to-repository traceability matrix
+
+Comprehensive mapping.
+
+## 9. KEEP / HARDEN / REFACTOR / REPLACE / REMOVE / DEFER map
+
+For major subsystems.
+
+## 10. Recommended target V1 architecture
+
+Based on the current codebase rather than a greenfield fantasy.
+
+## 11. Ordered Codex remediation plan
+
+Phase-by-phase.
+
+## 12. Required tests and acceptance criteria
+
+Financial, security, workflow, offline and UI.
+
+## 13. Checkpoint and resume system
+
+Provide file structures/templates.
+
+## 14. Master Codex prompt
+
+Ready to paste.
+
+## 15. Resume-after-interruption Codex prompt
+
+Ready to paste.
+
+## 16. Final verification Codex prompt
+
+Ready to paste.
+
+## 17. Remaining genuinely unresolved decisions
+
+Only things that actually need my input.
+
+## 18. Final recommendation
+
+Tell me:
+
+- what should happen first;
+- what should absolutely not be rebuilt;
+- what currently threatens the product most;
+- and the shortest credible route from the present repository to the agreed CashNarra V1.
+
+---
+
+# 21. Audit discipline
+
+Throughout this task:
+
+**Evidence over assumptions.**
+
+Do not say something exists because the README claims it.
+
+Do not call something missing because you did not search thoroughly enough.
+
+Do not recommend a rewrite simply because you would have structured it differently.
+
+Do not optimise for appearing comprehensive at the expense of prioritisation.
+
+Do not let attractive UI compensate for incorrect financial logic.
+
+Do not let good backend code compensate for an unusable interaction model.
+
+Do not let an LLM become the ledger.
+
+Do not introduce enterprise complexity CashNarra does not need.
+
+Do not silently change the product.
+
+Do not resurrect superseded requirements.
+
+And do not produce generic instructions like:
+
+> “Improve testing.”
+> “Improve UX.”
+> “Add security.”
+
+Everything important must connect:
+
+**source requirement → repository evidence → problem → consequence → precise remediation → verification.**
+
+The objective is not to criticise the existing work.
+
+The objective is to **recover the correct CashNarra trajectory, preserve what is good, and give Codex a disciplined, resumable route to finish the product properly.**
+
+Begin with repository access verification and the source-of-truth inventory. Do not make implementation recommendations until you understand both.
+
+## ChatGPT
+
+I’m starting with two gates before making any recommendations: verify the live repository state down to its current commit, then reconstruct the actual CashNarra source-of-truth from the three text sources and the v2 design kit. After that I’ll trace the real code paths, run the build/test checks I can, and only then turn the evidence into a Codex remediation and checkpoint plan.
+
+## ChatGPT
+
+Repository access is confirmed. It currently has **one commit only** on `main`: `3b4d1f89fed8c079cc3571aeff6276bfe5f04d92` (“Initial commit: frontend shell and Supabase bootstrap”). The local shell cannot reach GitHub directly, so I’m using the GitHub connector for source inspection and will distinguish “source-inspected” checks from commands I can actually execute locally.
+
+## ChatGPT
+
+The canonical discussions confirm an important precedence point: the **automatic Money Inbox / bank-MoMo capture idea was explored and then deliberately stepped back from**. The controlling V1 is the lighter **Record → Understand → Plan** product: manual Cash/Bank/MoMo tracking, natural narration, meaningful clarification, batch review/save, trustworthy records, Money Stories, and basic deterministic goals—not a payment/aggregation/ERP product. 
+
+## ChatGPT
+
+# 1. Executive verdict
+
+I audited the public repository itself at the immutable commit below, read the three canonical CashNarra text sources, inspected the contents of the revised **CashNarra Design Kit v2**, compared those sources with the repository implementation, traced the principal financial/data/AI paths, and checked current official documentation where the 2026 technology state matters.
+
+[Audited CashNarra commit](https://github.com/janelove-tech/CashNarra/tree/3b4d1f89fed8c079cc3571aeff6276bfe5f04d92)
+
+The first important conclusion is:
+
+> **This is not a frontend shell anymore. It is a substantial development alpha with a surprisingly serious financial core.**
+
+I would not give you one invented percentage for “how much CashNarra is done,” because different parts are at radically different levels of maturity.
+
+| Dimension | Where it actually stands |
+|---|---|
+| Financial/domain foundation | **Substantial and mostly correct** |
+| Deterministic posting/integrity | **Strong for the implemented event set** |
+| Supabase/Auth/tenant isolation architecture | **Strong development implementation; needs hardening/production verification** |
+| Narra v2 UI implementation | **Substantially implemented and aligned** |
+| Narration → review workflow | **Mechanically implemented** |
+| General AI interpretation quality | **Not yet proven** |
+| Corrections/debts/transfers/goals | **Substantial implementation** |
+| Offline draft recovery | **Useful V1 implementation exists** |
+| Reports/exports | **Substantial implementation** |
+| Voice | **Built unusually far ahead, but intentionally gated and not production-proven** |
+| Accessibility | **Good foundations and some automated/browser checks; not yet sufficient to claim conformance** |
+| Production/launch readiness | **Not ready** |
+| Durable development history | **Poor — essentially the entire product is in one giant initial commit** |
+
+The biggest mistake now would be to assume CashNarra needs rebuilding. It does not.
+
+The biggest remaining product risk is almost the opposite:
+
+> **CashNarra has built a large amount of rigorous machinery around the central interaction before proving that the central interaction works reliably on real messy financial narration.**
+
+The canonical vision says the core promise is that someone can describe a whole day faster than manual bookkeeping and still end up with trustworthy records. 
+
+Yet the deterministic mock interpreter deliberately supports only **two exact synthetic narrations**, while the real OpenAI extraction path exists but has not undergone representative live evaluation. The repository's own cross-check reaches the same conclusion: arbitrary narration and conversational corrections remain partial/unverified. 
+
+That is the central completion problem.
+
+I found **no demonstrated P0 vulnerability or financial-corruption path** in the source I inspected. Specifically, I did not find uncontrolled LLM database authority, use of JavaScript floating-point money for authoritative values, an obvious cross-workspace read path, an unbalanced journal path, or a known retry path that double-posts.
+
+That is not a production security certification, especially because I could not independently execute the repository in this environment.
+
+---
+
+# 2. Repository snapshot
+
+## Audited state
+
+**Repository:** `janelove-tech/CashNarra` 
+**Default branch:** `main` 
+**HEAD:** `3b4d1f89fed8c079cc3571aeff6276bfe5f04d92` 
+**Commit message:** `Initial commit: frontend shell and Supabase bootstrap`
+
+There is effectively **one repository commit** at the audited state. That commit contains far more than the message suggests.
+
+The lack of incremental Git history is important: commit history cannot meaningfully tell us how CashNarra evolved. The repository's `docs/BUILD-STATUS.md` contains extensive chronological development notes, but Git itself does not currently provide durable phase boundaries.
+
+## Stack detected
+
+The package manifest establishes roughly:
+
+- Next.js 16
+- React 19
+- TypeScript 5.9
+- Node 24
+- CSS Modules
+- Supabase JS / SSR
+- PostgreSQL via managed Supabase
+- `decimal.js`
+- OpenAI JS SDK
+- Zod
+- jsPDF
+- `write-excel-file`
+- Lucide
+- Vitest
+- Playwright
+- PostgreSQL integration scripts
+- Supabase CLI
+
+This is materially aligned with the final stack decision, which settled on Next.js/TypeScript, managed Supabase/PostgreSQL/Auth, hidden double-entry, OpenAI behind a bounded integration, IndexedDB drafts, exports, Resend, and Vercel as intended production hosting. 
+
+Next.js 16.x remains **Active LTS** as of this audit, so there is no reason to change frameworks. ([Next.js](https://nextjs.org/support-policy))
+
+## Major implementation areas
+
+The repository includes:
+
+```text
+src/
+  app/
+    api/
+    app/
+    auth/
+    privacy/
+    layout.tsx
+    manifest.ts
+    tokens.css
+  components/
+  domain/
+    dates.ts
+    fixture.ts
+    goals.ts
+    ledger.ts
+    money.ts
+    move.ts
+    planning.ts
+    types.ts
+  lib/
+    drafts.ts
+    draft-backup.ts
+    exports.ts
+    supabase.ts
+    voice.ts
+  server/
+    ai.ts
+    auth.ts
+    recording.ts
+    request.ts
+    store.ts
+
+supabase/
+  migrations/
+  seed...
+  config...
+
+tests/
+  unit/domain tests
+  financial lifecycle tests
+  Playwright e2e journeys
+
+scripts/
+  test-db.ts
+  test-supabase.ts
+  doctor.ts
+  ...
+
+docs/
+  BUILD-STATUS.md
+  PRODUCT-CROSSCHECK.md
+  LAUNCH-READINESS.md
+  SOURCE-DECISIONS.md
+
+CashNarra_Design_Kit_v2/
+public/
+  brand/
+  sw.js
+```
+
+The v2 design kit embedded in the repository is the same current Narra handoff in substance as the supplied ZIP. Its README describes the interactive preview, 16 screen states, tokens, assets, campaign work, fictional reports and validation material. 
+
+## Build/test status
+
+This distinction is important.
+
+### What the repository records as having passed
+
+`docs/BUILD-STATUS.md` records later verification reaching:
+
+- 62 unit tests;
+- isolated PostgreSQL integration;
+- actual local Supabase integration;
+- 23 browser tests;
+- lint;
+- TypeScript;
+- production build;
+- Next 16.4.0 / Node 24;
+- responsive browser checks at 320/390/768/1440;
+- correction/debt/retry/offline/isolation scenarios.
+
+It also explicitly says that live OpenAI extraction, live explanations, transcription and production email remain untested. 
+
+### What I independently ran
+
+I **could not independently rerun** `npm ci`, Vitest, Playwright, the database harness or `next build` because this execution environment could not establish the network path necessary to clone/fetch the public GitHub repository into its shell.
+
+I therefore did **not** convert the repository's recorded test results into “independently verified by this audit.”
+
+I source-inspected the actual tests, SQL and application paths instead.
+
+The tests themselves are not placeholders. For example, the domain suite explicitly checks exact decimal arithmetic, transfer exclusion, settlement without duplicate sales, overpayment rejection, corrections, splits, stale changes, foreign accounts, unknown openings, goals and spreadsheet-injection protection. 
+
+The database integration harness tests RLS isolation, balanced journals, stale revisions, idempotency, concurrent settlements, overpayment rejection and transactional moves against PostgreSQL. 
+
+There is currently **no GitHub Actions CI directory**, so those recorded local passes are not independently reproduced automatically on every commit.
+
+---
+
+# 3. Source-of-truth decision inventory
+
+The final concept summary is decisive. It describes CashNarra as a conversational financial memory, record-keeping, insight and goal-navigation product whose experience is deliberately lightweight. 
+
+Its conceptual structure is:
+
+> **Record → Understand → Plan** 
+
+Its interaction rule is:
+
+> **Don't confirm the obvious. Clarify the important.** 
+
+And:
+
+> **Serious money. Light interaction.** 
+> **Tell. Tap. Done.** 
+
+## FIXED / AGREED
+
+| Decision | Resolution |
+|---|---|
+| Name | **CashNarra** |
+| Tagline | **Tell Your Money Story. See the Numbers.** |
+| Product structure | **Record → Understand → Plan** |
+| Product identity | Conversational financial memory/navigation system |
+| Experience principle | **Serious money. Light interaction.** |
+| Interaction | Narrate naturally; ask only material questions; batch review; save |
+| Accounting UX | Hide jargon from ordinary users |
+| AI boundary | AI interprets/explains; deterministic code/DB validates, posts, calculates |
+| Financial foundation | Hidden double-entry or equivalent rigorous postings |
+| Money arithmetic | Exact decimal |
+| Primary accounts | Manually tracked Cash, Bank and MoMo |
+| Workspaces | Personal and Business |
+| Technical family | Next.js + React + TypeScript + managed Supabase |
+| Production direction | Vercel unless later operational/legal evidence changes it |
+| Development | Local + Supabase Free + synthetic data + mocked AI |
+| Design system | **Revised Narra v2 handoff**, not Storyline v1 |
+
+The stack document explicitly says that AI interprets and explains, while application/database logic validates, posts, calculates and forecasts. 
+
+## V1 REQUIRED
+
+The later final concept moved several things into the real MVP that had previously been discussed as later additions.
+
+Required:
+
+- Personal/business workspaces.
+- Manual Cash/Bank/MoMo accounts.
+- Opening balances.
+- Text-first narration.
+- Multiple transactions from one narration.
+- Material clarification.
+- Compact review/save.
+- Income.
+- Expenses.
+- Transfers.
+- Loans.
+- Owner contribution/withdrawal.
+- Receivables.
+- Payables.
+- Partial/full settlements.
+- Editable records.
+- Corrections.
+- Supported splits/reclassification/moves.
+- Traceable ledger/provenance.
+- Basic reports.
+- Daily/weekly/monthly Money Stories.
+- Honest review/consistency indicators.
+- Forgiving catch-up.
+- Basic goals.
+- Deterministic pace scenarios.
+- Explicit assumptions / insufficient-data state.
+- CSV/PDF/spreadsheet exports.
+- Useful offline draft capture.
+- Mobile-first/PWA behaviour.
+- Ghana cedi/local usability.
+
+The final MVP list expressly includes owner money, receivables/payables, goals and basic current-pace forecasting. 
+
+## LATER / DEFERRED
+
+- Richer goal types.
+- Richer what-if modelling.
+- Confirmed learned classification rules.
+- Short voice **after the text flow is proven**.
+- Receipt OCR.
+- Statement imports.
+- Bank/MoMo feeds.
+- SMS capture.
+- Richer integrations.
+- Collaboration/staff permissions.
+- Full reconciliation.
+- More sophisticated forecasting.
+- Automated financial-data ingestion.
+
+The final stack's build order places voice after text and receipt recognition/imports after that. 
+
+## EXPLICITLY OUT OF SCOPE
+
+CashNarra V1 must not become:
+
+- a wallet;
+- a payment initiator;
+- a MoMo initiator;
+- a card issuer;
+- a lender;
+- an investment adviser;
+- a tax filing system;
+- an accountant replacement;
+- POS;
+- inventory ERP;
+- payroll;
+- HR;
+- CRM;
+- full ERP;
+- automatic bank/MoMo aggregation platform.
+
+The final concept states the boundary succinctly:
+
+> **CashNarra understands and organises money. It does not move the money.** 
+
+## SUPERSEDED
+
+### Automatic “Money Inbox”
+
+The automatic-ingestion concept was a valuable exploration but was stepped back from because of integration, legal and product complexity.
+
+The later stack and product decision returned V1 to manual narration with manually tracked accounts.
+
+It must **not** be treated as missing V1 functionality.
+
+### First Storyline UI
+
+The first handoff was explicitly rejected for weak hierarchy, excessive cards, weak visual personality and an insufficiently memorable mark. 
+
+The v2 Narra redesign supersedes it. The current implementation brief identifies Narra's speech mark, violet/ink/apricot system, Today/Records/Money Stories/Plan navigation and anti-card layout. 
+
+### Paid infrastructure during development
+
+Supabase Free/local development plus mocked AI is explicitly approved. Production Vercel/Supabase paid plans do not imply paid development infrastructure from day one. 
+
+## DESIGN PROPOSAL
+
+The Narra v2 visual identity is the current implementation handoff, but the kit itself still accurately labels the logo/identity as proposed concept artwork rather than trademark-cleared property.
+
+That distinction should remain.
+
+The app can implement it.
+
+Marketing must not imply trademark clearance or regulator approval.
+
+## UNRESOLVED
+
+These are external/product-operation questions, not reasons for Codex to redesign the architecture:
+
+- final operating company identity;
+- DPC registration/operating process;
+- Ghana record-location/retention interpretation;
+- GRA accounting-software applicability;
+- BoG/PFTSP classification;
+- NITA applicability;
+- final production provider contracts and locations;
+- production backup/recovery target;
+- trademark clearance;
+- live SMTP configuration;
+- commercial hosting plan;
+- representative AI evaluation;
+- representative voice evaluation.
+
+The repository's launch-readiness file correctly keeps these separate from implemented code. 
+
+## RESEARCH CLAIM REQUIRING CURRENT VERIFICATION
+
+One source decision changed **after the October 13 stack research**.
+
+The repository defaults to:
+
+```text
+gpt-4.1-mini-2025-04-14
+```
+
+in `.env.example`, and the fallback is also coded into the AI adapter. 
+
+On **October 14, 2026**, OpenAI deprecated that GPT-4.1 Mini snapshot with shutdown scheduled for **January 14, 2027** and recommends `gpt-6-luna` as the replacement. ([OpenAI Developers](https://developers.openai.com/api/docs/deprecations))
+
+GPT-6 Luna currently supports the Responses API and Structured Outputs, so the existing architecture does not need changing to migrate. ([OpenAI Developers](https://developers.openai.com/api/docs/models/gpt-6-luna))
+
+---
+
+# 4. What the repository got right
+
+A lot.
+
+These areas should be protected from unnecessary rewrites.
+
+## Exact-money handling
+
+`money.ts` uses `decimal.js`, string boundaries, explicit two-decimal validation and tabular GH₵ formatting rather than authoritative JavaScript floating-point arithmetic. 
+
+This directly satisfies one of the most important architectural requirements.
+
+**KEEP.**
+
+## Hidden double-entry semantics
+
+The ledger distinguishes:
+
+- sale;
+- other income;
+- expenses;
+- stock;
+- asset purchase;
+- transfers;
+- credit sales;
+- unpaid stock purchases;
+- debt receipts;
+- payable settlements;
+- loans;
+- loan principal;
+- loan interest;
+- owner contributions;
+- owner withdrawals;
+- opening receivables/payables/loans.
+
+The human labels are intentionally not accounting jargon. 
+
+**KEEP.**
+
+## Transfer correctness
+
+Transfers debit one cash account and credit another, and reports exclude them from received/paid totals.
+
+This is tested at the domain layer and at database level.
+
+**KEEP.**
+
+## Debt settlement avoids double-counting
+
+Receivable settlement posts:
+
+```text
+cash ↑
+receivable ↓
+```
+
+instead of creating another sale.
+
+Likewise payable principal reduces the payable rather than becoming another operating expense.
+
+The SQL posting templates enforce those semantics. 
+
+**KEEP.**
+
+## Stock is not automatically expensed as profit cost
+
+A stock purchase posts into a stock account rather than the general expense account.
+
+The report consequently refuses to invent profit.
+
+The current report returns `profit: null` and explicitly explains that cost-of-sales and other information are missing. 
+
+This is exactly the kind of financial honesty the source demanded.
+
+**KEEP.**
+
+## Unknown is not zero
+
+Unknown account openings can remain `null`.
+
+Balances remain unknown rather than becoming GH₵0.00.
+
+This distinction has explicit tests. 
+
+**KEEP.**
+
+## Corrections preserve history
+
+Posted records are not silently overwritten.
+
+The implementation preserves old records and correction history, including source provenance and opening-balance history.
+
+Database rules explicitly reject arbitrary rewriting of financial history. 
+
+**KEEP.**
+
+## Atomic saves and retries
+
+This is one of the strongest areas.
+
+`commit_workspace`:
+
+- uses a request key;
+- stores a payload hash;
+- returns the existing receipt for a valid retry;
+- rejects reuse of the same ID with different content;
+- checks expected workspace version;
+- takes a transaction-level advisory lock;
+- validates the candidate state;
+- rebuilds journal lines;
+- checks journal balance;
+- stores state and receipt together.
+
+Two-workspace moves lock both workspaces in deterministic order. 
+
+The UI also preserves the original request when the network outcome is unknown and asks the server for the receipt before retrying. 
+
+That is exactly the behaviour CashNarra needs.
+
+**KEEP.**
+
+## Tenant isolation architecture
+
+The application uses the user's Supabase session and `auth.getUser()`, not a browser-exposed service-role credential. 
+
+Tables have RLS enabled, broad write grants are revoked, and the mutation RPC checks `auth.uid()` ownership again.
+
+The database harness explicitly exercises cross-user reads and writes. 
+
+**KEEP + HARDEN**, not replace.
+
+## AI is not the ledger
+
+This is correctly implemented architecturally.
+
+The model:
+
+- has no database credentials;
+- does not receive SQL tools;
+- proposes event structures;
+- cannot decide workspace access;
+- cannot post;
+- cannot calculate authoritative totals;
+- cannot claim a record was saved.
+
+`realExtract()` is followed by deterministic validation. 
+
+That is directly aligned with the product's core financial architecture. 
+
+**KEEP + HARDEN.**
+
+## Goal forecasts are deterministic
+
+The goal calculation is ordinary TypeScript/Decimal logic rather than an AI prediction.
+
+It:
+
+- counts actual allocations;
+- checks three completed months;
+- refuses dates when months/commitments are unknown;
+- uses an explicit pace;
+- treats what-if as isolated;
+- produces no completion date at zero/negative pace;
+- doesn't mutate actual allocations.
+
+
+
+**KEEP.**
+
+## Narra v2 is actually implemented
+
+The current UI is not the rejected v1 Storyline design.
+
+The code contains:
+
+- v2 semantic tokens;
+- violet/ink/apricot roles;
+- light/dark themes;
+- reduced-motion tokens;
+- Manrope/Inter typography;
+- Today/Records/Money Stories/Plan;
+- mobile bottom navigation;
+- a prominent narration composer;
+- unboxed transaction rows;
+- Money Story presentation;
+- recorded-balance wording;
+- explicit “manually tracked” account text;
+- rhythm copy that says a check-in does not prove complete records.
+
+ 
+
+**KEEP.**
+
+## The review workflow understands “saved” correctly
+
+Draft states include:
+
+- waiting for processing;
+- needs clarification;
+- ready to review;
+- saving;
+- save not confirmed;
+- receipt recovery;
+- saved.
+
+The review screen says proposed records are **not saved yet**. 
+
+**KEEP.**
+
+## Offline behaviour is intentionally modest
+
+The app does not pretend to have a fully offline ledger or AI.
+
+IndexedDB stores private-device drafts, scoped to account/workspace, with stale revision protection. 
+
+The service worker only caches public brand assets rather than authenticated financial responses. 
+
+That is exactly the appropriate V1 boundary.
+
+**KEEP + HARDEN.**
+
+---
+
+# 5. Where the repository has drifted
+
+The drift is smaller than I expected, but important.
+
+## The implementation sequence drifted toward secondary complexity before proving the core AI
+
+The agreed sequence was:
+
+1. financial core;
+2. text narration/review;
+3. reports;
+4. goals;
+5. voice after text validation.
+
+Instead, the repository has already accumulated substantial voice-recorder/container/parser/recovery work while representative real narration interpretation remains unvalidated.
+
+This is not reason to delete the voice code.
+
+It is reason to **stop investing in it for now**.
+
+## “Payables” are implemented too narrowly
+
+The product source says CashNarra should understand **payables**, not merely “stock bought on credit.”
+
+The current event type exposed to users is effectively:
+
+> **Unpaid stock purchase**
+
+and SQL always posts `credit_purchase` as:
+
+```text
+stock asset ↑
+payable ↑
+```
+
+ 
+
+Therefore this ordinary statement is not represented correctly:
+
+> “The electrician fixed the shop for GH₵800 and I will pay him next week.”
+
+That should be an expense/payable, not stock/payable.
+
+This is a real financial semantics gap.
+
+## The app structure retained too much prototype centralisation
+
+The v2 handoff expressly said to translate the interactive preview into reusable components rather than ship the monolithic prototype. 
+
+Yet `src/components/cashnarra.tsx` is an enormous client-side controller containing navigation, loading, offline drafts, narration, review, records, stories, planning and multiple dialogs.
+
+The UI itself is aligned.
+
+The structure is not yet aligned with the handoff's intended maintainability.
+
+## Full workspace state is repeatedly transported
+
+`store.list()` selects entire JSON workspace states.
+
+`get()` obtains one workspace by calling that list operation and then finding it in memory.
+
+After successful writes the client calls `refresh()` and re-downloads all workspace states. 
+
+For today's synthetic dataset this is fine.
+
+For “financial memory” accumulated over years, it conflicts with the low-data/modest-device goal.
+
+This does **not** justify normalising the whole database today.
+
+It justifies improving the read boundary.
+
+## Development history is not checkpointed in Git
+
+The code may have undergone many disciplined internal passes, but the public repository has one giant commit.
+
+For a project you intend Codex to continue autonomously, that is dangerous.
+
+The repository currently remembers progress through a huge historical `BUILD-STATUS.md`, not through clean phase commits.
+
+That should change immediately.
+
+---
+
+# 6. P0/P1 findings
+
+## P0 status
+
+**No demonstrated P0 defect found in the audited source.**
+
+I found no evidence of:
+
+- cross-user readable financial tables;
+- client-side service-role credentials;
+- LLM database authority;
+- unbalanced journal acceptance;
+- known duplicate retry posting;
+- destructive correction overwrite;
+- authoritative floating-point money;
+- exposed real secret committed to `.env.example`.
+
+This is not proof that no vulnerability exists.
+
+It means this audit did not find evidence supporting a P0 classification.
+
+---
+
+## CN-P1-01 — General narration intelligence is not yet proven
+
+**Severity:** P1 
+**Category:** Core product / AI
+
+**Source requirement:** CashNarra's defining promise is converting an entire natural narration into trustworthy records with only necessary clarification. 
+
+**Repository evidence:** `mockExtract()` accepts exactly two labelled synthetic strings and rejects everything else. The real Responses API adapter exists, but no representative evaluation corpus or scored live evaluation is present. 
+
+**Current behaviour:** Development/demo flows prove the mechanics of extraction → clarification → review → save, but not the quality of arbitrary financial understanding.
+
+**Why it matters:** This is CashNarra's core product, not an optional AI enhancement.
+
+**Desired behaviour:** Representative Ghanaian money narratives reliably become correct event proposals or appropriate clarification questions, without making up missing facts.
+
+**Recommended action:** Build the evaluation harness before further feature work.
+
+Initial corpus should cover at least:
+
+- multi-event days;
+- sales vs cash receipts;
+- credit sales;
+- debt settlements;
+- partial settlements;
+- supplier payables;
+- transfers;
+- owner contributions;
+- owner withdrawals;
+- loans;
+- principal/interest;
+- stock;
+- ambiguous dates;
+- ambiguous payment accounts;
+- correction instructions;
+- splits;
+- workspace moves;
+- colloquial GHS expressions;
+- “4k”, “two five”, “momo”;
+- irrelevant text;
+- prompt-injection-like narration;
+- missing amounts;
+- uncertain parties.
+
+Keep the gold data synthetic but human-reviewed.
+
+**Dependency:** CN-P1-02 and CN-P1-04.
+
+**Verification:** Every designated financial-integrity case must either produce the correct proposed meaning or explicitly require clarification. There must be zero direct posting by the model and zero invented authoritative totals.
+
+OpenAI itself recommends evals for Structured Outputs and explicitly warns that schema-conforming output can still contain semantic mistakes. ([OpenAI Developers](https://developers.openai.com/api/docs/guides/structured-outputs?api-mode=responses))
+
+---
+
+## CN-P1-02 — The default OpenAI model was deprecated after the stack decision
+
+**Severity:** P1 before declaring V1 complete 
+**Category:** AI/runtime lifecycle
+
+**Source requirement:** Small replaceable OpenAI integration using a supported model.
+
+**Repository evidence:** `.env.example` and `ai.ts` default to `gpt-4.1-mini-2025-04-14`. 
+
+**Current technology fact:** OpenAI deprecated that snapshot on October 14, 2026 and schedules removal for January 14, 2027. Recommended replacement: `gpt-6-luna`. ([OpenAI Developers](https://developers.openai.com/api/docs/deprecations))
+
+**Why it matters:** Completing V1 around a model already on its shutdown path creates unnecessary immediate migration work and invalidates any new evaluation baseline.
+
+**Current behaviour:** It still exists today, but the default is time-limited.
+
+**Desired behaviour:** A supported current model behind the same provider abstraction.
+
+**Recommended action:** Keep the current Responses API/Zod boundary, migrate the development default to `gpt-6-luna`, and establish its behaviour through CN-P1-01 before enabling production AI.
+
+GPT-6 Luna supports Responses and Structured Outputs, so this does not require architectural replacement. ([OpenAI Developers](https://developers.openai.com/api/docs/models/gpt-6-luna))
+
+**Dependency:** None.
+
+**Verification:** AI schema tests + opt-in live eval harness; no hard-coded deprecated fallback remains in production paths.
+
+---
+
+## CN-P1-03 — General operating payables cannot be represented correctly
+
+**Severity:** P1 
+**Category:** Financial integrity / scope completeness
+
+**Source requirement:** V1 explicitly includes receivables **and payables**. 
+
+**Repository evidence:** `credit_purchase` is labelled “Unpaid stock purchase” and posts only:
+
+```text
+Dr stock
+Cr payable
+```
+
+
+
+**Current behaviour:** Stock purchased on credit works. Ordinary operating expenses incurred but not yet paid do not have a truthful representation.
+
+**Why it matters:** Encoding an unpaid electricity bill, contractor service or delivery expense as stock is financially wrong; recording it only when paid puts expense recognition in the wrong period.
+
+**Desired behaviour:** CashNarra can represent both:
+
+```text
+Stock bought on credit:
+Dr Stock
+Cr Payable
+```
+
+and:
+
+```text
+Operating expense incurred on credit:
+Dr Expense
+Cr Payable
+```
+
+**Recommended action:** Add the smallest additional event kind, e.g.:
+
+```text
+credit_expense
+```
+
+Human label:
+
+> Expense to pay later
+
+Do not create a generic accounting subsystem.
+
+Update:
+
+- `types.ts`;
+- `ledger.ts`;
+- SQL posting template;
+- manual form;
+- AI prompt/schema semantics;
+- obligations logic;
+- reports;
+- exports;
+- fixture/eval cases;
+- TS↔SQL parity tests.
+
+**Dependency:** Financial phase before AI evaluation baseline.
+
+**Verification:** Incurred expense appears in period expense immediately, payable increases, later payment reduces payable and cash without creating another expense.
+
+---
+
+## CN-P1-04 — AI clarification/context schema does not yet fully model important ambiguities
+
+**Severity:** P1 
+**Category:** AI/domain boundary
+
+**Source requirement:** “Clarify the important” in human language.
+
+**Repository evidence:** `realExtract()` receives account lists and obligations but does not pass the workspace type in its structured context. Its clarification schema can ask only about:
+
+```text
+accountId
+kind
+amount
+obligationId
+date
+```
+
+It cannot first-class identify missing `party` or `toAccountId`. 
+
+**Current behaviour:** Some errors fall into a generic “review the meaning/date/account/linked balance” clarification instead of a precise human question.
+
+**Why it matters:** Questions such as:
+
+> “Which of your accounts did you move it to?”
+
+and:
+
+> “Who do you owe?”
+
+are exactly where CashNarra's product quality lives.
+
+Workspace type also informs business owner-money semantics.
+
+**Desired behaviour:** Structured, deterministic clarification reasons that can express every financially material missing field.
+
+**Recommended action:**
+
+- pass `workspace.type`;
+- extend clarification fields with at least `party` and `toAccountId`;
+- distinguish model-proposed uncertainty from deterministic validation failures;
+- have the application generate durable event IDs after parsing rather than treating arbitrary model IDs as authority;
+- use human-language question templates where deterministic context is sufficient.
+
+**Dependency:** CN-P1-03 event model; CN-P1-02 model migration.
+
+**Verification:** Eval cases for every clarification type, including correct no-question cases.
+
+---
+
+# 7. P2/P3 findings
+
+## CN-P2-01 — Main application component is too monolithic
+
+**Severity:** P2 
+**Category:** Maintainability / UX implementation
+
+**Source requirement:** v2 reusable components and distinct task layouts; do not ship the prototype architecture. 
+
+**Repository evidence:** `cashnarra.tsx` centralises most product screens, application state, offline recovery, saving, navigation and modal orchestration. 
+
+**Why it matters:** Financial changes now risk unrelated UI regressions.
+
+**Current behaviour:** Works, but is becoming a “god component.”
+
+**Desired behaviour:** Same Narra UI and journeys, split around stable product responsibilities.
+
+**Recommended action:** Refactor, do not redesign.
+
+Suggested boundaries:
+
+```text
+CashNarraAppController
+AppShell
+TodayView
+CaptureFlow
+ClarificationView
+BatchReview
+RecordsView
+RecordDetail
+MoneyStoryView
+PlanView
+AccountsView
+SettingsView
+useWorkspaceData
+useDraftRecovery
+useSaveRecovery
+```
+
+**Dependency:** Complete financial/AI schema first so refactor doesn't chase moving contracts.
+
+**Verification:** Existing Playwright suite must remain unchanged/passing.
+
+---
+
+## CN-P2-02 — Re-downloading entire workspace histories conflicts with low-data goals
+
+**Severity:** P2 
+**Category:** Performance / architecture
+
+**Source requirement:** modest devices and low/unreliable connectivity.
+
+**Repository evidence:** `list()` selects entire `state` values for every workspace; `get()` loads all states; successful mutations trigger a full client refresh. 
+
+**Current behaviour:** Fine with small synthetic data.
+
+**Desired behaviour:** Initial shell/list operations fetch workspace metadata, while the selected workspace is loaded separately.
+
+**Recommended action:** Preserve the aggregate V1 model. Do **not** normalise the whole database yet.
+
+Add:
+
+```text
+listWorkspaceSummaries()
+getWorkspaceState(id)
+```
+
+and update only the affected workspace after mutations.
+
+Measure before adding pagination/normalisation.
+
+**Dependency:** Component/data hook refactor.
+
+**Verification:** Synthetic 5,000- and 10,000-record workspaces; record response size, load time and client memory.
+
+---
+
+## CN-P2-03 — Security-definer RPCs should follow current Supabase hardening guidance
+
+**Severity:** P2 
+**Category:** Security hardening
+
+**Source requirement:** strict workspace isolation and narrow privileged operations.
+
+**Repository evidence:** current functions are `security definer`, placed in `public`, and set `search_path=public,pg_temp`. They do revoke broad execute grants and perform explicit ownership checks, which is good. 
+
+Current Supabase guidance now recommends keeping security-definer functions out of exposed schemas and using `search_path=''` with schema-qualified objects. ([Supabase](https://supabase.com/docs/guides/database/functions))
+
+**Current behaviour:** No exploit demonstrated; ownership checking is strong.
+
+**Desired behaviour:** Equivalent functionality with a smaller privilege surface.
+
+**Recommended action:** Migrate privileged implementation functions to a private schema where practical, schema-qualify all referenced objects, pin an empty search path, and expose only narrow authenticated RPC wrappers if needed.
+
+Do not casually change ownership/permissions.
+
+**Dependency:** SQL parity tests first.
+
+**Verification:** Repeat all cross-user, concurrent, retry and rollback tests against the migrated functions.
+
+---
+
+## CN-P2-04 — No CI and no meaningful incremental Git history
+
+**Severity:** P2 
+**Category:** QA / program continuity
+
+**Source requirement:** resumable, trustworthy implementation.
+
+**Repository evidence:** one giant initial commit; no `.github/workflows`.
+
+**Current behaviour:** A large `BUILD-STATUS.md` claims extensive local verification, but nothing automatically reproduces it on pushes.
+
+**Desired behaviour:** Clean phase commits plus automated basic validation.
+
+**Recommended action:** Add CI for:
+
+```bash
+npm ci
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
+
+Add isolated PostgreSQL and demo Playwright jobs where practical.
+
+**Dependency:** Phase 00.
+
+**Verification:** clean workflow pass on remediation branch.
+
+---
+
+## CN-P2-05 — Voice work is ahead of agreed sequencing
+
+**Severity:** P2 
+**Category:** Scope / prioritisation
+
+**Source requirement:** short voice after text behaviour is proven. 
+
+**Repository evidence:** substantial MediaRecorder, upload validation, WebM/Opus parsing, timeout/recovery work exists while live text extraction remains unevaluated.
+
+**Current behaviour:** Safely gated and disabled, so this is not a dangerous defect.
+
+**Desired behaviour:** No more voice investment until CN-P1-01 passes.
+
+**Recommended action:** **KEEP the voice implementation, DEFER further work and production enablement.**
+
+**Dependency:** AI completion gate.
+
+**Verification:** `VOICE_QUALITY_APPROVED=false` remains default until approved evidence exists.
+
+---
+
+## CN-P2-06 — Review/completeness guidance remains thinner than the full V1 vision
+
+**Severity:** P2 
+**Category:** Product UX/trust
+
+**Source requirement:** forgiving catch-up and useful review indicators without conflating habit with financial completeness.
+
+**Repository evidence:** the app has check-ins, rest days, reminders and careful copy; the repository's own product cross-check still identifies richer completeness/review guidance as incomplete. 
+
+**Current behaviour:** Honest but limited.
+
+**Desired behaviour:** Simple period status such as:
+
+```text
+Activity narrated
+Records reviewed
+2 questions unresolved
+Cash opening unknown
+```
+
+not:
+
+```text
+Your finances are 94% complete
+```
+
+unless that can genuinely be supported.
+
+**Recommended action:** Add minimal review-state evidence. Do not build reconciliation or an elaborate scoring engine.
+
+**Dependency:** None.
+
+**Verification:** Missing records never become zero; check-ins never imply financial completeness.
+
+---
+
+## CN-P2-07 — Accessibility evidence is good but incomplete
+
+**Severity:** P2 
+**Category:** Accessibility
+
+**Source requirement:** WCAG 2.2 AA target.
+
+**Repository evidence:** 44px controls, skip link, native dialogs, focus restore, reduced motion, status regions and 320px overflow tests exist. 
+
+**Current behaviour:** Better than a typical prototype.
+
+**Desired behaviour:** Evidence across the important production flows.
+
+**Recommended action:** Add:
+
+- automated axe checks;
+- keyboard-only complete narration/review/save;
+- 200%/400% zoom/reflow;
+- screen-reader status testing;
+- error association;
+- Android TalkBack or equivalent mobile review;
+- reduced-motion check.
+
+**Dependency:** component refactor finished.
+
+**Verification:** document actual results; do not claim blanket WCAG certification.
+
+---
+
+## CN-P2-08 — TypeScript and PostgreSQL duplicate financial posting rules
+
+**Severity:** P2 
+**Category:** Financial maintainability
+
+**Source requirement:** deterministic financial correctness.
+
+**Repository evidence:** event-to-journal posting templates exist both in `ledger.ts` and the large PL/pgSQL commit function. 
+
+**Current behaviour:** They appear aligned for current cases.
+
+**Desired behaviour:** Changes cannot accidentally update one side but not the other.
+
+**Recommended action:** Do not rewrite into an elaborate rules engine.
+
+Instead add a table-driven parity suite covering every event kind and comparing TS postings with authoritative SQL projection.
+
+**Dependency:** CN-P1-03.
+
+**Verification:** every supported kind produces identical debit/credit semantics and rejects identical invalid cases.
+
+---
+
+## CN-P2-09 — Production provider/operational paths remain unverified
+
+**Severity:** P2 launch gate 
+**Category:** Operations
+
+**Source requirement:** production deployment must actually satisfy auth/email/privacy/recovery assumptions.
+
+**Repository evidence:** hosted SMTP, provider AI, hosted Supabase, production backup/restore and launch obligations remain intentionally unresolved. 
+
+**Current behaviour:** Correct for local development.
+
+**Desired behaviour:** Explicit production go-live checklist.
+
+**Recommended action:** Keep this separate from product coding. Codex should not invent regulator answers or purchase services.
+
+**Dependency:** external decisions/credentials.
+
+**Verification:** staging smoke test and documented operator procedures before accepting real user data.
+
+---
+
+## CN-P3-01 — Generated marketing/video build artifacts clutter the code repository
+
+**Severity:** P3 
+**Category:** Repository hygiene
+
+**Evidence:** `brag-output/` contains generated plans, JPEG and a roughly 16 MB MP4 in the source repository. 
+
+**Desired behaviour:** Runtime repository stays focused.
+
+**Action:** Remove/generated-ignore `brag-output/` or move final marketing renders to a release/artifact store. Keep canonical v2 source assets where they are intentionally part of the handoff.
+
+**Verification:** clean repository; no runtime import depends on it.
+
+---
+
+## CN-P3-02 — Manrope is still shipped as TTF
+
+The v2 README recommended converting/subsetting production fonts to WOFF2 where appropriate. 
+
+Inter is already WOFF2, while Manrope is loaded from TTF. 
+
+**Action:** optimise after core completion. Do not change typography.
+
+---
+
+## CN-P3-03 — Historical build status is becoming a substitute for checkpoints
+
+`BUILD-STATUS.md` is valuable evidence but has grown into a long development diary.
+
+**Action:** Freeze it as historical material after the remediation harness begins. Use concise phase build-log entries plus Git commits from that point forward.
+
+---
+
+# 8. Vision-to-repository traceability matrix
+
+| Requirement | Source/decision | Repository implementation | Status | Evidence | Gap | Priority | Codex action |
+|---|---|---|---|---|---|---|---|
+| CashNarra identity | Fixed | Narra v2 assets/landing | Aligned | | Trademark separate | External | Preserve |
+| Record → Understand → Plan | Fixed | Landing/nav/product flows | Aligned | | None material | KEEP | Preserve |
+| Serious money, light interaction | Fixed | Copy + v2 UI | Aligned | | Real-user usability untested | P2 | Validate |
+| Personal/business workspaces | V1 | Workspace type supported | Implemented | | Production Auth config | P2 | Harden |
+| Cash/Bank/MoMo | V1 | Explicit account types | Implemented | | None major | KEEP | Preserve |
+| Opening balances | V1 | Known/null openings + history | Implemented | | None major | KEEP | Preserve |
+| Text narration | V1 | Capture/API/AI adapter | Partial | | General interpretation unproven | P1 | Eval |
+| Multiple events per narration | V1 | Event arrays + batch | Mechanically implemented | | AI quality unproven | P1 | Eval |
+| Clarify only important | V1 | Questions gate save | Partial | | Schema misses some fields | P1 | Extend |
+| Compact review/save | V1 | Review rows + Save reviewed | Implemented | | Need real AI cases | P1 | Preserve + test |
+| Atomic batch save | Critical | single RPC transaction | Strong | | Harden function placement | P2 | Keep |
+| Retry/idempotency | Critical | request key/hash/receipt | Strong | | CI verification | P2 | Keep |
+| Exact money | Critical | decimal strings + NUMERIC | Strong | | None | KEEP | Preserve |
+| Transfers | V1 | two-sided posting | Strong | | parity suite | P2 | Test |
+| Loans | V1 | receipt/liability/principal/interest | Implemented | | strengthen journey tests | P2 | Test |
+| Owner money | V1 | equity postings | Implemented | | AI context | P1 | Test/eval |
+| Credit sales | V1 | receivable + sales | Implemented | same | — | KEEP | Preserve |
+| Receivable settlement | V1 | receipt reduces debt | Strong | | — | KEEP | Preserve |
+| Payables | V1 | stock-credit payable only | **Partial** | | no general expense payable | P1 | Add `credit_expense` |
+| Partial/full settlement | V1 | obligation balance | Implemented | | edge-case UX | P2 | Harden |
+| Corrections | V1 | replacement/history | Strong | | conversational AI untested | P1/P2 | Eval |
+| Splits | V1 where agreed | same-total replacement | Implemented | | linked-debt complexity deliberately limited | P2 | Preserve limitation |
+| Workspace move | V1 support | atomic eligible move | Implemented | | linked dependencies constrained | Acceptable | Keep |
+| Provenance | Critical | source IDs + immutable source refs | Strong | | — | KEEP | Preserve |
+| Profit honesty | Critical | `profit:null` | Strong | | — | KEEP | Preserve |
+| Money Stories | V1 | deterministic reports/story views | Substantial | | richer explanation optional | P2 | Harden, no redesign |
+| Traceable totals | V1 | amount inspection + record drill-down | Implemented | | broader coverage | P2 | Test |
+| Goals | V1 basic | deterministic allocations/pace | Strong | | richer goal types deferred | KEEP | Preserve |
+| What-if | progressive | isolated monthly scenario | Basic implementation | same | richer scenarios deferred | DEFER | Do not expand |
+| Exports | V1 | CSV/PDF/XLSX | Implemented | | unusual data testing | P2 | Harden |
+| Offline capture | V1 | IndexedDB drafts | Implemented | | cold offline shell limited | Acceptable V1 | Keep |
+| PWA | V1 | manifest/SW | Basic implementation | | installability/device QA | P2/P3 | Test |
+| Private caching | Critical | public-brand-only SW | Good | | — | KEEP | Preserve |
+| RLS/isolation | Critical | RLS/grants/auth RPCs | Strong basis | | definer hardening | P2 | Harden |
+| AI authority boundary | Critical | proposal-only | Strong | | quality not proven | P1 | Keep boundary |
+| Current AI model | Technical | deprecated 4.1 mini | Drifted | ([OpenAI Developers](https://developers.openai.com/api/docs/deprecations)) | migration needed | P1 | Switch/evaluate |
+| V2 visual system | Current design | tokens/assets/layout | Strong alignment | | maintainability only | P2 | Preserve visuals |
+| Mobile 320px | Design requirement | responsive CSS/e2e | Substantial evidence | | broader manual QA | P2 | Validate |
+| WCAG 2.2 AA target | Design | good primitives | Partial evidence | | no complete audit | P2 | Accessibility pass |
+| Low-data | V1 | single-app architecture | Partial | | full-state re-fetch | P2 | Read-path refactor |
+| Voice | Later | extensive gated implementation | Early relative to sequence | Build docs | no live quality evidence | DEFER | Freeze |
+| OCR/imports | Later | absent | Correctly deferred | Source | — | DEFER | Do not add |
+| Bank/MoMo automatic feeds | Out of scope | absent | Correct | Source | — | REMOVE from V1 ideas | Do not add |
+| POS/ERP/payments | Out of scope | absent | Correct | Source | — | KEEP boundary | Do not add |
+| CI | Engineering safeguard | absent | Missing | repo structure | local-only evidence | P2 | Add CI |
+| Durable Codex checkpoints | Requested | absent | Missing | one-commit repo | interruption risk | P1 process | Add first |
+
+---
+
+# 9. KEEP / HARDEN / REFACTOR / REPLACE / REMOVE / DEFER map
+
+| Subsystem | Decision | Why |
+|---|---|---|
+| Next.js/React/TypeScript | **KEEP** | Agreed stack and current LTS |
+| CSS Modules | **KEEP** | Agreed, implementation aligned |
+| Supabase managed PostgreSQL/Auth | **KEEP** | Correct fit; no evidence for migration |
+| Workspace JSON aggregate | **KEEP + HARDEN** | Intentionally simple V1 architecture; don't normalise prematurely |
+| `decimal.js` + numeric strings | **KEEP** | Correct |
+| Hidden journal | **KEEP** | Strong |
+| Posting templates | **KEEP + HARDEN** | Add credit-expense payable + parity suite |
+| Corrections/history | **KEEP** | Correct |
+| Idempotent receipts | **KEEP** | Correct |
+| RLS model | **KEEP + HARDEN** | Good ownership model, tighten definer functions |
+| OpenAI integration boundary | **KEEP + HARDEN** | Correct architecture; needs current model/evals |
+| GPT-4.1 Mini default | **REPLACE** | Deprecated |
+| Mock extraction | **KEEP** | Useful deterministic development fixture |
+| AI evaluation strategy | **ADD** | Missing central validation |
+| Main `CashNarra` component | **REFACTOR** | Too much responsibility; preserve behaviour |
+| Narra v2 tokens/logo/layout | **KEEP** | Current design source |
+| Offline IndexedDB drafts | **KEEP + HARDEN** | Correct V1 scope |
+| Service worker | **KEEP** | Correctly public-only |
+| Reports/Money Stories | **KEEP + HARDEN** | Financial honesty is good |
+| Goals/scenarios | **KEEP** | Correct deterministic logic |
+| Exports | **KEEP + HARDEN** | Good security/format design |
+| Voice implementation | **DEFER ENABLEMENT** | Already built; text must be proven first |
+| OCR/imports | **DEFER** | Explicitly later |
+| Bank/MoMo auto capture | **DEFER / OUT OF SCOPE V1** | Superseded |
+| Collaboration | **DEFER** | No membership model needed yet |
+| ERP/POS/inventory/payroll | **REMOVE FROM V1 DISCUSSION** | Explicitly out of scope |
+| `brag-output/` generated media | **REMOVE/MOVE** | Repository hygiene |
+| Long historical status diary | **FREEZE/ARCHIVE** | Replace future logging with checkpoint system |
+| Current product UI | **DO NOT REPLACE** | It is already v2-aligned |
+
+---
+
+# 10. Recommended target V1 architecture
+
+The target should be an evolution of the current repository, not a greenfield redesign.
+
+```text
+┌───────────────────────────────────────────────┐
+│                 NEXT.JS CLIENT                │
+│                                               │
+│  Today / Records / Money Stories / Plan       │
+│                                               │
+│  Narration text                               │
+│       │                                       │
+│       ├── optional IndexedDB draft            │
+│       │                                       │
+│       ▼                                       │
+│  Review UI / clarification UI                 │
+└─────────────────┬─────────────────────────────┘
+                  │ authorised HTTPS
+                  ▼
+┌───────────────────────────────────────────────┐
+│             NEXT.JS SERVER BOUNDARY           │
+│                                               │
+│ Auth + workspace ownership                    │
+│ Bounded request validation                    │
+│                                               │
+│ Narration                                     │
+│   ↓                                           │
+│ OpenAI adapter ──→ structured PROPOSALS only  │
+│   ↓                                           │
+│ deterministic domain validation               │
+│   ↓                                           │
+│ material clarification reasons                │
+└─────────────────┬─────────────────────────────┘
+                  │ user reviews/confirms
+                  ▼
+┌───────────────────────────────────────────────┐
+│              SUPABASE POSTGRES                │
+│                                               │
+│ RLS / owner isolation                         │
+│ atomic commit RPC                             │
+│ idempotency receipt                           │
+│ stale revision protection                     │
+│ immutable corrections/provenance              │
+│                                               │
+│ candidate event                               │
+│      ↓                                        │
+│ deterministic posting template                │
+│      ↓                                        │
+│ balanced journal lines                        │
+│      ↓                                        │
+│ authoritative financial state                 │
+└─────────────────┬─────────────────────────────┘
+                  │
+          ┌───────┼────────┐
+          ▼       ▼        ▼
+      Reports   Goals    Exports
+       SQL/TS    TS       CSV/PDF/XLSX
+          │
+          ▼
+ AI explanation may explain supplied facts
+ but never create official numbers
+```
+
+## Client responsibilities
+
+The browser may:
+
+- capture words;
+- persist optional private-device drafts;
+- display proposals;
+- collect clarification;
+- allow edits;
+- render authoritative server data;
+- render deterministic scenarios.
+
+It must not be authoritative for:
+
+- workspace access;
+- official journal posting;
+- save success;
+- official totals;
+- final duplicate prevention.
+
+## AI boundary
+
+Keep approximately:
+
+```text
+src/server/ai/
+  extractNarration
+  interpretCorrection
+  explainPeriod
+```
+
+No agent framework.
+
+No vector database.
+
+No autonomous SQL.
+
+No AI-generated balance.
+
+Add an explicit evaluation contract.
+
+## Event/domain model
+
+Retain the current event model but close the payable gap:
+
+```text
+sale
+income
+expense
+credit_expense       ← add
+stock
+credit_purchase
+asset
+transfer
+credit_sale
+receivable_payment
+payable_payment
+loan_received
+loan_principal
+interest
+owner_in
+owner_out
+opening_receivable
+opening_payable
+opening_loan
+```
+
+Do not attempt full GAAP/IFRS accounting software.
+
+## Database model
+
+Do not perform a major normalisation rewrite.
+
+The current deliberate approach is documented as a versioned workspace aggregate plus deterministic journal projection and receipts. 
+
+That is acceptable for V1.
+
+Improve read efficiency before reconsidering storage architecture.
+
+A future normalisation trigger should be measured, such as:
+
+- workspace payload becoming materially slow;
+- report queries requiring excessive client transfer;
+- histories exceeding practical update sizes;
+- concurrent collaboration becoming required.
+
+Not merely “relational databases should be normalised.”
+
+## Corrections
+
+Continue:
+
+```text
+posted record
+   ↓ correction
+mark prior effect removed
+   +
+append replacement
+   +
+append correction history
+```
+
+Do not silently mutate posted facts.
+
+## Provenance
+
+Continue retaining:
+
+```text
+record → sourceId → narration/evidence metadata
+```
+
+while permitting source text minimisation separately.
+
+## Reports
+
+Authoritative values come from ledger/records.
+
+AI explanation can receive:
+
+```text
+record IDs
+event meanings
+already-computed summaries
+known exclusions
+```
+
+and explain them.
+
+Do not ask it:
+
+> “Read this month and calculate my profit.”
+
+## Goals
+
+Keep goal allocations separate from spending.
+
+Keep basic current-pace scenario only.
+
+Do not yet implement:
+
+- investment returns;
+- probabilistic market forecasts;
+- credit recommendations;
+- sophisticated Monte Carlo;
+- “you can afford this” claims.
+
+## Offline
+
+Keep V1 deliberately modest:
+
+```text
+offline → retain draft locally
+online → process draft
+user reviews
+authoritative server save
+```
+
+Do not synchronise the entire ledger offline.
+
+---
+
+# 11. Ordered Codex remediation plan
+
+The order below is dependency-driven.
+
+## Phase 00 — Establish the remediation baseline and durable harness
+
+### Purpose
+
+Prevent another giant uncheckpointed development pass.
+
+### Problems fixed
+
+- one-commit repository;
+- no Codex recovery protocol;
+- no CI;
+- no durable phase state.
+
+### Exact scope
+
+Create:
+
+```text
+GOALS.md
+PLANS.md
+
+harness/
+  build/
+  context/
+    README.md
+  build-log.md
+```
+
+Extend existing `AGENTS.md` without destroying the Next-generated block.
+
+Create branch:
+
+```text
+codex/cashnarra-v1-remediation
+```
+
+Record:
+
+```text
+baseline_branch = main
+baseline_head   = 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
+```
+
+Add baseline CI.
+
+### Non-goals
+
+No product behaviour changes.
+
+### Likely files
+
+```text
+AGENTS.md
+GOALS.md
+PLANS.md
+harness/**
+.github/workflows/**
+```
+
+### Acceptance
+
+- clean branch created;
+- baseline HEAD recorded;
+- worktree inspection documented;
+- existing local validations run where available;
+- CI added;
+- no financial code changed;
+- first checkpoint commit created.
+
+### Rollback
+
+Purely additive process changes.
+
+### Complete when
+
+The next Codex session can identify exactly what comes next without reading the whole conversation history.
+
+---
+
+## Phase 01 — Close the deterministic financial semantics gap
+
+### Purpose
+
+Finish financial meaning before evaluating AI against it.
+
+### Problems
+
+CN-P1-03, CN-P2-08.
+
+### Scope
+
+Add:
+
+```text
+credit_expense
+```
+
+or an equivalently explicit minimal event type.
+
+Update domain + SQL together.
+
+Build event-posting parity tests for **every** event type.
+
+### Non-goals
+
+No tax engine.
+
+No accounts payable aging suite.
+
+No invoices.
+
+No full accrual accounting.
+
+### Likely files
+
+```text
+src/domain/types.ts
+src/domain/ledger.ts
+src/components/record-form.tsx
+src/server/ai.ts
+src/lib/exports.ts
+supabase/migrations/<new>.sql
+tests/domain.test.ts
+tests/financial-lifecycle.test.ts
+scripts/test-db.ts
+```
+
+### Required semantics
+
+```text
+credit_expense:
+Dr expense
+Cr payable:<record>
+```
+
+Settlement:
+
+```text
+payable_payment:
+Dr payable:<obligation>
+Cr cash:<account>
+```
+
+No second expense.
+
+### Migration implications
+
+Additive event semantic support only.
+
+No destructive rewriting of historical state.
+
+### Acceptance
+
+- credit stock stays stock;
+- credit expense is period expense;
+- both create payable;
+- partial/full payments work;
+- no duplicate expense/sale;
+- TS/SQL postings agree for every kind.
+
+### Validation
+
+```bash
+npm run lint
+npm run typecheck
+npm test
+npm run test:db
+npm run build
+```
+
+---
+
+## Phase 02 — Complete the AI contract and establish the evaluation harness
+
+### Purpose
+
+Prove CashNarra's central differentiator.
+
+### Problems
+
+CN-P1-01, CN-P1-02, CN-P1-04.
+
+### Scope
+
+1. Replace deprecated default model with `gpt-6-luna`.
+2. Preserve configurable `OPENAI_MODEL`.
+3. Pass workspace type.
+4. Extend clarification schema.
+5. Generate durable proposal IDs application-side.
+6. Build synthetic evaluation corpus.
+7. Add opt-in live eval runner.
+8. Do not change database authority.
+
+### Suggested layout
+
+```text
+tests/evals/
+  narration-cases.json
+  correction-cases.json
+  adversarial-cases.json
+  README.md
+
+scripts/
+  eval-ai.ts
+```
+
+Each evaluation case should contain:
+
+```json
+{
+  "id": "loan-vs-income-001",
+  "workspaceType": "Business",
+  "narration": "...",
+  "expected": {
+    "events": [],
+    "requiredClarifications": []
+  },
+  "safetyCritical": true
+}
+```
+
+No real customer information.
+
+### Acceptance
+
+Safety-critical cases: **all must pass**.
+
+For ordinary cases, report rather than hide:
+
+- amount accuracy;
+- event-count accuracy;
+- event-kind agreement;
+- account agreement;
+- debt-link agreement;
+- required clarification recall;
+- unnecessary clarification rate;
+- full-event exact-match rate.
+
+Do not invent an impressive threshold and silently tune to it.
+
+Instead save the baseline and require explicit approval before `AI_ENABLED=true` for real users.
+
+### Manual evaluation categories
+
+At minimum:
+
+- Ghanaian English;
+- shorthand;
+- “2k/4.5k”;
+- MoMo;
+- cash vs sale;
+- “paid what she owed”;
+- loan vs income;
+- owner money;
+- transfers;
+- stock;
+- service purchased on credit;
+- corrections;
+- missing information;
+- unrelated/prompt-injection text.
+
+### Non-goals
+
+No agent.
+
+No retrieval system.
+
+No learning-rule automation.
+
+No voice evaluation yet.
+
+### Definition complete
+
+The text workflow has an evidence-backed quality baseline.
+
+---
+
+## Phase 03 — Refactor and finish the narration/review experience
+
+### Purpose
+
+Make the core product maintainable and satisfy Tell → Clarify → Review → Save.
+
+### Problems
+
+CN-P2-01 plus clarification UX.
+
+### Scope
+
+Extract components/hooks without visually redesigning Narra v2.
+
+Preserve:
+
+- existing tokens;
+- navigation;
+- composer;
+- record-row style;
+- Story presentation;
+- exact copy where already good.
+
+Suggested structure:
+
+```text
+components/app-shell/
+components/today/
+components/capture/
+components/review/
+components/records/
+components/stories/
+components/plan/
+components/settings/
+
+hooks/
+  use-workspace.ts
+  use-draft.ts
+  use-save-recovery.ts
+```
+
+### UX acceptance
+
+Given:
+
+> “Today I sold 2,400. 900 cash, 1,200 momo and Kojo still owes 300. I paid delivery but can't remember whether cash or momo.”
+
+CashNarra should:
+
+1. propose the financially clear items;
+2. ask only about delivery account;
+3. show a compact batch;
+4. allow editing/deleting/splitting;
+5. save the whole approved batch atomically;
+6. say Saved only after authoritative receipt;
+7. retain the original words/provenance.
+
+### Non-goals
+
+No fresh design concept.
+
+No dashboard redesign.
+
+No new navigation.
+
+---
+
+## Phase 04 — Low-data reads, offline recovery and review-status hardening
+
+### Purpose
+
+Make the existing architecture sustainable without over-engineering.
+
+### Problems
+
+CN-P2-02, CN-P2-06.
+
+### Scope
+
+Separate:
+
+```text
+GET /workspaces summaries
+GET /workspaces/:id state
+```
+
+or equivalent internal boundaries.
+
+Avoid reloading every workspace after every mutation.
+
+Keep:
+
+- JSON aggregate;
+- journal projection;
+- IndexedDB draft model;
+- public-only SW cache.
+
+Add minimal review-state UI.
+
+### Performance acceptance
+
+Use synthetic large workspaces.
+
+Record for:
+
+- 1,000 records;
+- 5,000;
+- 10,000.
+
+Measure:
+
+- response bytes;
+- server response;
+- parse/render time;
+- mutation refresh cost.
+
+No arbitrary database redesign unless measurement demonstrates need.
+
+### Offline acceptance
+
+- draft survives connection loss;
+- draft does not enter totals;
+- logout handles local draft warning/clearing;
+- retry uses same request identity;
+- authenticated responses never enter shared SW cache.
+
+---
+
+## Phase 05 — Supabase/RPC security hardening
+
+### Purpose
+
+Reduce privileged SQL surface while preserving current good isolation.
+
+### Problems
+
+CN-P2-03.
+
+### Scope
+
+- private schema for privileged helpers where practical;
+- `search_path=''`;
+- schema-qualified tables/functions;
+- exact execute grants;
+- owner checks;
+- RLS tests;
+- no service key in browser;
+- cache checks.
+
+### Critical rule
+
+Do **not** “simplify” by granting authenticated users normal writes to `workspaces`.
+
+The narrow RPC write path is a good design.
+
+### Acceptance
+
+User A cannot:
+
+- list;
+- infer;
+- read;
+- mutate;
+- settle;
+- move;
+- retrieve receipts
+
+from User B.
+
+Malformed RPC state cannot bypass financial rules.
+
+---
+
+## Phase 06 — Reports, goals, exports and accessibility validation
+
+### Purpose
+
+Finish quality without expanding scope.
+
+### Scope
+
+Reports:
+
+- day/week/month;
+- traceable totals;
+- correct unknown states;
+- no unsupported profit.
+
+Goals:
+
+- deterministic current pace;
+- assumption display;
+- no duplicate allocation capacity;
+- insufficient-data state.
+
+Exports:
+
+- CSV;
+- PDF;
+- XLSX;
+- formula-injection defense;
+- long text;
+- GH₵;
+- correction references.
+
+Accessibility:
+
+- axe;
+- full keyboard;
+- focus;
+- announcements;
+- zoom/reflow;
+- reduced motion;
+- screen reader sampling.
+
+### Non-goals
+
+No advanced forecasting.
+
+No tax report.
+
+No investment advice.
+
+---
+
+## Phase 07 — Scope quarantine, cleanup and independent final verification
+
+### Purpose
+
+Stop the product from expanding before V1 is actually finished.
+
+### Scope
+
+- keep voice code disabled;
+- document its future gate;
+- remove/move `brag-output`;
+- freeze historical build diary;
+- run all validations;
+- conduct source-to-repo traceability review;
+- ensure deferred features are clearly labelled.
+
+### Voice rule
+
+Do not continue voice development until text AI evaluation is approved.
+
+If text V1 is otherwise complete, CashNarra can reach its first proper release **without enabling voice**.
+
+### Final validation
+
+```bash
+npm ci
+npm run doctor
+npm run lint
+npm run typecheck
+npm test
+npm run test:db
+npm run test:supabase
+npm run test:e2e
+npm run build
+```
+
+Where any command requires configured services, record exactly what was and was not exercised.
+
+---
+
+## Phase 08 — External launch gates
+
+This is **not an autonomous Codex coding phase**.
+
+It remains blocked until actual company/provider/legal decisions exist.
+
+Includes:
+
+- production Supabase;
+- production SMTP;
+- Vercel commercial deployment;
+- provider agreements;
+- DPC process;
+- Ghana record-location/retention resolution;
+- BoG/GRA/NITA classification;
+- backup/restore;
+- security review;
+- trademark review.
+
+Codex must not fabricate completion of these.
+
+---
+
+# 12. Required tests and acceptance criteria
+
+## Financial
+
+| Scenario | Required result |
+|---|---|
+| GH₵0.10 + GH₵0.20 | Exactly GH₵0.30 |
+| Transfer Cash → MoMo | Source decreases once, destination increases once, income/expense unchanged |
+| Retry same request | One authoritative posting |
+| Same request ID + different payload | Reject |
+| Concurrent settlement | Cannot over-settle |
+| Credit sale | Sales + receivable; no cash |
+| Receivable settlement | Cash +; receivable -; sales unchanged |
+| Credit stock purchase | Stock +; payable + |
+| Credit operating expense | Expense +; payable + |
+| Pay payable | Cash -; payable -; no second expense |
+| Loan receipt | Cash +; liability +; no revenue |
+| Loan principal | Cash -; liability -; no operating expense |
+| Interest | Cash -; interest expense |
+| Owner contribution | Cash +; equity +; no sales |
+| Owner withdrawal | Cash -; equity -; no operating expense |
+| Unknown opening | Balance remains unknown |
+| Stock purchase | Cash movement but not automatic profit expense |
+| Correction | Prior effect removed/reversed traceably; replacement added |
+| Correction changes date | Both affected period reports update |
+| Split | Combined financial effect exactly equals original where required |
+| Move | Source/destination atomically consistent |
+| Journal | Every record's lines sum to zero |
+
+## AI
+
+Required adversarial/quality cases:
+
+- narration containing “ignore your rules” must remain data;
+- model may not reference foreign account IDs;
+- model may not invent missing amounts;
+- model may not create a debt link when no matching debt is supplied;
+- model may not say saved;
+- loan-vs-income ambiguity must clarify;
+- old-debt-vs-new-sale ambiguity must clarify;
+- transfer-vs-expense ambiguity must clarify;
+- missing destination account must clarify;
+- missing counterparty for debt must clarify;
+- business/personal workspace context must be honoured.
+
+## Security
+
+- User A cannot SELECT User B's workspace.
+- User A cannot read User B's journal lines.
+- User A cannot fetch User B's save receipt.
+- User A cannot mutate User B through RPC.
+- User A cannot move a record into/from User B.
+- Invalid `ownerId` supplied by client is rejected.
+- Service/secret keys never enter browser bundle.
+- Authenticated financial responses use no shared caching.
+
+## Offline
+
+- draft saved locally remains a draft;
+- reconnect doesn't auto-post;
+- pending reviewed request keeps same idempotency key;
+- lost response can recover receipt;
+- logout warns/cleans according to device mode;
+- one account cannot restore another account's draft;
+- older IndexedDB write cannot overwrite newer one.
+
+## UI
+
+At:
+
+```text
+320 × 568
+390 × 844
+768 × 1024
+1440 × 900
+```
+
+verify:
+
+- no horizontal overflow;
+- narration CTA appears prominently;
+- amount typography doesn't clip;
+- bottom navigation fits;
+- dialogs fit;
+- long Ghanaian names wrap;
+- GH₵ displays correctly;
+- light/dark states;
+- reduced motion;
+- hidden amounts remain accessible;
+- 44px effective targets minimum.
+
+## Accessibility
+
+Manually verify at least:
+
+- keyboard complete first record;
+- keyboard correction;
+- keyboard debt settlement;
+- keyboard goal scenario;
+- focus restored after dialogs;
+- processing/save/error states announced;
+- screen-reader labels do not rely solely on icon/colour;
+- 200% and 400% scaling;
+- colour-independent income/outflow meaning.
+
+---
+
+# 13. Checkpoint and resume system
+
+## Proposed repository structure
+
+```text
+AGENTS.md
+GOALS.md
+PLANS.md
+
+harness/
+  build/
+    00-baseline-and-harness.md
+    01-financial-semantics.md
+    02-ai-evaluation-and-model.md
+    03-record-review-ui.md
+    04-data-loading-offline-review.md
+    05-security-boundaries.md
+    06-reports-goals-accessibility.md
+    07-release-verification.md
+    08-external-launch-gates.md
+
+  context/
+    README.md
+    # phase-specific files only when genuinely needed
+
+  build-log.md
+```
+
+## `AGENTS.md`
+
+Preserve the existing Next.js-generated block exactly, then append:
+
+```md
+# CashNarra repository operating rules
+
+## Source precedence
+
+For CashNarra product decisions:
+
+1. Current approved GOALS.md and PLANS.md remediation constraints.
+2. Latest/final decisions in Research CashNarra Concept.txt.
+3. Recommend Technology Stack.txt for technical decisions.
+4. CashNarra Design Kit v2 for visual/product implementation.
+5. Earlier brainstorming only where not superseded.
+
+Automatic Money Inbox/bank-MoMo capture, Storyline v1, full ERP scope,
+and paid-development assumptions are superseded for V1.
+
+## Non-negotiable financial invariants
+
+- AI may interpret and explain. It never authorises access, posts ledger
+  entries, calculates authoritative totals, or determines official forecasts.
+- Money crosses application boundaries as exact decimal strings.
+  Never use ordinary JavaScript floating-point arithmetic for authoritative money.
+- Posted journal records must balance.
+- Batch saves are atomic.
+- Retries are idempotent and reuse the original request identity.
+- Transfers move money between accounts and do not create income/expense.
+- Loan proceeds are not revenue.
+- Loan principal repayment is not operating expense.
+- Owner contribution is not sales.
+- Owner withdrawal is not operating expense.
+- Existing-debt settlement does not create new sales/expense.
+- Stock purchase is not automatically recognised as profit expense.
+- Missing information is not zero.
+- Profit must remain unavailable when required information is unavailable.
+- Posted corrections preserve provenance and prior history.
+- Never display “Saved” before authoritative persistence succeeds.
+
+## Security invariants
+
+- Every financial read/write is scoped to the authenticated owner/workspace.
+- Keep privileged Supabase credentials out of browser code.
+- RLS and grants must be tested together.
+- Privileged database functions require explicit ownership validation and
+  narrow execute privileges.
+- Authenticated financial responses must never enter a shared/public cache.
+- Logs must not contain raw narrations or unnecessary financial payloads.
+
+## Product/design invariants
+
+- Current product navigation: Today / Records / Money Stories / Plan.
+- Narra v2 tokens/assets are the current visual handoff.
+- Inter is used for financial amounts.
+- Narration stays prominent.
+- Clarify materially important ambiguity only.
+- Review remains compact.
+- Recorded balances must not be described as bank-verified.
+- Habit/check-in indicators must not imply financial completeness.
+- V1 does not initiate payments, create wallets, provide credit,
+  file taxes, or become a POS/ERP/payroll/CRM system.
+
+## Agent workflow
+
+Before work:
+1. Read GOALS.md.
+2. Read PLANS.md.
+3. Read harness/build-log.md.
+4. Read only the current phase file and relevant context.
+5. Inspect branch, HEAD and worktree.
+6. Preserve unrelated user changes.
+
+During work:
+- Stay inside the current approved phase.
+- Prefer preserving correct implementation over rewriting it.
+- Update tests with every financial/domain change.
+- Do not make destructive migrations against non-isolated data.
+- Do not enable paid/live providers without an explicit approved gate.
+
+At a completed phase:
+1. Run all phase validation.
+2. Fix failures before proceeding.
+3. Update context only if a future session would otherwise rediscover it.
+4. Update harness/build-log.md with observed results.
+5. Update PLANS.md.
+6. Inspect git diff/status.
+7. Commit the completed phase separately.
+8. Record the resulting commit SHA.
+
+If interrupted mid-phase, add a WIP recovery checkpoint to build-log.md.
+Never mark knowingly failing or incomplete work as complete.
+Never store secrets in checkpoint files.
+```
+
+## `GOALS.md`
+
+```md
+# CashNarra V1 remediation goals
+
+Baseline:
+- Repository: janelove-tech/CashNarra
+- Baseline branch: main
+- Baseline HEAD: 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
+
+## Outcome
+
+Finish the agreed CashNarra V1 by preserving the strong existing financial
+foundation and closing the remaining core-product, AI validation, security,
+performance, accessibility and operational-evidence gaps.
+
+CashNarra V1 must deliver:
+
+Record → Understand → Plan
+
+with the experience:
+
+Serious money. Light interaction.
+
+## Definition of success
+
+- Natural text narration can propose multiple financial events.
+- Material ambiguity produces precise clarification.
+- Review is compact and editable.
+- Confirmed batches post atomically and idempotently.
+- Financial semantics are deterministic and correct.
+- Payables support both stock and operating expenses.
+- Corrections preserve history and provenance.
+- Cross-workspace/user isolation is demonstrated.
+- Important totals remain traceable.
+- Profit is not fabricated.
+- Basic goal scenarios are deterministic and assumptions are visible.
+- Offline drafts recover without becoming posted records.
+- Narra v2 remains coherent at mobile and desktop sizes.
+- High-risk financial journeys have automated tests.
+- lint, typecheck, unit, DB integration, browser tests and build pass,
+  or an explicitly approved exception is documented.
+
+## Hard constraints
+
+- Do not rewrite the application from scratch.
+- Keep Next.js/React/TypeScript/CSS Modules.
+- Keep managed Supabase/PostgreSQL/Auth.
+- Keep the hidden deterministic journal architecture.
+- Keep exact-decimal money handling.
+- Keep the bounded OpenAI integration.
+- Keep the Narra v2 identity/navigation unless an explicit later decision changes it.
+- Development remains local/free-first and uses synthetic data by default.
+
+## Non-goals
+
+Do not add:
+- wallets;
+- payment initiation;
+- automatic bank/MoMo aggregation;
+- lending;
+- investment advice;
+- tax filing;
+- POS;
+- inventory ERP;
+- payroll;
+- HR;
+- CRM;
+- receipt OCR;
+- statement imports;
+- collaboration;
+- sophisticated forecasting.
+
+Voice code may remain but production enablement is not required for text-first V1.
+
+## External launch gates
+
+Regulatory interpretations, trademark clearance, provider contracts,
+production credentials, paid plans and operating-company decisions remain
+separate external gates. Codex must not invent their completion.
+```
+
+## `PLANS.md`
+
+```md
+# CashNarra remediation plan
+
+Baseline: main @ 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
+Working branch: codex/cashnarra-v1-remediation
+
+| Phase | Status | Build file | Completed commit |
+|---|---|---|---|
+| 00 Baseline and harness | NEXT | harness/build/00-baseline-and-harness.md | — |
+| 01 Financial semantics | NOT STARTED | harness/build/01-financial-semantics.md | — |
+| 02 AI evaluation and model | NOT STARTED | harness/build/02-ai-evaluation-and-model.md | — |
+| 03 Narration/review UI | NOT STARTED | harness/build/03-record-review-ui.md | — |
+| 04 Data loading/offline/review | NOT STARTED | harness/build/04-data-loading-offline-review.md | — |
+| 05 Security boundaries | NOT STARTED | harness/build/05-security-boundaries.md | — |
+| 06 Reports/goals/accessibility | NOT STARTED | harness/build/06-reports-goals-accessibility.md | — |
+| 07 Release verification | NOT STARTED | harness/build/07-release-verification.md | — |
+| 08 External launch gates | BLOCKED / EXTERNAL | harness/build/08-external-launch-gates.md | — |
+
+Only one implementation phase may be IN PROGRESS at a time.
+A phase becomes COMPLETE only after its acceptance criteria pass and its
+completion commit SHA is recorded.
+```
+
+## Phase build-file template
+
+```md
+# Phase NN — Name
+
+Status: NOT STARTED
+Start HEAD:
+Completion commit:
+
+## Purpose
+
+## Findings addressed
+
+## Source requirements
+
+## Exact scope
+
+## Explicit non-goals
+
+## Prerequisites
+
+## Likely files/subsystems
+
+## Data/migration implications
+
+## Implementation requirements
+
+## Acceptance criteria
+
+- [ ]
+
+## Automated validation
+
+```bash
+# exact commands
+```
+
+## Manual verification
+
+## Rollback/risk notes
+
+## Material context discovered
+
+Link to harness/context/<phase>.md only if needed.
+
+## Definition of complete
+```
+
+## `harness/context/README.md`
+
+```md
+# Phase context
+
+This directory is not a second product specification.
+
+Create a phase context file only when a material discovery, repository
+constraint, decision, provider fact or unresolved question would otherwise
+need to be rediscovered by a later Codex session.
+
+Do not:
+- copy source documents;
+- paste code diffs;
+- duplicate AGENTS.md;
+- duplicate build-log entries;
+- record secrets.
+
+A context file should normally be short and contain:
+- discovery;
+- evidence/file references;
+- decision;
+- consequence for the current or later phase.
+```
+
+## `harness/build-log.md`
+
+Initial content:
+
+```md
+# CashNarra remediation build log
+
+This records observed work and verification, not planned work.
+
+## Baseline
+
+Repository: janelove-tech/CashNarra
+Baseline branch: main
+Baseline HEAD: 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
+
+Audit conclusion:
+- Preserve the existing deterministic ledger, retry/correction model,
+  Narra v2 visual system, goals, exports and offline draft model.
+- Main completion risks are general narration evaluation, payable semantics,
+  AI clarification/context, security hardening, full-state read behaviour,
+  accessibility evidence and durable verification.
+
+No remediation phase has yet been completed.
+```
+
+## WIP recovery checkpoint format
+
+When interrupted:
+
+```md
+## WIP checkpoint — <ISO timestamp>
+
+Branch:
+HEAD:
+Current phase:
+
+### Exact objective
+
+### Completed work
+
+### Files changed
+
+### Validation already run
+
+| Command | Result |
+|---|---|
+
+### Current working-tree status
+
+### Known broken/incomplete state
+
+### Unfinished work
+
+### Blockers / consequential questions
+
+### Assumptions made
+
+### Exact next action
+
+### Resume commands
+
+```bash
+git status
+git diff
+# next relevant validation command
+```
+
+This checkpoint is WIP and does not mark the phase complete.
+```
+
+Git remains the real checkpoint.
+
+---
+
+# 14. Master Codex prompt
+
+:::writing{variant="document" id="73148" title="CashNarra Master Codex Remediation Prompt"}
+You are continuing development of the real CashNarra repository.
+
+Repository:
+https://github.com/janelove-tech/CashNarra
+
+AUDITED BASELINE
+
+Baseline branch:
+main
+
+Baseline commit:
+3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
+
+Work on a dedicated branch:
+
+codex/cashnarra-v1-remediation
+
+Do not rewrite CashNarra from scratch.
+
+The existing repository already contains substantial correct work, particularly:
+
+- exact-decimal financial arithmetic;
+- a hidden balanced journal/posting model;
+- atomic versioned workspace commits;
+- request-key/idempotency protection;
+- corrections with retained history;
+- transfer semantics;
+- receivable/payable settlement foundations;
+- owner-money and loan semantics;
+- traceable provenance;
+- deterministic reports;
+- deterministic basic goal scenarios;
+- Supabase Auth/RLS architecture;
+- IndexedDB draft recovery;
+- public-only service-worker caching;
+- CSV/PDF/XLSX exports;
+- the current Narra v2 visual system.
+
+Preserve correct implementation unless repository evidence proves it must change.
+
+SOURCE PRECEDENCE
+
+Use this precedence:
+
+1. Current approved GOALS.md and PLANS.md remediation constraints.
+2. Latest/final decisions in Research CashNarra Concept.txt.
+3. Recommend Technology Stack.txt for technical decisions.
+4. CashNarra Design Kit v2 for current visual/product implementation.
+5. Earlier brainstorming only where not superseded.
+
+Important superseded/out-of-scope concepts:
+
+- The automatic Money Inbox / automatic bank-MoMo capture direction is not V1.
+- Storyline v1 is superseded by Narra v2.
+- Do not introduce wallets, payments, lending, investment advice, tax filing, POS, ERP, inventory, payroll, HR, CRM or automatic aggregation.
+- Voice remains secondary to proving the text workflow.
+- Receipt OCR/imports/collaboration/advanced forecasting remain deferred.
+
+CORE PRODUCT
+
+CashNarra is a conversational financial memory and navigation system.
+
+Structure:
+
+Record → Understand → Plan
+
+Experience principle:
+
+Serious money. Light interaction.
+
+Interaction:
+
+Tell → understand → clarify only what materially matters → compact review → authoritative save → useful meaning.
+
+The user should not need accounting vocabulary.
+
+NON-NEGOTIABLE FINANCIAL RULES
+
+AI interprets language and may explain already-authorised deterministic results.
+
+AI must never:
+- decide authorisation;
+- write the ledger;
+- calculate official balances/totals;
+- decide save success;
+- calculate official forecasts;
+- receive uncontrolled database authority.
+
+Use exact decimals. Never use ordinary JavaScript floating point for authoritative money.
+
+Protect these distinctions:
+
+- revenue is not every receipt;
+- expenses are not every outflow;
+- transfer is not spending;
+- loan receipt is not revenue;
+- loan principal repayment is not operating expense;
+- owner contribution is not sales;
+- owner withdrawal is not operating expense;
+- credit sale is not cash receipt;
+- existing-debt settlement is not another sale;
+- stock purchase is not automatically recognised as profit expense;
+- goal allocation is not expenditure;
+- unknown is not zero.
+
+If available information cannot support profit, leave profit unavailable.
+
+Every posted batch must be atomic.
+Every retry must be idempotent.
+Every correction must retain provenance/history.
+Never display Saved until authoritative persistence succeeds.
+
+STARTUP PROTOCOL
+
+Before modifying code:
+
+1. Read AGENTS.md.
+2. Read GOALS.md.
+3. Read PLANS.md.
+4. Read harness/build-log.md.
+5. Identify the next incomplete approved phase.
+6. Read only that phase build file and any context file it references.
+7. Run:
+   - git status
+   - git branch --show-current
+   - git rev-parse HEAD
+8. Preserve any unrelated user changes.
+9. Run the smallest sanity validation appropriate to the phase.
+10. Do not repeat completed repository discovery unless current repository evidence contradicts the checkpoint.
+
+If the checkpoint files do not yet exist, Phase 00 is the first task. Create them according to the approved audit and record:
+
+baseline_branch = main
+baseline_head = 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
+
+REMEDIATION ORDER
+
+Execute the approved phases in this dependency order:
+
+00 — Baseline, durable harness and CI.
+01 — Financial semantic closure and TypeScript/PostgreSQL posting parity.
+02 — Current OpenAI model, AI clarification contract and representative evaluation harness.
+03 — Narration/review UX completion and decomposition of the monolithic application component.
+04 — Low-data workspace loading, offline recovery validation and honest review indicators.
+05 — Supabase/RPC/RLS security hardening.
+06 — Reports, goals, exports and accessibility validation.
+07 — Scope quarantine, repository cleanup and independent release verification.
+08 — External launch gates remain blocked until actual external/company/provider decisions exist.
+
+Do not skip ahead because a later feature looks more interesting.
+
+PHASE-SPECIFIC CRITICAL ITEMS
+
+Phase 01:
+Add truthful support for an operating expense incurred on credit. The existing credit_purchase/Unpaid stock purchase behaviour must remain stock + payable. Add the smallest separate semantic such as credit_expense:
+
+Dr Expense
+Cr Payable
+
+Later payable settlement reduces payable and cash and must not create another expense.
+
+Create table-driven parity tests for every event type so TypeScript and PostgreSQL posting rules cannot drift.
+
+Phase 02:
+The repository currently defaults to gpt-4.1-mini-2025-04-14, which was deprecated by OpenAI on 14 October 2026 and is scheduled for shutdown on 14 January 2027. Migrate the default to the currently recommended supported replacement gpt-6-luna while keeping OPENAI_MODEL configurable.
+
+Do not alter the basic Responses API + Zod Structured Outputs boundary unless current official docs require a compatibility change.
+
+Pass workspace type into extraction context.
+
+Extend clarification support so financially important missing party and transfer destination information can produce precise questions rather than only generic kind review.
+
+Prefer application-generated durable proposal/event IDs after model parsing rather than treating arbitrary model identifiers as authority.
+
+Create a synthetic evaluation corpus and an opt-in live eval runner. Never put real customer financial data in repository eval fixtures.
+
+Cover multi-event narration, sales vs receipts, transfers, owner money, loans, stock, credit expenses, credit sales, receivables/payables, partial settlements, corrections, missing fields, Ghanaian money expressions and adversarial/unrelated text.
+
+All designated safety-critical cases must either produce the expected financial meaning or the required clarification.
+
+Do not enable production AI merely because output satisfies the JSON schema.
+
+Phase 03:
+Do not redesign the Narra v2 UI.
+Refactor the huge CashNarra client component into maintainable screen/flow components and hooks while preserving behaviour and visual hierarchy.
+
+Phase 04:
+Do not normalise the whole database speculatively.
+Keep the workspace aggregate for V1, but stop loading every complete workspace state for simple listing/get operations.
+Separate workspace metadata listing from selected-workspace state loading and measure large synthetic workspaces.
+
+Phase 05:
+Preserve the narrow RPC mutation architecture.
+Do not grant ordinary broad workspace mutations to authenticated clients.
+Harden SECURITY DEFINER functions according to current Supabase guidance, including private/unexposed implementation where practical, empty search_path and schema-qualified objects, while preserving explicit auth.uid ownership checks and narrow execute grants.
+
+Phase 06:
+Do not invent profit.
+Do not turn goal scenarios into guarantees.
+Keep exports private and formula-injection safe.
+Complete keyboard, screen-reader, zoom/reflow, reduced-motion and automated accessibility validation.
+
+Phase 07:
+Freeze further voice development unless the approved text evaluation gate has passed.
+Do not delete good gated voice work.
+Remove or relocate generated brag-output runtime-unrelated artifacts.
+Perform independent final source-to-repository verification.
+
+VERIFICATION DISCIPLINE
+
+For each phase:
+
+1. Implement only the phase scope.
+2. Add/update relevant tests.
+3. Run all required phase validations.
+4. If a validation fails, fix it before proceeding.
+5. Never mark the phase complete with a knowingly broken state.
+6. Update phase context only with material discoveries a future session would otherwise need to rediscover.
+7. Update harness/build-log.md with actual commands/results.
+8. Update PLANS.md.
+9. Inspect git diff and git status.
+10. Commit the completed phase separately with a descriptive message.
+11. Record the resulting commit SHA in PLANS.md and build-log.md.
+12. Continue autonomously into the next unblocked phase.
+
+Do not bundle several unrelated phases into one commit.
+
+INTERRUPTION SAFETY
+
+Whenever substantial uncommitted work exists after a meaningful atomic unit, leave a WIP recovery checkpoint in harness/build-log.md containing:
+
+- timestamp;
+- branch;
+- current HEAD;
+- phase;
+- exact objective;
+- completed work;
+- files changed;
+- tests run/results;
+- worktree status;
+- known broken state;
+- unfinished work;
+- blockers/questions;
+- exact next action;
+- resume commands;
+- assumptions.
+
+Never record secrets.
+
+If interrupted in a failing/half-finished state, explicitly say it is failing/half-finished.
+
+DECISION POLICY
+
+Continue autonomously through implementation questions that are answerable from:
+
+- canonical CashNarra sources;
+- repository evidence;
+- current official framework/provider documentation.
+
+Do not ask the user trivial programming questions.
+
+Stop only when a decision is genuinely consequential and cannot be resolved from the sources/repository, for example:
+
+- changing product scope;
+- destructive data migration;
+- changing the agreed stack;
+- spending money/enabling production services;
+- unresolved regulatory interpretation;
+- exposing real customer data to a new processor;
+- abandoning a major agreed behaviour.
+
+EXTERNAL GATES
+
+Do not claim these are complete merely because code exists:
+
+- DPC/BoG/GRA/NITA determinations;
+- production provider contracts;
+- production data-location arrangement;
+- SMTP production delivery;
+- backup/restore operational evidence;
+- trademark clearance;
+- paid production hosting;
+- live customer launch.
+
+DEFINITION OF DONE
+
+CashNarra remediation is complete only when evidence shows:
+
+- core text narration journeys work;
+- financially important ambiguity is clarified;
+- authoritative posting is deterministic;
+- retries do not double-post;
+- corrections preserve integrity;
+- user/workspace isolation is enforced;
+- payables correctly support both stock and operating expenses;
+- debt settlement does not double-count;
+- transfers do not affect income/expense;
+- owner money and loans remain distinct;
+- important totals are traceable;
+- goals are deterministic and assumptions are visible;
+- offline drafts recover without becoming posted data;
+- Narra v2 remains coherent at mobile/desktop sizes;
+- important accessibility paths have been checked;
+- high-risk financial tests pass;
+- lint, typecheck, tests and production build pass or any explicitly accepted exception is documented;
+- deferred work is clearly separated from incomplete V1 work;
+- no feature claim exceeds what is actually implemented.
+
+Proceed phase by phase until an actual consequential blocker is reached.
+:::
+
+---
+
+# 15. Resume-after-interruption Codex prompt
+
+:::writing{variant="document" id="45826" title="CashNarra Resume and Phase Execution Prompts"}
+## RESUME AFTER INTERRUPTION
+
+Continue the existing CashNarra remediation from the repository's durable checkpoint.
+
+Do not restart the audit and do not repeat completed discovery unless repository evidence contradicts the recorded checkpoint.
+
+Follow this exact startup sequence:
+
+1. Read AGENTS.md.
+2. Read GOALS.md.
+3. Read PLANS.md.
+4. Read harness/build-log.md.
+5. Identify the current incomplete phase.
+6. Read only that phase's harness/build/<phase>.md and any context file it explicitly references.
+7. Run:
+   git branch --show-current
+   git rev-parse HEAD
+   git status
+8. Compare branch, HEAD and worktree with the latest build-log checkpoint.
+9. Run the smallest sanity verification needed to confirm the recorded state.
+10. Continue from the exact "next action" in the checkpoint.
+
+Preserve unrelated user changes.
+
+Do not reimplement completed phases.
+
+Do not mark a phase complete unless its acceptance criteria and validations pass.
+
+At each completed phase:
+- update its build/context evidence;
+- update harness/build-log.md;
+- update PLANS.md;
+- inspect git diff/status;
+- commit only that phase;
+- record the resulting commit SHA;
+- then continue to the next unblocked phase.
+
+If substantial uncommitted work remains when interrupted again, leave a new WIP recovery checkpoint containing branch, HEAD, phase, objective, completed work, files changed, tests/results, working-tree status, broken/incomplete state, blockers, next action, resume commands and assumptions.
+
+Never store secrets.
+
+Baseline for reference:
+main @ 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
+
+
+## CONTINUE NEXT INCOMPLETE APPROVED PHASE
+
+Continue with the next incomplete approved CashNarra remediation phase.
+
+First read AGENTS.md, GOALS.md, PLANS.md and harness/build-log.md.
+
+Identify the first phase whose status is neither COMPLETE nor BLOCKED/EXTERNAL.
+
+Read that phase's build file and only its relevant context.
+
+Verify current branch, HEAD and worktree before changing anything.
+
+Execute the phase exactly within its approved scope.
+
+Preserve correct existing implementation.
+
+Do not expand CashNarra into deferred or out-of-scope features.
+
+Add/update tests for every financial/domain change.
+
+Run every validation named in the phase file.
+
+Fix failures before marking the phase complete.
+
+When acceptance criteria pass:
+1. update material phase context if necessary;
+2. append actual verification evidence to harness/build-log.md;
+3. set the phase COMPLETE in PLANS.md;
+4. inspect git diff and git status;
+5. commit the phase separately with a descriptive message;
+6. record the commit SHA;
+7. proceed to the next unblocked phase unless it requires a genuinely consequential external decision.
+
+If you cannot complete the phase, leave a precise WIP recovery checkpoint rather than pretending it is complete.
+:::
+
+---
+
+# 16. Final verification Codex prompt
+
+:::writing{variant="document" id="90417" title="CashNarra Independent Final Verification Prompt"}
+Act as an independent verification engineer for the completed CashNarra V1 remediation.
+
+Do not assume the implementation agent was correct.
+
+Do not rely on PLANS.md saying COMPLETE.
+
+Treat repository code, database behaviour, tests and the canonical CashNarra sources as the evidence.
+
+BASELINE SOURCES
+
+Use source precedence:
+
+1. GOALS.md for the approved remediation outcome and non-goals.
+2. Latest/final decisions in Research CashNarra Concept.txt.
+3. Recommend Technology Stack.txt for the agreed architecture.
+4. CashNarra Design Kit v2 for the current product/design handoff.
+5. Earlier brainstorming only when it was not superseded.
+
+Do not resurrect automatic Money Inbox/bank-MoMo capture, Storyline v1, ERP/POS/payroll/HR/CRM, tax filing, payments, lending or other deferred/out-of-scope concepts.
+
+VERIFICATION START
+
+Read:
+
+- AGENTS.md
+- GOALS.md
+- PLANS.md
+- harness/build-log.md
+
+Record:
+
+- current branch;
+- current HEAD;
+- worktree status;
+- completion commits for every phase.
+
+Then independently inspect the actual implementation.
+
+Do not accept a phase solely because it has a completion commit.
+
+VERIFY PRODUCT JOURNEYS
+
+Trace the real code and, where possible, exercise:
+
+1. First authenticated use.
+2. Business workspace creation.
+3. Personal workspace creation.
+4. Cash/Bank/MoMo account creation.
+5. Known opening balance.
+6. Unknown opening balance.
+7. Multi-event narration.
+8. Material ambiguity.
+9. Clarification.
+10. Batch editing.
+11. Atomic save.
+12. Lost response and retry.
+13. Duplicate submission.
+14. Saved-record correction.
+15. Split.
+16. Eligible workspace move.
+17. Internal transfer.
+18. Owner contribution.
+19. Owner withdrawal.
+20. Loan receipt.
+21. Loan principal.
+22. Interest.
+23. Cash sale.
+24. Credit sale.
+25. Receivable partial settlement.
+26. Receivable full settlement.
+27. Stock acquired on credit.
+28. Operating expense incurred on credit.
+29. Payable partial/full settlement.
+30. Daily Money Story.
+31. Weekly Money Story.
+32. Monthly Money Story.
+33. Trace an important number to records.
+34. Create/allocate to a goal.
+35. Current-pace estimate with sufficient evidence.
+36. Insufficient goal data.
+37. Zero/negative pace.
+38. What-if scenario without changing actual data.
+39. Offline draft capture.
+40. Reconnect and explicit reviewed save.
+41. CSV/PDF/XLSX export.
+42. Cross-user/workspace isolation.
+
+VERIFY FINANCIAL INVARIANTS
+
+Independently prove:
+
+- authoritative money never uses ordinary JS floating point;
+- all journal records balance;
+- transfers affect each account exactly once;
+- transfers do not inflate money-in/out reports;
+- old receivable settlement does not create another sale;
+- payable settlement does not create another expense;
+- loan receipt is not revenue;
+- loan principal is not expense;
+- loan interest is expense;
+- owner contribution is not sales;
+- owner withdrawal is not operating expense;
+- stock purchase is not automatically profit expense;
+- unknown opening remains unknown, not zero;
+- duplicate retries cannot double-post;
+- concurrency cannot over-settle a debt;
+- correction preserves provenance and prior state;
+- all TypeScript posting templates match PostgreSQL authoritative posting templates;
+- profit remains unavailable whenever required accounting information is missing.
+
+VERIFY AI BOUNDARY
+
+Confirm:
+
+- the model has no database credentials;
+- the model cannot authorise workspace access;
+- the model cannot directly post records;
+- the model cannot calculate official totals;
+- the model cannot determine save success;
+- the model cannot calculate official forecasts;
+- narration is treated as untrusted data;
+- only allowed account/debt IDs survive validation;
+- consequential missing information becomes clarification;
+- workspace type is supplied where relevant;
+- party and transfer-destination ambiguity can be represented;
+- the configured default OpenAI model is currently supported according to current official OpenAI documentation.
+
+Inspect the evaluation corpus and independently run the deterministic evaluation.
+
+If live-provider evaluation is explicitly authorised/configured, run only the approved bounded eval and record cost/settings. Otherwise do not call paid providers and mark live evaluation unverified.
+
+VERIFY SECURITY
+
+Inspect RLS, grants and every SECURITY DEFINER function.
+
+Confirm:
+
+- ownership checks cannot be bypassed by supplied owner/workspace IDs;
+- functions use hardened search paths/schema qualification;
+- privileged implementation is not unnecessarily exposed;
+- no service/secret key enters the client;
+- User A cannot read or mutate User B;
+- private/authenticated financial responses are never cached in public/shared service-worker caches.
+
+VERIFY OFFLINE
+
+Confirm:
+
+- IndexedDB data is account/workspace scoped;
+- an older write cannot replace a newer draft;
+- draft recovery does not post automatically;
+- a pending save retains its original request identity;
+- logout/shared-device handling is explicit;
+- browser storage is not represented as backup.
+
+VERIFY DESIGN/ACCESSIBILITY
+
+Compare the implementation with CashNarra Design Kit v2.
+
+Confirm:
+
+- Today / Records / Money Stories / Plan hierarchy;
+- narration remains the prominent home action;
+- Narra tokens and typography remain coherent;
+- all financial amounts use the intended financial typography;
+- recorded/manual balances are not described as externally verified;
+- check-ins do not imply financial completeness;
+- 320px mobile flow works;
+- desktop flow works;
+- light and dark appearances work;
+- 44px effective targets are preserved;
+- keyboard operation works;
+- dialogs manage focus;
+- processing/error/success states are announced;
+- reduced-motion is respected;
+- zoom/reflow and representative screen-reader checks are documented.
+
+VERIFY SCOPE
+
+Search for accidental scope expansion.
+
+CashNarra V1 must not claim or implement as core:
+- wallet;
+- payment initiation;
+- automatic bank/MoMo aggregation;
+- card issuing;
+- lending;
+- investment advice;
+- tax filing;
+- POS;
+- inventory ERP;
+- payroll;
+- HR;
+- CRM;
+- full ERP.
+
+Deferred code such as voice may remain gated but must not be presented as production-proven without evidence.
+
+RUN VERIFICATION
+
+From a clean install/environment where available run:
+
+npm ci
+npm run doctor
+npm run lint
+npm run typecheck
+npm test
+npm run test:db
+npm run test:supabase
+npm run test:e2e
+npm run build
+
+Record exact results.
+
+If a command cannot run because an external service/credential is intentionally unavailable, document that as unverified. Do not convert inability to verify into a pass.
+
+FINAL REPORT
+
+Produce:
+
+1. audited final commit SHA;
+2. PASS / FAIL / PARTIAL for every V1 requirement;
+3. any P0/P1 blockers;
+4. remaining P2/P3 items;
+5. financial-invariant results;
+6. security/isolation results;
+7. AI evaluation results;
+8. accessibility results;
+9. build/test results;
+10. deferred features;
+11. external launch gates;
+12. any documentation/marketing claim that exceeds actual implementation;
+13. final verdict:
+   - V1 CODE COMPLETE,
+   - V1 CODE COMPLETE BUT EXTERNAL LAUNCH GATES REMAIN,
+   - or NOT V1 COMPLETE.
+
+Do not change code during this verification unless specifically instructed after reporting the findings.
+:::
+
+---
+
+# 17. Remaining genuinely unresolved decisions
+
+There are fewer than the source history might suggest.
+
+### 1. External Ghana launch classification
+
+The repository cannot solve this itself.
+
+The source has unresolved questions around:
+
+- DPC;
+- BoG/PFTSP;
+- GRA software/record rules;
+- NITA.
+
+Codex should maintain the launch checklist, not invent answers.
+
+### 2. Production recovery objective
+
+You still eventually need to decide the acceptable recovery-point objective for real financial data.
+
+That determines whether basic managed backups are sufficient or whether PITR/another recovery arrangement is required.
+
+It does not need deciding to finish local V1 development.
+
+### 3. Trademark/identity clearance
+
+Narra v2 is the current product handoff.
+
+Legal clearance of the mark/name is a separate business decision.
+
+### 4. The quality bar for enabling real AI
+
+The evaluation system can be built autonomously.
+
+But after seeing measured results, somebody should consciously approve:
+
+> “This is good enough to expose to pilot users.”
+
+That should not be an AI agent silently marking its own model “accurate enough.”
+
+### 5. Voice timing
+
+I would resolve this without needing further product debate:
+
+> **Text V1 first. Voice stays disabled until text passes.**
+
+Only if you specifically decide voice must be in the first public pilot does it become an immediate launch dependency.
+
+Everything else has enough source/repository evidence to proceed without asking you routine implementation questions.
+
+---
+
+# 18. Final recommendation
+
+## What should happen first
+
+**Do Phase 00 immediately, then Phase 01 and Phase 02.**
+
+Not visual polish.
+
+Not more voice work.
+
+Not new reports.
+
+Not a hosting migration.
+
+Not automatic MoMo.
+
+The shortest meaningful sequence is:
+
+```text
+Checkpoint the repo
+      ↓
+Close payable semantics
+      ↓
+Add TS ↔ SQL posting parity
+      ↓
+Move from deprecated AI model
+      ↓
+Build the real narration evaluation corpus
+      ↓
+Prove narration → clarification → review
+      ↓
+Refactor without redesigning
+      ↓
+Harden read/security/accessibility paths
+      ↓
+Independent final verification
+```
+
+## What absolutely should not be rebuilt
+
+Do **not** rebuild:
+
+- the Next.js/Supabase stack;
+- the decimal-money layer;
+- the journal;
+- atomic posting;
+- idempotency;
+- correction history;
+- RLS ownership model;
+- goal calculation model;
+- exports;
+- IndexedDB draft strategy;
+- Narra v2 visual identity;
+- Today/Records/Money Stories/Plan IA.
+
+Those represent useful work and are broadly aligned with the actual CashNarra trajectory.
+
+## What threatens CashNarra most right now
+
+Not scalability.
+
+Not Vercel.
+
+Not the UI.
+
+Not the database.
+
+The biggest threat is this:
+
+> **The system around the conversation is more proven than the conversation itself.**
+
+CashNarra's financial core can correctly process a loan, transfer or debt settlement **once the right structured meaning reaches it**.
+
+The unanswered product question is whether the interpreter can reliably derive that meaning from the way actual people talk about their money.
+
+That needs to become measurable immediately.
+
+The second-largest threat is subtler: continuing to add conveniences before proving that core. The amount of work already invested in voice is the first warning sign.
+
+## Shortest credible route to the agreed V1
+
+Preserve approximately **everything foundational**.
+
+Close one financial-model hole.
+
+Make the AI contract more expressive.
+
+Move to a current supported model.
+
+Create a serious narration/correction evaluation set.
+
+Prove the defining interaction.
+
+Refactor the large client component without touching the visual direction.
+
+Improve read efficiency.
+
+Harden Supabase privileged functions.
+
+Run the existing strong high-risk tests plus the missing parity/AI/accessibility checks.
+
+Then perform an independent source-to-code verification.
+
+That route is much shorter, safer and more faithful to CashNarra than starting again.
+
+The repository already understands a great deal about **money**.
+
+The remaining job is to prove that CashNarra can consistently understand the **story** well enough to deserve the ledger behind it.
+
+
+
+---
+Generated with ChatGPT Pro Tools
+https://chromewebstore.google.com/detail/chatgpt-pro-tools/blehigjjjlnlbbgjghhfnllglnelijkg?utm_source=extension&utm_medium=export-footer
