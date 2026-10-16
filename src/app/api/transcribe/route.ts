@@ -3,6 +3,7 @@ import { context, sameOrigin } from "@/server/auth";
 import { get } from "@/server/store";
 import { boundedFormData } from "@/server/upload";
 import { validateRecording } from "@/server/recording";
+import { transcriptText } from "@/lib/voice";
 export async function POST(req: Request) {
   try {
     sameOrigin(req);
@@ -22,13 +23,14 @@ export async function POST(req: Request) {
       !(clip instanceof File) ||
       clip.size === 0 ||
       clip.size > 3 * 1024 * 1024 ||
-      !["audio/webm", "audio/mp4"].includes(clip.type) ||
+      clip.type !== "audio/webm" ||
       !Number.isFinite(seconds) ||
       seconds < 0 ||
       seconds > 60
     )
       throw new Error("Use a supported recording up to 60 seconds and 3 MB.");
     validateRecording(new Uint8Array(await clip.arrayBuffer()), clip.type);
+    req.signal.throwIfAborted();
     const { error } = await ctx.db!.rpc("reserve_ai_call", {
       p_limit: Number(process.env.AI_DAILY_CALL_LIMIT || 10),
     });
@@ -38,14 +40,16 @@ export async function POST(req: Request) {
       timeout: 45000,
       maxRetries: 0,
     });
-    const result = await client.audio.transcriptions.create({
-      file: clip,
-      model: process.env.TRANSCRIPTION_MODEL || "gpt-4o-mini-transcribe",
-      response_format: "json",
-    });
-    if (!result.text?.trim() || result.text.length > 12000)
-      throw new Error("No usable transcript returned.");
-    return Response.json({ text: result.text });
+    const result = await client.audio.transcriptions.create(
+      {
+        file: clip,
+        model: process.env.TRANSCRIPTION_MODEL || "gpt-4o-mini-transcribe",
+        response_format: "json",
+      },
+      { signal: req.signal },
+    );
+    req.signal.throwIfAborted();
+    return Response.json({ text: transcriptText(result) });
   } catch (e) {
     return Response.json({ error: (e as Error).message }, { status: 422 });
   }

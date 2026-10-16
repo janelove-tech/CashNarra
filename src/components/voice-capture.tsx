@@ -35,7 +35,6 @@ export default function VoiceCapture({
     return () => {
       mounted.current = false;
       cancelled.current = true;
-      permissionRevision.current++;
       upload.current?.abort();
       if (recorder.current?.state === "recording") recorder.current.stop();
       stream.current?.getTracks().forEach((t) => t.stop());
@@ -182,7 +181,7 @@ export default function VoiceCapture({
       if (!response.ok) throw new Error(result.error);
       const words = transcriptText(result);
       if (mounted.current && !controller.signal.aborted) setText(words);
-    } catch (e) {
+    } catch {
       if (mounted.current)
         setError(
           (controller.signal.aborted
