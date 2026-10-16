@@ -202,3 +202,13 @@ Git HEAD was already `3020dafaefdad2f3f0e3100452add83a773ff576`, the Phase 08 ve
 The user asked whether Phase 09 can continue while Phase 08 is parked. It can be documented. It cannot be resolved, and it does not replace the parked evidence.
 
 No product code, provider call, purchase, or deployment. Every launch gate remains unresolved. Phase 08 return items stay in `harness/build/08-release-verification.md`.
+
+## Phase 08 local verification return — 2026-10-16 — Codex
+
+Reconciled clean Cursor HEAD `4465381` against stale CURRENT (`152debd`, register ready to commit). Preserved all Cursor product work. Latest instruction to execute unblocked phases resumed local release evidence rather than restarting the audit.
+
+Added development-only axe Playwright text-contrast checks: four light/dark mobile/desktop scenarios, all 28 scans with zero violations or incomplete results. Added actual 200% Edge zoom checks using disposable profiles, verified pixel ratio/reduced layout viewport, keyboard-contained record dialog and review. Two zoom journeys PASS; physical-surface screenshots visually inspected. Harness navigation, server-lifecycle and zoom preference/measurement issues corrected; details in `harness/context/08-local-release-evidence.md`.
+
+PASS after fresh npm ci: doctor, lint zero warnings, typecheck, 95 unit tests, isolated PostgreSQL, local Supabase integration, full 31-test browser suite and production build. Two zoom tests added afterwards passed separately. No production reset/migration, deployment or paid calls. Production npm audit: zero advisories. Development audit: five entries trace to braces stack exhaustion in Next ESLint chain; suggested downgrade to v14 not applied, unresolved upstream.
+
+User explicitly approved US$5 cumulative narration/voice evaluation spend; recordings to follow. Local API key absent, spend US$0. Approval persists; do not ask again. Missing key/representative recordings/screen-reader evidence remain external; non-text contrast not tested. Verdict remains NOT V1 COMPLETE; Phase 09 unresolved. Updated CURRENT/PLANS/phase files for continuation without chat context.

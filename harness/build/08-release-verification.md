@@ -34,6 +34,10 @@ Status: PARKED. The automated pass at `3020daf` stays valid as historical eviden
 
 Phase 09 may document launch decisions without this return. It must not treat those decisions as a substitute for this evidence.
 
+## Return — 2026-10-16 — Codex
+
+The renewed user instruction to execute unblocked work resumed local release verification from Cursor commit `4465381`. Preserve the historical record above; fresh install and measured text contrast now have new evidence in `harness/context/08-local-release-evidence.md`. V1 remains incomplete. User approved up to US$5 total evaluation spend; recordings will follow. No API key is configured and no paid calls have been made. Provider enablement and launch gates remain separate.
+
 The automated code checks below passed. The verdict stays incomplete because representative voice-quality evidence does not exist, screen-reader testing was not run, and Phase 09 launch decisions are still external. Do not treat this as a product rewrite request.
 
 ## Verdict

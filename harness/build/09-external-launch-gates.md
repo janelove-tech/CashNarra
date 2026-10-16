@@ -12,12 +12,13 @@ Do not mark a gate resolved from repository inspection. Do not purchase, enable,
 
 | Item | Label | What is still required |
 |---|---|---|
-| Clean `npm ci` | NOT RUN | Repeat the release commands from a fresh install |
+| Clean `npm ci` | PASS | Completed in the 2026-10-16 Codex return; see `../context/08-local-release-evidence.md` |
 | Representative voice quality | EXTERNAL | Consented Ghana-relevant clips and an opted-in provider. Typed narration stays the fallback. Voice must not post automatically |
-| Live narration evaluation | EXTERNAL | Opt-in provider run against the synthetic corpus |
+| Live narration evaluation | EXTERNAL | User approved US$5 total for narration/voice evaluation. API key absent; no spend. Recordings to follow. Production enablement is not approved |
 | Screen reader | NOT RUN | A person using assistive technology on the critical flows |
-| Contrast audit | NOT RUN | A measured check. Do not claim WCAG certification |
-| Separate 200% zoom pass | NOT RUN | 320px reflow was checked; 200% was not repeated on its own |
+| Text contrast | PASS | Automated measured text contrast passed across 28 scans. No WCAG certification |
+| Non-text/manual contrast | NOT RUN | Outside the measured text-contrast scope |
+| Separate 200% zoom pass | PASS | Two Edge journeys, verified actual zoom metrics, light/dark screenshots reviewed; see Phase 08 local evidence |
 
 ## Decision register
 

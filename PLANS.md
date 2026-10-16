@@ -17,7 +17,7 @@ Baseline: `main` @ `3b4d1f89fed8c079cc3571aeff6276bfe5f04d92`
 | 08 — Independent V1 release verification | BLOCKED | harness/build/08-release-verification.md | 01108da07fe946b328fc705aa560832d0afadc4d | 3020dafaefdad2f3f0e3100452add83a773ff576 |
 | 09 — External launch gates | EXTERNAL | harness/build/09-external-launch-gates.md | 152debde8d8e21bb22671905c126bacaf718250f | |
 
-Phase 08 is parked, not discarded. Its automated verification commit remains `3020daf`. Return to it for voice-quality, screen-reader, contrast, zoom, and clean-install evidence. Phase 09 does not wait on that return, and it cannot be marked resolved from the repository.
+Phase 08 remains incomplete, not discarded. Historical verification is `3020daf`; the 2026-10-16 Codex continuation adds fresh-install and measured text-contrast evidence in `harness/context/08-local-release-evidence.md`. Live evaluation is approved up to US$5 total but awaits a local API key and representative recordings; no spend yet. Screen-reader evidence remains external. Read CURRENT for the latest zoom and validation status. Phase 09 cannot be marked resolved from repository checks.
 
 Only one coding phase should be IN PROGRESS. Phase 09 stays EXTERNAL until the user or business decisions in that phase file exist.
 
