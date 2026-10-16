@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head><meta charset="UTF-8"></head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Inter"; src: url("assets/fonts/InterVariable.woff2") format("woff2"); font-weight: 100 900; }
+        #chrome { position: absolute; inset: 0; font-family: "Inter", sans-serif; }
+        #chrome .chrome-logo { position: absolute; left: 80px; top: 98px; width: 200px; height: 40px; }
+        #chrome .chrome-logo img { display: block; width: 200px; height: 40px; }
+        #chrome .chrome-label { position: absolute; right: 80px; top: 104px; font-weight: 600; font-size: 24px; letter-spacing: 0.01em; }
+        #chrome .chrome-label.rev { color: #e6e1f2; }
+        #chrome .chrome-label.ink { color: #4f4b63; }
+      </style>
+      <div data-hf-id="hf-b69j" id="chrome" data-composition-id="chrome" data-width="1080" data-height="1920">
+        <div data-hf-id="hf-o2rm" class="chrome-logo" id="chrome-logo-rev"><img data-hf-id="hf-2t9k" src="assets/brand/cashnarra-lockup-reversed.svg" alt="CashNarra"></div>
+        <div data-hf-id="hf-sgw8" class="chrome-logo" id="chrome-logo-ink" style="opacity: 0"><img data-hf-id="hf-2r75" src="assets/brand/cashnarra-lockup.svg" alt="CashNarra"></div>
+        <div data-hf-id="hf-f5w1" class="chrome-label rev" id="chrome-story">Illustrative business story</div>
+        <div data-hf-id="hf-p2id" class="chrome-label rev" id="chrome-preview-rev" style="opacity: 0">Product preview • Illustrative data</div>
+        <div data-hf-id="hf-rccd" class="chrome-label ink" id="chrome-preview-ink" style="opacity: 0">Product preview • Illustrative data</div>
+      </div>
+      <script>
+        (function () {
+          const tl = gsap.timeline({ paused: true });
+          // ink on the paper scenes (20.6–49.4), reversed on ink/photo scenes
+          tl.set("#chrome-logo-rev", { opacity: 1 }, 0).set("#chrome-logo-rev", { opacity: 0 }, 20.6).set("#chrome-logo-rev", { opacity: 1 }, 49.4);
+          tl.set("#chrome-logo-ink", { opacity: 0 }, 0).set("#chrome-logo-ink", { opacity: 1 }, 20.6).set("#chrome-logo-ink", { opacity: 0 }, 49.4);
+          tl.set("#chrome-story", { opacity: 1 }, 0).set("#chrome-story", { opacity: 0 }, 14.0).set("#chrome-story", { opacity: 1 }, 49.4);
+          tl.set("#chrome-preview-rev", { opacity: 0 }, 0).set("#chrome-preview-rev", { opacity: 1 }, 14.0).set("#chrome-preview-rev", { opacity: 0 }, 20.6);
+          tl.set("#chrome-preview-ink", { opacity: 0 }, 0).set("#chrome-preview-ink", { opacity: 1 }, 20.6).set("#chrome-preview-ink", { opacity: 0 }, 49.4);
+          window.__timelines["chrome"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

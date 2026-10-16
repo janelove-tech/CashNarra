@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+  </head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Manrope"; src: url("assets/fonts/ManropeVariable.ttf") format("truetype"); font-weight: 200 800; }
+        @font-face { font-family: "Inter"; src: url("assets/fonts/InterVariable.woff2") format("woff2"); font-weight: 100 900; }
+        #s1-closing { position: absolute; inset: 0; overflow: hidden; background: #29263d; }
+        #s1-closing .photo { position: absolute; left: -924px; top: 486px; width: 2150px; height: 1434px; transform-origin: 1484px 420px; will-change: transform; }
+        #s1-closing .photo img { display: block; width: 100%; height: 100%; }
+        #s1-closing .topfade { position: absolute; left: 0; top: 360px; width: 1080px; height: 500px;
+          background: linear-gradient(180deg, #29263d 0%, #29263d 34%, rgba(41,38,61,0.78) 52%, rgba(41,38,61,0.36) 76%, rgba(41,38,61,0) 100%); }
+        #s1-closing .vignette { position: absolute; inset: 0; background: radial-gradient(120% 80% at 50% 62%, rgba(25,23,35,0) 45%, rgba(25,23,35,0.72) 100%); }
+        #s1-closing .dim { position: absolute; inset: 0; background: #191723; }
+        #s1-closing .type { position: absolute; left: 80px; top: 236px; width: 920px; font-family: "Manrope", sans-serif; font-weight: 800;
+          font-size: 86px; line-height: 1.02; letter-spacing: -0.035em; color: #ffffff; }
+        #s1-closing .type div { display: block; }
+        #s1-closing .type .l2 { color: #ffc4a0; }
+      </style>
+      <div data-hf-id="hf-p3s3" id="s1-closing" data-composition-id="s1-closing" data-width="1080" data-height="1920">
+        <div data-hf-id="hf-17ap" class="photo" id="s1-photo"><img data-hf-id="hf-95aq" src="assets/img/campaign-studio.png" alt=""></div>
+        <div data-hf-id="hf-93kn" class="topfade"></div>
+        <div data-hf-id="hf-q7bi" class="vignette"></div>
+        <div data-hf-id="hf-odtp" class="dim" id="s1-dim"></div>
+        <div data-hf-id="hf-8lig" class="type">
+          <div data-hf-id="hf-3fvz" class="l1" id="s1-l1">SHOP CLOSED.</div>
+          <div data-hf-id="hf-vvcr" class="l2" id="s1-l2">MIND STILL OPEN.</div>
+        </div>
+      </div>
+      <script>
+        (function () {
+          const tl = gsap.timeline({ paused: true });
+          // slow, tight push into the portrait (focal point: her face)
+          tl.fromTo("#s1-photo", { scale: 1.06, y: 10 }, { scale: 1.16, y: -14, duration: 5.0, ease: "sine.inOut" }, 0);
+          // the room settles after the closing click
+          tl.fromTo("#s1-dim", { opacity: 0.55 }, { opacity: 0.12, duration: 1.4, ease: "power2.out" }, 0.05);
+          tl.fromTo("#s1-l1", { opacity: 0, y: 26, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.7, ease: "power3.out" }, 0.75);
+          tl.fromTo("#s1-l2", { opacity: 0, y: 26, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.7, ease: "power3.out" }, 2.35);
+          tl.to(["#s1-l1", "#s1-l2"], { y: -10, duration: 1.6, ease: "sine.inOut" }, 3.3);
+          window.__timelines["s1-closing"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

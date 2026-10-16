@@ -1,0 +1,90 @@
+[
+  {
+    "id": "CN-101",
+    "name": "Cash sales",
+    "detail": "Sales · Cash",
+    "amount": 900,
+    "kind": "in",
+    "icon": "banknote",
+    "date": "13 Oct 2026",
+    "source": "GH₵900 cash",
+    "type": "Sale received"
+  },
+  {
+    "id": "CN-102",
+    "name": "MoMo sales",
+    "detail": "Sales · MoMo",
+    "amount": 1200,
+    "kind": "in",
+    "icon": "smartphone",
+    "date": "13 Oct 2026",
+    "source": "GH₵1,200 MoMo",
+    "type": "Sale received"
+  },
+  {
+    "id": "CN-103",
+    "name": "Kojo’s credit sale",
+    "detail": "People owe you · Kojo",
+    "amount": 300,
+    "kind": "owed",
+    "icon": "user-round",
+    "date": "13 Oct 2026",
+    "source": "Kojo still owes GH₵300",
+    "type": "Credit sale"
+  },
+  {
+    "id": "CN-104",
+    "name": "Stock for the shop",
+    "detail": "Stock purchase · Cash",
+    "amount": 700,
+    "kind": "out",
+    "icon": "package",
+    "date": "13 Oct 2026",
+    "source": "bought GH₵700 of stock with cash",
+    "type": "Stock purchase"
+  },
+  {
+    "id": "CN-105",
+    "name": "Customer delivery",
+    "detail": "Delivery · MoMo",
+    "amount": 80,
+    "kind": "out",
+    "icon": "truck",
+    "date": "13 Oct 2026",
+    "source": "paid GH₵80 delivery from MoMo",
+    "type": "Operating expense"
+  },
+  {
+    "id": "CN-106",
+    "name": "Bank → MoMo",
+    "detail": "Transfer · Between your accounts",
+    "amount": 500,
+    "kind": "transfer",
+    "icon": "arrow-left-right",
+    "date": "13 Oct 2026",
+    "source": "moved GH₵500 from bank to MoMo",
+    "type": "Internal transfer"
+  },
+  {
+    "id": "CN-107",
+    "name": "Abena’s part payment",
+    "detail": "Old balance payment · MoMo",
+    "amount": 200,
+    "kind": "in",
+    "icon": "user-round-check",
+    "date": "13 Oct 2026",
+    "source": "Abena paid GH₵200 of what she owed into MoMo",
+    "type": "Receivable settlement"
+  },
+  {
+    "id": "CN-108",
+    "name": "Money taken home",
+    "detail": "Owner withdrawal · Cash",
+    "amount": 150,
+    "kind": "out",
+    "icon": "briefcase-business",
+    "date": "13 Oct 2026",
+    "source": "took GH₵150 cash home",
+    "type": "Owner withdrawal"
+  }
+]

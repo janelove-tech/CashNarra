@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+  </head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Inter"; src: url("assets/fonts/InterVariable.woff2") format("woff2"); font-weight: 100 900; }
+        #s6-ahead { position: absolute; inset: 0; overflow: hidden; background: #f7f7fa; font-family: "Inter", sans-serif; color: #29263d; }
+        #s6-ahead .glow { position: absolute; left: -260px; top: 900px; width: 1600px; height: 1600px; border-radius: 50%;
+          background: radial-gradient(circle, rgba(255,196,160,0.55) 0%, rgba(255,196,160,0.22) 42%, rgba(255,196,160,0) 70%); }
+        #s6-ahead .part { position: absolute; inset: 0; opacity: 0; }
+        #s6-ahead .win { position: absolute; overflow: hidden; border-radius: 36px; background: #f7f7fa; border: 2px solid #e1deeb;
+          box-shadow: 0 30px 90px rgba(41,38,61,0.16); will-change: transform; }
+        #s6-ahead .win img { position: absolute; left: 0; display: block; }
+        #s6-ahead .win img.sc { opacity: 0; }
+        #s6-ahead .big { position: absolute; left: 92px; top: 1052px; display: flex; align-items: center; gap: 34px; width: 900px; }
+        #s6-ahead .pct { font-weight: 700; font-size: 150px; letter-spacing: -0.04em; color: #5b49c7; font-variant-numeric: tabular-nums; line-height: 1; width: 290px; }
+        #s6-ahead .facts .a { font-weight: 600; font-size: 40px; line-height: 1.22; font-variant-numeric: tabular-nums; }
+        #s6-ahead .facts .b { font-weight: 500; font-size: 30px; color: #625f73; margin-top: 10px; }
+        #s6-ahead .note { position: absolute; left: 170px; top: 1232px; width: 760px; opacity: 0; }
+        #s6-ahead .note .a { font-weight: 700; font-size: 40px; }
+        #s6-ahead .note .b { font-weight: 500; font-size: 30px; color: #625f73; margin-top: 8px; }
+        #s6-ahead .touch { position: absolute; left: 0; top: 0; width: 76px; height: 76px; border-radius: 50%; background: rgba(91,73,199,0.28);
+          border: 3px solid rgba(91,73,199,0.9); opacity: 0; }
+      </style>
+      <div data-hf-id="hf-p7kx" id="s6-ahead" data-composition-id="s6-ahead" data-width="1080" data-height="1920">
+        <div data-hf-id="hf-xnpc" class="glow" id="s6-glow"></div>
+        <!-- A · the existing New equipment goal -->
+        <div data-hf-id="hf-4qtw" class="part" id="s6-a">
+          <div data-hf-id="hf-wkbi" class="win" id="s6-a-win" style="left: 92px; top: 230px; width: 897px; height: 787px">
+            <img data-hf-id="hf-7pt7" src="assets/ui/plan_full.png" alt="" style="width: 897px; top: -593px">
+          </div>
+          <div data-hf-id="hf-vf1u" class="big">
+            <div data-hf-id="hf-jfep" class="pct" id="s6-pct">0%</div>
+            <div data-hf-id="hf-idat" class="facts">
+              <div data-hf-id="hf-y5vi" class="a" id="s6-fa">GH₵1,200 assigned toward GH₵6,000</div>
+              <div data-hf-id="hf-vazs" class="b" id="s6-fb">Assigned, not moved.</div>
+            </div>
+          </div>
+        </div>
+        <!-- B · contribution what-if (conditional) -->
+        <div data-hf-id="hf-depr" class="part" id="s6-b">
+          <div data-hf-id="hf-u58i" class="win" id="s6-b-win" style="left: 170px; top: 230px; width: 741px; height: 969px">
+            <img data-hf-id="hf-prij" class="sc" id="s6-v0" src="assets/ui/scenario_0_full.png" alt="" style="width: 741px; top: -498px; opacity: 1">
+            <img data-hf-id="hf-woxa" class="sc" id="s6-v50" src="assets/ui/scenario_50_full.png" alt="" style="width: 741px; top: -498px">
+            <img data-hf-id="hf-pa8a" class="sc" id="s6-v100" src="assets/ui/scenario_100_full.png" alt="" style="width: 741px; top: -498px">
+            <img data-hf-id="hf-3130" class="sc" id="s6-v150" src="assets/ui/scenario_150_full.png" alt="" style="width: 741px; top: -498px">
+            <img data-hf-id="hf-mc40" class="sc" id="s6-v200" src="assets/ui/scenario_200_full.png" alt="" style="width: 741px; top: -498px">
+          </div>
+          <div data-hf-id="hf-v2re" class="note" id="s6-note">
+            <div data-hf-id="hf-8zv5" class="a">A what-if, not a promise.</div>
+            <div data-hf-id="hf-4s61" class="b">Your actual records and goal stay the same.</div>
+          </div>
+          <div data-hf-id="hf-zgeu" class="touch" id="s6-touch"></div>
+        </div>
+      </div>
+      <script>
+        (function () {
+          const tl = gsap.timeline({ paused: true });
+          // the room opens: warm light grows, framing pulls back
+          tl.fromTo("#s6-glow", { opacity: 0.2, scale: 0.75 }, { opacity: 1, scale: 1.15, duration: 7.8, ease: "sine.inOut" }, 0);
+          tl.fromTo("#s6-a", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power1.out" }, 0);
+          tl.fromTo("#s6-a-win", { scale: 1.1, y: 40 }, { scale: 1, y: 0, duration: 4.0, ease: "power2.out" }, 0);
+          tl.fromTo("#s6-fa", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 1.9);
+          tl.fromTo("#s6-fb", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 2.6);
+          const pct = { v: 0 };
+          tl.fromTo(pct, { v: 0 }, { v: 20, duration: 1.1, ease: "power2.out",
+            onUpdate: () => { document.getElementById("s6-pct").textContent = Math.round(pct.v) + "%"; } }, 2.5);
+          tl.to("#s6-a", { opacity: 0, y: -40, duration: 0.35, ease: "power2.in" }, 4.05);
+          // B — the supplied contribution what-if: +GH₵0 → +GH₵200 a month
+          tl.fromTo("#s6-b", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 4.3);
+          tl.fromTo("#s6-b-win", { scale: 1.04 }, { scale: 1, duration: 3.4, ease: "sine.out" }, 4.3);
+          // drag the slider thumb (css x 48 → 147, y 572 → film coords)
+          tl.fromTo("#s6-touch", { x: 223, y: 841, opacity: 0 }, { x: 223, y: 781, opacity: 1, duration: 0.3, ease: "power2.out", immediateRender: false }, 4.6);
+          tl.to("#s6-touch", { x: 412, duration: 1.15, ease: "power1.inOut" }, 4.9);
+          tl.to("#s6-touch", { opacity: 0, duration: 0.3 }, 6.2);
+          [["#s6-v50", 5.08], ["#s6-v100", 5.37], ["#s6-v150", 5.66], ["#s6-v200", 5.95]].forEach(([id, at]) => tl.set(id, { opacity: 1 }, at));
+          tl.fromTo("#s6-note", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 6.25);
+          window.__timelines["s6-ahead"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

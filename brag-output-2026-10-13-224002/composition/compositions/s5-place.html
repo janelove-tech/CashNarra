@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+  </head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Manrope"; src: url("assets/fonts/ManropeVariable.ttf") format("truetype"); font-weight: 200 800; }
+        @font-face { font-family: "Inter"; src: url("assets/fonts/InterVariable.woff2") format("woff2"); font-weight: 100 900; }
+        #s5-place { position: absolute; inset: 0; overflow: hidden; background: #f7f7fa; font-family: "Inter", sans-serif; color: #29263d; }
+        #s5-place .part { position: absolute; inset: 0; opacity: 0; }
+        #s5-place .name { position: absolute; left: 80px; top: 214px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 120px;
+          line-height: 1; letter-spacing: -0.04em; }
+        #s5-place .eq { position: absolute; left: 80px; width: 920px; display: flex; align-items: baseline; gap: 26px; }
+        #s5-place .eq .v { font-weight: 700; font-size: 96px; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; line-height: 1.05; }
+        #s5-place .eq .t { font-weight: 500; font-size: 42px; color: #625f73; }
+        #s5-place .rule { position: absolute; left: 80px; width: 640px; height: 5px; border-radius: 3px; background: #29263d; transform-origin: 0% 50%; }
+        #s5-place .win { position: absolute; overflow: hidden; border-radius: 34px; background: #f7f7fa; border: 2px solid #e1deeb;
+          box-shadow: 0 24px 70px rgba(41,38,61,0.14); }
+        #s5-place .win img { position: absolute; left: 0; display: block; }
+        #s5-place .rows { position: absolute; left: 80px; top: 812px; width: 920px; }
+        #s5-place .row { position: relative; padding: 20px 0 22px; border-top: 3px solid #e1deeb; opacity: 0; }
+        #s5-place .row .top { display: flex; justify-content: space-between; align-items: baseline; }
+        #s5-place .row .lab { font-weight: 600; font-size: 38px; }
+        #s5-place .row .amt { font-weight: 700; font-size: 66px; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+        #s5-place .row .sub { font-weight: 500; font-size: 27px; color: #625f73; margin-top: 4px; font-variant-numeric: tabular-nums; }
+        #s5-place .foot { position: absolute; left: 80px; top: 1300px; width: 920px; font-weight: 500; font-size: 27px; color: #625f73; opacity: 0; }
+      </style>
+      <div data-hf-id="hf-pjs3" id="s5-place" data-composition-id="s5-place" data-width="1080" data-height="1920">
+        <!-- A · Abena: GH₵600 owed → GH₵200 received → GH₵400 remaining -->
+        <div data-hf-id="hf-822f" class="part" id="s5-a">
+          <div data-hf-id="hf-3p1i" class="name" id="s5-a-name">Abena</div>
+          <div data-hf-id="hf-mgi3" class="eq" id="s5-a1" style="top: 384px"><span data-hf-id="hf-4jb1" class="v">GH₵600</span><span data-hf-id="hf-g8g0" class="t">owed</span></div>
+          <div data-hf-id="hf-8bvt" class="eq" id="s5-a2" style="top: 512px"><span data-hf-id="hf-wvhc" class="v" style="color: #445ba1">−GH₵200</span><span data-hf-id="hf-84gs" class="t">received</span></div>
+          <div data-hf-id="hf-thi2" class="rule" id="s5-a-rule" style="top: 646px"></div>
+          <div data-hf-id="hf-fxpi" class="eq" id="s5-a3" style="top: 668px"><span data-hf-id="hf-y88p" class="v" style="color: #5b49c7">GH₵400</span><span data-hf-id="hf-fmt9" class="t">remaining</span></div>
+          <div data-hf-id="hf-dc3h" class="win" id="s5-a-win" style="left: 70px; top: 850px; width: 940px; height: 520px">
+            <img data-hf-id="hf-239y" src="assets/ui/abena_full.png" alt="" style="width: 940px; top: -1422px">
+          </div>
+        </div>
+        <!-- B · Kojo: GH₵300 still owed -->
+        <div data-hf-id="hf-ze6k" class="part" id="s5-b">
+          <div data-hf-id="hf-ol2v" class="name" id="s5-b-name">Kojo</div>
+          <div data-hf-id="hf-6e3o" class="eq" id="s5-b1" style="top: 384px"><span data-hf-id="hf-gznq" class="v">GH₵300</span><span data-hf-id="hf-iooy" class="t">still owed</span></div>
+          <div data-hf-id="hf-0g35" class="win" id="s5-b-win1" style="left: 70px; top: 560px; width: 940px; height: 232px">
+            <img data-hf-id="hf-yitv" src="assets/ui/review_full.png" alt="" style="width: 940px; top: -1446px">
+          </div>
+          <div data-hf-id="hf-onwi" class="win" id="s5-b-win2" style="left: 70px; top: 836px; width: 940px; height: 342px">
+            <div data-hf-id="hf-qxon" style="position: absolute; left: 0; top: -2531px; width: 940px; height: 4413px; background: url('assets/ui/story_full.png') 0 0 / 100% 100% no-repeat"></div>
+          </div>
+        </div>
+        <!-- C · Money Story -->
+        <div data-hf-id="hf-05ud" class="part" id="s5-c">
+          <div data-hf-id="hf-7w4q" class="win" id="s5-c-win" style="left: 150px; top: 214px; width: 780px; height: 560px">
+            <img data-hf-id="hf-az98" src="assets/ui/story_full.png" alt="" style="width: 780px; top: -560px">
+          </div>
+          <div data-hf-id="hf-hnc7" class="rows">
+            <div data-hf-id="hf-qvco" class="row" id="s5-r1"><div data-hf-id="hf-sijt" class="top"><span data-hf-id="hf-4665" class="lab">Money received</span><span data-hf-id="hf-0qfn" class="amt" style="color: #445ba1">GH₵2,300</span></div>
+              <div data-hf-id="hf-7wp4" class="sub">Cash GH₵900 · MoMo GH₵1,200 · Abena’s payment GH₵200</div></div>
+            <div data-hf-id="hf-zj8j" class="row" id="s5-r2"><div data-hf-id="hf-8kpp" class="top"><span data-hf-id="hf-ggog" class="lab">Money paid out</span><span data-hf-id="hf-i1q7" class="amt" style="color: #95603e">GH₵930</span></div>
+              <div data-hf-id="hf-rgmf" class="sub">Stock GH₵700 · Delivery GH₵80 · Taken home GH₵150</div></div>
+            <div data-hf-id="hf-vl4i" class="row" id="s5-r3"><div data-hf-id="hf-9rms" class="top"><span data-hf-id="hf-uivz" class="lab">People owe you</span><span data-hf-id="hf-4x8y" class="amt">GH₵700</span></div>
+              <div data-hf-id="hf-pfno" class="sub">Abena GH₵400 · Kojo GH₵300</div></div>
+          </div>
+          <div data-hf-id="hf-vzu8" class="foot" id="s5-foot">The GH₵500 Bank → MoMo transfer is excluded from both totals.</div>
+        </div>
+      </div>
+      <script>
+        (function () {
+          const tl = gsap.timeline({ paused: true });
+          const up = (id, at, d) => tl.fromTo(id, { opacity: 0, y: d || 28 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, at);
+          // A — Abena (local 0–4.2): "Abena's two hundred is not a new sale. She owes four hundred now."
+          tl.set("#s5-a", { opacity: 1 }, 0);
+          up("#s5-a-name", 0.1);
+          up("#s5-a1", 0.4);
+          up("#s5-a2", 0.95);
+          tl.fromTo("#s5-a-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "power2.inOut" }, 2.55);
+          up("#s5-a3", 2.75);
+          tl.fromTo("#s5-a-win", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 1.2);
+          tl.to("#s5-a", { opacity: 0, y: -40, duration: 0.3, ease: "power2.in" }, 4.0);
+          // B — Kojo (4.3–6.4)
+          tl.fromTo("#s5-b", { opacity: 0 }, { opacity: 1, duration: 0.01 }, 4.3);
+          up("#s5-b-name", 4.32);
+          up("#s5-b1", 4.5);
+          tl.fromTo("#s5-b-win1", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 4.65);
+          tl.fromTo("#s5-b-win2", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 4.95);
+          tl.to("#s5-b", { opacity: 0, y: -40, duration: 0.3, ease: "power2.in" }, 6.25);
+          // C — Money Story (6.55–11.6): lands on the score's big lift, then holds steady
+          tl.fromTo("#s5-c", { opacity: 0 }, { opacity: 1, duration: 0.01 }, 6.55);
+          tl.fromTo("#s5-c-win", { opacity: 0, y: 40, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "power3.out" }, 6.55);
+          up("#s5-r1", 6.6, 22); // beat-locked: 47.6s strong cue — boom + full strings on "came in"
+          up("#s5-r2", 8.55, 22); // "…went out" ~49.6s
+          up("#s5-r3", 9.4, 22);
+          up("#s5-foot", 10.0, 14);
+          window.__timelines["s5-place"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+  </head>
+  <body>
+    <template>
+      <style>
+        #s4-review { position: absolute; inset: 0; overflow: hidden; background: #f7f7fa; }
+        #s4-review .win { position: absolute; left: 70px; top: 236px; width: 940px; height: 1130px; border-radius: 40px; overflow: hidden;
+          background: #f7f7fa; border: 2px solid #e1deeb; box-shadow: 0 30px 80px rgba(41,38,61,0.16); will-change: transform; }
+        #s4-review .layer { position: absolute; left: 0; top: 0; width: 940px; opacity: 0; will-change: transform; }
+        #s4-review .layer img { display: block; width: 940px; }
+        #s4-review .bar { position: absolute; left: 10px; width: 8px; height: 150px; border-radius: 4px; background: #5b49c7; transform-origin: 50% 0%; }
+        #s4-review .touch { position: absolute; left: 0; top: 0; width: 76px; height: 76px; border-radius: 50%; background: rgba(91,73,199,0.28);
+          border: 3px solid rgba(91,73,199,0.9); opacity: 0; will-change: transform, opacity; }
+        #s4-review .ring { position: absolute; left: 0; top: 0; width: 76px; height: 76px; border-radius: 50%; border: 3px solid #5b49c7; opacity: 0; }
+        #s4-review .focus { position: absolute; left: 106px; top: 790px; width: 868px; height: 386px; border-radius: 30px;
+          border: 4px solid #5b49c7; opacity: 0; }
+      </style>
+      <div data-hf-id="hf-k98f" id="s4-review" data-composition-id="s4-review" data-width="1080" data-height="1920">
+        <div data-hf-id="hf-6x3k" class="win" id="s4-win">
+          <div data-hf-id="hf-kxbt" class="layer" id="s4-type"><img data-hf-id="hf-p9po" src="assets/ui/type_full.png" alt=""></div>
+          <div data-hf-id="hf-p319" class="layer" id="s4-clar"><img data-hf-id="hf-g5ns" src="assets/ui/clarify_full.png" alt=""></div>
+          <div data-hf-id="hf-8lnd" class="layer" id="s4-momo"><img data-hf-id="hf-yg57" src="assets/ui/clarify_momo_full.png" alt=""></div>
+          <div data-hf-id="hf-sp70" class="layer" id="s4-rev">
+            <img data-hf-id="hf-oycs" src="assets/ui/review_full.png" alt="">
+            <div data-hf-id="hf-t84d" class="bar" id="s4-b1" style="top: 1090px"></div><div data-hf-id="hf-f87s" class="bar" id="s4-b2" style="top: 1283px"></div>
+            <div data-hf-id="hf-vrqb" class="bar" id="s4-b3" style="top: 1476px"></div><div data-hf-id="hf-hcl6" class="bar" id="s4-b4" style="top: 1669px"></div>
+            <div data-hf-id="hf-8ame" class="bar" id="s4-b5" style="top: 1862px"></div><div data-hf-id="hf-655a" class="bar" id="s4-b6" style="top: 2055px"></div>
+            <div data-hf-id="hf-66mf" class="bar" id="s4-b7" style="top: 2248px"></div><div data-hf-id="hf-uy6j" class="bar" id="s4-b8" style="top: 2441px"></div>
+          </div>
+          <div data-hf-id="hf-qu3e" class="layer" id="s4-saved"><img data-hf-id="hf-qio5" src="assets/ui/saved_full.png" alt=""></div>
+        </div>
+        <div data-hf-id="hf-6v8w" class="focus" id="s4-focus"></div>
+        <div data-hf-id="hf-8upk" class="ring" id="s4-ring"></div>
+        <div data-hf-id="hf-zszs" class="touch" id="s4-touch"></div>
+      </div>
+      <script>
+        (function () {
+          const tl = gsap.timeline({ paused: true });
+          const K = 940 / 390; // css px -> film px inside the window
+          const show = (id, at, y0, from) => {
+            tl.set("#s4-win .layer", { opacity: 0 }, at);
+            tl.fromTo(id, { opacity: 1, y: -y0 * K + (from || 0) }, { opacity: 1, y: -y0 * K, duration: from ? 0.45 : 0.01, ease: "power3.out", immediateRender: false }, at);
+          };
+          // tap = touch dot moves in, presses, ripples (cursor-click-ripple, touch variant)
+          const tap = (x, y, at) => {
+            tl.fromTo("#s4-touch", { x: x - 38 + 60, y: y - 38 + 90, opacity: 0, scale: 1 },
+              { x: x - 38, y: y - 38, opacity: 1, duration: 0.32, ease: "power2.out", immediateRender: false }, at - 0.34);
+            tl.to("#s4-touch", { scale: 0.78, duration: 0.09, ease: "power2.in" }, at);
+            tl.to("#s4-touch", { scale: 1, opacity: 0, duration: 0.3, ease: "power2.out" }, at + 0.09);
+            tl.fromTo("#s4-ring", { x: x - 38, y: y - 38, scale: 0.6, opacity: 0.9 },
+              { scale: 2.4, opacity: 0, duration: 0.55, ease: "power2.out", immediateRender: false }, at + 0.04);
+          };
+          tl.fromTo("#s4-win", { scale: 1.04, y: 30 }, { scale: 1, y: 0, duration: 0.6, ease: "power3.out" }, 0);
+          // 1 — the story as typed (complete example) → Understand my story
+          show("#s4-type", 0, 400);
+          tap(540, 1330, 0.55);
+          // 2 — CashNarra asks for the missing account
+          show("#s4-clar", 0.88, 228, 50);
+          // the question that needs her answer: slow push + focus frame on "Which account paid for delivery?"
+          tl.fromTo("#s4-win", { scale: 1 }, { scale: 1.025, duration: 5.2, ease: "sine.inOut", immediateRender: false }, 1.0);
+          tl.fromTo("#s4-focus", { opacity: 0, scale: 1.04 }, { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }, 4.6); // "Which account paid for delivery?" 35.0s
+          tl.to("#s4-focus", { opacity: 0.45, duration: 0.8, ease: "sine.inOut" }, 5.2);
+          tl.to("#s4-focus", { opacity: 1, duration: 0.6, ease: "sine.inOut" }, 6.0);
+          tl.to("#s4-focus", { opacity: 0, duration: 0.2, ease: "power1.in" }, 6.75);
+          tl.to("#s4-win", { scale: 1, duration: 0.35, ease: "power2.out" }, 6.6);
+          // 3 — the owner chooses MoMo, then reviews
+          tap(540, 1039, 6.78); // her answer, "MoMo." 37.15s
+          show("#s4-momo", 6.88, 228);
+          tap(540, 1335, 7.5);
+          show("#s4-rev", 7.62, 228, 60);
+          for (let i = 1; i <= 8; i++) {
+            tl.fromTo("#s4-b" + i, { scaleY: 0 }, { scaleY: 1, duration: 0.35, ease: "power3.out" }, 7.9 + i * 0.06);
+          }
+          tl.to("#s4-rev", { y: -809 * K, duration: 1.35, ease: "power2.inOut" }, 8.1);
+          // 4 — save the batch
+          tap(540, 1299, 9.55); // "…and I save." ~39.9s
+          show("#s4-saved", 9.85, 300, 40); // saved chime 40.3s
+          window.__timelines["s4-review"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

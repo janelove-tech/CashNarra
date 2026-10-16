@@ -1,0 +1,533 @@
+# Storyline handoff package
+
+## User
+
+# CashNarra: Brand, UI, UX, and Product Design Guide
+
+Act as a brand strategist, creative director, and senior product designer experienced in conversational AI, financial UX, accessibility, and practical design systems.
+
+Research and create the best coherent branding, UI, and UX direction for CashNarra, then turn it into a **complete brand and product-design guide we can actually build with**.
+
+Make specific decisions. The deliverable must connect positioning, identity, interface, behaviour, content, and implementation. Give designers, developers, AI coding tools, and marketers a shared source of truth.
+
+Optimise for **distinctiveness, trust, effortless use, accessibility, and a small team’s ability to execute consistently**.
+
+## 1. Read and reconcile the sources
+
+Read every available CashNarra source completely. List the sources you actually reviewed and identify any you cannot access.
+
+Follow the latest explicit decisions. Distinguish agreed requirements, earlier proposals, deferred features, and your new recommendations. Treat previous chatbot research as claims to verify.
+
+Use CashNarra’s sources and this brief for requirements. Do not import branding, preferences, architecture, or decisions from unrelated projects.
+
+Preserve:
+
+**Name:** CashNarra 
+**Tagline:** Tell Your Money Story. See the Numbers. 
+**Product structure:** Record → Understand → Plan 
+**Experience principle:** Serious money. Light interaction.
+
+CashNarra is a **conversational financial memory and navigation system**. Users describe ordinary money activity; CashNarra turns it into trustworthy records, useful explanations, and realistic goal forecasts.
+
+Its core experience is:
+
+**Tell → Understand → Clarify what matters → Review/save simply → See the meaning.**
+
+The sources’ ideas about warm financial minimalism, an abstract “Narra Pulse,” or particular gamification mechanics are design proposals to evaluate, not automatically approved visual assets.
+
+Respect any genuinely approved logo, palette, or component system found in the sources. If none exists, make a clear recommendation rather than inventing an existing identity.
+
+### Scope the design must support
+
+- Personal/business workspaces and manually tracked Cash, Bank, and MoMo accounts.
+- Text narration first, with a coherent path to short voice recording.
+- Multiple financial events extracted from one narration.
+- Important clarifications, simple batch review, and conversational corrections.
+- Income, expenses, transfers, loans, owner money, receivables/payables, and settlements.
+- An accessible ledger with traceable records and totals.
+- Daily, weekly, and monthly Money Stories.
+- Optional goals, current-pace forecasts, and progressively richer what-if scenarios.
+- Forgiving consistency and review indicators.
+- Useful exports and privacy/settings controls.
+
+Initial users include people and small businesses in Ghana who find conventional record-keeping cumbersome. Design for differing financial/digital confidence, modest phones, low data usage, and unreliable connectivity. Use Ghanaian relevance thoughtfully without stereotyping or assuming all users behave identically.
+
+CashNarra initially records and explains money. It does not hold funds, operate a wallet, initiate users’ payments, offer credit, recommend securities, or file taxes. Automatic bank/MoMo capture and a full ERP are outside the initial scope.
+
+Do not let the visual language or labels imply those capabilities.
+
+## 2. Research before choosing the direction
+
+Use current primary sources: official brand/design systems, product documentation, published research, accessibility standards, and relevant regulator guidance. State the research date and cite material claims.
+
+Study a focused selection of relevant references, potentially including:
+
+- Duolingo: clear next actions, identity coherence, habit mechanics, and craft.
+- Monzo or Wise: approachable financial presentation and brand/product consistency.
+- Finch or Todoist: forgiving progress and useful motivation.
+- Relevant goal-planning products: forecast communication and progress.
+- GOV.UK/W3C: accessible questions, review, error recovery, and interaction standards.
+- Human–AI interaction guidance: explaining capability, uncertainty, control, and correction.
+
+For each important lesson, explain **what applies to CashNarra, what needs adapting, and what evidence is missing**.
+
+Distinguish marketing-site patterns from authenticated product UI. Distinguish another product’s measured results from hypotheses for CashNarra.
+
+Use references to understand principles. Create CashNarra’s own identity, interaction language, and signature patterns.
+
+Keep the research synthesis concise enough that the actual guide receives most of the attention.
+
+## 3. Choose one coherent creative direction
+
+Develop **three meaningfully different directions**, each with:
+
+- A clear concept and audience rationale.
+- Its emotional character and distinctive visual device.
+- Indicative palette, typography, logo approach, and UI treatment.
+- A short example of how the home screen would express it.
+- Strengths, risks, accessibility implications, and production burden.
+
+These should differ in concept and experience, not merely colour.
+
+Compare them, choose **one recommended direction**, and continue through the complete guide. Do not stop to ask me which option to pick.
+
+Make the chosen direction recognisable without relying on a logo in every corner. Explain how it expresses financial memory, clarity, and direction toward goals.
+
+Do not choose stock finance or AI imagery merely because of the category. If using familiar conventions, explain how CashNarra makes them its own.
+
+Aim for character and visual craft that remain clear, fast, and credible during ordinary financial work.
+
+## 4. Define the brand foundation
+
+For the chosen direction, provide:
+
+- Positioning, priority audiences, core problem, promise, and meaningful differentiation.
+- A concise brand story and personality.
+- Concrete design principles and the behaviour each principle produces.
+- Messaging hierarchy: tagline, main value proposition, supporting messages, and proof.
+- How the brand changes tone between onboarding, routine work, uncertainty, mistakes, and difficult financial news.
+
+Keep the language human and financially honest. Explain what CashNarra can reasonably claim before launch and what requires evidence.
+
+Write actual messaging examples. Avoid interchangeable descriptions such as “modern, premium, clean, innovative” without translating them into decisions.
+
+## 5. Specify the visual identity precisely
+
+### Logo and brand device
+
+Recommend a wordmark, symbol/app-icon approach, and a distinctive supporting graphic language.
+
+Specify construction intent, proportions, clear space, minimum sizes, horizontal/compact lockups, monochrome/reversed versions, and acceptable backgrounds.
+
+Explain behaviour at favicon/app-icon sizes, under icon masks, in print, and without animation.
+
+If creating an original mark, favour a reproducible vector design. Label conceptual artwork and pending refinement accurately. Do not claim trademark clearance or ownership of borrowed assets.
+
+Define whether CashNarra needs an AI visual presence or mascot. Justify the decision against trust, usefulness, and production cost.
+
+### Colour
+
+Provide exact **HEX values** and roles for:
+
+- Primary brand colour and supporting accents.
+- Backgrounds, surfaces, text hierarchy, borders, and focus.
+- Primary/secondary actions.
+- Success, warning, error, neutral, and unresolved states.
+- Financial directions/categories and charts.
+- Light and dark themes.
+
+Separate brand colours from financial/status meaning. Money going out is not automatically an error; money coming in is not automatically a healthy outcome.
+
+Include intended foreground/background pairs and measured contrast ratios where you can calculate them. Clearly mark checks that remain unverified.
+
+### Typography
+
+Choose a small practical font system with exact family names, roles, weights, sizes, line heights, and letter spacing.
+
+Check commercial licensing, font availability, loading costs, fallbacks, and Ghana cedi symbol support.
+
+Specify tabular numerals, amount alignment, decimals, negative values, long names, large figures, dates, and mixed currencies.
+
+### Supporting assets
+
+Specify icon family/style, stroke rules, illustration, photography, shape language, spacing, radii, elevation, and texture/gradient rules.
+
+Show how the selected style carries across product, marketing, reports, and print. Give concrete appropriate/inappropriate examples.
+
+## 6. Design the information architecture and core journeys
+
+Recommend a small clear navigation structure for mobile and desktop. Explain where recording, records, accounts, Money Stories, goals, and settings belong.
+
+Make one contextually useful next action obvious. Explain how the home changes for a new user, unresolved records, a reviewed day, and a returning user catching up.
+
+Keep conversation available without forcing every task through a blank chatbot screen.
+
+Define these journeys step by step:
+
+1. First use and the first useful recorded story.
+2. Text narration containing several events.
+3. Voice capture, transcript review, and accessible text fallback.
+4. Necessary clarification and batch save.
+5. Correcting, splitting, moving, or removing an incorrect record.
+6. Recording an outstanding debt’s partial/full settlement.
+7. Checking a period and opening its Money Story.
+8. Creating an optional goal and inspecting its forecast.
+9. Exploring a what-if scenario without altering actual records.
+10. Offline capture, reconnection, and safe recovery.
+
+For each, specify the user’s intent, screens/actions, key copy, what can be skipped, and where control or safeguards are needed.
+
+Give value early while placing necessary authentication, privacy information, and permissions at appropriate moments.
+
+Separate first-release journeys from future capabilities. Preserve a simple usable product while giving later features a natural home.
+
+## 7. Give screen and component specifications
+
+Provide concrete specifications for the essential screens:
+
+- First-use/onboarding.
+- Home/Today.
+- Narration and voice capture.
+- Clarification and batch review.
+- Ledger/search/filter and transaction detail/provenance.
+- Accounts/workspace selection.
+- Money Story/report detail.
+- Goals, forecast explanation, and what-if exploration.
+- Relevant privacy/settings controls.
+
+For each, define information hierarchy, sections, primary/secondary actions, actual sample copy, responsive behaviour, and reuse of components.
+
+Show the important screens visually if tools permit. Otherwise provide precise layout specifications; do not pretend text descriptions are rendered mockups.
+
+Use one coherent fictional dataset throughout. Check the arithmetic and relationships between examples. Label it as illustrative, and avoid lorem ipsum.
+
+Define a manageable component library: navigation, buttons, inputs, capture controls, clarification cards, record rows, review summaries, filters, account cards, status badges, progress, charts, notices, dialogs, and feedback.
+
+Specify relevant default, focus, pressed, disabled, loading, empty, error, and success states, along with dimensions, spacing, typography, and accessibility behaviour.
+
+## 8. Make financial meaning and AI status visible
+
+Define distinct states for:
+
+**Captured locally → Waiting for processing → Draft understood → Needs clarification → Ready to review → Saving → Saved.**
+
+Show what happens when recording permissions are denied, processing fails, the connection drops during saving, a possible duplicate is found, or a previous record changes.
+
+Never say “Saved” before the authoritative save succeeds. Let users recover without re-entering everything.
+
+Clarify the difference between:
+
+- Draft and confirmed records.
+- Money received and revenue.
+- Cash outflow and expense.
+- Transfers and spending.
+- Recorded/declared balances and externally verified balances.
+- Checked-in days, reviewed records, and reconciled periods.
+- Goal allocations and money actually moved.
+- Forecast scenarios and actual financial results.
+
+Avoid treating missing information as zero or an absence of records as proof of no financial activity.
+
+Let important totals reveal the records, period, and assumptions behind them. Avoid unsupported “profit,” confidence percentages, and exact completion dates.
+
+For forecasts, specify pace, assumptions, data period, insufficient-data states, uncertainty wording, and explanations of changes. Allow “I cannot estimate a useful date yet.”
+
+For charts, choose appropriate chart types, labels, units, legends, accessible alternatives, category colours, negative-value treatment, and missing-data presentation. Make summaries understandable before the user studies a chart.
+
+## 9. Establish voice, UX writing, and content patterns
+
+Define CashNarra’s writing voice, reading level, naming conventions, and glossary of human terms for financial concepts.
+
+Provide actual before/after examples and a reusable copy matrix covering:
+
+- First narration and onboarding.
+- Important ambiguity.
+- Draft review and successful saving.
+- Corrections and duplicate detection.
+- Offline and processing failures.
+- Missing opening balance or incomplete period.
+- Outstanding debt.
+- Forecast delays and insufficient data.
+- No-activity/rest days and catch-up.
+- Weekly/monthly recap.
+- Privacy and permission explanation.
+
+Use plain respectful language. Avoid shame, false reassurance, exaggerated AI personality, and financial guarantees.
+
+Support Ghanaian English naturally while keeping the language internationally understandable. Explain localisation readiness without inventing translations or forcing slang.
+
+## 10. Define ethical motivation and motion
+
+Develop a restrained habit system around useful record-keeping, review, and understanding.
+
+Specify rhythm choices, what counts as a check-in, rest/no-activity days, catch-up, milestones, reminder controls, and what the user receives as a meaningful reward.
+
+Keep engagement indicators separate from evidence of financial completeness or forecast reliability.
+
+Avoid incentives tied to spending, borrowing, wealth, transaction volume, or public financial comparison. Do not copy another product’s streak logic without testing whether it fits CashNarra.
+
+Define celebrations by significance and emotional context. Completing useful records can be satisfying; recording a loan or reporting a loss needs an appropriate tone.
+
+Specify motion durations, easing, listening/processing feedback, progress transitions, reduced-motion alternatives, and optional sound/haptics.
+
+Animation must not delay recording or obscure numbers. Identify what is essential at launch and what is optional polish.
+
+## 11. Integrate accessibility, privacy, and applicable compliance
+
+Set **WCAG 2.2 AA as the design target**, verify current relevant criteria, and distinguish design targets from legal requirements and actual tested conformance.
+
+Cover contrast, keyboard/focus, screen readers, status announcements, text resizing/reflow, colour independence, touch targets, accessible authentication, alternatives to gestures/audio, and reduced motion.
+
+Distinguish minimum standards from more comfortable product choices.
+
+Assume Ghana is the initial market; verify obligations that affect notices, consent/lawful processing, permissions, marketing claims, third-party data, financial explanations, and users’ data rights. Identify facts that could change applicability.
+
+Assess relevant DPC, Bank of Ghana, SEC, and GRA requirements where the product’s features or claims create a trigger. The absence of money movement alone does not establish a licensing exemption.
+
+Separate binding duties, official guidance, recommended safeguards, and unresolved legal interpretation. Do not automatically apply foreign financial/privacy rules to CashNarra.
+
+Design relevant controls for notifications, recording, retention, account deletion/export, privacy on shared devices, and sharing reports.
+
+Use brief contextual explanations with accessible detail on demand. Keep financial/personal information out of public-facing or shared assets by default unless the user deliberately chooses to include it.
+
+Check licences for fonts, icons, images, illustrations, and brand assets. Flag trademark questions requiring actual clearance.
+
+Never invent regulator approval, certification, bank affiliation, security guarantees, testimonials, or performance evidence.
+
+## 12. Deliver the complete build guide and handoff
+
+Organise the result into:
+
+1. Recommended direction and rationale.
+2. Source/decision inventory and concise research lessons.
+3. Creative-direction comparison and selection.
+4. Brand foundation and messaging.
+5. Visual identity and exact specifications.
+6. Information architecture and core journeys.
+7. Screen specifications and component/state library.
+8. Financial/AI presentation and data visualisation.
+9. Voice and ready-to-use copy.
+10. Habit, motion, and notification rules.
+11. Accessibility, privacy, and applicable compliance checks.
+12. Marketing/report applications.
+13. Design tokens and implementation handoff.
+14. Validation plan, first-release priorities, and one-page build brief.
+
+For marketing/report applications, demonstrate the same identity on a landing-page hero, social graphic, onboarding email, exported report, and shareable Money Story. Make clear what the real product can deliver.
+
+Provide a compact, valid token JSON and matching CSS custom properties for the selected system. Include meaningful semantic names, light/dark values, typography, spacing, radii, elevation, and motion. Keep values consistent with the guide.
+
+Explain how components and assets should be named and documented so design files and implementation stay aligned. If a stack has actually been approved in the sources, respect it; otherwise keep the handoff framework-neutral.
+
+When tools permit, create a readable guide, a visual identity/specimen board, selected screen examples, and editable assets. Label generated files, proposed concepts, and pending assets accurately. The guide must remain complete and usable even when asset-generation tools are unavailable.
+
+Provide a practical validation plan with representative users, mobile devices, accessibility checks, and tasks involving narration, correction, debt settlement, offline recovery, and forecast understanding.
+
+Recommend measures such as time to first useful record, task success, clarification burden, correction recovery, comprehension, and consistent use. Treat proposed targets as hypotheses, not achieved results.
+
+Finish with a **one-page implementation brief** that a designer or AI coding tool can use immediately: selected direction, fixed values, core navigation, reusable components, signature behaviours, required safeguards, and first build priorities.
+
+Make routine creative decisions yourself. State assumptions and meaningful unresolved questions, but complete the recommendation.
+
+**Final quality check:** Does every brand promise have an honest product expression? Do the colours, copy, components, financial examples, and tokens agree? Can a small team reproduce this consistently? Is CashNarra distinctive while still easy to understand and use?
+
+Resolve contradictions before delivering. Produce the actual guide with specific decisions, examples, and specifications.
+
+## ChatGPT
+
+I’ll read the CashNarra source, verify the design and regulatory references, and build a complete guide with editable assets and screen examples. I’ll use the Library and document skills to make the handoff readable and reusable.
+
+## ChatGPT
+
+The source changes direction over time. I’m treating the latest Record → Understand → Plan vision and your current scope as controlling; earlier ideas about automatic capture, full accounting, and gamification remain proposals. I’m also checking that the design clearly separates recorded money from bank-verified balances.
+
+## ChatGPT
+
+I’ve finished the concept history and found no approved logo, palette, component system, or technology stack. My emerging recommendation is “Storyline”: a warm journal-like interface with clear numbers and a distinctive line-and-marker device. The habit indicators will describe check-ins and reviews without suggesting the finances are complete.
+
+## ChatGPT
+
+“Storyline” is the strongest fit: it connects a user’s words to reviewable records, then to a Money Story and optional goal. Two checks are shaping the guide: BoG licensing analysis must consider the actual service model, including PFTSP, and GRA’s older software guidance needs checking against the VAT changes effective in 2026. I’ll distinguish those questions from confirmed design requirements.
+
+## ChatGPT
+
+The financial examples are now fixed and arithmetically consistent: one fictional workspace, eight new records, a partial debt settlement, an internal transfer, and a separate goal allocation. I’m building the guide and visual specimens around those same figures, with light/dark tokens and an original vector mark.
+
+## User
+
+don't forget to read and understand the recommend technology stack chat oh
+
+## User
+
+don't forget to read and understand the recommend technology stack chat oh
+
+## ChatGPT
+
+I’ll retrieve and read the technology-stack conversation, then align the handoff with its recommendation. So far I’ve reviewed the stack research prompt; I haven’t yet read the resulting recommendation. I’m using the Personal Context skill to find that CashNarra chat.
+
+## ChatGPT
+
+I found the chat’s recommendation: Next.js/React/TypeScript, managed Supabase, and Vercel, with text-first capture, atomic saving, and short voice clips later. I also recovered its launch conditions, including provider retention checks and unresolved Ghanaian regulatory questions. The retrieval exposes excerpts rather than the full transcript, so I’ll state that limit and align the handoff with the recommendation recovered.
+
+## ChatGPT
+
+The full technology-stack file is now available. I’ll read it completely and update the guide against that source, replacing the incomplete chat excerpts in the source inventory.
+
+## ChatGPT
+
+I’ve read the complete file, including the OVH discussion and the final free-development decision. It confirms Vercel as the intended production host, managed Supabase retained, and CSS Modules; development starts locally with Supabase Free and mocked AI. I’m updating the guide to match, including the retention proposal, voice upload cap, and distinction between pace estimates and affordability.
+
+## ChatGPT
+
+The content and stack alignment are complete. I’m checking the rendered guide and screen specimens now. The examples also show declared debt commitments so the goal estimate stays conditional and doesn’t imply the user can afford that pace.
+
+## ChatGPT
+
+The screen specimens are rendered, including the dark theme and small-phone layouts. I’m checking the final document layout, editable assets, colour contrast, and financial examples for consistency before packaging the handoff.
+
+## ChatGPT
+
+The handoff now follows the complete technology chat: Next.js with CSS Modules, managed Supabase, Vercel as the intended production host, and local development with mocked AI first. The guide also separates recorded balances, reviewed activity, debt settlements, and goal allocations so the interface’s labels match what the numbers mean.
+
+## ChatGPT
+
+The visual checks caught and corrected a dark-theme text-colour issue. The intended colour pairs pass their contrast checks, and the phone specimens reflow at 320px. I’m adding a complete fictional report and export example so developers can see how the same records carry through to totals and reporting.
+
+## ChatGPT
+
+The guide is ready for its final page-by-page check. It includes all ten journeys, component and state specifications, ready-to-use copy, Ghana-specific compliance questions, and the implementation brief. The handoff also contains 14 editable screen specimens and a checked eight-record fictional report.
+
+## ChatGPT
+
+The report reconciles to the shared example: GH₵2,300 received, GH₵930 out, and GH₵5,970 in recorded closing balances. I’m finishing the document checks and packaging the SVG marks, fonts and licences, tokens, screens, report, and editable guide together.
+
+## ChatGPT
+
+The guide has passed the page checks, and all 96 tested colour pairs meet their stated thresholds. I’m completing the asset manifest and final package, with proposed artwork and launch questions clearly labelled.
+
+## ChatGPT
+
+The final build kit is assembled. I’m saving the guide, visual specimens, one-page brief, and editable package now.
+
+## ChatGPT
+
+Completed. I recommend **Storyline**: a warm financial journal connecting narration, reviewable records, and traceable numbers.
+
+I read the complete technology-stack chat and aligned the handoff with its final decisions, including **local/free development first**.
+
+- [CashNarra_Brand_and_Product_Design_Guide.pdf](sandbox:/workspace/scratch/fcec2d85419c/cashnarra_handoff/CashNarra_Brand_and_Product_Design_Guide.pdf) — complete 49-page guide with cited research.
+- [CashNarra_Visual_Specimens.html](sandbox:/workspace/scratch/fcec2d85419c/cashnarra_handoff/CashNarra_Visual_Specimens.html) — identity board, 14 screens, and marketing examples.
+- [CashNarra_Storyline_Build_Kit.zip](sandbox:/workspace/scratch/fcec2d85419c/CashNarra_Storyline_Build_Kit.zip) — editable guide, SVG assets, fonts/licences, JSON/CSS tokens, screens, and fictional report.
+- [CashNarra_Implementation_Brief.pdf](sandbox:/workspace/scratch/fcec2d85419c/cashnarra_handoff/CashNarra_Implementation_Brief.pdf) — one-page starting brief.
+
+Financial arithmetic and 96 contrast pairs were checked. Proposed artwork, implementation testing, and unresolved launch questions are clearly labelled.
+
+## User
+
+the UI is ugly... it does not follow best practices for design principles, engaging factors, etc... feels AI made... not something an expert UI designer and developer made!...
+
+## User
+
+the UI is ugly... it does not follow best practices for design principles, engaging factors, etc... feels AI made... not something an expert UI designer and developer made!...
+
+## ChatGPT
+
+You’re right. The screens rely on repetitive cards, weak hierarchy, and too much explanatory copy. I’ll redesign them with stronger typography, more deliberate layouts, a better recording experience, and useful progress cues, then update the guide to match.
+
+## User
+
+the UI is ugly... it does not follow best practices for design principles, engaging factors, etc... feels AI made... not something an expert UI designer and developer made!... i need something that even the ui alone wants someone to use it... the logo too is not memorable enough... also include in the package marketing flyers that are engaging and look like it was designed by a top-notch graphic designer!
+
+## ChatGPT
+
+The revision needs to cover the whole identity: the app, a more memorable mark, and marketing flyers with the same visual character. I’ll make the screens interactive so you can judge how the recording and review experience feels, alongside the visual design.
+
+
+## ChatGPT
+
+I’ve inspected the screens. The hierarchy is too flat, the repeated boxes make every element compete, and the thin “N” mark has little presence at small sizes. Passing contrast checks didn’t resolve those design problems.
+
+I’m developing a stronger wordmark and a bolder, more focused interface: one inviting place to record, readable financial summaries, and a clear path from your words to saved records.
+
+
+## ChatGPT
+
+The new direction pairs ink violet and warm apricot with more expressive typography. The mark will use two interlocking speech shapes to suggest narration and an “N.”
+
+For the marketing package, I’ll create three distinct flyer layouts: a bold launch poster, a narration-to-record demonstration, and a campaign image featuring a fictional business owner. I’m using image generation for that photograph and editable vector assets for the logo and layouts.
+
+
+## ChatGPT
+
+![Generated image](https://chatgpt.com/backend-api/estuary/content?id=file_00000000bd78820e8d9f371356d6eade&ts=497753&p=fs&cid=1&sig=182286b9621afa7402cd303007f3c87ab7a20ccddc1e548db6fb4bebd1e5271b&v=0)
+
+## ChatGPT
+
+The layouts now give each task a different shape: Today invites narration, Records prioritises scanning, Money Stories explain the numbers, and Plan shows progress with its assumptions. The logo is a filled shape that should hold up better at app-icon size.
+
+I also caught a font limitation: Manrope lacks the cedi glyph. I’ll use it for headings and keep Inter for amounts and financial tables.
+
+
+## ChatGPT
+
+The flyers are taking shape around three different compositions: oversized typography, a worked narration example, and editorial photography. They’ll use the same mark and palette as the app, with copy that reflects the planned product rather than implying it is already launched.
+
+I’m wiring the prototype so you can try clarification, review, correction, record filtering, and a goal scenario.
+
+
+## ChatGPT
+
+The first interactive version and all three flyer layouts are built. I’m checking the rendered screens on narrow phones and desktop now, including text fit, control spacing, keyboard access, and whether corrections update the right totals.
+
+
+## ChatGPT
+
+The phone check caught an important issue: the balance summaries pushed the recording button too low. I’ve moved the secondary figures into the Money Story so the main action appears earlier.
+
+Two muted-text colour pairs also missed the contrast target. I’ve darkened that token and am rerunning the checks.
+
+
+## ChatGPT
+
+The six flyer exports are rendered: three designs in feed and story sizes. The spacing check caught an overlap in the record-demo flyer, which I’ve corrected.
+
+I’m finishing the interaction checks now, particularly whether corrections and debt payments update the figures correctly, and whether what-if changes stay separate from actual records.
+
+
+## ChatGPT
+
+The interaction checks pass: draft edits update totals, partial payments reduce the remaining debt, and what-if changes leave actual records untouched. I’m now checking the PDFs and packaging the revised guide, logo assets, editable layouts, and six flyer exports.
+
+
+## ChatGPT
+
+The kit is assembled: the interactive UI, proposed logo system, revised guide, one-page build brief, and three flyer designs in both feed and story formats. I’m completing the PDF layout check and saving the files.
+
+
+## ChatGPT
+
+I found and corrected a few stale specifications in the guide, including navigation dimensions and touch targets. Accounts and privacy settings are also reachable from the mobile workspace menu. The final check is aligning those details with the tokens before delivery.
+
+
+## ChatGPT
+
+The visual and interaction checks are complete. I’m saving the revised package now: the interactive UI, new vector logo, updated guide, and six marketing flyer exports.
+
+
+## ChatGPT
+
+Rebuilt the UI and identity with **stronger typography, a bolder speech mark, clearer layouts, and an interactive recording flow**.
+
+![Redesigned CashNarra UI, logo, and marketing flyers](sandbox:/workspace/scratch/fcec2d85419c/cashnarra_v2/CashNarra_Design_Overview.png)
+
+- [CashNarra_Interactive_Preview.html](sandbox:/workspace/scratch/fcec2d85419c/cashnarra_v2/CashNarra_Interactive_Preview.html) — try recording, review, corrections, and goal scenarios.
+- [CashNarra_Design_Kit_v2.zip](sandbox:/workspace/scratch/fcec2d85419c/CashNarra_Design_Kit_v2.zip) — editable SVG logo, tokens, screens, updated guide, and **three flyer designs in feed and story sizes**.
+- [CashNarra_Brand_and_Product_Design_Guide_v2.pdf](sandbox:/workspace/scratch/fcec2d85419c/cashnarra_v2/CashNarra_Brand_and_Product_Design_Guide_v2.pdf) — complete revised guide.
+
+The preview uses fictional data; the identity remains a proposed design.
+
+
+
+---
+Generated with ChatGPT Pro Tools
+https://chromewebstore.google.com/detail/chatgpt-pro-tools/blehigjjjlnlbbgjghhfnllglnelijkg?utm_source=extension&utm_medium=export-footer

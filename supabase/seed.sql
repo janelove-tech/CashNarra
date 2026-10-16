@@ -1,0 +1,3 @@
+-- Financial fixtures are posted through the same authorised RPCs as application records.
+-- Run npm run test:supabase after local startup to create a synthetic test user and Ama Works.
+-- No identities, passwords, live data or service keys are embedded in this migration seed.

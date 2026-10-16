@@ -1,0 +1,1025 @@
+# Recommend Technology Stack
+
+## User
+
+# CashNarra: Choose the Simplest Suitable Technology Stack
+
+Act as a pragmatic senior software architect and technical researcher experienced in conversational AI, financial record-keeping, and small SaaS products.
+
+Research and recommend the best technology stack for developing CashNarra.
+
+My priority is straightforward:
+
+**Nothing unnecessarily complicated or heavy, but enough to deliver the agreed product reliably, maintain it affordably, and meet the legal, regulatory, contractual, and platform requirements that actually apply.**
+
+Make a decision I can build from. Give me one recommended stack and one credible fallback.
+
+## 1. Understand the actual CashNarra we are building
+
+Read the attached **Research CashNarra Concept.txt** completely before recommending technologies.
+
+The discussion evolves. Use the latest agreed vision and final summary to interpret earlier proposals. Distinguish settled direction, suggestions, and deferred features. Treat previous research claims as claims to verify, rather than current legal or technical authority. Use this brief and attachment for product requirements; do not import assumptions from unrelated projects.
+
+The current vision is:
+
+**CashNarra is a conversational financial memory and navigation system that turns ordinary descriptions of money activity into trustworthy records, clear insights, and realistic forecasts toward users’ goals.**
+
+Its structure is **Record → Understand → Plan**.
+
+Its experience should feel like **“Serious money. Light interaction.”**
+
+Users describe financial activity naturally, initially through text and eventually through voice. CashNarra extracts several events from one narration, asks about important ambiguities, offers a simple batch review/save action, and organises the records.
+
+The working scope includes:
+
+- Personal and business workspaces.
+- Manually tracked Cash, Bank, and MoMo accounts, with opening balances where needed.
+- Income, expenses, transfers, loans, owner contributions/withdrawals, receivables, payables, and debt settlements.
+- Natural corrections, splits, recategorisation, and links to earlier records.
+- A trustworthy ledger, traceable totals, and daily/weekly/monthly summaries and Money Stories.
+- Simple goals and deterministic current-pace forecasts, with more advanced goal types and what-if scenarios developed progressively.
+- Light consistency and review indicators, forgiving catch-up, and useful reminders. Habit engagement must remain separate from financial record quality.
+- PDF, CSV, and spreadsheet exports using the simplest suitable implementation.
+- A mobile-friendly experience suited to Ghanaian users, Ghana cedi, modest devices, and unreliable connectivity.
+
+Receipt recognition, statement imports, richer forecasting, collaboration, and integrations can follow. Recommend where voice belongs in the build sequence rather than assuming live voice infrastructure is necessary at launch.
+
+The initial product records and explains money. It does not hold customer funds, create wallets, initiate their bank/MoMo payments, offer credit, recommend securities, or file taxes. Automatic bank/MoMo/SMS capture and a full accounting/ERP suite are outside the initial scope.
+
+CashNarra’s own subscription billing, if discussed, is a separate merchant-billing concern.
+
+These boundaries reduce product scope; **they are not proof of exemption from regulation**.
+
+## 2. Make compliance a condition of the recommendation
+
+Assume Ghana is the initial operating jurisdiction and target market, consistent with the attachment. State that assumption. Identify any company-location, customer-location, business-model, or data-flow fact that could change the analysis.
+
+Investigate current applicable requirements using legislation, regulators, and official provider documents. At minimum, assess:
+
+- Ghanaian data protection obligations, including the current status of Act 843 and any enacted changes: registration, controller/processor roles, lawful processing, transparency, minimisation, security, access/correction, retention/deletion, international processing, and breach handling.
+- How responsibilities differ for CashNarra account holders and the customers, suppliers, or other people mentioned in their financial records.
+- Bank of Ghana’s relevant payment and financial technology licensing categories, including PFTSP where relevant. Examine the actual service and customer model; the absence of money movement alone does not settle licensing.
+- Whether goal projections, debt tracking, financial explanations, or future features cross a regulated boundary, including relevant SEC requirements. Distinguish arithmetic scenarios from securities advice, credit decisions, and guarantees.
+- Relevant Ghanaian electronic-record, tax/accounting-software, ICT/NITA, and cybersecurity/CSA requirements **where their applicability is supported**. Explain what triggers each requirement.
+- Commercial terms, acceptable-use policies, data-processing agreements, subprocessors, country availability, and software licences for the chosen providers and libraries.
+- App-store and permission rules if you recommend native distribution. Explain foreign-jurisdiction obligations only when there is an actual applicability trigger.
+
+For every material requirement, classify it as:
+
+**Binding legal/regulatory duty; contractual/platform duty; official guidance; recommended safeguard; conditional future requirement; or unresolved interpretation.**
+
+Cite the relevant provision or official policy and explain its effect on the stack or launch process.
+
+Do not equate a vendor’s security certification with CashNarra’s compliance. Do not assume foreign hosting is either forbidden or automatically acceptable. Check the actual requirements and processing chain.
+
+For each selected external service, identify:
+
+- What data it receives and why.
+- Storage and processing locations, including relevant subprocessors.
+- Retention, deletion, model-training use, and available controls.
+- Which controls are available on the proposed plan and which require approval or a higher tier.
+- Necessary agreements, disclosures, configuration, and remaining verification.
+
+Treat “not used for model training,” “zero retention,” and “regional storage” as separate claims that need evidence.
+
+Show how audit history and necessary financial retention can coexist with lawful deletion/minimisation of personal information, raw narrations, recordings, attachments, logs, and backups.
+
+**The stack must support compliance, and the operating company must complete its own obligations.** Identify both. If an interpretation needs Ghanaian counsel or regulator confirmation, state the exact question and how the answer could change the recommendation.
+
+Keep this practical: identify the minimum applicable launch obligations and the events that create additional duties. Avoid inventing approvals, applying foreign rules without a trigger, or treating every good practice as compulsory.
+
+## 3. Research a small set of credible options
+
+Use current official technical documentation, pricing, release/support information, provider terms, legislation, and regulator publications. State the research date. Verify material facts rather than relying on stack popularity or earlier chatbot answers.
+
+Prefer supported stable components. If evidence is missing, label the uncertainty.
+
+Shortlist **no more than three coherent stacks**. Useful candidates to examine include:
+
+1. Next.js + TypeScript with managed Supabase/PostgreSQL.
+2. SvelteKit + TypeScript with an appropriately simple PostgreSQL/auth/storage arrangement.
+3. A conventional Django or Laravel monolith with a suitable interface and relational database.
+
+These are starting candidates, not predetermined winners. Replace one if another architecture is demonstrably better for CashNarra. Avoid combining the shortlist into one oversized stack.
+
+Among options that can meet the applicable obligations, prioritise:
+
+1. Ease of building, understanding, debugging, and maintaining.
+2. Financial integrity and reliable recovery.
+3. Few deployed services, provider accounts, and duplicated responsibilities.
+4. Good mobile performance and low data usage.
+5. Predictable realistic operating costs.
+6. Mature documentation, libraries, and suitability for AI-assisted development.
+7. Reasonable growth and migration options without speculative infrastructure.
+
+Assume one developer or a very small team for comparison purposes. Do not assume I already prefer a language, cloud, framework, or existing identity system.
+
+Compare managed services with the actual work of self-hosting: updates, monitoring, backups, restore, security, and on-call responsibility. Count that work alongside subscription costs.
+
+If recommending Supabase, distinguish managed Supabase, self-hosting its full service bundle, and using ordinary PostgreSQL. They have different operational costs.
+
+If recommending a mobile-first web app/PWA, explain why it fits the first release and what browser capabilities still need explicit implementation.
+
+## 4. Resolve the important architecture questions
+
+Keep these explanations specific to the recommended stack. Use ordinary language and enough technical detail to make the choices assessable.
+
+### Financial integrity
+
+AI interprets and explains; deterministic application/database logic validates, posts, totals, and forecasts.
+
+Explain the smallest reliable ledger design for this scope, including whether hidden double-entry is appropriate. Cover:
+
+- Exact money representation and safe application/database arithmetic.
+- Atomic posting, including transfers and batch saving.
+- Retry protection, duplicate detection, concurrent changes, and partial failure.
+- Draft/review/posted states, source provenance, and corrections that preserve an appropriate history.
+- Separation of revenue, receipts, loans, owner money, debt settlements, stock purchases, and expenses.
+
+Do not label cash remaining as profit or invent profit when inventory/other accounting information is missing. A simpler release should narrow its reports honestly.
+
+Explain how users can correct or remove mistakes through a simple interface while the underlying history remains consistent.
+
+### AI and voice
+
+Recommend one initial AI provider/model approach and a small replaceable integration boundary.
+
+Explain schema-constrained extraction plus domain validation and necessary clarification. Schema-valid output is not automatically a correct financial interpretation; model-generated confidence percentages are not automatically calibrated.
+
+Keep database authority, financial calculations, and user/workspace authorisation outside the model.
+
+Use narrowly authorised operations for conversational queries and corrections. Treat narration and future uploaded documents as untrusted inputs.
+
+Prefer the simplest suitable SDK/API approach. Justify orchestration frameworks, retrieval infrastructure, extra models, or separate services only if an actual requirement needs them.
+
+For voice, compare short recorded clips followed by transcription with live conversational audio. Check uploads, browser recording support, provider limits, privacy, and cost. Explain how to evaluate Ghanaian accents, names, and money expressions using representative samples rather than assuming accuracy.
+
+### Goals
+
+Basic forecasting should use deterministic code in the existing application unless another component is justified.
+
+Explain how it uses actual goal contributions, user-selected allocations, and reliable financial history. Do not automatically assign all apparent surplus to every goal or count earmarking existing money as spending.
+
+Handle insufficient records, zero/negative sustainable contributions, changing targets, debt interest where applicable, and multiple goals competing for the same funds.
+
+Distinguish an assumption-based scenario range from a statistically validated forecast interval. Explain when CashNarra should say it cannot yet estimate a useful date.
+
+### Offline behaviour, security, and operations
+
+Recommend the minimum useful offline support: capture drafts safely, show their status, and process/synchronise when connected. Distinguish this from fully offline AI or synchronising the entire ledger.
+
+Explain safe retries, shared-device/logout behaviour, cached financial data, and local storage limitations.
+
+Identify the simplest workable approach to tenant isolation, access control, secrets, admin access, private attachments, migrations, backups, and restoration. If using Supabase, explain the roles of RLS and privileged server-side access.
+
+Check whether backups cover database records **and actual uploaded files**.
+
+For the proposed host/runtime, verify request duration, payload/upload limits, database connections, job execution, and any relevant caching restrictions. Add workers or queues only where reliable processing requires them.
+
+Keep logs and product analytics from unnecessarily collecting raw financial narrations or recordings.
+
+## 5. Deliver a decision I can act on
+
+Organise the answer as follows:
+
+**A. Recommendation first**
+
+Name the exact recommended stack and explain why it fits CashNarra’s scope, simplicity, and obligations. State material assumptions and conditions.
+
+**B. Short comparison**
+
+Compare the finalists on complexity, financial reliability, compliance support, mobile experience, realistic cost, and maintenance. Explain the decisive trade-offs. Avoid unsupported precision in scores or performance claims.
+
+**C. Minimal component table**
+
+For each necessary layer, give the chosen tool/service, its purpose, why it earns its place, and whether it belongs in the first release or later.
+
+Cover interface, server logic, database/data access, authentication, AI, voice, offline capture, reports/exports, hosting, necessary jobs, and verification/monitoring.
+
+“Built into the chosen framework” or “not needed initially” are valid answers. Do not turn every layer into another paid service.
+
+**D. Compliance and launch matrix**
+
+For each applicable area, show the obligation/trigger, authority and status, stack control or operational action, and evidence needed before launch. Separate confirmed obligations from unresolved questions and future triggers.
+
+Explain any vendor-plan, processing-location, contract, or configuration requirement that changes the stack’s cost or suitability.
+
+**E. One end-to-end example**
+
+Walk through a messy narration becoming reviewed financial records, updated reports, and a revised goal scenario. Identify important ambiguity instead of inventing missing facts.
+
+Show where AI acts and where deterministic logic takes over.
+
+**F. Realistic costs**
+
+Estimate development/testing, a pilot with approximately 100 monthly active users, and early growth around 1,000.
+
+State active-day frequency, narrations, tokens/calls, voice usage, storage/retention, and other assumptions. Show the cost calculation using current official unit prices.
+
+Separate hosting/database, AI/transcription, storage, necessary communications, and relevant compliance/operational costs. Label estimates and unpriced items.
+
+Check commercial-use restrictions, free-tier pausing, backup availability, paid-plan controls, and overages. Distinguish a development prototype from a suitable live deployment.
+
+**G. A short build sequence and upgrade triggers**
+
+Give a few practical stages from the core recording workflow to reports, basic goals, voice, and later conveniences. Include launch obligations in the sequence.
+
+Identify the small set of checks that prove the financial and privacy essentials: transfer semantics, debt settlement, retries without duplicate posting, isolation between users/workspaces, corrections, restore, and forecasting with insufficient data.
+
+Explain what measured limit or new feature would justify additional infrastructure or another regulatory review.
+
+**H. Final decision**
+
+State the default stack, the fallback, the circumstances that would change your choice, and the remaining facts or confirmations needed.
+
+Write clearly enough for a founder to understand. Explain necessary jargon briefly. Give an architecture decision and a practical path to launch; save full schemas, code generation, and lengthy legal drafting for implementation.
+
+**Before finishing, simplify your proposal once more: remove any component that adds more burden than value, while keeping the controls and obligations that CashNarra actually needs.**
+
+## ChatGPT
+
+I’ll read the full CashNarra discussion, then verify the Ghanaian requirements and provider details that could change the stack decision. I’ll focus on a small, buildable architecture and separate confirmed launch duties from questions that need clarification.
+
+
+## ChatGPT
+
+The discussion moves back from automatic bank/MoMo capture to a simpler launch: users narrate, review a batch, and save it. That makes a compact web app plausible. The financial ledger still needs strong controls, and I’m checking licensing against the actual service and customer model—not just whether CashNarra moves money.
+
+
+## ChatGPT
+
+Two practical issues have emerged: Supabase’s database backups do not restore uploaded files, and an API promise of “no model training” is separate from retention and processing location. I’m using official OpenAI documentation for those controls, alongside Ghana’s current legislation and regulator publications.
+
+
+## ChatGPT
+
+The launch scope still supports one application and one relational database. The main open questions are specific: whether this direct-to-user SaaS falls within BoG’s PFTSP category, which NITA requirements apply, and whether GRA’s accounting-software approval wording covers its intended use by VAT-registered businesses. I’ll distinguish those from confirmed duties.
+
+
+## ChatGPT
+
+Next.js with managed Supabase is becoming the strongest default: one codebase, with database, authentication, backups, and optional file storage handled together. Django remains a credible fallback for a conventional server-led app. I’m finishing the cost model now, including AI calls, production email, recovery, and maintenance work.
+
+
+## ChatGPT
+
+One finding changes the launch conditions: Ghana’s tax-record law requires relevant records to be maintained within Ghana, as well as retained for at least six years. A foreign-hosted app therefore needs a confirmed way to satisfy that duty for business users. I’m also checking GRA’s software-approval wording under the newer VAT law.
+
+
+## ChatGPT
+
+Under the stated usage assumptions, the text-first pilot comes to about US$59 per month for hosting, database, AI, and authentication email, before labour and legal work. I’ve removed live audio, a separate AI server, an ORM, vector storage, Redis, and paid analytics. The decision will also make the limits of daily backups and the cost of point-in-time recovery explicit.
+
+
+## ChatGPT
+
+## A. Recommendation first
+
+**Build CashNarra as a mobile-first web app/PWA using Next.js 16, TypeScript, managed Supabase, and a small OpenAI integration. Host it on Vercel Pro.**
+
+My recommended stack is:
+
+| Component | Choice |
+|---|---|
+| Application | **Next.js 16 + React + TypeScript**, using the supported stable release and current security patches |
+| Runtime | **Node.js 24**, supported by Vercel |
+| Database and identity | **Managed Supabase Pro: PostgreSQL, Auth, and optional private Storage** |
+| Hosting | **Vercel Pro**, with server functions in Frankfurt |
+| Initial AI | **OpenAI Responses API**, initially `gpt-4.1-mini-2025-04-14`, using Structured Outputs |
+| Authentication email | **Resend SMTP**, sending verification and recovery emails |
+| Offline capture | **IndexedDB plus a small service worker**, implemented inside the app |
+| Money calculations | **PostgreSQL exact arithmetic and decimal.js** |
+| Exports | **CSV, jsPDF, and write-excel-file**, generated without another reporting service |
+
+Next.js 16 is currently listed as Active LTS. Vercel supports Node.js 24. GPT-4.1 Mini remains listed, supports Structured Outputs, and offers a pinned snapshot with predictable behaviour and no separate reasoning step. These are supported choices; the model must still pass CashNarra’s own financial-language evaluation. ([nextjs.org](https://nextjs.org/support-policy?utm_source=chatgpt.com), [vercel.com](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions?utm_source=chatgpt.com), [developers.openai.com](https://developers.openai.com/api/docs/models/gpt-4.1-mini?utm_source=chatgpt.com), [developers.openai.com](https://developers.openai.com/api/docs/models/gpt-4.1-mini?utm_source=chatgpt.com))
+
+**Why this fits:** CashNarra needs an interactive conversation, editable batch review, modest offline capture, and dependable financial records. This arrangement gives you one application codebase, a managed database/authentication provider, an AI provider, and an email provider. It avoids maintaining a separate backend application or operating your own database servers.
+
+The financial discipline belongs in your application and database. Supabase and OpenAI do not supply CashNarra’s accounting correctness.
+
+**Research date: 13 October 2026.** I read the complete attachment; both supplied copies are identical. I used the final **Record → Understand → Plan** direction, which supersedes the earlier automatic financial-inbox proposal.
+
+### Assumptions and launch conditions
+
+I assume:
+
+- The operating company is established in Ghana.
+- Initial customers are adults in Ghana: individuals and small businesses buying CashNarra directly.
+- The first release uses GHS and manually recorded Cash, Bank, and MoMo accounts.
+- CashNarra provides record-keeping and arithmetic planning, without supplying services to banks, lenders, or payment companies.
+- Collaboration, automatic account capture, securities recommendations, tax filing, and payment initiation remain deferred.
+
+Company establishment, foreign ownership, customers abroad, services supplied to regulated institutions, and the precise processing countries could change the analysis.
+
+**The architecture is suitable to build now. Production launch remains conditional on the company completing the applicable duties in section D.** Three findings particularly affect deployment:
+
+1. BoG’s PFTSP category requires assessment of the service and customer model.
+2. Ghana’s tax-record rules include maintaining relevant records **within Ghana**. Foreign hosting needs a confirmed arrangement that satisfies that requirement for business users.
+3. GRA’s accounting-software approval wording needs an applicability decision for CashNarra’s intended business use.
+
+These conditions cannot be resolved simply by selecting a vendor with an ISO or SOC certification.
+
+---
+
+## B. Short comparison
+
+I shortlisted three coherent options.
+
+| Stack | Complexity and maintenance | Financial reliability and compliance support | Mobile experience | Infrastructure cost before AI/email |
+|---|---|---|---|---|
+| **Next.js 16 + managed Supabase + Vercel Pro** | One TypeScript application. Managed auth/database reduce operating work. Requires care around caching, permissions, and database functions. | PostgreSQL transactions, constraints, RLS, and managed backups. Good controls, provided CashNarra implements them correctly. | Well suited to interactive review, conversational corrections, and offline drafts. Control JavaScript size. | **About $45/month** for one production project and one deploying developer |
+| **SvelteKit 3 + managed Supabase + Vercel Pro** | Comparable deployment arrangement. Concise interface code; the recent major release adds migration/documentation considerations. | Essentially the same database and provider obligations as the recommendation. | A credible fit. Actual download size and responsiveness depend on implementation; I would measure them. | **About $45/month** on the same plans |
+| **Django 5.2 LTS + templates/HTMX + managed PostgreSQL on Render** | Conventional monolith with built-in authentication, forms, admin, and migrations. Interactive review/offline capture still need browser JavaScript. | Strong transaction support and exact decimal arithmetic. Workspace isolation must be implemented and tested. Paid Render databases include PITR. | Can be very light and effective. Requires a little more coordination between server templates and the richer recording interface. | **Approximately $26/month upwards**, plus database storage, using a $7 app and $19 database; more app memory may increase this |
+
+Supabase Pro starts at $25/month and includes compute credit sufficient for one Micro database. Vercel Pro is $20/month, including one deploying seat and $20 in usage credit. Render’s published prices support the stated starting configuration. ([supabase.com](https://supabase.com/pricing?utm_source=chatgpt.com), [vercel.com](https://vercel.com/docs/plans/pro-plan?utm_source=chatgpt.com), [render.com](https://render.com/pricing?trk=article-ssr-frontend-pulse_little-text-block&utm_source=chatgpt.com), [render.com](https://render.com/articles/top-heroku-alternatives-agencies?utm_source=chatgpt.com))
+
+SvelteKit 3 is now released. Django 5.2 LTS has extended support through April 2028. Render’s paid PostgreSQL recovery window is three days on Hobby workspaces and seven days on Pro or higher. ([svelte.dev](https://svelte.dev/blog/sveltekit-3-is-here?utm_source=chatgpt.com), [djangoproject.com](https://www.djangoproject.com/download/?utm_source=chatgpt.com), [render.com](https://render.com/docs/postgresql-backups?utm_source=chatgpt.com))
+
+**My decision is Next.js/Supabase by a modest margin.** Its shared TypeScript types and established interface ecosystem suit CashNarra’s conversational batch editing. Supabase also supplies authentication and the private storage needed by later features.
+
+**Django is the fallback.** It becomes more attractive if you prefer a conventional server application, need inexpensive PITR from the beginning, or eventually require deployment on an approved local hosting arrangement.
+
+### Managed services versus self-hosting
+
+These are materially different choices:
+
+- **Managed Supabase:** the provider operates PostgreSQL, authentication infrastructure, and database backups. You still own permissions, schema changes, retention, incident response, and restoration verification.
+- **Self-hosted Supabase:** you operate its service bundle, including upgrades, authentication/email configuration, monitoring, recovery, and security.
+- **Ordinary PostgreSQL:** a database alone. Django supplies much of the surrounding application machinery; a TypeScript application needs its identity/storage arrangement defined separately.
+
+**I would not self-host the full Supabase bundle for the first release.** Subscription savings would need to outweigh server administration, restore work, and responsibility for outages.
+
+---
+
+## C. Minimal component table and architecture
+
+| Layer | Chosen component | Why it earns its place | Timing |
+|---|---|---|---|
+| Interface | Next.js/React, TypeScript, CSS Modules | Conversation, editable batch review, ledger, and goals in one application | First release |
+| Server logic | Next.js server routes/actions | Authorisation, validation, AI calls, and reports without another backend | First release |
+| Database/data access | Supabase PostgreSQL; official SDK; narrowly scoped SQL functions | Exact records and atomic posting. No ORM needed initially | First release |
+| Authentication | Supabase Auth: email/password, recovery, optional user MFA | Avoid implementing password infrastructure | First release |
+| AI | OpenAI SDK + Zod schema helpers | Typed extraction through one replaceable integration | First release |
+| Voice | Browser recording → OpenAI transcription → existing text workflow | Reuses recording/review/posting logic | After text workflow is proven |
+| Offline | IndexedDB drafts; service worker for public assets | Useful capture during connection failures | First release |
+| Summaries/Money Stories | SQL totals and simple application templates | Traceable, inexpensive summaries; AI can explain supplied figures | First release |
+| Goals | Deterministic TypeScript/decimal.js calculations | No separate forecasting service | Basic goals in first proper release |
+| Exports | CSV, jsPDF, write-excel-file | PDF and XLSX downloads without another server/service | First release |
+| Hosting | Vercel Pro; Supabase Pro | Managed deployment and database operations | Live pilot onwards |
+| Jobs | One secured scheduled maintenance endpoint | Expiry/deletion checks; later generic reminders | First release |
+| Verification/monitoring | Financial tests, isolation tests, provider metrics, redacted errors | Detect errors without collecting financial narratives | First release |
+| Attachments | Supabase private Storage | Receipts and imports need controlled access and file recovery | Later |
+| Queues/vector database/native apps | Not needed initially | No current requirement justifies them | Add only after a measured trigger |
+
+### Financial integrity: a small hidden double-entry ledger
+
+**Yes—hidden double-entry is appropriate from the beginning.** It provides a consistent way to distinguish transfers, debts, owner money, stock, and spending while keeping the interface conversational.
+
+Use a small set of internal accounts and posting templates. Users see “loan received” or “Sandra paid her balance,” rather than journal terminology.
+
+The minimum rules are:
+
+1. **Exact money.** Store GHS amounts as PostgreSQL `NUMERIC(20,2)`. Transfer amounts through application boundaries as decimal strings. Use decimal.js where application arithmetic is necessary. Do not calculate money using ordinary JavaScript floating-point arithmetic. Define rounding rules explicitly.
+
+2. **Atomic posting.** “Save all” invokes one database transaction. Journal lines, debt links, and batch status commit together. Transfers contain both account movements in that transaction. A failed batch changes nothing.
+
+3. **Retry protection.** Every submission has a unique request ID scoped to its workspace. Repeating a successful request returns the existing result. Similar date/amount/person matches produce duplicate warnings, not automatic deletion.
+
+4. **Concurrency protection.** Lock the batch and affected obligations while posting. Use versions to detect stale edits. Two tabs cannot settle the same outstanding balance twice.
+
+5. **Controlled states.** Narrations produce drafts; unresolved material questions keep affected records in review. Only confirmed, posted records affect reports.
+
+6. **Traceability.** Retain the confirmed financial facts, source ID, relevant dates, actor, interpretation version, and correction links. Raw source content can expire separately.
+
+Posted journals must balance within their workspace and currency. Database controls should reject invalid account relationships and unbalanced posting.
+
+| Event | Financial treatment |
+|---|---|
+| New cash sale | Cash receipt and sales |
+| Credit sale | Receivable and sales; no cash receipt yet |
+| Customer pays an existing debt | Receipt and reduced receivable; no second sale |
+| Loan received | More cash and a liability; no sales revenue |
+| Loan repayment | Principal reduces liability; interest is separately classified |
+| Owner contribution/withdrawal | Owner money; distinct from sales and operating expenses |
+| Internal transfer | Account balances change; workspace total cash does not |
+| Stock purchase | Cash outflow and stock acquired; not automatically cost of goods sold |
+
+**Initial reports should show cash movement, recorded sales, operating expenses, stock purchases, owner money, and outstanding obligations.** When inventory consumption, tax treatment, depreciation, or other necessary information is absent, say that profit cannot yet be determined.
+
+Balances should be labelled **“recorded balance”**, with the last user check shown separately.
+
+#### Corrections and removal
+
+Drafts can be edited or discarded normally.
+
+For posted records:
+
+- “Change this” creates a linked reversal and replacement.
+- “Delete this duplicate” voids its financial effect and hides it from normal reports.
+- Splits preserve the original total.
+- Corrections involving settled debts or another workspace require dependency checks.
+- A privacy deletion request follows the retention process in section D.
+
+The interface can remain simple while the financial history remains consistent.
+
+### AI: interpretation through a small boundary
+
+Use one internal module with operations such as:
+
+- `extractNarration`
+- `interpretCorrection`
+- `explainSummary`
+
+Initially, use the pinned GPT-4.1 Mini snapshot through the Responses API with Structured Outputs. This is a cost/latency starting choice, subject to evaluation—not proof that it understands Ghanaian financial narration adequately.
+
+Schema validation checks output shape. Domain validation checks financial meaning: accounts, dates, amounts, debt references, sales-versus-receipt ambiguity, and principal/interest splits. OpenAI itself states that Structured Outputs can still contain mistakes. ([developers.openai.com](https://developers.openai.com/api/docs/guides/structured-outputs?utm_source=chatgpt.com))
+
+Use explicit missing fields and clarification reasons. Do not present model-generated “93% confidence” as a calibrated probability.
+
+**The model receives no database credentials and cannot decide workspace access, post records, calculate official totals, or authorise corrections.**
+
+Conversational queries use narrow server operations: search authorised records, retrieve a period summary, retrieve an obligation, or propose a correction. The server validates every record ID and operation.
+
+Treat narration and future uploads as untrusted content. Instructions inside them cannot change system permissions. SQL queries and bounded context are sufficient initially; no retrieval framework, vector database, or agent orchestration is needed.
+
+### Goals: deterministic current-pace scenarios
+
+Maintain a separate goal-allocation record. Earmarking existing money changes its intended use; it does not create an expense.
+
+For a fixed nominal savings target:
+
+
+
+$$\text{months remaining}
+=
+\left\lceil
+\frac{\text{target}-\text{funded amount}}
+{\text{monthly contribution}}
+\right\rceil$$
+
+
+
+Use:
+
+- Actual net contributions to that goal.
+- The user’s chosen future allocation.
+- Reviewed financial history and known commitments.
+- Separate handling of initial funding and one-off contributions.
+
+Multiple goals share one contribution budget. CashNarra must not assign the same GH₵500 monthly capacity to three separate goals.
+
+If records are insufficient, show an explicitly assumed contribution scenario. If sustainable contributions are zero/negative, or material debt commitments are unknown, withhold a useful completion date.
+
+Debt projections require applicable interest and repayment terms. Changing targets and allocations retain their previous assumptions so date changes can be explained.
+
+**A range calculated from GH₵300 versus GH₵400 monthly contributions is a scenario range. It is not a statistically validated forecast interval.** More recorded days do not automatically establish forecast confidence.
+
+### Voice: short clips after text works
+
+Choose **short recorded clips followed by transcription**, rather than live conversational audio.
+
+A practical first implementation:
+
+- Start with a 60–90 second recording limit.
+- Cap uploaded audio at **3 MB**.
+- Check recording formats using `MediaRecorder.isTypeSupported()`.
+- Require HTTPS and microphone permission.
+- Offer text entry or file selection when recording is unavailable.
+- Let users review the transcript before financial extraction.
+- Release the clip after successful processing; retain no audio archive by default.
+
+OpenAI’s current file-transcription documentation recommends `gpt-transcribe`, accepts supported formats including MP4/M4A/WebM, and allows files up to 25 MB. CashNarra’s smaller cap accommodates Vercel’s request limit. Browser recording formats still need device testing. ([developers.openai.com](https://developers.openai.com/api/docs/guides/speech-to-text?utm_source=chatgpt.com), [developer.mozilla.org](https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder/isTypeSupported_static?utm_source=chatgpt.com), [developer.mozilla.org](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia?utm_source=chatgpt.com))
+
+Live audio adds session management, reconnection, interruption handling, and additional privacy/cost questions. It earns its place only if short clips demonstrably constrain the product.
+
+Evaluate representative Ghanaian samples: accents, noisy shops, names, “MoMo,” “two-five,” “4k,” corrections, and code-switching. Measure **amount accuracy, event meaning, clarification quality, and correction effort**, not transcription accuracy alone. Do not advertise local-language support before testing it.
+
+### Offline capture, security, and recovery
+
+A PWA still requires explicit implementation of installation metadata, service-worker behaviour, offline storage, and synchronisation. Browser storage can be evicted and is not a backup. ([nextjs.org](https://nextjs.org/docs/app/guides/progressive-web-apps?utm_source=chatgpt.com), [developer.mozilla.org](https://developer.mozilla.org/en-US/docs/Web/API/Storage_API/Storage_quotas_and_eviction_criteria?utm_source=chatgpt.com))
+
+The first release should:
+
+- Save text drafts locally on opted-in private devices.
+- Show **“Saved on this device,” “Waiting for connection,” “Needs review,”** and **“Posted.”**
+- Reuse request IDs during retries.
+- Keep drafts outside financial totals.
+- Synchronise/process when the app is open and connected.
+- Avoid relying on background sync.
+
+For shared devices, use a session-only mode without persistent financial caches. Logout should warn about unsynchronised drafts and clear local data. Device/browser access remains a privacy limitation; client-side encryption with a key stored beside the data does not solve it.
+
+On the server:
+
+- Verify authentication tokens; do not authorise from an unchecked session object.
+- Scope every record by workspace and verify ownership/membership.
+- Enable RLS on exposed tables.
+- Use user-scoped access for ordinary requests.
+- Reserve privileged secrets for narrow administrative jobs.
+- Review views and privileged SQL functions separately.
+- Keep secrets server-side, administrators individually authenticated with MFA, and support access recorded.
+
+Supabase documents that privileged access can bypass RLS, and that views/functions can unintentionally bypass tenant protection. ([supabase.com](https://supabase.com/docs/guides/database/postgres/row-level-security?utm_source=chatgpt.com), [supabase.com](https://supabase.com/docs/guides/database/functions?utm_source=chatgpt.com))
+
+**Disable shared caching for authenticated financial responses and responses setting session cookies.** Supabase warns that caching these responses can expose another user’s session. Cache public application assets only. ([supabase.com](https://supabase.com/docs/guides/auth/server-side/nextjs?utm_source=chatgpt.com))
+
+Version migrations in the repository, apply them first to a separate development/staging database, and test restoration before onboarding real financial records.
+
+Supabase Pro supplies seven days of daily database backups. **Those backups exclude actual Storage objects.** Before retaining receipts or other evidence, add and test a file-backup process that restores files and their database references together. ([supabase.com](https://supabase.com/docs/guides/platform/backups?utm_source=chatgpt.com))
+
+Daily backups mean potentially losing roughly a day’s changes. Document that limitation for the pilot. Keep periodic encrypted recovery copies under company control and perform restores in isolation. Apply the deletion register before reopening restored data.
+
+### Runtime limits and necessary jobs
+
+Vercel Pro’s generally available maximum function duration is 800 seconds; the larger extended limit is beta. The request/response payload maximum is 4.5 MB. Set bounded application timeouts, such as 120 seconds, and keep exports paginated or generated locally. ([vercel.com](https://vercel.com/docs/functions/limitations?utm_source=chatgpt.com), [vercel.com](https://vercel.com/docs/functions/limitations?utm_source=chatgpt.com))
+
+Use Supabase’s HTTP API/RPC for ordinary application access, avoiding a new PostgreSQL connection for each serverless request. If direct SQL access is later added, use appropriate pooling.
+
+Scheduled maintenance needs a secret-protected endpoint, database locking, and resumable processing. Vercel cron delivery is best effort and can miss or duplicate runs; make each run safely recheck outstanding work. ([vercel.com](https://vercel.com/docs/cron-jobs/manage-cron-jobs?utm_source=chatgpt.com))
+
+A separate worker becomes appropriate for long imports, substantial file backup, or processing that must finish reliably after the request ends.
+
+Logs should contain IDs, timings, status codes, and error categories. Avoid raw narration, recordings, account balances, SQL parameters, and financial content in analytics.
+
+---
+
+## D. Compliance and launch matrix
+
+### Current legal position
+
+The DPC’s current public materials continue to identify **Data Protection Act, 2012, Act 843** as the governing framework. I found a published 2025 replacement bill, but no official enacted replacement establishing new obligations. Recheck enactment and commencement immediately before launch; proposed provisions should not be treated as current law. ([dpc.gov.gh](https://dpc.gov.gh/for-organisations/?utm_source=chatgpt.com), [dataprotection.org.gh](https://dataprotection.org.gh/wp-content/uploads/2025/11/DATA_PROTECTION_BILL1_DRAFT-1.pdf?utm_source=chatgpt.com))
+
+The classifications below mean:
+
+- **Legal:** binding legal/regulatory duty.
+- **Contract:** contractual/platform duty.
+- **Guidance:** official guidance.
+- **Safeguard:** recommended implementation or operating control.
+- **Future:** conditional additional requirement.
+- **Unresolved:** an applicability interpretation requiring confirmation.
+
+| Area | Obligation/trigger, authority and status | Stack or operating action | Evidence before launch |
+|---|---|---|---|
+| DPC registration | **Legal:** controller registration under Act 843 ss.27, 53; renewal under s.50. DPC also directs processors to register. | Register CashNarra’s operating entity and describe both roles, purposes, recipients and processing countries. | Valid registration; accurate application and renewal owner. ([dpc.gov.gh](https://dpc.gov.gh/for-organisations/?utm_source=chatgpt.com)) |
+| Lawful processing/minimisation | **Legal:** ss.18–23. A lawful basis must support each purpose; consent is not the only available basis. | Document grounds; collect account labels rather than unnecessary account numbers/IDs; provide clear collection notices. | Processing register, notices, and basis assessment. ([dataprotection.org.gh](https://dataprotection.org.gh/wp-content/uploads/2025/05/Data-Protection-Act-2012-Act-843.pdf?utm_source=chatgpt.com)) |
+| Access/correction/objection | **Legal:** ss.32–35, 39–44, subject to applicable limits. | Verified request process; export, correction, restriction and deletion procedures. Protect other people’s information in responses. | Tested request workflow and assigned responsibility. ([dpc.gov.gh](https://dpc.gov.gh/for-individuals/?utm_source=chatgpt.com)) |
+| Security and processor contracts | **Legal:** ss.28–30 require appropriate safeguards and written processing arrangements. Foreign processors must meet relevant Ghanaian requirements. | Tenant isolation, controlled administration, incident procedures and applicable DPAs. | Security review, agreements, access list and processor assessment. ([dataprotection.org.gh](https://dataprotection.org.gh/wp-content/uploads/2025/05/Data-Protection-Act-2012-Act-843.pdf?utm_source=chatgpt.com)) |
+| International processing | **Legal/Unresolved:** foreign processing must be documented and lawful; provider-region selection alone is insufficient. DPC’s FAQ also expects compliant, registered third-party recipients. | Map actual countries, support access and subprocessors. Confirm expectations for foreign-provider registration. | Data-flow map, contracts, DPC/counsel classification of foreign processors. ([dpc.gov.gh](https://dpc.gov.gh/help-faqs/?utm_source=chatgpt.com), [dataprotection.org.gh](https://dataprotection.org.gh/wp-content/uploads/2025/07/GUIDELINES-TO-DEMONSTRATE-DATA-PROTECTION-COMPLIANCE-1.pdf?utm_source=chatgpt.com)) |
+| Breaches | **Legal:** s.31 requires notification to the Commission and affected subjects as soon as reasonably practicable when its trigger is met. | Detection, escalation, containment and notification runbook. | Named incident lead and rehearsal. Do not substitute an assumed universal 72-hour rule. ([dataprotection.org.gh](https://dataprotection.org.gh/wp-content/uploads/2025/05/Data-Protection-Act-2012-Act-843.pdf?utm_source=chatgpt.com)) |
+| Supervisor and privacy assessment | **Guidance:** DPC compliance arrangements distinguish small controllers from medium/large entities for supervisor requirements. | Assign a privacy lead; conduct a concise risk assessment; confirm classification/training requirements. | Classification, compliance assessment and required submissions. ([dataprotection.org.gh](https://dataprotection.org.gh/wp-content/uploads/2025/07/GUIDELINES-TO-DEMONSTRATE-DATA-PROTECTION-COMPLIANCE-1.pdf?utm_source=chatgpt.com)) |
+| Tax-record location/retention | **Legal:** Revenue Administration Act 915 s.27 requires relevant records within Ghana and at least six years from the relevant date; disputes/investigations can extend retention. | Maintain CashNarra’s own statutory records appropriately. Establish a confirmed local-record arrangement for relevant business workspaces. | Accepted location, completeness and retention process. A foreign database alone is insufficient evidence. ([gra.gov.gh](https://gra.gov.gh/wp-content/uploads/2023/01/Revenue-Administration-Act-2016-.pdf?utm_source=chatgpt.com)) |
+| Electronic records | **Legal where applicable:** Act 772 ss.5–8 address recognition, integrity, evidential weight and retention. | Accurate exports, origin/date information, correction history and retrievable records. | Export/retrieval tests and retention interpretation. ([nita.gov.gh](https://www.nita.gov.gh/api/documents/file/Electronic-Transactions-Act-772.pdf?utm_source=chatgpt.com)) |
+| VAT accounting software | **Conditional legal duty/Unresolved application:** L.I.2243 reg.31(2) specifies Commissioner-General approval for accounting software used by a registered person. GRA repeats this in E-VAT guidance. Act 1151 preserves compatible prior instruments until changed. | Determine whether CashNarra’s intended use falls within it. Obtain applicable approval before offering a covered workflow. | Current GRA applicability decision and any approval—not merely wording that says “not tax software.” ([gra.gov.gh](https://gra.gov.gh/wp-content/uploads/2022/07/VALUE-ADDED-TAX-REGULATIONS-2016-L.I.-2243.pdf?utm_source=chatgpt.com), [gra.gov.gh](https://gra.gov.gh/wp-content/uploads/2024/07/E-VAT-GUIDELINES_20240222.pdf?utm_source=chatgpt.com), [gra.gov.gh](https://gra.gov.gh/wp-content/uploads/2026/01/VALUE-ADDED-TAX-ACT-2025-ACT-1151.pdf?utm_source=chatgpt.com)) |
+| BoG/PFTSP | **Unresolved for current scope; Legal if classified:** Notice BG/GOV/SEC/2020/14 concerns critical/outsourced services in the financial-service industry, including specified technology and analytics activities. | Assess direct-to-user record-keeping separately from supplying banks/PSPs/lenders. Reassess changed services and customers. | Ghanaian classification memo; BoG clarification where ambiguity remains. ([bog.gov.gh](https://www.bog.gov.gh/wp-content/uploads/2020/11/Notice-Payment-and-Fintech-Service-Providers-_Final-26th-November-2020.pdf?utm_source=chatgpt.com)) |
+| SEC and lending boundaries | **Future:** securities advisory/capital-market activity requires licensing under Act 929 s.109. Credit supply/scoring creates separate questions. | Keep initial scenarios arithmetic, assumptions visible, and decisions with users. | Product/output review; renewed assessment before securities advice, credit decisions or guarantees. ([sec.gov.gh](https://sec.gov.gh/public-notice-warning-against-unlicensed-investment-scheme-mekanism-marketing-ltd/?utm_source=chatgpt.com), [bog.gov.gh](https://www.bog.gov.gh/fintech-innovation/licence-categories/?utm_source=chatgpt.com)) |
+| NITA | **Unresolved current registration/licensing scope:** NITA identifies industry registration/licensing responsibilities; published government standards have government-specific scope. Broad proposed bills/draft LIs are not proof of enacted duties. | Confirm requirements for this private SaaS under currently effective instruments. | Applicable instrument, category and completed requirements where triggered. ([nita.gov.gh](https://www.nita.gov.gh/ict-regulations?utm_source=chatgpt.com), [brr.gov.gh](https://brr.gov.gh/new/consultation?cd=NDQ%3D&utm_source=chatgpt.com)) |
+| CSA | **Future/conditional:** cybersecurity-service licensing concerns providing cybersecurity services for reward. Designated critical infrastructure has additional duties, including incident reporting. | Protecting CashNarra’s own app does not establish that it sells cybersecurity services or is designated CII. Use appropriate licensed external services where required. | Relevant service/designation assessment. ([csa.gov.gh](https://www.csa.gov.gh/licensing-and-accreditation-faq.php?utm_source=chatgpt.com), [csa.gov.gh](https://www.csa.gov.gh/resources/Directive_CII.pdf?utm_source=chatgpt.com)) |
+| Selling subscriptions | **Legal/Contract when enabled:** company tax duties, electronic supplier disclosures and secure merchant billing. | Publish legal identity, price, terms, cancellation/support details; use a licensed PSP’s hosted checkout. | Tax registration, merchant agreement and billing review. ([nita.gov.gh](https://www.nita.gov.gh/api/documents/file/Electronic-Transactions-Act-772.pdf?utm_source=chatgpt.com), [gra.gov.gh](https://gra.gov.gh/domestic-tax/tax-registration/?utm_source=chatgpt.com)) |
+| Provider use | **Contract:** terms, AUPs, DPAs and permissions for submitted data. | Maintain agreements and avoid unauthorised/high-stakes AI uses. | Contract/configuration checklist and vendor register. ([supabase.com](https://supabase.com/legal/dpa?utm_source=chatgpt.com), [openai.com](https://openai.com/policies/data-processing-addendum/?utm_source=chatgpt.com), [openai.com](https://openai.com/policies/usage-policies/?utm_source=chatgpt.com)) |
+| Native distribution/foreign markets | **Future:** store rules when native distribution is chosen; foreign laws when actual establishment, targeting, processing or other relevant triggers arise. | Web/PWA launch avoids native distribution requirements initially. Reassess before expansion. | Feature/market-specific review at that stage. |
+
+**PFTSP classification would materially change the launch burden.** The cited BoG notice specifies requirements including company-level ISO 27001 certification, independent vulnerability assessment and continuity documentation. A vendor’s certification does not satisfy those company obligations. These costs are excluded from the baseline estimate because applicability remains unresolved. ([bog.gov.gh](https://www.bog.gov.gh/wp-content/uploads/2020/11/Notice-Payment-and-Fintech-Service-Providers-_Final-26th-November-2020.pdf?utm_source=chatgpt.com))
+
+### Account holders and people mentioned in records
+
+The roles depend on processing purposes, rather than simply who pays for an account. DPC distinguishes the party determining purposes/manner from a party processing on its behalf. ([dpc.gov.gh](https://dpc.gov.gh/help-faqs/?utm_source=chatgpt.com))
+
+| Information | Expected role allocation |
+|---|---|
+| Login, subscription administration, support and security | CashNarra is ordinarily the controller |
+| A business’s customer, supplier or staff records, processed under its instructions | The business is ordinarily the controller; CashNarra is ordinarily its processor |
+| CashNarra’s independent reuse of those records for another purpose | CashNarra needs its own role and lawful basis; the customer agreement does not automatically authorise it |
+| An individual’s domestic records | Assess the domestic-purpose exemption for that individual; it does not exempt CashNarra’s commercial processing |
+
+The account holder’s contract does not make every mentioned customer a party to that contract.
+
+Provide business users with a short processing agreement and practical notice instructions. Support legitimate rights requests concerning people who never created CashNarra accounts, without exposing the business’s complete ledger.
+
+Free narration can also reveal health, religious or other special personal information. Minimise such detail, provide a way to revise/redact before AI submission, and assess the necessary grounds and vendor conditions. Supabase’s DPA imposes explicit-consent requirements for its defined Sensitive Data. ([supabase.com](https://supabase.com/legal/dpa?utm_source=chatgpt.com))
+
+### Selected service data flows and plan conditions
+
+| Service | Data received and purpose | Locations and relevant processing chain | Retention/training/controls and launch action |
+|---|---|---|---|
+| **Supabase Pro** | Identity records, ledger, drafts, goals, operational metadata; later attachments | Select the **specific Frankfurt `eu-central-1` region**. Core database/Auth/Storage/backups are regional, but support, telemetry and delivery can involve other countries. Current subprocessors include AWS, Cloudflare, US/Singapore affiliates, monitoring providers and AI suppliers for relevant services. | Company-controlled record deletion; Pro database backups/logs have seven-day windows. Keep production records out of optional dashboard AI/support prompts. DPA is part of the service agreement; record subprocessor authorisation and changes. Regional hosting is not a guarantee that all processing stays there. ([supabase.com](https://supabase.com/docs/guides/platform/regions?utm_source=chatgpt.com), [supabase.com](https://supabase.com/legal/privacy-resources/data-residency-and-transfers-faq?utm_source=chatgpt.com), [supabase.com](https://supabase.com/legal/subprocessor-list/October-12-2026.pdf?utm_source=chatgpt.com), [supabase.com](https://supabase.com/legal/dpa?utm_source=chatgpt.com)) |
+| **Vercel Pro** | Application requests, authentication handling, narration in transit, generated responses and technical metadata | Set server runtime to Frankfurt. CDN/control-plane/support processing is broader. DPA identifies AWS, Microsoft and GCP infrastructure. | Disable private caching and body logging. Obtain the current subprocessor export and confirm log/deletion locations and periods; the public roster was not fully readable in this research. Execute the applicable DPA. Do not claim EU-only processing from the function setting. ([vercel.com](https://vercel.com/legal/dpa?utm_source=chatgpt.com), [vercel.com](https://vercel.com/legal/sub-processors?utm_source=chatgpt.com), [vercel.com](https://vercel.com/legal/dpa?utm_source=chatgpt.com)) |
+| **OpenAI API** | Necessary narration, bounded authorised context; later short audio clips | Default API use is an international processing chain, with infrastructure/CDN/support subprocessors in multiple countries. Ghana is supported. | API data is not used for training by default; leave optional sharing off. Use Responses `store:false`: this does **not** remove ordinary abuse-monitoring retention, normally up to 30 days with exceptions. The transcription endpoint lists no abuse/application retention. ZDR/MAM require approval; non-US residency requires approval and a Modified Retention amendment. Regional controls do not cover all system data. Obtain the DPA and disclose actual settings. ([platform.openai.com](https://platform.openai.com/docs/supported-countries?utm_source=chatgpt.com), [openai.com](https://openai.com/policies/sub-processor-list/?utm_source=chatgpt.com), [developers.openai.com](https://developers.openai.com/api/docs/guides/your-data?utm_source=chatgpt.com), [openai.com](https://openai.com/policies/data-processing-addendum/?utm_source=chatgpt.com)) |
+| **Resend SMTP** | Recipient email, verification/recovery messages and delivery metadata | Stored customer data is in the **US**. An EU sending region changes email routing, not storage. Published subprocessors include AWS and other infrastructure/support/AI suppliers. | Free/Pro list 30-day retention; provider security materials describe seven-day backups. DPA applies on all plans. Keep financial narratives, balances and attachments out of emails. Do not enable optional AI features; I did not verify a blanket no-training commitment across the Free/Pro chain. Confirm it if required by your processing policy. ([resend.com](https://resend.com/security/gdpr?utm_source=chatgpt.com), [resend.com](https://resend.com/pricing?utm_source=chatgpt.com), [resend.com](https://resend.com/security?utm_source=chatgpt.com), [resend.com](https://resend.com/legal/subprocessors?utm_source=chatgpt.com)) |
+
+For the **Render fallback**, application/database content would be hosted in the selected Frankfurt region. Its DPA and paid database recovery are documented. Its complete support/control-plane/subprocessor location mapping still needs the same pre-launch verification; I would not present regional hosting as complete residency evidence. ([render.com](https://render.com/docs/regions?utm_source=chatgpt.com), [render.com](https://render.com/dpa?utm_source=chatgpt.com), [render.com](https://render.com/docs/postgresql-backups?utm_source=chatgpt.com))
+
+Supabase’s default SMTP is unsuitable for production: it restricts recipients and currently limits sending to two messages per hour. This is why an email provider earns its place. ([supabase.com](https://supabase.com/docs/guides/auth/auth-smtp?utm_source=chatgpt.com))
+
+Ordinary regional hosting and DPAs are available without buying enterprise plans. **Guaranteed special residency, approved zero retention, negotiated contracts and stricter administrative controls can change availability and cost.** None should be assumed included in the $45 infrastructure baseline.
+
+### Audit history and deletion can coexist
+
+Separate the durable financial facts from capture material and unnecessary identifiers.
+
+| Data | Practical initial treatment |
+|---|---|
+| Posted financial records and necessary evidence | Applicable statutory/contractual retention; legal holds and restricted access where needed |
+| Raw narration and discarded extraction output | Proposed short expiry, such as 30 days after confirmation; allow earlier deletion where appropriate |
+| Audio | Capture aid only; release after successful processing, with a short retry window if needed |
+| Receipts | Retain when necessary evidence; do not apply the audio expiry automatically |
+| Operational logs | Minimum useful period and content; exclude financial payloads |
+| Backups | Defined expiry; restricted recovery use; replay deletions before restoring access |
+| Counterparty identifiers and free-text descriptions | Remove or minimise when no longer necessary and legally permitted |
+
+The short periods above are **proposed safeguards**, not statutory deadlines.
+
+Pseudonyms do not automatically anonymise financial records. Amounts, dates and descriptions may still identify a person. Conversely, an audit trail does not justify keeping all raw messages forever.
+
+On closure, export and resolve retention responsibilities. A customer’s retention duty does not automatically require CashNarra to host its closed account indefinitely. VAT-record destruction may need additional treatment under the applicable regulations.
+
+### Exact questions that remain
+
+Take this concrete scope to Ghanaian counsel, seeking regulator clarification where necessary:
+
+1. **BoG:** Does direct-to-user, manual financial record-keeping with arithmetic goals fall within PFTSP? What changes if CashNarra supplies analytics or infrastructure to a bank, PSP or lender?
+2. **GRA location:** Can complete, accurate records and underlying evidence maintained locally in Ghana satisfy s.27 while the working SaaS database is abroad? What format and update frequency are acceptable?
+3. **GRA approval:** Does reg.31(2), under the current VAT framework, cover CashNarra’s proposed use by VAT-registered businesses, including supplementary books? What approval is required?
+4. **DPC:** What registration/safeguard expectations apply to the named foreign processors and subprocessors? What is CashNarra’s fee/supervisor classification?
+5. **NITA:** Which currently effective registration/licensing instrument and category apply to this private SaaS?
+
+Answers may change hosting, launch customers, contracts, certification expenditure, or feature scope. Changing frameworks alone does not remove the duties.
+
+### Software licences
+
+The selected Next.js, Supabase JS, Zod, decimal.js, jsPDF and write-excel-file projects use MIT licences; TypeScript and the OpenAI Node SDK use Apache 2.0. PostgreSQL uses its permissive PostgreSQL licence. Preserve required notices and review the actual locked dependency tree before release. ([github.com](https://github.com/vercel/next.js/blob/canary/license.md?utm_source=chatgpt.com), [github.com](https://github.com/supabase/supabase-js/blob/master/LICENSE?utm_source=chatgpt.com), [github.com](https://github.com/colinhacks/zod/blob/main/LICENSE?utm_source=chatgpt.com), [github.com](https://github.com/MikeMcl/decimal.js?utm_source=chatgpt.com), [github.com](https://github.com/parallax/jsPDF?utm_source=chatgpt.com), [github.com](https://github.com/catamphetamine/write-excel-file?utm_source=chatgpt.com), [github.com](https://github.com/microsoft/TypeScript/blob/main/LICENSE.txt?utm_source=chatgpt.com), [github.com](https://github.com/openai/openai-node/blob/master/LICENSE?utm_source=chatgpt.com), [postgresql.org](https://www.postgresql.org/about/licence/?utm_source=chatgpt.com))
+
+The export libraries execute inside CashNarra; they do not need to receive data as external services. Escape untrusted text in PDF output and prevent spreadsheet-formula injection.
+
+---
+
+## E. One end-to-end example
+
+For this example, assume a non-VAT-registered business. Existing records include Sandra’s GH₵700 receivable and yesterday’s GH₵150 cash transport payment.
+
+The user types:
+
+> “Today sales were 3,800. Two thousand came by MoMo and Samuel still owes 450. Bought 900 stock and paid 120 transport cash. Moved 500 cash to MoMo. My brother gave the business 2,000 in the bank. Sandra paid her 700 by MoMo. Took 200 home. Put 1,000 towards the second shop. Yesterday’s 150 transport was actually 105.”
+
+**AI identifies proposed events and material questions:**
+
+- Is Samuel’s GH₵450 included in the GH₵3,800?
+- Is the brother’s GH₵2,000 a loan or owner contribution?
+- Does “put 1,000 towards the shop” mean earmarking or a payment?
+- Does the correction refer to the identified earlier transport record?
+
+After clarification, the user confirms:
+
+- The credit sale is included; today’s remaining cash receipts were GH₵1,350.
+- The GH₵2,000 is a loan; repayment terms remain unknown.
+- The GH₵1,000 earmarks existing available money.
+- The earlier transport record is the correct one.
+
+The review shows:
+
+| Confirmed record | Effect |
+|---|---|
+| Sales GH₵3,800 | GH₵2,000 MoMo + GH₵1,350 cash + GH₵450 receivable |
+| Stock GH₵900 cash | Stock acquired; cash decreases |
+| Transport GH₵120 cash | Operating expense |
+| Transfer GH₵500 | Cash decreases; MoMo increases |
+| Loan GH₵2,000 bank | Bank increases; liability increases |
+| Sandra settlement GH₵700 | MoMo increases; old receivable closes |
+| Owner withdrawal GH₵200 cash | Cash decreases; separate from operating expenses |
+| Goal allocation GH₵1,000 | Goal funding changes; no spending |
+| Earlier transport correction | Reverse GH₵150, replace with GH₵105 |
+
+The user taps **Save all**.
+
+Deterministic posting and calculations produce:
+
+- Today’s cash change: **−GH₵370**.
+- MoMo change: **+GH₵3,200**.
+- Bank change: **+GH₵2,000**.
+- Total cash-account change today: **+GH₵4,830**.
+- New receivable: **GH₵450**.
+- New loan liability: **GH₵2,000**.
+
+The earlier correction increases the recorded cash position by GH₵45 and changes the earlier expense report. It does not create a new receipt today.
+
+CashNarra cannot calculate profit without the necessary stock-consumption and other accounting information.
+
+Suppose the shop goal is GH₵12,000, previously funded with GH₵2,000, with a historical/user-selected GH₵300 monthly allocation. Earmarking GH₵1,000 raises funding to GH₵3,000:
+
+
+
+$$(12{,}000-3{,}000)/300=30\text{ months}$$
+
+
+
+CashNarra can display:
+
+> “At GH₵300 per month, the remaining amount takes about 30 months. Your new loan’s repayment terms are not recorded yet, so I cannot confirm whether that pace remains sustainable.”
+
+**AI interpreted and explains. The application/database authorised, posted and calculated.**
+
+---
+
+## F. Realistic costs
+
+All figures below are **US dollars**, excluding taxes, exchange costs, labour and unpriced legal work.
+
+### Usage assumptions
+
+| Assumption | Pilot: 100 MAU | Growth: 1,000 MAU |
+|---|---:|---:|
+| Active days/user/month | 22 | 22 |
+| Narrations/active day | 1.5 | 1.5 |
+| Narrations/month | 3,300 | 33,000 |
+| Extraction calls, allowing 30% extra clarification/retries | 4,290 | 42,900 |
+| Tokens/extraction call | 3,000 input; 1,200 output | Same |
+| AI-assisted stories/user/month | 5 | 5 |
+| Additional conversational queries/user/month | 2 | 2 |
+| Optional voice share | 30% of narrations | 30% |
+| Average clip | 45 seconds | 45 seconds |
+| Voice minutes/month | 742.5 | 7,425 |
+
+Narration retention is assumed at 30 days after confirmation; no retained audio archive or receipt storage initially. A rough sizing allowance is 1 KB per posted event including associated ledger/index overhead: around two million events/year at 1,000 users averaging five events per narration. **Measure real storage; this is a planning assumption.**
+
+### AI calculation
+
+GPT-4.1 Mini is listed at **$0.40/million input tokens and $1.60/million output tokens**. The current listed estimated transcription price for `gpt-transcribe` is **$0.0045/minute**. ([developers.openai.com](https://developers.openai.com/api/docs/models/gpt-4.1-mini?utm_source=chatgpt.com), [developers.openai.com](https://developers.openai.com/api/docs/pricing?utm_source=chatgpt.com))
+
+Extraction call:
+
+
+
+$$(3{,}000\times0.40+1{,}200\times1.60)/1{,}000{,}000
+=\$0.00312$$
+
+
+
+For the pilot:
+
+- Extraction: 4,290 × $0.00312 = **$13.38**.
+- Stories, assuming 1,500 input/500 output tokens: **$0.70**.
+- Queries, assuming 2,000 input/500 output tokens: **$0.32**.
+- **Total text AI: $14.40/month**.
+- Optional voice: 742.5 × $0.0045 = **$3.34/month**.
+
+At 1,000 MAU: **$144.05 text AI**, plus approximately **$33.41 transcription**.
+
+Templates for routine Money Stories reduce those costs. Longer prompts, larger outputs and repeated failed requests increase them.
+
+### Monthly service estimate
+
+| Cost | Development/testing | 100-MAU live pilot | 1,000 MAU |
+|---|---:|---:|---:|
+| Application host | Local development $0; hosted commercial prototype uses Pro | $20 | $20 baseline; budget overages |
+| Database/Auth | Supabase Free with synthetic data, or paid staging | $25 | $25 baseline; compute/storage may grow |
+| Text AI | Allow $10–30 for evaluations and testing | $14.40 | $144.05 |
+| Optional transcription | Included in testing allowance | $3.34 | $33.41 |
+| Authentication email | Free within limits | $0 within limits | Budget $20 for Pro |
+| File storage | None initially | $0 additional | $0 additional initially |
+| **Text-first total** | **About $10–30 local, or $55–75 with paid services** | **$59.40** | **$209.05 baseline** |
+| **With assumed voice** | — | **$62.75** | **$242.46 baseline** |
+
+For growth, I would allow **another $20–40/month** for staging, increased compute and hosting usage until measurements establish the actual requirement.
+
+### Important plan details
+
+- **Vercel Hobby is restricted to personal, non-commercial use.** Do not use it as the commercial deployment plan. ([vercel.com](https://vercel.com/docs/plans/hobby?utm_source=chatgpt.com))
+- Supabase Free projects can pause after low activity over seven days. Use Pro for the live pilot. ([supabase.com](https://supabase.com/docs/guides/platform/free-project-pausing?utm_source=chatgpt.com))
+- Supabase Pro includes 8 GB database disk, 100 GB file storage, and 250 GB uncached egress; overages are separately charged. Another Micro project normally adds about $10/month. ([supabase.com](https://supabase.com/pricing?utm_source=chatgpt.com))
+- Resend Free lists 3,000 emails/month with a 100/day cap. Pro is $20 for 50,000/month, without that daily cap; listed additional email cost is $0.90/1,000. Account onboarding bursts can justify Pro before reaching 1,000 MAU. ([resend.com](https://resend.com/pricing?utm_source=chatgpt.com))
+
+Frankfurt Vercel compute is listed at $0.184/active CPU-hour and $0.0152/GB-hour, with invocations at $0.60/million. Under an illustrative 440,000 monthly invocations, 0.05 CPU-seconds each and bounded AI waits, compute is approximately $4.36 before other usage—within the Pro credit. This is an estimate, not a capacity test. ([vercel.com](https://vercel.com/docs/functions/usage-and-pricing?utm_source=chatgpt.com))
+
+**PITR changes the price materially.** Supabase’s published example for Pro, Small compute and seven-day PITR totals approximately **$130/month for Supabase**, versus the $25 baseline: approximately **$105 extra**. Choose it when a day’s potential record loss is unacceptable. ([supabase.com](https://supabase.com/docs/guides/platform/manage-your-usage/point-in-time-recovery?utm_source=chatgpt.com))
+
+### Development and operating work
+
+My planning estimate for one experienced developer is **8–12 full-time development weeks**, followed by a focused pilot. This includes the ledger, correction/retry controls, privacy workflows, exports and recovery verification.
+
+Budget separately for:
+
+- Ghanaian legal/classification work and applicable registrations.
+- Accounting review of posting templates and reports.
+- Voice/extraction evaluation.
+- Domain and company backup arrangements.
+- Support, patching, restore drills and rights requests.
+- Merchant processing fees once subscription billing is selected.
+
+DPC’s current FAQ lists **GH₵156 for small businesses/startups** and **GH₵5,000 for specialised industries**, among other categories. Obtain CashNarra’s classification rather than assuming the startup fee applies. ([dpc.gov.gh](https://dpc.gov.gh/help-faqs/?utm_source=chatgpt.com))
+
+A reasonable initial allowance is several hours each month for maintenance and privacy operations, plus incident time. Self-hosting adds OS/database updates, backup operation, monitoring and outage response. Those hours belong in the cost comparison.
+
+---
+
+## G. Build sequence and upgrade triggers
+
+### Practical stages
+
+1. **Confirm scope and launch classifications.** Identify the entity, customers and processing chain. Start registration and contract work. Use synthetic data during development.
+2. **Build the financial core.** Workspaces, accounts/opening balances, obligations, atomic posting, idempotency, correction history and ownership controls.
+3. **Add text narration and batch review.** Evaluate messy financial meanings and clarifications against accountant-reviewed examples.
+4. **Add reports, exports and basic goals.** Every total opens its supporting records. Keep habit check-ins separate from review/account-check status.
+5. **Complete launch evidence and run a small pilot.** Verify recovery, privacy requests, local statutory-record arrangements and applicable approvals.
+6. **Add short-clip voice.** Use representative Ghanaian recordings. Then consider receipts, imports and collaboration.
+
+### Small set of essential checks
+
+| Check | Required outcome |
+|---|---|
+| Transfer | Both accounts update once; workspace cash total is unchanged apart from separately recorded fees |
+| Debt settlement | Receivable/payable reduces; revenue/expense is not counted twice |
+| Retry/interrupted response | One committed batch despite repeated submission |
+| Concurrent settlement/edit | Stale or conflicting changes are rejected safely |
+| Isolation | Another user/workspace cannot read, export, alter or infer protected records |
+| Corrections | Current totals and earlier-period reports change correctly; links remain consistent |
+| Restore | Records, identities/permissions and deletion treatment work; actual files recover when that feature exists |
+| Forecast insufficiency | Missing history, zero contributions, unknown interest and competing allocations do not produce invented dates |
+
+These should run against actual database behaviour, including failed and concurrent transactions.
+
+### Upgrade only when a trigger appears
+
+| Trigger | Appropriate change |
+|---|---|
+| Unacceptable daily-backup recovery gap | PITR or another tested recovery arrangement |
+| Repeated AI timeouts or jobs must complete after disconnection | Durable job processing and a worker |
+| Large receipt/statement uploads | Direct private uploads, file recovery, bounded import jobs |
+| Sustained database pressure after indexing/query improvements | Increase database compute |
+| Exports exceed request/device limits | Background export generation |
+| Short clips materially constrain users | Evaluate live audio |
+| Team access | Roles, invitations and a new privacy/security review |
+| Bank/MoMo feeds, SMS access, lender analytics, payments, securities or tax workflows | Regulatory/provider/platform reassessment before implementation |
+| Foreign customers or an institutional customer | Jurisdiction and contract reassessment |
+
+---
+
+## H. Final decision
+
+**Default:** Next.js 16 + TypeScript + managed Supabase Pro + Vercel Pro + OpenAI Responses API, with Resend for authentication email.
+
+**Fallback:** Django 5.2 LTS + templates/HTMX + managed PostgreSQL on Render, retaining the same bounded AI approach. Change hosting separately if the confirmed Ghanaian requirements demand another location or arrangement.
+
+I would change the default if inexpensive PITR is essential immediately, the team prefers conventional server development, or the confirmed hosting/contract requirements cannot be satisfied by the selected providers.
+
+The remaining facts are the operating entity’s establishment/ownership, actual customer locations, intended statutory use of business records, acceptable recovery gap, and the specific BoG/GRA/DPC/NITA classifications described above.
+
+After simplifying once more, **the first release needs one application, one managed database/authentication provider, one AI integration and production email**. Keep voice after text, attachments after file recovery, and advanced infrastructure after measured demand. Build the ledger, privacy controls and operating obligations into that small system from the start.
+
+## User
+
+what if i use a ovhcloud d2-4 instance to host Cash Narra instead... what would change?
+
+## ChatGPT
+
+I’ll check the D2-4’s current resources and compare two setups: hosting just the app on OVHcloud, or hosting the app and database together.
+
+
+## ChatGPT
+
+The D2-4 looks reasonable for a small pilot’s application server. Keeping the ledger in managed Supabase would make this a fairly small hosting change; moving the database onto OVH too would make you responsible for its backups, recovery, and maintenance.
+
+## ChatGPT
+
+**Yes—an OVHcloud D2-4 is a reasonable option for CashNarra’s pilot application server.** My recommendation would be to replace Vercel with OVHcloud initially and **keep managed Supabase for the database and authentication**.
+
+The main trade-off is a potentially lower hosting bill in exchange for responsibility for server maintenance and recovery.
+
+Checked **13 October 2026**: OVHcloud lists the D2-4 with **2 vCores, 4 GB RAM, 50 GB storage and 250 Mbps public networking**. It belongs to the Discovery range, which uses shared resources and is positioned for testing and development. My assessment is that it can support a modest CashNarra pilot, but production suitability needs a representative load test. ([ovhcloud.com](https://www.ovhcloud.com/en/public-cloud/prices/?utm_source=chatgpt.com))
+
+| What you put on OVHcloud | What changes | My recommendation |
+|---|---|---|
+| **Next.js application only; managed Supabase remains** | You operate Linux and the application server. Supabase still operates the database/auth services. | **Best initial OVH arrangement.** |
+| **Application and ordinary PostgreSQL together** | You also own database upgrades, backups, recovery and authentication implementation. | Credible lower-subscription-cost option. For a fresh build, Django with its built-in authentication becomes more attractive. |
+| **Next.js plus the full self-hosted Supabase bundle** | You maintain several services and lose managed operational features. | Too much burden and too little resource margin on a D2-4. |
+
+Full self-hosted Supabase currently specifies **4 GB RAM, two CPU cores and 40 GB SSD as its minimum**, with **8 GB+, four cores+ and 80 GB+ recommended**. The D2-4 barely clears the minimum before adding CashNarra itself. Managed backups and PITR also become your responsibility when self-hosting. ([supabase.com](https://supabase.com/docs/guides/self-hosting/docker?utm_source=chatgpt.com), [supabase.com](https://supabase.com/docs/guides/self-hosting?utm_source=chatgpt.com))
+
+For the recommended arrangement, I would use:
+
+- **Ubuntu LTS, Node.js and the existing Next.js/TypeScript application.**
+- **Next.js standalone deployment**, built outside the production VM, with `systemd` keeping it running.
+- **Caddy** in front of the application to handle HTTPS and forward requests.
+- **Managed Supabase Pro**, OpenAI and the existing email service.
+
+Next.js officially supports the standalone deployment format, and Caddy can obtain and renew HTTPS certificates automatically. This does not require Kubernetes or another deployment platform. ([nextjs.org](https://nextjs.org/docs/app/api-reference/config/next-config-js/output?utm_source=chatgpt.com), [caddyserver.com](https://caddyserver.com/docs/automatic-https?utm_source=chatgpt.com))
+
+The practical changes are these:
+
+| Area | Effect of using the D2-4 |
+|---|---|
+| **Maintenance** | You patch Linux, Node and Caddy; secure SSH; protect secrets; monitor memory/disk; and respond to outages. |
+| **Deployments** | You implement a repeatable deployment and rollback process. Build elsewhere to avoid competing with live requests for the VM’s memory. |
+| **Requests and jobs** | Vercel’s function limits disappear, but you must configure upload limits and timeouts. Scheduled tasks can use a system timer; a queue is unnecessary initially. |
+| **Availability** | A single VM is a single application failure point. With Supabase elsewhere, an application-server failure does not also destroy the ledger. |
+| **Delivery and caching** | You lose Vercel’s integrated global delivery. Serve compressed assets and keep financial responses out of shared caches. |
+| **Financial integrity** | The ledger still needs exact arithmetic, atomic posting, retry protection, tenant isolation and traceable corrections. Hosting does not replace these controls. |
+
+**The D2-4 would not run the AI model locally.** It would call OpenAI, so extraction and later transcription costs remain separate. Whether it supports 1,000 monthly active users depends on simultaneous activity, report queries and background work—not the monthly user count alone.
+
+On cost, you would replace **Vercel Pro’s US$20/month base charge** with the OVH instance charge and any backup/storage extras. Supabase Pro still starts at **US$25/month** for the proposed single Micro project. Use the OVH checkout quote for your billing country, currency, region and billing mode; I would not assume the worldwide page’s dollar figures are US dollars. Your maintenance time belongs in the comparison too. ([vercel.com](https://vercel.com/pricing?utm_source=chatgpt.com), [supabase.com](https://supabase.com/pricing?utm_source=chatgpt.com), [ovhcloud.com](https://www.ovhcloud.com/en/public-cloud/prices/?utm_source=chatgpt.com))
+
+If you also move PostgreSQL onto OVH, require **automated encrypted backups stored off the VM, a tested restore, and an explicit acceptable amount of potential data loss** before taking real users. Back up actual uploaded files separately where applicable. A VM snapshot can supplement that recovery plan.
+
+The compliance change is mainly the processing chain: OVH replaces Vercel as a hosting provider. Before launch, verify the contracting entity, processing agreement, selected region, backup locations, subprocessors and support access, then update your disclosures. The Ghanaian registration, licensing and record-location questions identified earlier still need resolution.
+
+**My choice: Next.js on the D2-4, with managed Supabase retained.** If your objective is to host the application *and* database yourself, I would favour **Django + ordinary PostgreSQL**, accepting the additional operational work. Choose that for control and a deliberate operating model; the small hosting saving alone would not justify taking on database recovery responsibility.
+
+## User
+
+in all honesty, should i rather stick to the vercel route? do the pros outweigh the cons?
+
+## ChatGPT
+
+I’ll check the current Vercel terms and limits, then weigh the cost against the server work OVH would add.
+
+## ChatGPT
+
+**Yes. For CashNarra’s current scope, I would stick with Vercel Pro + managed Supabase. The pros outweigh the cons for one developer or a very small team.**
+
+Your hardest work will be making financial records trustworthy, handling messy narrations, and getting the review experience right. Vercel reduces the server work competing for that attention.
+
+| Advantage | Why it matters for CashNarra |
+|---|---|
+| Automatic deployments and preview environments | You can test changes before releasing them. |
+| Application rollback | You can recover more easily from a problematic deployment. |
+| Managed HTTPS and global asset delivery | Less infrastructure to configure and maintain. |
+| Managed application infrastructure | You avoid administering the Linux server that an OVH instance would require. |
+
+These are concrete platform capabilities, although they do not guarantee that your application is correct or secure. ([vercel.com](https://vercel.com/pricing?utm_source=chatgpt.com))
+
+**The disadvantages are real, but manageable for this product:**
+
+- **Variable costs:** Pro starts at **US$20/month**, with US$20 in usage credit; additional usage and taxes can increase the bill. Configure spending alerts and decide deliberately whether exceeding your budget should pause the application. ([vercel.com](https://vercel.com/pricing?utm_source=chatgpt.com), [vercel.com](https://vercel.com/docs/spend-management?utm_source=chatgpt.com))
+- **Runtime and upload limits:** Functions have bounded execution time and a **4.5 MB request/response payload limit**. Text narration fits comfortably; later voice clips need size limits, and larger attachments should upload directly to private storage. Heavy imports may eventually justify a worker. ([vercel.com](https://vercel.com/docs/functions/limitations?utm_source=chatgpt.com))
+- **Provider dependence:** Keep the application portable by using ordinary PostgreSQL, a small direct AI integration, and limited dependence on Vercel-specific services.
+
+For the proposed single-developer deployment, **Vercel Pro plus one Supabase Pro Micro project starts at about US$45/month**, before AI, communications, additional backup arrangements, overages and taxes. Use Pro for the commercial product; Hobby is restricted to personal, non-commercial use. ([vercel.com](https://vercel.com/pricing?utm_source=chatgpt.com), [supabase.com](https://supabase.com/pricing?utm_source=chatgpt.com))
+
+That fee buys a meaningful reduction in operational work. You still own tenant isolation, ledger correctness, privacy, backup verification and the company’s launch obligations.
+
+**I would reconsider OVH when measured costs become substantial, a required workload does not fit Vercel, or a confirmed contractual/data-location requirement changes the choice.** Until then, Vercel is the better fit for your priority: straightforward to build and maintain, with enough capability to deliver CashNarra reliably.
+
+## User
+
+alright.. what is the final decision now?
+
+## ChatGPT
+
+**The final decision is: Next.js + TypeScript, hosted on Vercel Pro, with managed Supabase Pro and OpenAI.**
+
+Build CashNarra as a **mobile-friendly web app/PWA**, starting with text narration.
+
+| Layer | Final choice |
+|---|---|
+| Interface and server logic | **Next.js 16, React, TypeScript, Node.js 24**—one application |
+| Database | **Managed Supabase PostgreSQL** |
+| Authentication | **Supabase Auth** |
+| Financial integrity | Hidden double-entry ledger; exact decimal amounts; atomic posting, retry protection and traceable corrections |
+| AI | **OpenAI Responses API**, initially GPT-4.1 mini, through the official SDK with schema validation |
+| Offline capture | **IndexedDB** for pending drafts, with explicit synchronisation status |
+| Email | **Resend** for authentication and necessary transactional messages |
+| Exports | CSV, lightweight PDF generation and spreadsheet export within the existing application |
+| Hosting | **Vercel Pro** |
+
+**AI interprets and explains. Application and database logic validate, post, calculate and forecast.**
+
+Build in this order:
+
+1. Accounts, opening balances, narration → clarification → batch review/save, and corrections.
+2. Traceable summaries, Money Stories and exports.
+3. Simple goals and deterministic current-pace scenarios.
+4. Short recorded voice clips, after testing transcription with representative Ghanaian users.
+5. Receipt recognition, imports and other conveniences when demand justifies them.
+
+Base Vercel and Supabase plans start at approximately **US$45/month**, before AI, email upgrades, additional backups, overages and taxes. ([vercel.com](https://vercel.com/pricing?utm_source=chatgpt.com), [supabase.com](https://supabase.com/pricing?utm_source=chatgpt.com))
+
+Before public launch, complete the company’s privacy and operational obligations and resolve the Ghanaian regulatory applicability questions identified in the research.
+
+**Proceed with Vercel.** Keep the application portable so OVH remains a practical hosting option if measured costs or requirements later justify the additional server work.
+
+## User
+
+you do know for development... we will stick with their free for now, right?
+
+## ChatGPT
+
+Understood—the paid-plan figures were for a live deployment. I’ll check the free-plan terms so the development setup is accurate.
+
+## ChatGPT
+
+**Yes—free/local development first.** The US$45/month figure was the proposed live-deployment budget, not a day-one expense.
+
+For now:
+
+- **Next.js:** develop and test locally.
+- **Supabase Free:** database, authentication and storage within its limits. It has no automatic backups and can pause after a week of inactivity, so we’ll keep migrations and reproducible test data. ([supabase.com](https://supabase.com/pricing?utm_source=chatgpt.com))
+- **AI:** mock responses for routine development; use a small budget for real OpenAI API testing.
+
+**Vercel needs one qualification:** Hobby permits personal, non-commercial use. Its definition includes deployments intended for financial gain, so “still in development” does not automatically make CashNarra eligible. My earlier wording about upgrading only at launch was too broad. ([vercel.com](https://vercel.com/docs/limits/fair-use-guidelines?utm_source=chatgpt.com))
+
+We can keep development infrastructure free by running locally with Supabase Free, use Hobby where permitted, and retain **Vercel as the intended production host**. Paid upgrades should follow an actual contractual or operational need.
+
+
+
+---
+Generated with ChatGPT Pro Tools
+https://chromewebstore.google.com/detail/chatgpt-pro-tools/blehigjjjlnlbbgjghhfnllglnelijkg?utm_source=extension&utm_medium=export-footer

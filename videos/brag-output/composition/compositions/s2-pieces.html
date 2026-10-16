@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+  </head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Inter"; src: url("assets/fonts/InterVariable.woff2") format("woff2"); font-weight: 100 900; }
+        #s2-pieces { position: absolute; inset: 0; overflow: hidden; background: #29263d; font-family: "Inter", sans-serif; }
+        #s2-pieces .crop { position: absolute; will-change: transform; opacity: 0; }
+        #s2-pieces .crop { background: url("assets/img/campaign-studio.png") 0 0 / 100% 100% no-repeat; }
+        #s2-pieces #s2-a { left: -1632px; top: -26px; width: 3379px; height: 2253px; transform-origin: 2332px 726px; }
+        #s2-pieces #s2-b { left: -2685px; top: -95px; width: 4608px; height: 3072px; transform-origin: 3225px 855px; }
+        #s2-pieces #s2-c { left: -3300px; top: -510px; width: 4608px; height: 3072px; transform-origin: 3900px 1410px; }
+        #s2-pieces .ink { position: absolute; inset: 0; background: #1c1a2a; }
+        #s2-pieces .vignette { position: absolute; inset: 0; background: radial-gradient(110% 75% at 50% 50%, rgba(25,23,35,0) 40%, rgba(25,23,35,0.78) 100%); }
+        #s2-pieces .frag { position: absolute; padding: 24px 34px 28px; border-radius: 22px; background: rgba(28,26,42,0.8);
+          border: 2px solid rgba(255,196,160,0.32); color: #ffffff; opacity: 0; will-change: transform, opacity, filter; }
+        #s2-pieces .lab { font-weight: 600; font-size: 28px; letter-spacing: 0.08em; text-transform: uppercase; color: #d9d4e9; }
+        #s2-pieces .amt { font-weight: 700; font-size: 84px; line-height: 1.05; letter-spacing: -0.025em; font-variant-numeric: tabular-nums; margin-top: 6px; }
+        #s2-pieces .sub { font-weight: 500; font-size: 30px; color: #d9d4e9; margin-top: 4px; }
+        #s2-pieces .debt .amt { color: #ffc4a0; font-size: 108px; }
+      </style>
+      <div data-hf-id="hf-lghv" id="s2-pieces" data-composition-id="s2-pieces" data-width="1080" data-height="1920">
+        <div data-hf-id="hf-t90l" class="crop" id="s2-a"></div>
+        <div data-hf-id="hf-x74m" class="crop" id="s2-b"></div>
+        <div data-hf-id="hf-3cuf" class="crop" id="s2-c"></div>
+        <div data-hf-id="hf-4s8i" class="ink" id="s2-ink"></div>
+        <div data-hf-id="hf-vyh8" class="ink" id="s2-pulse" style="opacity: 0"></div>
+        <div data-hf-id="hf-q7bi" class="vignette"></div>
+
+        <div data-hf-id="hf-bu2p" class="frag" id="s2-cash" style="left: 60px; top: 300px"><div data-hf-id="hf-2x9m" class="lab">Cash sales</div><div data-hf-id="hf-n58n" class="amt">GH₵900</div></div>
+        <div data-hf-id="hf-k9g0" class="frag" id="s2-momo" style="left: 60px; top: 650px"><div data-hf-id="hf-dk8d" class="lab">MoMo sales</div><div data-hf-id="hf-oncx" class="amt">GH₵1,200</div></div>
+        <div data-hf-id="hf-xoq4" class="frag" id="s2-stock" style="left: 90px; top: 330px"><div data-hf-id="hf-idd9" class="lab">Stock</div><div data-hf-id="hf-8bux" class="amt">GH₵700</div></div>
+        <div data-hf-id="hf-a2m2" class="frag" id="s2-deliv" style="left: 60px; top: 690px"><div data-hf-id="hf-d9cd" class="lab">Delivery</div><div data-hf-id="hf-q30k" class="amt">GH₵80</div></div>
+        <div data-hf-id="hf-566m" class="frag debt" id="s2-kojo" style="left: 80px; top: 300px"><div data-hf-id="hf-b7wg" class="lab">Kojo still owes</div><div data-hf-id="hf-5aid" class="amt">GH₵300</div></div>
+        <div data-hf-id="hf-9f5u" class="frag debt" id="s2-abena" style="left: 330px; top: 1110px"><div data-hf-id="hf-ebe6" class="lab">Abena paid</div><div data-hf-id="hf-b2ju" class="amt">GH₵200</div><div data-hf-id="hf-4sal" class="sub">toward an old balance</div></div>
+      </div>
+      <script>
+        (function () {
+          const tl = gsap.timeline({ paused: true });
+          // three framings of the same evening: shoulders → eyes → the phone in her hand
+          tl.set("#s2-a", { opacity: 1 }, 0).set("#s2-a", { opacity: 0 }, 3.42);
+          tl.set("#s2-b", { opacity: 1 }, 3.42).set("#s2-b", { opacity: 0 }, 6.85);
+          tl.set("#s2-c", { opacity: 1 }, 6.85);
+          tl.fromTo("#s2-a", { scale: 1.0, x: 0 }, { scale: 1.05, x: -18, duration: 3.42, ease: "none" }, 0);
+          tl.fromTo("#s2-b", { scale: 1.0, x: 0 }, { scale: 1.045, x: 14, duration: 3.43, ease: "none" }, 3.42);
+          tl.fromTo("#s2-c", { scale: 1.0 }, { scale: 1.06, duration: 2.15, ease: "sine.in" }, 6.85);
+          // the mind gets heavier — ink deepens, breathing on the 76 bpm pulse
+          tl.fromTo("#s2-ink", { opacity: 0.22 }, { opacity: 0.4, duration: 8.4, ease: "none" }, 0);
+          const BEAT = 60 / 76;
+          for (let i = 0; i * BEAT < 8.3; i++) {
+            const at = i * BEAT;
+            tl.fromTo("#s2-pulse", { opacity: 0 }, { opacity: 0.09, duration: 0.12, ease: "power2.out", immediateRender: false }, at);
+            tl.to("#s2-pulse", { opacity: 0, duration: 0.5, ease: "sine.inOut" }, at + 0.12);
+          }
+          // fragments — never more than two on screen; debts hold longest
+          const frag = (id, tin, tout, rot) => {
+            tl.fromTo(id, { opacity: 0, y: 34, scale: 0.95, rotation: rot * 0.5, filter: "blur(12px)" },
+              { opacity: 1, y: 0, scale: 1, rotation: rot, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, tin);
+            tl.to(id, { y: -16, duration: tout - tin - 0.83, ease: "sine.inOut" }, tin + 0.45);
+            tl.to(id, { opacity: 0, y: -46, filter: "blur(10px)", duration: 0.38, ease: "power2.in" }, tout - 0.38);
+          };
+          // beat-grid (76 bpm pulse from 5.0s): cash 5.00 · MoMo 5.75 (beat 5.79) · stock 6.62 (6.58) · delivery 7.42 (7.37); debts follow the voice
+          frag("#s2-cash", 0.0, 1.5, -2);
+          frag("#s2-momo", 0.75, 2.3, 2);
+          frag("#s2-stock", 1.62, 3.1, 1.5);
+          frag("#s2-deliv", 2.42, 3.38, -2);
+          frag("#s2-kojo", 3.42, 6.9, -1.5);
+          frag("#s2-abena", 4.95, 8.85, 1.5);
+          window.__timelines["s2-pieces"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

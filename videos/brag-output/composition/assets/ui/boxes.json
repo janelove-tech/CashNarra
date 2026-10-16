@@ -1,0 +1,4208 @@
+{
+ "type_full": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.text-button",
+   "action": "today",
+   "text": "Back to Today",
+   "x": 20,
+   "y": 124,
+   "w": 111,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "Tell it as it happened.",
+   "x": 20,
+   "y": 233,
+   "w": 350,
+   "h": 36
+  },
+  {
+   "sel": "textarea",
+   "text": "",
+   "x": 38,
+   "y": 397,
+   "w": 314,
+   "h": 250
+  },
+  {
+   "sel": "button.button.ghost.small",
+   "action": "voice",
+   "text": "Voice preview",
+   "x": 209,
+   "y": 662,
+   "w": 143,
+   "h": 44
+  },
+  {
+   "sel": "div.flow-options",
+   "text": "Use the example Try an unclear version",
+   "x": 20,
+   "y": 739,
+   "w": 350,
+   "h": 44
+  },
+  {
+   "sel": "button.text-button",
+   "action": "example",
+   "text": "Use the example",
+   "x": 20,
+   "y": 739,
+   "w": 127,
+   "h": 44
+  },
+  {
+   "sel": "button.text-button",
+   "action": "unclear",
+   "text": "Try an unclear version",
+   "x": 159,
+   "y": 739,
+   "w": 163,
+   "h": 44
+  },
+  {
+   "sel": "div.flow-footer",
+   "text": "CashNarra will propose records for you to review. Understand",
+   "x": 20,
+   "y": 809,
+   "w": 350,
+   "h": 100
+  },
+  {
+   "sel": "button.button.primary",
+   "action": "understand",
+   "text": "Understand my story",
+   "x": 20,
+   "y": 830,
+   "w": 350,
+   "h": 48
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 772,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "clarify": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.text-button",
+   "action": "today",
+   "text": "Back to Today",
+   "x": 20,
+   "y": 124,
+   "w": 111,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "Just one detail.",
+   "x": 20,
+   "y": 233,
+   "w": 350,
+   "h": 36
+  },
+  {
+   "sel": "div.source-quote",
+   "text": "From your story “Paid GH₵80 for delivery.”",
+   "x": 20,
+   "y": 343,
+   "w": 350,
+   "h": 92
+  },
+  {
+   "sel": "h2",
+   "text": "Which account paid for delivery?",
+   "x": 58,
+   "y": 463,
+   "w": 284,
+   "h": 24
+  },
+  {
+   "sel": "button.account-choice",
+   "action": "account-choice",
+   "text": "Cash",
+   "x": 20,
+   "y": 509,
+   "w": 111,
+   "h": 104
+  },
+  {
+   "sel": "button.account-choice",
+   "action": "account-choice",
+   "text": "MoMo",
+   "x": 140,
+   "y": 509,
+   "w": 111,
+   "h": 104
+  },
+  {
+   "sel": "button.account-choice",
+   "action": "account-choice",
+   "text": "Bank",
+   "x": 259,
+   "y": 509,
+   "w": 111,
+   "h": 104
+  },
+  {
+   "sel": "div.flow-footer",
+   "text": "You can change any detail in the next step. Review 8 records",
+   "x": 20,
+   "y": 639,
+   "w": 350,
+   "h": 100
+  },
+  {
+   "sel": "button.button.primary",
+   "action": "review",
+   "text": "Review 8 records",
+   "x": 20,
+   "y": 660,
+   "w": 350,
+   "h": 48
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 772,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "clarify_full": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.text-button",
+   "action": "today",
+   "text": "Back to Today",
+   "x": 20,
+   "y": 124,
+   "w": 111,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "Just one detail.",
+   "x": 20,
+   "y": 233,
+   "w": 350,
+   "h": 36
+  },
+  {
+   "sel": "div.source-quote",
+   "text": "From your story “Paid GH₵80 for delivery.”",
+   "x": 20,
+   "y": 343,
+   "w": 350,
+   "h": 92
+  },
+  {
+   "sel": "h2",
+   "text": "Which account paid for delivery?",
+   "x": 58,
+   "y": 463,
+   "w": 284,
+   "h": 24
+  },
+  {
+   "sel": "button.account-choice",
+   "action": "account-choice",
+   "text": "Cash",
+   "x": 20,
+   "y": 509,
+   "w": 111,
+   "h": 104
+  },
+  {
+   "sel": "button.account-choice",
+   "action": "account-choice",
+   "text": "MoMo",
+   "x": 140,
+   "y": 509,
+   "w": 111,
+   "h": 104
+  },
+  {
+   "sel": "button.account-choice",
+   "action": "account-choice",
+   "text": "Bank",
+   "x": 259,
+   "y": 509,
+   "w": 111,
+   "h": 104
+  },
+  {
+   "sel": "div.flow-footer",
+   "text": "You can change any detail in the next step. Review 8 records",
+   "x": 20,
+   "y": 639,
+   "w": 350,
+   "h": 100
+  },
+  {
+   "sel": "button.button.primary",
+   "action": "review",
+   "text": "Review 8 records",
+   "x": 20,
+   "y": 660,
+   "w": 350,
+   "h": 48
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 772,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "clarify_momo": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.text-button",
+   "action": "today",
+   "text": "Back to Today",
+   "x": 20,
+   "y": 124,
+   "w": 111,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "Just one detail.",
+   "x": 20,
+   "y": 233,
+   "w": 350,
+   "h": 36
+  },
+  {
+   "sel": "div.source-quote",
+   "text": "From your story “Paid GH₵80 for delivery.”",
+   "x": 20,
+   "y": 343,
+   "w": 350,
+   "h": 92
+  },
+  {
+   "sel": "h2",
+   "text": "Which account paid for delivery?",
+   "x": 58,
+   "y": 463,
+   "w": 284,
+   "h": 24
+  },
+  {
+   "sel": "button.account-choice",
+   "action": "account-choice",
+   "text": "Cash",
+   "x": 20,
+   "y": 509,
+   "w": 111,
+   "h": 104
+  },
+  {
+   "sel": "button.account-choice.selected",
+   "action": "account-choice",
+   "text": "MoMo",
+   "x": 140,
+   "y": 509,
+   "w": 111,
+   "h": 104
+  },
+  {
+   "sel": "button.account-choice",
+   "action": "account-choice",
+   "text": "Bank",
+   "x": 259,
+   "y": 509,
+   "w": 111,
+   "h": 104
+  },
+  {
+   "sel": "div.flow-footer",
+   "text": "You can change any detail in the next step. Review 8 records",
+   "x": 20,
+   "y": 639,
+   "w": 350,
+   "h": 100
+  },
+  {
+   "sel": "button.button.primary",
+   "action": "review",
+   "text": "Review 8 records",
+   "x": 20,
+   "y": 660,
+   "w": 350,
+   "h": 48
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 772,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "clarify_momo_full": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.text-button",
+   "action": "today",
+   "text": "Back to Today",
+   "x": 20,
+   "y": 124,
+   "w": 111,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "Just one detail.",
+   "x": 20,
+   "y": 233,
+   "w": 350,
+   "h": 36
+  },
+  {
+   "sel": "div.source-quote",
+   "text": "From your story “Paid GH₵80 for delivery.”",
+   "x": 20,
+   "y": 343,
+   "w": 350,
+   "h": 92
+  },
+  {
+   "sel": "h2",
+   "text": "Which account paid for delivery?",
+   "x": 58,
+   "y": 463,
+   "w": 284,
+   "h": 24
+  },
+  {
+   "sel": "button.account-choice",
+   "action": "account-choice",
+   "text": "Cash",
+   "x": 20,
+   "y": 509,
+   "w": 111,
+   "h": 104
+  },
+  {
+   "sel": "button.account-choice.selected",
+   "action": "account-choice",
+   "text": "MoMo",
+   "x": 140,
+   "y": 509,
+   "w": 111,
+   "h": 104
+  },
+  {
+   "sel": "button.account-choice",
+   "action": "account-choice",
+   "text": "Bank",
+   "x": 259,
+   "y": 509,
+   "w": 111,
+   "h": 104
+  },
+  {
+   "sel": "div.flow-footer",
+   "text": "You can change any detail in the next step. Review 8 records",
+   "x": 20,
+   "y": 639,
+   "w": 350,
+   "h": 100
+  },
+  {
+   "sel": "button.button.primary",
+   "action": "review",
+   "text": "Review 8 records",
+   "x": 20,
+   "y": 660,
+   "w": 350,
+   "h": 48
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 772,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "review": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.text-button",
+   "action": "today",
+   "text": "Back to Today",
+   "x": 20,
+   "y": 124,
+   "w": 111,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "Your story, organised.",
+   "x": 20,
+   "y": 233,
+   "w": 350,
+   "h": 36
+  },
+  {
+   "sel": "div.review-metrics",
+   "text": "Draft records 8 Money in GH₵2,300.00 Money out GH₵930.00",
+   "x": 20,
+   "y": 343,
+   "w": 350,
+   "h": 85
+  },
+  {
+   "sel": "span.amount",
+   "text": "8",
+   "x": 20,
+   "y": 384,
+   "w": 75,
+   "h": 27
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵2,300.00",
+   "x": 113,
+   "y": 384,
+   "w": 114,
+   "h": 27
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵930.00",
+   "x": 245,
+   "y": 384,
+   "w": 99,
+   "h": 27
+  },
+  {
+   "sel": "div.record-row.in",
+   "text": "Cash sales Sales · Cash GH₵900.00 Received",
+   "x": 20,
+   "y": 448,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵900.00",
+   "x": 252,
+   "y": 472,
+   "w": 66,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 466,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.in",
+   "text": "MoMo sales Sales · MoMo GH₵1,200.00 Received",
+   "x": 20,
+   "y": 528,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵1,200.00",
+   "x": 241,
+   "y": 552,
+   "w": 77,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 546,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.owed",
+   "text": "Kojo’s credit sale People owe you · Kojo GH₵300.00 Still owe",
+   "x": 20,
+   "y": 608,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵300.00",
+   "x": 252,
+   "y": 632,
+   "w": 66,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 626,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.out",
+   "text": "Stock for the shop Stock purchase · Cash −GH₵700.00 Paid out",
+   "x": 20,
+   "y": 688,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "−GH₵700.00",
+   "x": 244,
+   "y": 712,
+   "w": 74,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 706,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.out",
+   "text": "Customer delivery Delivery · MoMo −GH₵80.00 Paid out",
+   "x": 20,
+   "y": 768,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "−GH₵80.00",
+   "x": 252,
+   "y": 792,
+   "w": 66,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 786,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.transfer",
+   "text": "Bank → MoMo Transfer · Between your accounts GH₵500.00 Trans",
+   "x": 20,
+   "y": 848,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵500.00",
+   "x": 252,
+   "y": 872,
+   "w": 66,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 866,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.in",
+   "text": "Abena’s part payment Old balance payment · MoMo GH₵200.00 Re",
+   "x": 20,
+   "y": 928,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵200.00",
+   "x": 252,
+   "y": 952,
+   "w": 66,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 946,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.out",
+   "text": "Money taken home Owner withdrawal · Cash −GH₵150.00 Paid out",
+   "x": 20,
+   "y": 1008,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "−GH₵150.00",
+   "x": 244,
+   "y": 1032,
+   "w": 74,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 1026,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "span.badge.draft",
+   "text": "Not saved yet",
+   "x": 20,
+   "y": 1110,
+   "w": 86,
+   "h": 25
+  },
+  {
+   "sel": "div.flow-footer",
+   "text": "You stay in control. Save this batch together. Save 8 record",
+   "x": 20,
+   "y": 1205,
+   "w": 350,
+   "h": 100
+  },
+  {
+   "sel": "button.button.primary",
+   "action": "save",
+   "text": "Save 8 records",
+   "x": 20,
+   "y": 1226,
+   "w": 350,
+   "h": 48
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 772,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "review_full": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.text-button",
+   "action": "today",
+   "text": "Back to Today",
+   "x": 20,
+   "y": 124,
+   "w": 111,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "Your story, organised.",
+   "x": 20,
+   "y": 233,
+   "w": 350,
+   "h": 36
+  },
+  {
+   "sel": "div.review-metrics",
+   "text": "Draft records 8 Money in GH₵2,300.00 Money out GH₵930.00",
+   "x": 20,
+   "y": 343,
+   "w": 350,
+   "h": 85
+  },
+  {
+   "sel": "span.amount",
+   "text": "8",
+   "x": 20,
+   "y": 384,
+   "w": 75,
+   "h": 27
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵2,300.00",
+   "x": 113,
+   "y": 384,
+   "w": 114,
+   "h": 27
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵930.00",
+   "x": 245,
+   "y": 384,
+   "w": 99,
+   "h": 27
+  },
+  {
+   "sel": "div.record-row.in",
+   "text": "Cash sales Sales · Cash GH₵900.00 Received",
+   "x": 20,
+   "y": 448,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵900.00",
+   "x": 252,
+   "y": 472,
+   "w": 66,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 466,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.in",
+   "text": "MoMo sales Sales · MoMo GH₵1,200.00 Received",
+   "x": 20,
+   "y": 528,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵1,200.00",
+   "x": 241,
+   "y": 552,
+   "w": 77,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 546,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.owed",
+   "text": "Kojo’s credit sale People owe you · Kojo GH₵300.00 Still owe",
+   "x": 20,
+   "y": 608,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵300.00",
+   "x": 252,
+   "y": 632,
+   "w": 66,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 626,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.out",
+   "text": "Stock for the shop Stock purchase · Cash −GH₵700.00 Paid out",
+   "x": 20,
+   "y": 688,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "−GH₵700.00",
+   "x": 244,
+   "y": 712,
+   "w": 74,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 706,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.out",
+   "text": "Customer delivery Delivery · MoMo −GH₵80.00 Paid out",
+   "x": 20,
+   "y": 768,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "−GH₵80.00",
+   "x": 252,
+   "y": 792,
+   "w": 66,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 786,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.transfer",
+   "text": "Bank → MoMo Transfer · Between your accounts GH₵500.00 Trans",
+   "x": 20,
+   "y": 848,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵500.00",
+   "x": 252,
+   "y": 872,
+   "w": 66,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 866,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.in",
+   "text": "Abena’s part payment Old balance payment · MoMo GH₵200.00 Re",
+   "x": 20,
+   "y": 928,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵200.00",
+   "x": 252,
+   "y": 952,
+   "w": 66,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 946,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.out",
+   "text": "Money taken home Owner withdrawal · Cash −GH₵150.00 Paid out",
+   "x": 20,
+   "y": 1008,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "−GH₵150.00",
+   "x": 244,
+   "y": 1032,
+   "w": 74,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 1026,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "span.badge.draft",
+   "text": "Not saved yet",
+   "x": 20,
+   "y": 1110,
+   "w": 86,
+   "h": 25
+  },
+  {
+   "sel": "div.flow-footer",
+   "text": "You stay in control. Save this batch together. Save 8 record",
+   "x": 20,
+   "y": 1205,
+   "w": 350,
+   "h": 100
+  },
+  {
+   "sel": "button.button.primary",
+   "action": "save",
+   "text": "Save 8 records",
+   "x": 20,
+   "y": 1226,
+   "w": 350,
+   "h": 48
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 772,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "review_bottom": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.text-button",
+   "action": "today",
+   "text": "Back to Today",
+   "x": 20,
+   "y": 124,
+   "w": 111,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "Your story, organised.",
+   "x": 20,
+   "y": 233,
+   "w": 350,
+   "h": 36
+  },
+  {
+   "sel": "div.review-metrics",
+   "text": "Draft records 8 Money in GH₵2,300.00 Money out GH₵930.00",
+   "x": 20,
+   "y": 343,
+   "w": 350,
+   "h": 85
+  },
+  {
+   "sel": "span.amount",
+   "text": "8",
+   "x": 20,
+   "y": 384,
+   "w": 75,
+   "h": 27
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵2,300.00",
+   "x": 113,
+   "y": 384,
+   "w": 114,
+   "h": 27
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵930.00",
+   "x": 245,
+   "y": 384,
+   "w": 99,
+   "h": 27
+  },
+  {
+   "sel": "div.record-row.in",
+   "text": "Cash sales Sales · Cash GH₵900.00 Received",
+   "x": 20,
+   "y": 448,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵900.00",
+   "x": 252,
+   "y": 472,
+   "w": 66,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 466,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.in",
+   "text": "MoMo sales Sales · MoMo GH₵1,200.00 Received",
+   "x": 20,
+   "y": 528,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵1,200.00",
+   "x": 241,
+   "y": 552,
+   "w": 77,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 546,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.owed",
+   "text": "Kojo’s credit sale People owe you · Kojo GH₵300.00 Still owe",
+   "x": 20,
+   "y": 608,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵300.00",
+   "x": 252,
+   "y": 632,
+   "w": 66,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 626,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.out",
+   "text": "Stock for the shop Stock purchase · Cash −GH₵700.00 Paid out",
+   "x": 20,
+   "y": 688,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "−GH₵700.00",
+   "x": 244,
+   "y": 712,
+   "w": 74,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 706,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.out",
+   "text": "Customer delivery Delivery · MoMo −GH₵80.00 Paid out",
+   "x": 20,
+   "y": 768,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "−GH₵80.00",
+   "x": 252,
+   "y": 792,
+   "w": 66,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 786,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.transfer",
+   "text": "Bank → MoMo Transfer · Between your accounts GH₵500.00 Trans",
+   "x": 20,
+   "y": 848,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵500.00",
+   "x": 252,
+   "y": 872,
+   "w": 66,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 866,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.in",
+   "text": "Abena’s part payment Old balance payment · MoMo GH₵200.00 Re",
+   "x": 20,
+   "y": 928,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵200.00",
+   "x": 252,
+   "y": 952,
+   "w": 66,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 946,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.out",
+   "text": "Money taken home Owner withdrawal · Cash −GH₵150.00 Paid out",
+   "x": 20,
+   "y": 1008,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "−GH₵150.00",
+   "x": 244,
+   "y": 1032,
+   "w": 74,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 1026,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "span.badge.draft",
+   "text": "Not saved yet",
+   "x": 20,
+   "y": 1110,
+   "w": 86,
+   "h": 25
+  },
+  {
+   "sel": "div.flow-footer",
+   "text": "You stay in control. Save this batch together. Save 8 record",
+   "x": 20,
+   "y": 1205,
+   "w": 350,
+   "h": 100
+  },
+  {
+   "sel": "button.button.primary",
+   "action": "save",
+   "text": "Save 8 records",
+   "x": 20,
+   "y": 1226,
+   "w": 350,
+   "h": 48
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 1334,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "saving": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.text-button",
+   "action": "today",
+   "text": "Back to Today",
+   "x": 20,
+   "y": 124,
+   "w": 111,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "Your story, organised.",
+   "x": 20,
+   "y": 233,
+   "w": 350,
+   "h": 36
+  },
+  {
+   "sel": "div.review-metrics",
+   "text": "Draft records 8 Money in GH₵2,300.00 Money out GH₵930.00",
+   "x": 20,
+   "y": 343,
+   "w": 350,
+   "h": 85
+  },
+  {
+   "sel": "span.amount",
+   "text": "8",
+   "x": 20,
+   "y": 384,
+   "w": 75,
+   "h": 27
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵2,300.00",
+   "x": 113,
+   "y": 384,
+   "w": 114,
+   "h": 27
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵930.00",
+   "x": 245,
+   "y": 384,
+   "w": 99,
+   "h": 27
+  },
+  {
+   "sel": "div.record-row.in",
+   "text": "Cash sales Sales · Cash GH₵900.00 Received",
+   "x": 20,
+   "y": 448,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵900.00",
+   "x": 252,
+   "y": 472,
+   "w": 66,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 466,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.in",
+   "text": "MoMo sales Sales · MoMo GH₵1,200.00 Received",
+   "x": 20,
+   "y": 528,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵1,200.00",
+   "x": 241,
+   "y": 552,
+   "w": 77,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 546,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.owed",
+   "text": "Kojo’s credit sale People owe you · Kojo GH₵300.00 Still owe",
+   "x": 20,
+   "y": 608,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵300.00",
+   "x": 252,
+   "y": 632,
+   "w": 66,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 626,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.out",
+   "text": "Stock for the shop Stock purchase · Cash −GH₵700.00 Paid out",
+   "x": 20,
+   "y": 688,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "−GH₵700.00",
+   "x": 244,
+   "y": 712,
+   "w": 74,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 706,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.out",
+   "text": "Customer delivery Delivery · MoMo −GH₵80.00 Paid out",
+   "x": 20,
+   "y": 768,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "−GH₵80.00",
+   "x": 252,
+   "y": 792,
+   "w": 66,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 786,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.transfer",
+   "text": "Bank → MoMo Transfer · Between your accounts GH₵500.00 Trans",
+   "x": 20,
+   "y": 848,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵500.00",
+   "x": 252,
+   "y": 872,
+   "w": 66,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 866,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.in",
+   "text": "Abena’s part payment Old balance payment · MoMo GH₵200.00 Re",
+   "x": 20,
+   "y": 928,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵200.00",
+   "x": 252,
+   "y": 952,
+   "w": 66,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 946,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "div.record-row.out",
+   "text": "Money taken home Owner withdrawal · Cash −GH₵150.00 Paid out",
+   "x": 20,
+   "y": 1008,
+   "w": 350,
+   "h": 80
+  },
+  {
+   "sel": "span.amount",
+   "text": "−GH₵150.00",
+   "x": 244,
+   "y": 1032,
+   "w": 74,
+   "h": 15
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "edit-draft",
+   "text": "",
+   "x": 326,
+   "y": 1026,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "span.badge.draft",
+   "text": "Not saved yet",
+   "x": 20,
+   "y": 1110,
+   "w": 86,
+   "h": 25
+  },
+  {
+   "sel": "div.flow-footer",
+   "text": "You stay in control. Save this batch together. Saving demo r",
+   "x": 20,
+   "y": 1226,
+   "w": 350,
+   "h": 100
+  },
+  {
+   "sel": "button.button.primary",
+   "action": "save",
+   "text": "Saving demo records…",
+   "x": 20,
+   "y": 1247,
+   "w": 350,
+   "h": 48
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 1335,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "saved": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.text-button",
+   "action": "today",
+   "text": "Back to Today",
+   "x": 20,
+   "y": 124,
+   "w": 111,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "A clearer picture of today.",
+   "x": 20,
+   "y": 364,
+   "w": 350,
+   "h": 36
+  },
+  {
+   "sel": "span.badge",
+   "text": "Saved · design demo",
+   "x": 133,
+   "y": 479,
+   "w": 124,
+   "h": 25
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵2,300.00",
+   "x": 51,
+   "y": 561,
+   "w": 140,
+   "h": 33
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵930.00",
+   "x": 219,
+   "y": 561,
+   "w": 121,
+   "h": 33
+  },
+  {
+   "sel": "button.button.primary",
+   "action": "stories",
+   "text": "Read today’s Money Story",
+   "x": 81,
+   "y": 629,
+   "w": 229,
+   "h": 44
+  },
+  {
+   "sel": "button.button.ghost",
+   "action": "today",
+   "text": "Back to Today",
+   "x": 133,
+   "y": 683,
+   "w": 124,
+   "h": 44
+  },
+  {
+   "sel": "div.notice.neutral",
+   "text": "Your words remain linked to the records, so you can always s",
+   "x": 20,
+   "y": 757,
+   "w": 350,
+   "h": 70
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 772,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "saved_full": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.text-button",
+   "action": "today",
+   "text": "Back to Today",
+   "x": 20,
+   "y": 124,
+   "w": 111,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "A clearer picture of today.",
+   "x": 20,
+   "y": 364,
+   "w": 350,
+   "h": 36
+  },
+  {
+   "sel": "span.badge",
+   "text": "Saved · design demo",
+   "x": 133,
+   "y": 479,
+   "w": 124,
+   "h": 25
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵2,300.00",
+   "x": 51,
+   "y": 561,
+   "w": 140,
+   "h": 33
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵930.00",
+   "x": 219,
+   "y": 561,
+   "w": 121,
+   "h": 33
+  },
+  {
+   "sel": "button.button.primary",
+   "action": "stories",
+   "text": "Read today’s Money Story",
+   "x": 81,
+   "y": 629,
+   "w": 229,
+   "h": 44
+  },
+  {
+   "sel": "button.button.ghost",
+   "action": "today",
+   "text": "Back to Today",
+   "x": 133,
+   "y": 683,
+   "w": 124,
+   "h": 44
+  },
+  {
+   "sel": "div.notice.neutral",
+   "text": "Your words remain linked to the records, so you can always s",
+   "x": 20,
+   "y": 757,
+   "w": 350,
+   "h": 70
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 772,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "abena": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "Abena’s part payment",
+   "x": 20,
+   "y": 124,
+   "w": 226,
+   "h": 68
+  },
+  {
+   "sel": "button.button",
+   "action": "edit-record",
+   "text": "Edit record",
+   "x": 266,
+   "y": 124,
+   "w": 104,
+   "h": 62
+  },
+  {
+   "sel": "div.detail-hero",
+   "text": "Saved · design demo GH₵200.00 Receivable settlement · 13 Oc",
+   "x": 20,
+   "y": 262,
+   "w": 350,
+   "h": 170
+  },
+  {
+   "sel": "span.badge",
+   "text": "Saved · design demo",
+   "x": 48,
+   "y": 290,
+   "w": 124,
+   "h": 25
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵200.00",
+   "x": 48,
+   "y": 324,
+   "w": 294,
+   "h": 48
+  },
+  {
+   "sel": "div",
+   "text": "Workspace Ama Works · Business",
+   "x": 20,
+   "y": 453,
+   "w": 350,
+   "h": 49
+  },
+  {
+   "sel": "div",
+   "text": "Account / position MoMo",
+   "x": 20,
+   "y": 502,
+   "w": 350,
+   "h": 49
+  },
+  {
+   "sel": "div",
+   "text": "Record ID CN-107",
+   "x": 20,
+   "y": 551,
+   "w": 350,
+   "h": 49
+  },
+  {
+   "sel": "div",
+   "text": "Abena still owes GH₵400.00",
+   "x": 20,
+   "y": 600,
+   "w": 350,
+   "h": 49
+  },
+  {
+   "sel": "dd.amount",
+   "text": "GH₵400.00",
+   "x": 304,
+   "y": 615,
+   "w": 66,
+   "h": 18
+  },
+  {
+   "sel": "button.button.primary",
+   "action": "settle",
+   "text": "Record another payment",
+   "x": 20,
+   "y": 669,
+   "w": 220,
+   "h": 44
+  },
+  {
+   "sel": "div.notice.neutral",
+   "text": "This payment reduces Abena’s old balance. It is not counted ",
+   "x": 20,
+   "y": 733,
+   "w": 350,
+   "h": 70
+  },
+  {
+   "sel": "button.text-button",
+   "action": "records",
+   "text": "Back to records",
+   "x": 20,
+   "y": 823,
+   "w": 121,
+   "h": 44
+  },
+  {
+   "sel": "h2",
+   "text": "The story behind this record",
+   "x": 41,
+   "y": 914,
+   "w": 308,
+   "h": 23
+  },
+  {
+   "sel": "div.source-quote",
+   "text": "“Abena paid GH₵200 of what she owed into MoMo”",
+   "x": 41,
+   "y": 993,
+   "w": 308,
+   "h": 86
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 772,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "abena_full": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "Abena’s part payment",
+   "x": 20,
+   "y": 124,
+   "w": 226,
+   "h": 68
+  },
+  {
+   "sel": "button.button",
+   "action": "edit-record",
+   "text": "Edit record",
+   "x": 266,
+   "y": 124,
+   "w": 104,
+   "h": 62
+  },
+  {
+   "sel": "div.detail-hero",
+   "text": "Saved · design demo GH₵200.00 Receivable settlement · 13 Oc",
+   "x": 20,
+   "y": 262,
+   "w": 350,
+   "h": 170
+  },
+  {
+   "sel": "span.badge",
+   "text": "Saved · design demo",
+   "x": 48,
+   "y": 290,
+   "w": 124,
+   "h": 25
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵200.00",
+   "x": 48,
+   "y": 324,
+   "w": 294,
+   "h": 48
+  },
+  {
+   "sel": "div",
+   "text": "Workspace Ama Works · Business",
+   "x": 20,
+   "y": 453,
+   "w": 350,
+   "h": 49
+  },
+  {
+   "sel": "div",
+   "text": "Account / position MoMo",
+   "x": 20,
+   "y": 502,
+   "w": 350,
+   "h": 49
+  },
+  {
+   "sel": "div",
+   "text": "Record ID CN-107",
+   "x": 20,
+   "y": 551,
+   "w": 350,
+   "h": 49
+  },
+  {
+   "sel": "div",
+   "text": "Abena still owes GH₵400.00",
+   "x": 20,
+   "y": 600,
+   "w": 350,
+   "h": 49
+  },
+  {
+   "sel": "dd.amount",
+   "text": "GH₵400.00",
+   "x": 304,
+   "y": 615,
+   "w": 66,
+   "h": 18
+  },
+  {
+   "sel": "button.button.primary",
+   "action": "settle",
+   "text": "Record another payment",
+   "x": 20,
+   "y": 669,
+   "w": 220,
+   "h": 44
+  },
+  {
+   "sel": "div.notice.neutral",
+   "text": "This payment reduces Abena’s old balance. It is not counted ",
+   "x": 20,
+   "y": 733,
+   "w": 350,
+   "h": 70
+  },
+  {
+   "sel": "button.text-button",
+   "action": "records",
+   "text": "Back to records",
+   "x": 20,
+   "y": 823,
+   "w": 121,
+   "h": 44
+  },
+  {
+   "sel": "h2",
+   "text": "The story behind this record",
+   "x": 41,
+   "y": 914,
+   "w": 308,
+   "h": 23
+  },
+  {
+   "sel": "div.source-quote",
+   "text": "“Abena paid GH₵200 of what she owed into MoMo”",
+   "x": 41,
+   "y": 993,
+   "w": 308,
+   "h": 86
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 772,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "kojo_full": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "Kojo’s credit sale",
+   "x": 20,
+   "y": 124,
+   "w": 208,
+   "h": 34
+  },
+  {
+   "sel": "button.button",
+   "action": "edit-record",
+   "text": "Edit record",
+   "x": 252,
+   "y": 124,
+   "w": 118,
+   "h": 44
+  },
+  {
+   "sel": "div.detail-hero",
+   "text": "Saved · design demo GH₵300.00 Credit sale · 13 Oct 2026",
+   "x": 20,
+   "y": 228,
+   "w": 350,
+   "h": 170
+  },
+  {
+   "sel": "span.badge",
+   "text": "Saved · design demo",
+   "x": 48,
+   "y": 256,
+   "w": 124,
+   "h": 25
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵300.00",
+   "x": 48,
+   "y": 290,
+   "w": 294,
+   "h": 48
+  },
+  {
+   "sel": "div",
+   "text": "Workspace Ama Works · Business",
+   "x": 20,
+   "y": 419,
+   "w": 350,
+   "h": 49
+  },
+  {
+   "sel": "div",
+   "text": "Account / position Kojo",
+   "x": 20,
+   "y": 468,
+   "w": 350,
+   "h": 49
+  },
+  {
+   "sel": "div",
+   "text": "Record ID CN-103",
+   "x": 20,
+   "y": 517,
+   "w": 350,
+   "h": 49
+  },
+  {
+   "sel": "button.text-button",
+   "action": "records",
+   "text": "Back to records",
+   "x": 20,
+   "y": 586,
+   "w": 121,
+   "h": 44
+  },
+  {
+   "sel": "h2",
+   "text": "The story behind this record",
+   "x": 41,
+   "y": 677,
+   "w": 308,
+   "h": 23
+  },
+  {
+   "sel": "div.source-quote",
+   "text": "“Kojo still owes GH₵300”",
+   "x": 41,
+   "y": 756,
+   "w": 308,
+   "h": 62
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 772,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "story_full": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "Money Stories",
+   "x": 20,
+   "y": 124,
+   "w": 190,
+   "h": 34
+  },
+  {
+   "sel": "button.button",
+   "action": "export",
+   "text": "",
+   "x": 324,
+   "y": 124,
+   "w": 46,
+   "h": 44
+  },
+  {
+   "sel": "button.segment.active",
+   "action": "period",
+   "text": "Daily",
+   "x": 24,
+   "y": 210,
+   "w": 46,
+   "h": 44
+  },
+  {
+   "sel": "button.segment",
+   "action": "period",
+   "text": "Weekly",
+   "x": 73,
+   "y": 210,
+   "w": 58,
+   "h": 44
+  },
+  {
+   "sel": "button.segment",
+   "action": "period",
+   "text": "Monthly",
+   "x": 134,
+   "y": 210,
+   "w": 62,
+   "h": 44
+  },
+  {
+   "sel": "section.story-cover",
+   "text": "AMA WORKS · TUESDAY, 13 OCTOBER GH₵2,300.00 came in. Here’s ",
+   "x": 20,
+   "y": 280,
+   "w": 350,
+   "h": 280
+  },
+  {
+   "sel": "h1",
+   "text": "GH₵2,300.00 came in. Here’s the story.",
+   "x": 43,
+   "y": 347,
+   "w": 304,
+   "h": 123
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵2,300.00",
+   "x": 43,
+   "y": 347,
+   "w": 214,
+   "h": 41
+  },
+  {
+   "sel": "h2",
+   "text": "More came in than went out.",
+   "x": 60,
+   "y": 585,
+   "w": 310,
+   "h": 25
+  },
+  {
+   "sel": "div.comparison-bars",
+   "text": "Money in GH₵2,300.00 Money out GH₵930.00",
+   "x": 60,
+   "y": 711,
+   "w": 310,
+   "h": 51
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵2,300.00",
+   "x": 272,
+   "y": 711,
+   "w": 98,
+   "h": 17
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵930.00",
+   "x": 272,
+   "y": 746,
+   "w": 98,
+   "h": 17
+  },
+  {
+   "sel": "button.text-button",
+   "action": "records",
+   "text": "See the records behind this",
+   "x": 60,
+   "y": 791,
+   "w": 195,
+   "h": 44
+  },
+  {
+   "sel": "h2",
+   "text": "Money received isn’t always a new sale.",
+   "x": 60,
+   "y": 886,
+   "w": 310,
+   "h": 50
+  },
+  {
+   "sel": "div.story-connections",
+   "text": "People owe you GH₵700.00 Abena GH₵400.00 · Kojo GH₵300.00 Yo",
+   "x": 60,
+   "y": 1060,
+   "w": 310,
+   "h": 276
+  },
+  {
+   "sel": "div.connection",
+   "text": "People owe you GH₵700.00 Abena GH₵400.00 · Kojo GH₵300.00",
+   "x": 60,
+   "y": 1060,
+   "w": 310,
+   "h": 132
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵700.00",
+   "x": 79,
+   "y": 1108,
+   "w": 272,
+   "h": 36
+  },
+  {
+   "sel": "div.connection",
+   "text": "You owe GH₵1,500.00 Supplier GH₵500.00 · loan GH₵1,000.00",
+   "x": 60,
+   "y": 1204,
+   "w": 310,
+   "h": 132
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵1,500.00",
+   "x": 79,
+   "y": 1252,
+   "w": 272,
+   "h": 36
+  },
+  {
+   "sel": "button.text-button",
+   "action": "detail",
+   "text": "Open Abena’s payment",
+   "x": 60,
+   "y": 1365,
+   "w": 169,
+   "h": 44
+  },
+  {
+   "sel": "h2",
+   "text": "A useful picture. With clear boundaries.",
+   "x": 60,
+   "y": 1460,
+   "w": 310,
+   "h": 50
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 772,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "records_full": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "Your records",
+   "x": 20,
+   "y": 124,
+   "w": 162,
+   "h": 34
+  },
+  {
+   "sel": "button.button.primary",
+   "action": "record",
+   "text": "Add a story",
+   "x": 249,
+   "y": 124,
+   "w": 122,
+   "h": 44
+  },
+  {
+   "sel": "button.segment.active",
+   "action": "filter",
+   "text": "All records",
+   "x": 24,
+   "y": 266,
+   "w": 77,
+   "h": 44
+  },
+  {
+   "sel": "button.segment",
+   "action": "filter",
+   "text": "Money in",
+   "x": 104,
+   "y": 266,
+   "w": 68,
+   "h": 44
+  },
+  {
+   "sel": "button.segment",
+   "action": "filter",
+   "text": "Money out",
+   "x": 174,
+   "y": 266,
+   "w": 75,
+   "h": 44
+  },
+  {
+   "sel": "button.segment",
+   "action": "filter",
+   "text": "Owed",
+   "x": 252,
+   "y": 266,
+   "w": 50,
+   "h": 44
+  },
+  {
+   "sel": "button.segment",
+   "action": "filter",
+   "text": "Transfers",
+   "x": 24,
+   "y": 313,
+   "w": 69,
+   "h": 44
+  },
+  {
+   "sel": "button.record-row.in",
+   "action": "detail",
+   "text": "Cash sales Sales · Cash GH₵900.00 Received",
+   "x": 20,
+   "y": 432,
+   "w": 350,
+   "h": 78
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵900.00",
+   "x": 293,
+   "y": 452,
+   "w": 77,
+   "h": 17
+  },
+  {
+   "sel": "button.record-row.in",
+   "action": "detail",
+   "text": "MoMo sales Sales · MoMo GH₵1,200.00 Received",
+   "x": 20,
+   "y": 510,
+   "w": 350,
+   "h": 78
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵1,200.00",
+   "x": 281,
+   "y": 530,
+   "w": 89,
+   "h": 17
+  },
+  {
+   "sel": "button.record-row.owed",
+   "action": "detail",
+   "text": "Kojo’s credit sale People owe you · Kojo GH₵300.00 Still owe",
+   "x": 20,
+   "y": 588,
+   "w": 350,
+   "h": 78
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵300.00",
+   "x": 293,
+   "y": 608,
+   "w": 77,
+   "h": 17
+  },
+  {
+   "sel": "button.record-row.out",
+   "action": "detail",
+   "text": "Stock for the shop Stock purchase · Cash −GH₵700.00 Paid out",
+   "x": 20,
+   "y": 666,
+   "w": 350,
+   "h": 78
+  },
+  {
+   "sel": "span.amount",
+   "text": "−GH₵700.00",
+   "x": 284,
+   "y": 686,
+   "w": 86,
+   "h": 17
+  },
+  {
+   "sel": "button.record-row.out",
+   "action": "detail",
+   "text": "Customer delivery Delivery · MoMo −GH₵80.00 Paid out",
+   "x": 20,
+   "y": 744,
+   "w": 350,
+   "h": 78
+  },
+  {
+   "sel": "span.amount",
+   "text": "−GH₵80.00",
+   "x": 293,
+   "y": 764,
+   "w": 77,
+   "h": 17
+  },
+  {
+   "sel": "button.record-row.transfer",
+   "action": "detail",
+   "text": "Bank → MoMo Transfer · Between your accounts GH₵500.00 Trans",
+   "x": 20,
+   "y": 822,
+   "w": 350,
+   "h": 78
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵500.00",
+   "x": 293,
+   "y": 842,
+   "w": 77,
+   "h": 17
+  },
+  {
+   "sel": "button.record-row.in",
+   "action": "detail",
+   "text": "Abena’s part payment Old balance payment · MoMo GH₵200.00 Re",
+   "x": 20,
+   "y": 900,
+   "w": 350,
+   "h": 78
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵200.00",
+   "x": 293,
+   "y": 920,
+   "w": 77,
+   "h": 17
+  },
+  {
+   "sel": "button.record-row.out",
+   "action": "detail",
+   "text": "Money taken home Owner withdrawal · Cash −GH₵150.00 Paid out",
+   "x": 20,
+   "y": 978,
+   "w": 350,
+   "h": 78
+  },
+  {
+   "sel": "span.amount",
+   "text": "−GH₵150.00",
+   "x": 284,
+   "y": 998,
+   "w": 86,
+   "h": 17
+  },
+  {
+   "sel": "button.text-button",
+   "action": "export",
+   "text": "Export CSV",
+   "x": 20,
+   "y": 1110,
+   "w": 95,
+   "h": 44
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 772,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "plan_full": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "Give your story a direction.",
+   "x": 20,
+   "y": 124,
+   "w": 243,
+   "h": 68
+  },
+  {
+   "sel": "button.button",
+   "action": "new-goal",
+   "text": "New goal",
+   "x": 283,
+   "y": 124,
+   "w": 87,
+   "h": 62
+  },
+  {
+   "sel": "section.goal-main",
+   "text": "New equipment A purchase goal · Ama Works Money assigned t",
+   "x": 20,
+   "y": 258,
+   "w": 350,
+   "h": 757
+  },
+  {
+   "sel": "h2",
+   "text": "New equipment",
+   "x": 107,
+   "y": 284,
+   "w": 167,
+   "h": 26
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵1,200.00",
+   "x": 41,
+   "y": 391,
+   "w": 221,
+   "h": 42
+  },
+  {
+   "sel": "div.progress-track",
+   "text": "",
+   "x": 41,
+   "y": 483,
+   "w": 308,
+   "h": 12
+  },
+  {
+   "sel": "div.goal-progress-label",
+   "text": "20% assigned GH₵4,800.00 remaining",
+   "x": 41,
+   "y": 505,
+   "w": 308,
+   "h": 18
+  },
+  {
+   "sel": "button.button",
+   "action": "allocate",
+   "text": "Record an allocation",
+   "x": 41,
+   "y": 553,
+   "w": 193,
+   "h": 44
+  },
+  {
+   "sel": "div.forecast",
+   "text": "At your recorded contribution pace About 12 monthly contribu",
+   "x": 41,
+   "y": 624,
+   "w": 308,
+   "h": 250
+  },
+  {
+   "sel": "h3",
+   "text": "About 12 monthly contributions.",
+   "x": 41,
+   "y": 679,
+   "w": 308,
+   "h": 60
+  },
+  {
+   "sel": "button.button.soft",
+   "action": "scenario",
+   "text": "Explore a what-if",
+   "x": 41,
+   "y": 830,
+   "w": 169,
+   "h": 44
+  },
+  {
+   "sel": "div.notice.neutral",
+   "text": "Assigning money here does not move it, spend it, or set it a",
+   "x": 41,
+   "y": 899,
+   "w": 308,
+   "h": 91
+  },
+  {
+   "sel": "h3",
+   "text": "Behind this estimate",
+   "x": 41,
+   "y": 1066,
+   "w": 308,
+   "h": 21
+  },
+  {
+   "sel": "div.notice.warning",
+   "text": "You’ve declared a GH₵100.00 monthly loan repayment and a GH₵",
+   "x": 41,
+   "y": 1398,
+   "w": 308,
+   "h": 112
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 772,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "scenario_0_full": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "What if you assigned a little more?",
+   "x": 20,
+   "y": 124,
+   "w": 246,
+   "h": 101
+  },
+  {
+   "sel": "button.button.ghost",
+   "action": "plan",
+   "text": "Back to goal",
+   "x": 286,
+   "y": 124,
+   "w": 84,
+   "h": 82
+  },
+  {
+   "sel": "span.badge.scenario",
+   "text": "Scenario · your records stay the same",
+   "x": 20,
+   "y": 273,
+   "w": 213,
+   "h": 25
+  },
+  {
+   "sel": "div.scenario-box",
+   "text": "Extra monthly amount On top of your recent GH₵400.00 pace +G",
+   "x": 20,
+   "y": 318,
+   "w": 350,
+   "h": 320
+  },
+  {
+   "sel": "div.scenario-result",
+   "text": "On top of your recent GH₵400.00 pace +GH₵0.00 Scenario contr",
+   "x": 38,
+   "y": 380,
+   "w": 314,
+   "h": 146
+  },
+  {
+   "sel": "span.amount",
+   "text": "+GH₵0.00",
+   "x": 38,
+   "y": 406,
+   "w": 314,
+   "h": 35
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵400.00 / month",
+   "x": 38,
+   "y": 486,
+   "w": 314,
+   "h": 35
+  },
+  {
+   "sel": "input",
+   "text": "",
+   "x": 40,
+   "y": 550,
+   "w": 314,
+   "h": 44
+  },
+  {
+   "sel": "div.wide-panel",
+   "text": "Timing under this assumption About 12 monthly contributions.",
+   "x": 20,
+   "y": 657,
+   "w": 350,
+   "h": 267
+  },
+  {
+   "sel": "h2",
+   "text": "About 12 monthly contributions.",
+   "x": 39,
+   "y": 707,
+   "w": 312,
+   "h": 55
+  },
+  {
+   "sel": "div.notice.neutral",
+   "text": "No money has moved. Your target, allocations and actual reco",
+   "x": 39,
+   "y": 814,
+   "w": 312,
+   "h": 91
+  },
+  {
+   "sel": "div.notice.warning",
+   "text": "This only changes an assumed contribution. Consider the loan",
+   "x": 20,
+   "y": 944,
+   "w": 350,
+   "h": 112
+  },
+  {
+   "sel": "button.text-button",
+   "action": "plan",
+   "text": "Return to your actual goal",
+   "x": 20,
+   "y": 1056,
+   "w": 184,
+   "h": 44
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 772,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "scenario_50_full": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "What if you assigned a little more?",
+   "x": 20,
+   "y": 124,
+   "w": 246,
+   "h": 101
+  },
+  {
+   "sel": "button.button.ghost",
+   "action": "plan",
+   "text": "Back to goal",
+   "x": 286,
+   "y": 124,
+   "w": 84,
+   "h": 82
+  },
+  {
+   "sel": "span.badge.scenario",
+   "text": "Scenario · your records stay the same",
+   "x": 20,
+   "y": 273,
+   "w": 213,
+   "h": 25
+  },
+  {
+   "sel": "div.scenario-box",
+   "text": "Extra monthly amount On top of your recent GH₵400.00 pace +G",
+   "x": 20,
+   "y": 318,
+   "w": 350,
+   "h": 320
+  },
+  {
+   "sel": "div.scenario-result",
+   "text": "On top of your recent GH₵400.00 pace +GH₵50.00 Scenario cont",
+   "x": 38,
+   "y": 380,
+   "w": 314,
+   "h": 146
+  },
+  {
+   "sel": "span.amount",
+   "text": "+GH₵50.00",
+   "x": 38,
+   "y": 406,
+   "w": 314,
+   "h": 35
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵450.00 / month",
+   "x": 38,
+   "y": 486,
+   "w": 314,
+   "h": 35
+  },
+  {
+   "sel": "input",
+   "text": "",
+   "x": 40,
+   "y": 550,
+   "w": 314,
+   "h": 44
+  },
+  {
+   "sel": "div.wide-panel",
+   "text": "Timing under this assumption About 11 monthly contributions.",
+   "x": 20,
+   "y": 657,
+   "w": 350,
+   "h": 267
+  },
+  {
+   "sel": "h2",
+   "text": "About 11 monthly contributions.",
+   "x": 39,
+   "y": 707,
+   "w": 312,
+   "h": 55
+  },
+  {
+   "sel": "div.notice.neutral",
+   "text": "No money has moved. Your target, allocations and actual reco",
+   "x": 39,
+   "y": 814,
+   "w": 312,
+   "h": 91
+  },
+  {
+   "sel": "div.notice.warning",
+   "text": "This only changes an assumed contribution. Consider the loan",
+   "x": 20,
+   "y": 944,
+   "w": 350,
+   "h": 112
+  },
+  {
+   "sel": "button.text-button",
+   "action": "plan",
+   "text": "Return to your actual goal",
+   "x": 20,
+   "y": 1056,
+   "w": 184,
+   "h": 44
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 772,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "scenario_100_full": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "What if you assigned a little more?",
+   "x": 20,
+   "y": 124,
+   "w": 246,
+   "h": 101
+  },
+  {
+   "sel": "button.button.ghost",
+   "action": "plan",
+   "text": "Back to goal",
+   "x": 286,
+   "y": 124,
+   "w": 84,
+   "h": 82
+  },
+  {
+   "sel": "span.badge.scenario",
+   "text": "Scenario · your records stay the same",
+   "x": 20,
+   "y": 273,
+   "w": 213,
+   "h": 25
+  },
+  {
+   "sel": "div.scenario-box",
+   "text": "Extra monthly amount On top of your recent GH₵400.00 pace +G",
+   "x": 20,
+   "y": 318,
+   "w": 350,
+   "h": 320
+  },
+  {
+   "sel": "div.scenario-result",
+   "text": "On top of your recent GH₵400.00 pace +GH₵100.00 Scenario con",
+   "x": 38,
+   "y": 380,
+   "w": 314,
+   "h": 146
+  },
+  {
+   "sel": "span.amount",
+   "text": "+GH₵100.00",
+   "x": 38,
+   "y": 406,
+   "w": 314,
+   "h": 35
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵500.00 / month",
+   "x": 38,
+   "y": 486,
+   "w": 314,
+   "h": 35
+  },
+  {
+   "sel": "input",
+   "text": "",
+   "x": 40,
+   "y": 550,
+   "w": 314,
+   "h": 44
+  },
+  {
+   "sel": "div.wide-panel",
+   "text": "Timing under this assumption About 10 monthly contributions.",
+   "x": 20,
+   "y": 657,
+   "w": 350,
+   "h": 267
+  },
+  {
+   "sel": "h2",
+   "text": "About 10 monthly contributions.",
+   "x": 39,
+   "y": 707,
+   "w": 312,
+   "h": 55
+  },
+  {
+   "sel": "div.notice.neutral",
+   "text": "No money has moved. Your target, allocations and actual reco",
+   "x": 39,
+   "y": 814,
+   "w": 312,
+   "h": 91
+  },
+  {
+   "sel": "div.notice.warning",
+   "text": "This only changes an assumed contribution. Consider the loan",
+   "x": 20,
+   "y": 944,
+   "w": 350,
+   "h": 112
+  },
+  {
+   "sel": "button.text-button",
+   "action": "plan",
+   "text": "Return to your actual goal",
+   "x": 20,
+   "y": 1056,
+   "w": 184,
+   "h": 44
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 772,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "scenario_150_full": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "What if you assigned a little more?",
+   "x": 20,
+   "y": 124,
+   "w": 246,
+   "h": 101
+  },
+  {
+   "sel": "button.button.ghost",
+   "action": "plan",
+   "text": "Back to goal",
+   "x": 286,
+   "y": 124,
+   "w": 84,
+   "h": 82
+  },
+  {
+   "sel": "span.badge.scenario",
+   "text": "Scenario · your records stay the same",
+   "x": 20,
+   "y": 273,
+   "w": 213,
+   "h": 25
+  },
+  {
+   "sel": "div.scenario-box",
+   "text": "Extra monthly amount On top of your recent GH₵400.00 pace +G",
+   "x": 20,
+   "y": 318,
+   "w": 350,
+   "h": 320
+  },
+  {
+   "sel": "div.scenario-result",
+   "text": "On top of your recent GH₵400.00 pace +GH₵150.00 Scenario con",
+   "x": 38,
+   "y": 380,
+   "w": 314,
+   "h": 146
+  },
+  {
+   "sel": "span.amount",
+   "text": "+GH₵150.00",
+   "x": 38,
+   "y": 406,
+   "w": 314,
+   "h": 35
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵550.00 / month",
+   "x": 38,
+   "y": 486,
+   "w": 314,
+   "h": 35
+  },
+  {
+   "sel": "input",
+   "text": "",
+   "x": 40,
+   "y": 550,
+   "w": 314,
+   "h": 44
+  },
+  {
+   "sel": "div.wide-panel",
+   "text": "Timing under this assumption About 9 monthly contributions. ",
+   "x": 20,
+   "y": 657,
+   "w": 350,
+   "h": 267
+  },
+  {
+   "sel": "h2",
+   "text": "About 9 monthly contributions.",
+   "x": 39,
+   "y": 707,
+   "w": 312,
+   "h": 55
+  },
+  {
+   "sel": "div.notice.neutral",
+   "text": "No money has moved. Your target, allocations and actual reco",
+   "x": 39,
+   "y": 814,
+   "w": 312,
+   "h": 91
+  },
+  {
+   "sel": "div.notice.warning",
+   "text": "This only changes an assumed contribution. Consider the loan",
+   "x": 20,
+   "y": 944,
+   "w": 350,
+   "h": 112
+  },
+  {
+   "sel": "button.text-button",
+   "action": "plan",
+   "text": "Return to your actual goal",
+   "x": 20,
+   "y": 1056,
+   "w": 184,
+   "h": 44
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 772,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "scenario_200_full": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "What if you assigned a little more?",
+   "x": 20,
+   "y": 124,
+   "w": 246,
+   "h": 101
+  },
+  {
+   "sel": "button.button.ghost",
+   "action": "plan",
+   "text": "Back to goal",
+   "x": 286,
+   "y": 124,
+   "w": 84,
+   "h": 82
+  },
+  {
+   "sel": "span.badge.scenario",
+   "text": "Scenario · your records stay the same",
+   "x": 20,
+   "y": 273,
+   "w": 213,
+   "h": 25
+  },
+  {
+   "sel": "div.scenario-box",
+   "text": "Extra monthly amount On top of your recent GH₵400.00 pace +G",
+   "x": 20,
+   "y": 318,
+   "w": 350,
+   "h": 320
+  },
+  {
+   "sel": "div.scenario-result",
+   "text": "On top of your recent GH₵400.00 pace +GH₵200.00 Scenario con",
+   "x": 38,
+   "y": 380,
+   "w": 314,
+   "h": 146
+  },
+  {
+   "sel": "span.amount",
+   "text": "+GH₵200.00",
+   "x": 38,
+   "y": 406,
+   "w": 314,
+   "h": 35
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵600.00 / month",
+   "x": 38,
+   "y": 486,
+   "w": 314,
+   "h": 35
+  },
+  {
+   "sel": "input",
+   "text": "",
+   "x": 40,
+   "y": 550,
+   "w": 314,
+   "h": 44
+  },
+  {
+   "sel": "div.wide-panel",
+   "text": "Timing under this assumption About 8 monthly contributions. ",
+   "x": 20,
+   "y": 657,
+   "w": 350,
+   "h": 267
+  },
+  {
+   "sel": "h2",
+   "text": "About 8 monthly contributions.",
+   "x": 39,
+   "y": 707,
+   "w": 312,
+   "h": 55
+  },
+  {
+   "sel": "div.notice.neutral",
+   "text": "No money has moved. Your target, allocations and actual reco",
+   "x": 39,
+   "y": 814,
+   "w": 312,
+   "h": 91
+  },
+  {
+   "sel": "div.notice.warning",
+   "text": "This only changes an assumed contribution. Consider the loan",
+   "x": 20,
+   "y": 944,
+   "w": 350,
+   "h": 112
+  },
+  {
+   "sel": "button.text-button",
+   "action": "plan",
+   "text": "Return to your actual goal",
+   "x": 20,
+   "y": 1056,
+   "w": 184,
+   "h": 44
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 772,
+   "w": 390,
+   "h": 72
+  }
+ ],
+ "today_full": [
+  {
+   "sel": "div.demo-strip",
+   "text": "Interactive design demo · Fictional data First-use preview O",
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 30
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "hide",
+   "text": "",
+   "x": 222,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "theme",
+   "text": "",
+   "x": 274,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "workspace",
+   "text": "AW",
+   "x": 326,
+   "y": 42,
+   "w": 44,
+   "h": 44
+  },
+  {
+   "sel": "h1",
+   "text": "Good afternoon, Ama.",
+   "x": 20,
+   "y": 124,
+   "w": 272,
+   "h": 34
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵5,970.00",
+   "x": 20,
+   "y": 231,
+   "w": 350,
+   "h": 48
+  },
+  {
+   "sel": "h2",
+   "text": "What happened with your money today?",
+   "x": 43,
+   "y": 407,
+   "w": 304,
+   "h": 70
+  },
+  {
+   "sel": "button.capture-preview",
+   "action": "record",
+   "text": "“I sold GH₵900 cash, paid for delivery, and Abena paid part ",
+   "x": 43,
+   "y": 547,
+   "w": 304,
+   "h": 81
+  },
+  {
+   "sel": "button.button.primary",
+   "action": "record",
+   "text": "Tell your story",
+   "x": 43,
+   "y": 641,
+   "w": 248,
+   "h": 46
+  },
+  {
+   "sel": "button.icon-button",
+   "action": "voice",
+   "text": "",
+   "x": 301,
+   "y": 641,
+   "w": 46,
+   "h": 46
+  },
+  {
+   "sel": "h2",
+   "text": "Recent records",
+   "x": 20,
+   "y": 775,
+   "w": 126,
+   "h": 23
+  },
+  {
+   "sel": "button.text-button",
+   "action": "records",
+   "text": "View all",
+   "x": 302,
+   "y": 764,
+   "w": 68,
+   "h": 44
+  },
+  {
+   "sel": "button.record-row.out",
+   "action": "detail",
+   "text": "Stock for the shop Stock purchase · Cash −GH₵700.00 Paid out",
+   "x": 20,
+   "y": 815,
+   "w": 350,
+   "h": 78
+  },
+  {
+   "sel": "span.amount",
+   "text": "−GH₵700.00",
+   "x": 290,
+   "y": 836,
+   "w": 80,
+   "h": 16
+  },
+  {
+   "sel": "button.record-row.out",
+   "action": "detail",
+   "text": "Customer delivery Delivery · MoMo −GH₵80.00 Paid out",
+   "x": 20,
+   "y": 893,
+   "w": 350,
+   "h": 78
+  },
+  {
+   "sel": "span.amount",
+   "text": "−GH₵80.00",
+   "x": 298,
+   "y": 914,
+   "w": 72,
+   "h": 16
+  },
+  {
+   "sel": "button.record-row.transfer",
+   "action": "detail",
+   "text": "Bank → MoMo Transfer · Between your accounts GH₵500.00 Trans",
+   "x": 20,
+   "y": 971,
+   "w": 350,
+   "h": 78
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵500.00",
+   "x": 298,
+   "y": 992,
+   "w": 72,
+   "h": 16
+  },
+  {
+   "sel": "button.record-row.in",
+   "action": "detail",
+   "text": "Abena’s part payment Old balance payment · MoMo GH₵200.00 Re",
+   "x": 20,
+   "y": 1049,
+   "w": 350,
+   "h": 78
+  },
+  {
+   "sel": "span.amount",
+   "text": "GH₵200.00",
+   "x": 298,
+   "y": 1070,
+   "w": 72,
+   "h": 16
+  },
+  {
+   "sel": "h2",
+   "text": "Your day, made clearer.",
+   "x": 42,
+   "y": 1208,
+   "w": 280,
+   "h": 70
+  },
+  {
+   "sel": "button.text-button",
+   "action": "stories",
+   "text": "Read your story",
+   "x": 42,
+   "y": 1444,
+   "w": 122,
+   "h": 44
+  },
+  {
+   "sel": "h3",
+   "text": "Your rhythm",
+   "x": 20,
+   "y": 1534,
+   "w": 91,
+   "h": 20
+  },
+  {
+   "sel": "h3",
+   "text": "Something to work towards",
+   "x": 20,
+   "y": 1706,
+   "w": 350,
+   "h": 20
+  },
+  {
+   "sel": "div.progress-track",
+   "text": "",
+   "x": 20,
+   "y": 1802,
+   "w": 350,
+   "h": 7
+  },
+  {
+   "sel": "div.goal-progress-label",
+   "text": "20% of GH₵6,000.00 Assigned, not moved",
+   "x": 20,
+   "y": 1817,
+   "w": 350,
+   "h": 18
+  },
+  {
+   "sel": "button.text-button",
+   "action": "plan",
+   "text": "See the plan",
+   "x": 20,
+   "y": 1835,
+   "w": 95,
+   "h": 44
+  },
+  {
+   "sel": "nav.bottom-nav",
+   "text": "Today Records Stories Plan",
+   "x": 0,
+   "y": 772,
+   "w": 390,
+   "h": 72
+  }
+ ]
+}

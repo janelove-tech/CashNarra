@@ -1,0 +1,178 @@
+{
+  "version": "2.0",
+  "direction": "Narra \u2014 words into clarity",
+  "status": "proposed identity; working design demo",
+  "color": {
+    "light": {
+      "background": "#F7F7FA",
+      "surface": "#FFFFFF",
+      "surface-subtle": "#EFEDF8",
+      "text": "#29263D",
+      "text-secondary": "#625F73",
+      "text-muted": "#6B6779",
+      "border": "#E1DEEB",
+      "border-control": "#858194",
+      "action": "#5B49C7",
+      "action-hover": "#4D3DAE",
+      "action-pressed": "#403194",
+      "on-action": "#FFFFFF",
+      "brand-soft": "#F0ECFC",
+      "accent": "#FFC4A0",
+      "on-accent": "#29263D",
+      "focus": "#5B49C7",
+      "success": "#226247",
+      "success-bg": "#EAF4ED",
+      "warning": "#79501B",
+      "warning-bg": "#FFF3DF",
+      "error": "#AE302C",
+      "error-bg": "#FFEEEC",
+      "unresolved": "#68449B",
+      "unresolved-bg": "#F3EDF9",
+      "money-in": "#445BA1",
+      "money-out": "#95603E",
+      "transfer": "#625F73",
+      "chart-1": "#5B49C7",
+      "chart-2": "#95603E",
+      "chart-3": "#445BA1",
+      "chart-4": "#226247",
+      "disabled": "#E6E3ED",
+      "on-disabled": "#625F73",
+      "story-surface": "#29263D",
+      "story-text": "#FFFFFF",
+      "story-muted": "#D9D4E9",
+      "story-accent": "#FFC4A0",
+      "story-money-in": "#BACAFB",
+      "story-money-out": "#F1BA94"
+    },
+    "dark": {
+      "background": "#191723",
+      "surface": "#242131",
+      "surface-subtle": "#322C43",
+      "text": "#F6F3FB",
+      "text-secondary": "#C1BBCE",
+      "text-muted": "#B1AABE",
+      "border": "#423B53",
+      "border-control": "#8C849D",
+      "action": "#BEAEFF",
+      "action-hover": "#D0C3FF",
+      "action-pressed": "#AB96F0",
+      "on-action": "#27203E",
+      "brand-soft": "#322745",
+      "accent": "#FFC4A0",
+      "on-accent": "#29263D",
+      "focus": "#D0C3FF",
+      "success": "#9DD5AD",
+      "success-bg": "#203B2C",
+      "warning": "#F4CE91",
+      "warning-bg": "#423322",
+      "error": "#FFABA3",
+      "error-bg": "#432624",
+      "unresolved": "#D1B1F2",
+      "unresolved-bg": "#372945",
+      "money-in": "#BACAFB",
+      "money-out": "#F1BA94",
+      "transfer": "#C1BBCE",
+      "chart-1": "#BEAEFF",
+      "chart-2": "#F1BA94",
+      "chart-3": "#BACAFB",
+      "chart-4": "#9DD5AD",
+      "disabled": "#383245",
+      "on-disabled": "#C1BBCE",
+      "story-surface": "#322745",
+      "story-text": "#FFFFFF",
+      "story-muted": "#D9D4E9",
+      "story-accent": "#FFC4A0",
+      "story-money-in": "#BACAFB",
+      "story-money-out": "#F1BA94"
+    }
+  },
+  "font": {
+    "display": "Manrope",
+    "body": "Inter",
+    "fallback": "system-ui, -apple-system, Segoe UI, Arial, sans-serif",
+    "styles": {
+      "display": {
+        "size": 56,
+        "line": 60,
+        "weight": 800,
+        "tracking": "-0.045em"
+      },
+      "page": {
+        "size": 32,
+        "line": 40,
+        "weight": 800,
+        "tracking": "-0.035em"
+      },
+      "section": {
+        "size": 20,
+        "line": 28,
+        "weight": 700,
+        "tracking": "-0.02em"
+      },
+      "body": {
+        "size": 16,
+        "line": 24,
+        "weight": 400,
+        "tracking": "0"
+      },
+      "label": {
+        "size": 14,
+        "line": 20,
+        "weight": 600,
+        "tracking": "0"
+      },
+      "meta": {
+        "size": 12,
+        "line": 18,
+        "weight": 500,
+        "tracking": "0"
+      },
+      "amount": {
+        "size": 40,
+        "line": 48,
+        "weight": 600,
+        "tracking": "-0.03em"
+      }
+    }
+  },
+  "space": {
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "base": 16,
+    "lg": 20,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 40,
+    "4xl": 48,
+    "5xl": 64
+  },
+  "radius": {
+    "small": 8,
+    "control": 12,
+    "surface": 20,
+    "hero": 24,
+    "dialog": 24,
+    "pill": 999
+  },
+  "elevation": {
+    "surface": "0 1px 2px rgba(41,38,61,.04)",
+    "overlay": "0 24px 80px rgba(41,38,61,.22)"
+  },
+  "motion": {
+    "press": 100,
+    "control": 160,
+    "panel": 220,
+    "ease": "cubic-bezier(.2,.8,.2,1)",
+    "reduced": 0
+  },
+  "layout": {
+    "sidebar": 224,
+    "desktopGutter": 36,
+    "mobileGutter": 20,
+    "contentMax": 1180,
+    "touchTarget": 44,
+    "fieldHeight": 48,
+    "bottomNavigation": 72
+  }
+}

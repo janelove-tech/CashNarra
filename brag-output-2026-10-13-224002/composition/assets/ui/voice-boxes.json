@@ -1,0 +1,106 @@
+[
+ {
+  "sel": "BUTTON.workspace",
+  "text": "AWAma WorksBusiness workspace",
+  "x": 0,
+  "y": 0,
+  "w": 0,
+  "h": 0
+ },
+ {
+  "sel": "BUTTON.icon-button",
+  "text": "",
+  "x": 222,
+  "y": 41.5,
+  "w": 44,
+  "h": 44
+ },
+ {
+  "sel": "BUTTON.icon-button",
+  "text": "",
+  "x": 274,
+  "y": 41.5,
+  "w": 44,
+  "h": 44
+ },
+ {
+  "sel": "BUTTON.icon-button",
+  "text": "AW",
+  "x": 326,
+  "y": 41.5,
+  "w": 44,
+  "h": 44
+ },
+ {
+  "sel": "BUTTON.text-button",
+  "text": "Back to Today",
+  "x": 20,
+  "y": 124,
+  "w": 111.4375,
+  "h": 44
+ },
+ {
+  "sel": "H1.",
+  "text": "Say it in your own words.",
+  "x": 20,
+  "y": 233,
+  "w": 350,
+  "h": 36.25
+ },
+ {
+  "sel": "SPAN.badge draft",
+  "text": "Voice interaction preview · future capability",
+  "x": 20,
+  "y": 343.25,
+  "w": 242,
+  "h": 24.5
+ },
+ {
+  "sel": "DIV.voice-display",
+  "text": "Sample recording state\n00:24\n\nYou can pause, stop ",
+  "x": 20,
+  "y": 393.75,
+  "w": 350,
+  "h": 352
+ },
+ {
+  "sel": "SPAN.amount",
+  "text": "00:24",
+  "x": 38,
+  "y": 462.75,
+  "w": 314,
+  "h": 60
+ },
+ {
+  "sel": "DIV.voice-wave",
+  "text": "",
+  "x": 38,
+  "y": 546.75,
+  "w": 314,
+  "h": 60
+ },
+ {
+  "sel": "BUTTON.button primary",
+  "text": "Preview transcript",
+  "x": 105.234375,
+  "y": 673.75,
+  "w": 179.53125,
+  "h": 44
+ },
+ {
+  "sel": "DIV.notice neutral",
+  "text": "Microphone permission is requested only when recor",
+  "x": 20,
+  "y": 771.75,
+  "w": 350,
+  "h": 112
+ },
+ {
+  "sel": "BUTTON.text-button",
+  "text": "Use text instead",
+  "x": 20,
+  "y": 883.75,
+  "w": 124.375,
+  "h": 44
+ }
+]

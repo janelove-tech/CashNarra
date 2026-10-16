@@ -1,0 +1,230 @@
+{
+  "layout": [
+    {
+      "screen": "today",
+      "width": 320,
+      "overflow": false
+    },
+    {
+      "screen": "records",
+      "width": 320,
+      "overflow": false
+    },
+    {
+      "screen": "review",
+      "width": 320,
+      "overflow": false
+    },
+    {
+      "screen": "plan",
+      "width": 320,
+      "overflow": false
+    },
+    {
+      "screen": "scenario",
+      "width": 320,
+      "overflow": false
+    },
+    {
+      "screen": "settings",
+      "width": 320,
+      "overflow": false
+    },
+    {
+      "screen": "clarification",
+      "width": 320,
+      "overflow": false
+    },
+    {
+      "screen": "onboarding",
+      "width": 320,
+      "overflow": false
+    },
+    {
+      "screen": "stories",
+      "width": 320,
+      "overflow": false
+    },
+    {
+      "screen": "today",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "screen": "records",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "screen": "review",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "screen": "plan",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "screen": "scenario",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "screen": "settings",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "screen": "clarification",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "screen": "onboarding",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "screen": "stories",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "screen": "today",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "screen": "records",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "screen": "review",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "screen": "plan",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "screen": "scenario",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "screen": "settings",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "screen": "clarification",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "screen": "onboarding",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "screen": "stories",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "screen": "today",
+      "width": 1024,
+      "overflow": false
+    },
+    {
+      "screen": "records",
+      "width": 1024,
+      "overflow": false
+    },
+    {
+      "screen": "review",
+      "width": 1024,
+      "overflow": false
+    },
+    {
+      "screen": "plan",
+      "width": 1024,
+      "overflow": false
+    },
+    {
+      "screen": "scenario",
+      "width": 1024,
+      "overflow": false
+    },
+    {
+      "screen": "settings",
+      "width": 1024,
+      "overflow": false
+    },
+    {
+      "screen": "clarification",
+      "width": 1024,
+      "overflow": false
+    },
+    {
+      "screen": "onboarding",
+      "width": 1024,
+      "overflow": false
+    },
+    {
+      "screen": "stories",
+      "width": 1024,
+      "overflow": false
+    },
+    {
+      "screen": "today",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "screen": "records",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "screen": "review",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "screen": "plan",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "screen": "scenario",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "screen": "settings",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "screen": "clarification",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "screen": "onboarding",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "screen": "stories",
+      "width": 1440,
+      "overflow": false
+    }
+  ],
+  "scriptErrors": []
+}

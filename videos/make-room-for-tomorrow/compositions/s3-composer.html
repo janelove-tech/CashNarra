@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+  </head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Manrope"; src: url("assets/fonts/ManropeVariable.ttf") format("truetype"); font-weight: 200 800; }
+        @font-face { font-family: "Inter"; src: url("assets/fonts/InterVariable.woff2") format("woff2"); font-weight: 100 900; }
+        #s3-composer { position: absolute; inset: 0; overflow: hidden; background: #29263d; font-family: "Inter", sans-serif; }
+        #s3-composer .glow { position: absolute; left: 90px; top: 480px; width: 900px; height: 900px; border-radius: 50%;
+          background: radial-gradient(circle, rgba(255,196,160,0.24) 0%, rgba(255,196,160,0.08) 40%, rgba(255,196,160,0) 70%); }
+        #s3-composer .device { position: absolute; left: 272px; top: 381px; width: 536px; height: 1118px; border-radius: 70px;
+          background: #15131f; padding: 18px; box-shadow: 0 40px 120px rgba(10,8,20,0.6), inset 0 0 0 2px rgba(255,255,255,0.08); will-change: transform; }
+        #s3-composer .screen { position: relative; width: 500px; height: 1082px; border-radius: 54px; overflow: hidden; background: #f7f7fa; }
+        #s3-composer .screen img { position: absolute; left: 0; top: 0; width: 500px; height: 1082px; opacity: 0; }
+        #s3-composer .screen img.first { opacity: 1; }
+        #s3-composer .chip { position: absolute; padding: 14px 22px; border-radius: 16px; background: rgba(28,26,42,0.86);
+          border: 2px solid rgba(255,196,160,0.3); color: #ffffff; font-weight: 600; font-size: 28px; white-space: nowrap;
+          font-variant-numeric: tabular-nums; opacity: 0; will-change: transform, opacity; }
+        #s3-composer .chip b { color: #ffc4a0; font-weight: 700; }
+        #s3-composer .slot { position: absolute; left: 80px; top: 200px; width: 920px; height: 170px; }
+        #s3-composer .lockup { position: absolute; left: 200px; top: 32px; width: 520px; height: 104px; opacity: 0; }
+        #s3-composer .lockup img { width: 100%; height: 100%; display: block; }
+        #s3-composer .head { position: absolute; left: 0; top: 0; width: 920px; text-align: center; font-family: "Manrope", sans-serif; font-weight: 800;
+          font-size: 74px; line-height: 1.04; letter-spacing: -0.035em; color: #ffffff; }
+        #s3-composer .head div { display: block; opacity: 0; }
+        #s3-composer .head .l2 { color: #ffc4a0; }
+        #s3-composer .excerpt { position: absolute; left: 60px; top: 1236px; width: 960px; padding: 22px 30px 24px; border-radius: 22px;
+          background: rgba(28,26,42,0.92); border: 2px solid rgba(255,196,160,0.35); color: #ffffff; opacity: 0; }
+        #s3-composer .excerpt .q { font-weight: 500; font-size: 34px; line-height: 1.32; }
+        #s3-composer .excerpt .n { font-weight: 600; font-size: 22px; letter-spacing: 0.06em; text-transform: uppercase; color: #d9d4e9; margin-top: 10px; }
+        #s3-composer .paper { position: absolute; inset: 0; background: #f7f7fa; opacity: 0; }
+      </style>
+      <div data-hf-id="hf-muh7" id="s3-composer" data-composition-id="s3-composer" data-width="1080" data-height="1920">
+        <div data-hf-id="hf-2wxn" class="glow" id="s3-glow"></div>
+        <div data-hf-id="hf-mjtd" class="device" id="s3-device">
+          <div data-hf-id="hf-cdmk" class="screen">
+            <img data-hf-id="hf-d4xp" class="first" id="s3-t00" src="assets/ui/type_00.png" alt="">
+            <img data-hf-id="hf-jo6s" id="s3-t01" src="assets/ui/type_01.png" alt=""><img data-hf-id="hf-rn1g" id="s3-t02" src="assets/ui/type_02.png" alt="">
+            <img data-hf-id="hf-e1k4" id="s3-t03" src="assets/ui/type_03.png" alt=""><img data-hf-id="hf-cxxg" id="s3-t04" src="assets/ui/type_04.png" alt="">
+            <img data-hf-id="hf-u844" id="s3-t05" src="assets/ui/type_05.png" alt=""><img data-hf-id="hf-50xg" id="s3-t06" src="assets/ui/type_06.png" alt="">
+            <img data-hf-id="hf-dbh0" id="s3-t07" src="assets/ui/type_07.png" alt=""><img data-hf-id="hf-82hw" id="s3-t08" src="assets/ui/type_08.png" alt="">
+            <img data-hf-id="hf-98tw" id="s3-t09" src="assets/ui/type_09.png" alt=""><img data-hf-id="hf-37xg" id="s3-t10" src="assets/ui/type_10.png" alt="">
+            <img data-hf-id="hf-5itc" id="s3-t11" src="assets/ui/type_11.png" alt=""><img data-hf-id="hf-y38o" id="s3-t12" src="assets/ui/type_12.png" alt="">
+            <img data-hf-id="hf-nq4k" id="s3-t13" src="assets/ui/type_13.png" alt=""><img data-hf-id="hf-xct0" id="s3-t14" src="assets/ui/type_14.png" alt="">
+            <img data-hf-id="hf-rmhk" id="s3-t15" src="assets/ui/type_15.png" alt=""><img data-hf-id="hf-y5sg" id="s3-t16" src="assets/ui/type_16.png" alt="">
+            <img data-hf-id="hf-4sv8" id="s3-t17" src="assets/ui/type_17.png" alt=""><img data-hf-id="hf-rd8k" id="s3-t18" src="assets/ui/type_18.png" alt="">
+            <img data-hf-id="hf-9a1s" id="s3-t19" src="assets/ui/type_19.png" alt=""><img data-hf-id="hf-2w4g" id="s3-t20" src="assets/ui/type_20.png" alt="">
+            <img data-hf-id="hf-1n8c" id="s3-t21" src="assets/ui/type_21.png" alt=""><img data-hf-id="hf-p35s" id="s3-t22" src="assets/ui/type_22.png" alt="">
+            <img data-hf-id="hf-bcuc" id="s3-t23" src="assets/ui/type_23.png" alt=""><img data-hf-id="hf-s8uo" id="s3-t24" src="assets/ui/type_24.png" alt="">
+            <img data-hf-id="hf-4nd0" id="s3-t25" src="assets/ui/type_25.png" alt=""><img data-hf-id="hf-f128" id="s3-t26" src="assets/ui/type_26.png" alt="">
+            <img data-hf-id="hf-2aik" id="s3-t27" src="assets/ui/type_27.png" alt=""><img data-hf-id="hf-9cuo" id="s3-t28" src="assets/ui/type_28.png" alt="">
+          </div>
+        </div>
+
+        <div data-hf-id="hf-07hs" class="chip" id="s3-c1" style="left: 40px; top: 560px">Cash <b data-hf-id="hf-a88s">GH₵900</b></div>
+        <div data-hf-id="hf-j9q1" class="chip" id="s3-c2" style="left: 800px; top: 640px">MoMo <b data-hf-id="hf-b7pa">GH₵1,200</b></div>
+        <div data-hf-id="hf-wdie" class="chip" id="s3-c3" style="left: 40px; top: 860px">Stock <b data-hf-id="hf-5k8u">GH₵700</b></div>
+        <div data-hf-id="hf-jh2c" class="chip" id="s3-c4" style="left: 790px; top: 940px">Delivery <b data-hf-id="hf-5cdp">GH₵80</b></div>
+        <div data-hf-id="hf-66jh" class="chip" id="s3-c5" style="left: 40px; top: 1160px">Kojo owes <b data-hf-id="hf-fnpm">GH₵300</b></div>
+        <div data-hf-id="hf-euzq" class="chip" id="s3-c6" style="left: 740px; top: 1240px">Abena paid <b data-hf-id="hf-4ivp">GH₵200</b></div>
+
+        <div data-hf-id="hf-fv78" class="slot">
+          <div data-hf-id="hf-s3b9" class="lockup" id="s3-lockup"><img data-hf-id="hf-2t9k" src="assets/brand/cashnarra-lockup-reversed.svg" alt="CashNarra"></div>
+          <div data-hf-id="hf-z992" class="head"><div data-hf-id="hf-kpuq" class="l1" id="s3-h1">Your money.</div><div data-hf-id="hf-dg82" class="l2" id="s3-h2">In your words.</div></div>
+        </div>
+
+        <div data-hf-id="hf-rpej" class="excerpt" id="s3-excerpt">
+          <div data-hf-id="hf-hnhl" class="q">“…Kojo still owes GH₵300 … paid GH₵80 delivery … Abena paid GH₵200 of what she owed into MoMo …”</div>
+          <div data-hf-id="hf-9ojf" class="n">Excerpt · the complete example is typed above</div>
+        </div>
+        <div data-hf-id="hf-s3xn" class="paper" id="s3-paper"></div>
+      </div>
+      <script>
+        (function () {
+          const tl = gsap.timeline({ paused: true });
+          // MATCH CUT: the device opens exactly where her phone was in the last portrait frame, then straightens up
+          tl.fromTo("#s3-device", { x: 54, y: 11, rotation: 24.5, scale: 0.4 },
+            { x: 0, y: 0, rotation: 0, scale: 1, duration: 1.25, ease: "power3.inOut" }, 0.08);
+          tl.fromTo("#s3-glow", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 1.6, ease: "sine.out" }, 0.4);
+          tl.to("#s3-glow", { scale: 1.08, duration: 3.8, ease: "sine.inOut" }, 2.0);
+          // the scattered pieces drift around the new home for them
+          const chips = ["#s3-c1", "#s3-c2", "#s3-c3", "#s3-c4", "#s3-c5", "#s3-c6"];
+          // converge on the textarea centre (540, 1068)
+          const target = [[388, 477], [-385, 397], [388, 177], [-384, 97], [350, -123], [-358, -203]];
+          chips.forEach((c, i) => {
+            tl.fromTo(c, { opacity: 0, y: 20, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "power3.out" }, 0.7 + i * 0.09);
+            tl.to(c, { y: (i % 2 ? 1 : -1) * 14, duration: 2.6, ease: "sine.inOut" }, 1.25 + i * 0.09);
+            tl.to(c, { x: target[i][0], y: target[i][1], scale: 0.35, opacity: 0, duration: 0.62, ease: "power2.in" }, 4.32 + i * 0.03);
+          });
+          // "Meet CashNarra."
+          tl.fromTo("#s3-lockup", { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.55, ease: "power2.out" }, 2.82);
+          tl.to("#s3-lockup", { opacity: 0, y: -12, duration: 0.35, ease: "power2.in" }, 4.05);
+          // "Your money. In your words."
+          tl.fromTo("#s3-h1", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 4.3);
+          tl.fromTo("#s3-h2", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 4.48);
+          // TEXT ENTRY: the complete canonical example (delivery account omitted), captured stage by stage from the real composer
+          for (let i = 1; i <= 28; i++) {
+            tl.set("#s3-t" + String(i).padStart(2, "0"), { opacity: 1 }, 4.52 + i * 0.066);
+          }
+          tl.fromTo("#s3-excerpt", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 5.25);
+          // hand-off to the paper interface
+          tl.to("#s3-device", { scale: 2.6, y: 60, duration: 0.5, ease: "power2.in" }, 6.12);
+          tl.to(["#s3-excerpt", "#s3-h1", "#s3-h2"], { opacity: 0, duration: 0.25, ease: "power1.in" }, 6.12);
+          tl.fromTo("#s3-paper", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.in" }, 6.3);
+          window.__timelines["s3-composer"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>
