@@ -4,71 +4,63 @@ Updated: 2026-10-16
 Updated by agent: Cursor
 Branch: work/cashnarra-v1
 Baseline SHA: 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
-Phase 06 SHA: 4897fc0ac8b1171bfe3783ebd3f7a1732b139774
-Current phase: 07 — Reports, goals, exports and accessibility
-Status: COMPLETE pending the Phase 07 commit and SHA backfill
+Phase 07 SHA: 01108da07fe946b328fc705aa560832d0afadc4d
+Current phase: 08 — Independent V1 release verification
+Status: COMPLETE pending the verification commit
+
+Verdict: `NOT V1 COMPLETE`
 
 ## Immediate objective
 
-Commit Phase 07. Then run Phase 08 from `harness/build/08-release-verification.md`. Do not call the result V1 complete while representative voice quality is still EXTERNAL.
+Record this verification. Do not start new product features. Phase 09 stays EXTERNAL until the user decides.
 
 ## Completed in current phase
 
-- Reconciled Codex commits through Phase 06. Kept the uncommitted export and form-error work.
-- Export totals include recorded expenses. Settlement of a credit expense is not a second expense. Profit stays unavailable.
-- What-if scenarios say they are not a guarantee.
-- Record-dialog errors are associated, Tab stays inside, and Escape restores focus.
+- Re-read the handoff, preserved Codex phases 02–06 and the in-progress Phase 07 edits, then finished and committed Phase 07.
+- Ran the Phase 08 command set except a fresh `npm ci`.
 
-## Files changed
+## Why the verdict is not complete
 
-- `src/lib/exports.ts`
-- `src/domain/goals.ts`
-- `src/components/record-form.tsx`
-- `src/components/ui.tsx`
-- `tests/exports.test.ts`
-- `tests/domain.test.ts`
-- `tests/e2e/accessibility.spec.ts`
-- `harness/context/07-accessibility.md`
-- `PLANS.md`
-- `harness/build-log.md`
-- `harness/build/07-reports-goals-accessibility.md`
+- Representative Ghanaian voice quality has not been measured. Voice code exists and typed narration remains the fallback. Transcription was not called.
+- Screen-reader testing and a contrast audit were not run. Keyboard, focus, 320px, and reduced-motion checks passed.
+- Production Supabase, email, hosting, data-protection, BoG/PFTSP, GRA, NITA, trademark, and launch approval are still open. See `harness/build/09-external-launch-gates.md`.
 
 ## Validation already executed
 
 | Command | Result | Notes |
 |---|---|---|
-| npm test | PASS | 95 tests |
-| npm run lint | PASS | Zero warnings |
-| npm run typecheck | PASS | |
-| npm run test:db | PASS | Disposable cashnarra_test |
-| npm run build | PASS | Next.js 16.4.0 |
-| npx playwright test tests/e2e/accessibility.spec.ts | PASS | 320px, reduced motion, error association, focus trap and restore, 44px close control |
-| Screen reader / contrast tool / 200% zoom | NOT RUN | See harness/context/07-accessibility.md |
-| Representative voice quality | EXTERNAL | Unchanged |
+| npm ci | NOT RUN | Existing install used |
+| npm run doctor | PASS | AI and voice disabled |
+| npm run lint | PASS | Zero warnings, Phase 07 tree |
+| npm run typecheck | PASS | Phase 07 tree |
+| npm test | PASS | 95 tests after Phase 07 commit |
+| npm run test:db | PASS | Disposable cashnarra_test, Phase 07 tree |
+| npm run test:supabase | PASS | Local 127.0.0.1:58321 only |
+| npm run test:e2e | PASS | 27 tests |
+| npm run build | PASS | Next.js 16.4.0, Phase 07 tree |
+| Live narration / voice quality | EXTERNAL | |
+| Screen reader / contrast audit | NOT RUN | |
 
 ## Current worktree state
 
-Phase 07 files are ready to commit on `work/cashnarra-v1`. Do not reset the local Supabase database. Migration history is still incomplete; only additive migration 010 was applied earlier, with 20 workspace rows preserved.
+Verification notes are ready to commit. Branch `work/cashnarra-v1`. Do not run `supabase db reset` or a blanket `migration up` on the local development database.
 
 ## Known incomplete or broken work
 
-Phase 08 has not been run by this session yet.
+No failing automated check from this session. V1 is not complete for the reasons above.
 
 ## Material decisions made
 
-- Dialog Tab containment is explicit because the Edge dev session could tab out of the native modal.
-- Accessibility evidence is not certification.
+- `NOT V1 COMPLETE` is the release verdict. Passing tests are not a launch approval.
+- No further product code was opened after the verification.
 
 ## Blockers requiring user input
 
-None.
+Representative voice samples and the Phase 09 business/legal decisions. Do not purchase or enable production services without an explicit request.
 
 ## Exact next action
 
-1. Commit Phase 07.
-2. Record its SHA.
-3. Run Phase 08 commands from a reviewer’s stance. Mark anything not executed as NOT RUN or EXTERNAL.
-4. Verdict cannot be unqualified V1 complete without representative voice-quality evidence.
+If this verification commit is the latest commit, stop. Wait for the user on voice-quality material or a Phase 09 decision. Do not redo Phases 00–08.
 
 ## Resume commands
 
@@ -76,6 +68,5 @@ None.
 git branch --show-current
 git rev-parse HEAD
 git status
-git diff
-npm test
+git log --oneline -12
 ```

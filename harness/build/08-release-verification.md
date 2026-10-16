@@ -26,6 +26,12 @@ npm run build
 
 Unavailable checks stay NOT RUN or EXTERNAL. Do not convert them into PASS.
 
+## Result — 2026-10-16 — Cursor
+
+Verdict: `NOT V1 COMPLETE`
+
+The automated code checks below passed. The verdict stays incomplete because representative voice-quality evidence does not exist, screen-reader testing was not run, and Phase 09 launch decisions are still external. Do not treat this as a product rewrite request.
+
 ## Verdict
 
 Use exactly one:

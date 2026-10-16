@@ -159,4 +159,36 @@ Not run:
 
 - Screen reader, physical assistive technology, automated contrast, and a separate 200% zoom pass — NOT RUN. 320px reflow was checked.
 - Live narration and representative voice quality — EXTERNAL.
-- Full Playwright suite in this phase — not rerun. See Phase 08.
+
+## Phase 07 complete
+
+Date: 2026-10-16
+Agent: Cursor
+Commit: `01108da07fe946b328fc705aa560832d0afadc4d`
+
+## Phase 08 verification — 2026-10-16 — Cursor
+
+Reviewed the branch after `01108da` without assuming earlier phases were correct.
+
+Verdict: `NOT V1 COMPLETE`
+
+Executed on this tree:
+
+- `npm run doctor` — PASS — Node 24.21.0, AI and voice disabled.
+- `npm run lint` — PASS — zero warnings. Ran on the Phase 07 tree immediately before its commit.
+- `npm run typecheck` — PASS — same tree.
+- `npm test` — PASS — 95 tests, rerun after the Phase 07 commit.
+- `npm run test:db` — PASS — disposable `cashnarra_test`. Ran on the Phase 07 tree immediately before its commit.
+- `npm run test:supabase` — PASS — local API `127.0.0.1:58321` only.
+- `npm run test:e2e` — PASS — 27 tests, including auth, accessibility, voice controls, recovery, and 320px layouts.
+- `npm run build` — PASS — Next.js 16.4.0. Ran on the Phase 07 tree immediately before its commit.
+
+Not run:
+
+- `npm ci` — NOT RUN. The existing install was used. A clean install was not repeated.
+- Representative voice transcription quality — EXTERNAL.
+- Live narration evaluation — EXTERNAL.
+- Screen reader and contrast audit — NOT RUN.
+- Phase 09 provider, regulatory, and launch decisions — EXTERNAL.
+
+No production deploy, paid provider call, or database reset.
