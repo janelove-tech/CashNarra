@@ -4,6 +4,10 @@
 
 Prove that ordinary, messy descriptions become financially correct proposals, or a material clarification, without the model posting or guessing.
 
+## Already observed
+
+Read `harness/context/02-narration-gaps.md` before editing `src/server/ai.ts`.
+
 ## Recheck the model first
 
 `src/server/ai.ts` defaults to `process.env.OPENAI_MODEL || "gpt-4.1-mini-2025-04-14"`.

@@ -86,3 +86,12 @@ Not run:
 
 - `npm run build`, `npm run test:supabase`, and `npm run test:e2e` after the Phase 01 edits.
 - `supabase migration up` — not used. Local migration history is incomplete. The new function was applied with `psql` and the 18 local workspaces were kept.
+
+## Phase 01 complete
+
+Date: 2026-10-16
+Agent: Cursor
+Commit: `6cb30d92075ce5eead15c6ee4e337b41f01c1886`
+Branch: `work/cashnarra-v1`
+
+Phase 02 is open and incomplete. No narration code has been changed yet. See `harness/context/02-narration-gaps.md`.

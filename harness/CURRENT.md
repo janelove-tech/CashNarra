@@ -4,85 +4,71 @@ Updated: 2026-10-16
 Updated by agent: Cursor
 Branch: work/cashnarra-v1
 Baseline SHA: 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
-Current HEAD: cff81ec46544a10ec2805f44faf2a29560c28bbc
-Current phase: 01 — Financial semantics and posting parity
-Current subtask: Commit Phase 01, then backfill its SHA
-Status: COMPLETE pending the Phase 01 commit and SHA backfill
+Current HEAD: 6cb30d92075ce5eead15c6ee4e337b41f01c1886
+Phase 01 code SHA: 6cb30d92075ce5eead15c6ee4e337b41f01c1886
+Current phase: 02 — AI and general narration quality
+Current subtask: Recheck the OpenAI model, then add the synthetic evaluation corpus
+Status: IN PROGRESS
+
+INCOMPLETE — DO NOT TREAT AS PHASE COMPLETE
 
 ## Immediate objective
 
-Commit the credit-expense work. Do not include `next-env.d.ts` if the dev server flipped it to `.next/dev/types`. After the commit SHA is known, record it and start Phase 02.
+Start Phase 02 without a live provider call unless an opt-in key is already configured. Do not change financial posting again unless a narration test proves a posting bug.
 
 ## Completed in current phase
 
-- Added `credit_expense`: debit expense, credit payable, no cash account, person required.
-- Later payment stays `payable_payment` and does not create a second expense.
-- `credit_purchase` still debits stock.
-- Added a TypeScript template test for every event kind.
-- Database tests compare the fixture journal with `ledger()` and commit an electrician bill plus settlement.
-- Applied migration SQL to local Supabase with `psql`. 18 workspaces remained. Did not reset the database.
+- Recorded the gaps already visible in `src/server/ai.ts`. No interpretation code has been changed in this phase.
 
 ## Files changed
 
-- `src/domain/types.ts`
-- `src/domain/ledger.ts`
-- `src/domain/planning.ts`
-- `src/components/record-form.tsx`
-- `src/components/ui.tsx`
-- `src/components/cashnarra.tsx`
-- `src/components/report-trace.tsx`
-- `src/server/ai.ts`
-- `supabase/migrations/202610160009_credit_expense.sql`
-- `tests/posting-parity.test.ts`
-- `tests/domain.test.ts`
-- `scripts/test-db.ts`
 - `PLANS.md`
-- `harness/context/01-financial-semantics.md`
-- `harness/build/01-financial-semantics.md`
+- `harness/CURRENT.md`
+- `harness/build-log.md`
+- `harness/context/02-narration-gaps.md`
 
 ## Validation already executed
 
 | Command | Result | Notes |
 |---|---|---|
-| npm test | PASS | 14 files, 85 tests. Includes posting templates and the GH₵800 electrician case. |
-| npm run test:db | PASS | Disposable `cashnarra_test` only. Fixture journal matched TypeScript. Credit expense and settlement committed. |
-| npm run lint | PASS | Exit 0. Same two existing warnings in `src/components/voice-capture.tsx`. |
-| npm run typecheck | PASS | |
-| npm run build | NOT RUN | Not rerun after Phase 01. Phase 00 build passed before these edits. |
-| npm run test:supabase | NOT RUN | Not rerun after the SQL change. |
-| npm run test:e2e | NOT RUN | Not rerun. Manual browser check below. |
-| Browser manual record | PASS | Synthetic demo. Selected Unpaid operating expense, account cleared, review showed GH₵800, save confirmed. Balances stayed GH₵5,970.00. Money out stayed GH₵930.00. |
+| npm test | HISTORICAL PASS | 85 tests at Phase 01 commit `6cb30d9`. Not rerun for this handoff-only update. |
+| npm run test:db | HISTORICAL PASS | Passed at Phase 01. Not rerun for this handoff-only update. |
+| npm run lint | HISTORICAL PASS | Passed at Phase 01. |
+| npm run typecheck | HISTORICAL PASS | Passed at Phase 01. |
+| npm run build | NOT RUN | Last PASS was Phase 00, before credit_expense. |
+| Live narration evaluation | EXTERNAL | AI is disabled. No provider call in this programme. |
 
 ## Current worktree state
 
-Phase 01 source is uncommitted on `work/cashnarra-v1`. Phase 00 commit is `cff81ec46544a10ec2805f44faf2a29560c28bbc`.
+Phase 01 is committed. This handoff update is the only uncommitted work when the next session starts, until it is committed.
 
 ## Known incomplete or broken work
 
-Local `schema_migrations` only lists migrations `202610130001` through `202610130003`, even though later functions already exist. `supabase migration up` and `supabase db reset` are unsafe on that database.
+Phase 02 has not changed interpretation behaviour.
 
-The synthetic Ama Works workspace used in the browser now contains the electrician record. It is local demo data.
+Local `schema_migrations` still lists only `202610130001` through `202610130003`. Do not run `supabase migration up` or `supabase db reset` on `cashnarra-development`. The credit-expense function is already installed there. 18 workspaces were preserved.
 
-The auth browser test can still time out on a cold server. See the Phase 00 log.
+The local synthetic Ama Works workspace contains the browser-test electrician record.
 
-`npm audit` still reports 5 high-severity findings. They were not changed.
+Cold-start `auth.spec.ts` can exceed the 5 second expect while the heading is “Opening your records…”. A rerun passed in Phase 00.
 
 ## Material decisions made
 
-- Event name: `credit_expense`. Label: “Unpaid operating expense”.
-- Payment reuses `payable_payment`. No new settlement kind.
-- Reports count the expense when it is incurred. The later cash payment is money out, not a second expense.
-- Historical migration `202610130001` was left unchanged. The new migration replaces the function.
+- Phase 01 event name is `credit_expense`.
+- Phase 02 must recheck official OpenAI docs before replacing `gpt-4.1-mini-2025-04-14`.
+- Keep `OPENAI_MODEL` configurable.
 
 ## Blockers requiring user input
 
-None.
+None. A live model evaluation needs an existing opt-in key and remains EXTERNAL if that key is absent.
 
 ## Exact next action
 
-1. Commit Phase 01, excluding a dev-server rewrite of `next-env.d.ts`.
-2. Record that commit SHA in `PLANS.md`, this file, and `harness/build-log.md`.
-3. Start Phase 02 from `harness/build/02-ai-and-narration.md`. Recheck current OpenAI model documentation before changing `OPENAI_MODEL`'s default. Then add the synthetic narration corpus. Do not call the live API without an existing opt-in key.
+1. Read `harness/build/02-ai-and-narration.md` and `harness/context/02-narration-gaps.md`.
+2. Check current official OpenAI model and deprecation docs for `gpt-4.1-mini-2025-04-14`. Keep the default only if it is still supported. Do not call the API while checking docs.
+3. Add a synthetic, reviewable narration corpus covering the cases in the phase file, including `credit_expense` and missing person/account/amount. No real customer data.
+4. Fix the deterministic contract gaps: pass workspace type into interpretation, and decide application-owned proposal IDs. Distinguish model uncertainty from validation failure.
+5. Run `npm test`, `npm run lint`, and `npm run typecheck`. Run `npm run build` because it was not rerun after Phase 01.
 
 ## Resume commands
 
@@ -92,5 +78,4 @@ git rev-parse HEAD
 git status
 git diff
 npm test
-npm run test:db
 ```
