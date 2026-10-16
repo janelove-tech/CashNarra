@@ -4,8 +4,8 @@ Updated: 2026-10-16
 Updated by agent: Cursor
 Branch: work/cashnarra-v1
 Baseline SHA: 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
-Current HEAD: 6cb30d92075ce5eead15c6ee4e337b41f01c1886
-Phase 01 code SHA: 6cb30d92075ce5eead15c6ee4e337b41f01c1886
+Current HEAD: 01d4f4f opens Phase 02. Phase 01 code is 6cb30d92075ce5eead15c6ee4e337b41f01c1886.
+If the latest commit only changes `PLANS.md` and `harness/`, do not redo Phase 01.
 Current phase: 02 — AI and general narration quality
 Current subtask: Recheck the OpenAI model, then add the synthetic evaluation corpus
 Status: IN PROGRESS
