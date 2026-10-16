@@ -169,6 +169,6 @@ it("treats model references as untrusted and forces consequential clarification"
     },
     w,
   );
-  expect(result.questions[0].field).toBe("amount");
+  expect(result.questions.some((q) => q.field === "amount")).toBe(true);
   expect(duplicates(w, result.events)).toEqual([]);
 });
