@@ -55,7 +55,9 @@ export function forecast(goal: Goal, asOf: string, scenario?: string) {
       period: null,
       pace: pace.toFixed(2),
       reason:
-        "There is no completion date at this monthly amount. Try a positive amount to see a what-if estimate.",
+        scenario === undefined
+          ? "There is no completion date at this monthly amount. Try a positive amount to see a what-if estimate."
+          : "What-if only: there is no completion date at this monthly amount. Saved records stay unchanged. This is not a guarantee.",
       assigned,
     };
   const count = remaining.div(pace).ceil().toNumber();
@@ -81,6 +83,6 @@ export function forecast(goal: Goal, asOf: string, scenario?: string) {
     reason:
       scenario === undefined
         ? "Based on the middle monthly amount from the last three full months you checked. Assumes you add money at each month’s end, starting this month. Check that you can afford it."
-        : "What-if only: your saved records and assigned money stay unchanged. Assumes you add this amount at each month’s end, starting this month.",
+        : "What-if only: your saved records and assigned money stay unchanged. Assumes you add this amount at each month’s end, starting this month. This is not a guarantee.",
   };
 }

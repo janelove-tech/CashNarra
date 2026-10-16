@@ -21,6 +21,7 @@ export function exportRows(w: Workspace, from: string, to: string) {
     ["Money paid out", "", "", "", r.paid, ""],
     ["Net movement", "", "", "", r.net, ""],
     ["Sales value", "", "", "", r.sales, ""],
+    ["Recorded expenses", "", "", "", r.expenses, ""],
     ["Total recorded balances", "", "", "", r.total ?? "Unknown", ""],
     ["People owe", "", "", "", r.peopleOwe, ""],
     ["You owe", "", "", "", r.userOwes, ""],
@@ -153,7 +154,12 @@ export async function downloadReport(
   line(`Exported ${new Date().toISOString()} · Ledger version ${w.version}`);
   const r = report(w, from, to);
   line(`Received ${formatMoney(r.received)} · Paid out ${formatMoney(r.paid)}`);
-  line(`Net movement ${formatMoney(r.net)} · Sales ${formatMoney(r.sales)}`);
+  line(
+    `Net movement ${formatMoney(r.net)} · Sales ${formatMoney(r.sales)} · Recorded expenses ${formatMoney(r.expenses)}`,
+  );
+  line(
+    "Profit is unavailable. Cost of sales and other necessary information are missing.",
+  );
   line(
     `Recorded balances ${formatMoney(r.total)} · People owe ${formatMoney(r.peopleOwe)} · You owe ${formatMoney(r.userOwes)}`,
   );

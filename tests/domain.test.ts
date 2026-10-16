@@ -196,6 +196,11 @@ describe("goals and private exports", () => {
     g.commitmentsKnown = false;
     expect(forecast(g, "2026-10-13").period).toBeNull();
     expect(forecast(g, "2026-10-13", "0.00").count).toBeNull();
+    const before = JSON.stringify(g);
+    const negative = forecast(g, "2026-10-13", "-25.00");
+    expect(negative.count).toBeNull();
+    expect(negative.reason).toContain("not a guarantee");
+    expect(JSON.stringify(g)).toBe(before);
   });
   it("prevents competing allocations and checks goal withdrawals", () => {
     const w = fixture();

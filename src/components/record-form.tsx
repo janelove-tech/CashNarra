@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useId } from "react";
 import type { EventInput, Workspace } from "@/domain/types";
 import { kinds } from "@/domain/types";
 import { labels, obligations, posting } from "@/domain/ledger";
@@ -19,8 +19,13 @@ export default function RecordForm({
 }) {
   const [e, set] = useState(initial),
     [error, setError] = useState("");
+  const errorId = useId();
+  const errorSummary = useRef<HTMLParagraphElement>(null);
+  const [amountInvalid, setAmountInvalid] = useState(false);
   const update = (key: keyof EventInput, value: string | null) => {
     const next = { ...e, [key]: value };
+    setError("");
+    setAmountInvalid(false);
     if (key === "kind") {
       next.toAccountId = null;
       next.obligationId = null;
@@ -40,6 +45,7 @@ export default function RecordForm({
   };
   return (
     <form
+      aria-describedby={error ? errorId : undefined}
       onSubmit={(ev) => {
         ev.preventDefault();
         try {
@@ -47,7 +53,13 @@ export default function RecordForm({
           posting(v, workspace.accounts);
           onSave(v);
         } catch (x) {
+          try {
+            money(e.amount, true);
+          } catch {
+            setAmountInvalid(true);
+          }
           setError((x as Error).message);
+          requestAnimationFrame(() => errorSummary.current?.focus());
         }
       }}
     >
@@ -64,6 +76,8 @@ export default function RecordForm({
           <label htmlFor="amount">Amount · GHS</label>
           <input
             id="amount"
+            aria-invalid={amountInvalid || undefined}
+            aria-describedby={amountInvalid ? errorId : undefined}
             inputMode="decimal"
             value={e.amount}
             onChange={(x) => update("amount", x.target.value)}
@@ -171,7 +185,13 @@ export default function RecordForm({
           </select>
         </>
       )}
-      <p className={s.error} role="alert">
+      <p
+        id={errorId}
+        ref={errorSummary}
+        tabIndex={-1}
+        className={s.error}
+        role="alert"
+      >
         {error}
       </p>
       <div className={s.actions}>

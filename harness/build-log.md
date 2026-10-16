@@ -139,3 +139,24 @@ Official PostgreSQL/Supabase function guidance fetched; evidence in context/06-s
 PASS: disposable test:db including new ACL/path checks plus concurrency/idempotency/rollback/isolation; real local test:supabase before and after additive 010. Applied only 010 on localhost:58322, 20 existing workspaces preserved. No reset or migration-history rewrite. Source scan: provider keys only server/API modules; no service-role references in src. Existing public-only SW/private API cache boundaries preserved. Not an independent security certification.
 
 Phase 05 commit e950df3. Next phase 07 reports/goals/export and accessibility evidence.
+
+## Phase 07 checkpoint — 2026-10-16 — Cursor
+
+Preserved Codex phases 02–06. HEAD before this work was `4897fc0`. Uncommitted export and record-form edits were kept and finished.
+
+Implemented: recorded-expense totals in CSV/XLSX rows and the PDF summary; explicit unavailable-profit line; what-if copy states it is not a guarantee and does not change allocations; invalid amounts are associated with the alert and focused; dialog Tab is contained and Escape restores the opener.
+
+Executed:
+
+- `npm test` — PASS — 95 tests.
+- `npm run lint` — PASS — zero warnings.
+- `npm run typecheck` — PASS.
+- `npm run test:db` — PASS — disposable `cashnarra_test`.
+- `npm run build` — PASS — Next.js 16.4.0.
+- `npx playwright test tests/e2e/accessibility.spec.ts` — PASS — 1 test, after adding an explicit dialog Tab cycle. First run FAIL because Tab left the dialog.
+
+Not run:
+
+- Screen reader, physical assistive technology, automated contrast, and a separate 200% zoom pass — NOT RUN. 320px reflow was checked.
+- Live narration and representative voice quality — EXTERNAL.
+- Full Playwright suite in this phase — not rerun. See Phase 08.

@@ -1,6 +1,54 @@
 import { expect, it } from "vitest";
 import { fixture } from "../src/domain/fixture";
 import { exportRows, csv } from "../src/lib/exports";
+import { event } from "../src/domain/fixture";
+import { applyBatch, report } from "../src/domain/ledger";
+it("exports credit expenses when incurred and excludes their settlement from later expenses", () => {
+  const w = fixture();
+  const bill = event(
+    "credit_expense",
+    "300.00",
+    "Kwame wiring · GH₵300",
+    null,
+    { party: "Kwame", date: "2026-10-13" },
+  );
+  const payment = event("payable_payment", "300.00", "Wiring paid", "cash", {
+    party: "Kwame",
+    date: "2026-10-14",
+    obligationId: bill.id,
+  });
+  const next = applyBatch(w, {
+    requestId: "export-expense",
+    revision: 1,
+    expectedVersion: w.version,
+    source: "Synthetic wiring",
+    events: [bill, payment],
+    replaceIds: [],
+    reason: "",
+    allowDuplicates: true,
+  });
+  expect(
+    exportRows(next, "2026-10-14", "2026-10-14").find(
+      (row) => row[0] === "Recorded expenses",
+    )?.[4],
+  ).toBe("0.00");
+  expect(report(next, "2026-10-14", "2026-10-14").paid).toBe("300.00");
+  for (const [from, to] of [
+    ["2026-10-12", "2026-10-18"],
+    ["2026-10-01", "2026-10-31"],
+  ]) {
+    const r = report(next, from, to);
+    expect(
+      exportRows(next, from, to).find(
+        (row) => row[0] === "Recorded expenses",
+      )?.[4],
+    ).toBe(r.expenses);
+    expect(r.profit).toBeNull();
+  }
+  expect(csv(next, "2026-10-13", "2026-10-14")).toContain(
+    "Kwame wiring · GH₵300",
+  );
+});
 
 it("exports every baseline total, exclusions, openings and source references", () => {
   const w = fixture(),

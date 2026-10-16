@@ -101,6 +101,31 @@ export function Dialog({
         e.preventDefault();
         onClose();
       }}
+      onKeyDown={(event) => {
+        if (event.key !== "Tab" || !ref.current) return;
+        const items = [
+          ...ref.current.querySelectorAll<HTMLElement>(
+            "a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled])",
+          ),
+        ].filter((el) => el.tabIndex >= 0);
+        if (!items.length) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        const active = document.activeElement;
+        if (
+          event.shiftKey &&
+          (active === first || !ref.current.contains(active))
+        ) {
+          event.preventDefault();
+          last.focus();
+        } else if (
+          !event.shiftKey &&
+          (active === last || !ref.current.contains(active))
+        ) {
+          event.preventDefault();
+          first.focus();
+        }
+      }}
     >
       <div className={s.sectionHead}>
         <h2 id={titleId}>{title}</h2>
