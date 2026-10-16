@@ -40,4 +40,4 @@ Every row is unresolved.
 
 ## Agent rule
 
-Document status. Do not invent approvals. A code-complete verdict would not close this phase, and the current verdict is not code-complete.
+Document status. Do not invent approvals. The offline narration capture runner does not resolve a row in this register. A code-complete verdict would not close this phase, and the current verdict is not code-complete.

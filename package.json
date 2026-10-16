@@ -17,6 +17,7 @@
     "test:e2e": "playwright test",
     "test:supabase": "tsx scripts/test-supabase.ts",
     "eval:narration": "tsx scripts/score-narration.ts",
+    "eval:capture": "tsx scripts/capture-narration.ts",
     "doctor": "tsx scripts/doctor.ts"
   },
   "dependencies": {

@@ -42,6 +42,8 @@ The automated code checks below passed. The verdict stays incomplete because rep
 
 ## Verdict
 
+Latest evaluation preparation: read `harness/context/08-evaluation-runner.md`. The bounded capture CLI is implemented and tested offline; the local budget is initialised with zero spend. Live narration and representative voice remain EXTERNAL pending credentials/recordings. Preserve the existing US$5 cumulative approval.
+
 Use exactly one:
 
 - `V1 CODE COMPLETE`

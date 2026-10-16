@@ -12,7 +12,7 @@
   {"id":"credit-expense","text":"Electrician Kwame fixed the shop wiring for 300. I owe him all of it.","kinds":["credit_expense"],"amounts":["300.00"]},
   {"id":"credit-expense-party","text":"Shop wiring was fixed for 300 and I will pay later.","questions":["party"]},
   {"id":"expense-payment-unclear","text":"Kwame fixed the wiring for 300.","questions":["kind"]},
-  {"id":"payable","text":"Paid Kojo 100 cash towards the opening supplier balance.","kinds":["payable_payment"],"amounts":["100.00"]},
+  {"id":"payable","text":"Paid Adjei Packaging 100 cash towards the opening supplier balance.","kinds":["payable_payment"],"amounts":["100.00"]},
   {"id":"loan","text":"Borrowed 500 from Efua, received in Bank.","kinds":["loan_received"],"amounts":["500.00"]},
   {"id":"principal","text":"Paid 100 Bank as principal on my loan.","questions":["obligationId"]},
   {"id":"interest","text":"Paid 20 Bank as loan interest.","kinds":["interest"],"amounts":["20.00"]},

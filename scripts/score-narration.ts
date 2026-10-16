@@ -1,7 +1,11 @@
 // Offline scoring only. Supply reviewed captured outputs; this script never calls a provider.
 import { readFile } from "node:fs/promises";
 import { fixture } from "../src/domain/fixture";
-import { extractionSchema, validateExtraction } from "../src/server/ai";
+import {
+  extractionSchema,
+  assignProposalIds,
+  validateExtraction,
+} from "../src/server/ai";
 const corpus = JSON.parse(
   await readFile("harness/context/02-narration-corpus.json", "utf8"),
 ) as {
@@ -49,7 +53,11 @@ if (!path) {
     }
     try {
       const output = extractionSchema.parse(entry.output);
-      validateExtraction(output, fixture()); // reject foreign IDs; score model output before validation adds questions
+      const validated = validateExtraction(
+        assignProposalIds(output),
+        fixture(),
+      );
+      // Score raw model clarification separately; validation must not mask guesses.
       if (c.questions) {
         const matched = c.questions.every((field) =>
           output.questions.some((q) => q.field === field),
@@ -62,7 +70,8 @@ if (!path) {
           JSON.stringify(c.kinds) &&
         JSON.stringify(output.events.map((e) => e.amount)) ===
           JSON.stringify(c.amounts) &&
-        !output.questions.length
+        !output.questions.length &&
+        !validated.questions.length
       )
         kindMatches++;
     } catch {
