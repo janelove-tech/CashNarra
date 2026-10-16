@@ -38,6 +38,13 @@ try {
     await c.query("select set_config('request.jwt.claim.sub',$1,false)", [id]);
   };
   await user(db, a);
+  const security = await db.query("select proname, proconfig from pg_proc where pronamespace='public'::regnamespace and prosecdef");
+  assert.equal(security.rows.length, 5);
+  for (const fn of security.rows) assert.ok(fn.proconfig.includes('search_path=""'), fn.proname);
+  assert.equal((await db.query("select has_schema_privilege('authenticated','public','CREATE') as allowed")).rows[0].allowed, false);
+  assert.equal((await db.query("select has_function_privilege('anon','public.commit_workspace(jsonb,integer,text,text,jsonb)','EXECUTE') as allowed")).rows[0].allowed, false);
+  assert.equal((await db.query("select has_function_privilege('authenticated','public.minimize_expired_sources()','EXECUTE') as allowed")).rows[0].allowed, false);
+  await assert.rejects(() => db.query("create table public.untrusted_shadow(id integer)"), /permission denied/);
   const commit = async (
     c: Client,
     w: Workspace,

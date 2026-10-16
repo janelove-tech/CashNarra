@@ -1,17 +1,15 @@
 # CashNarra current development handoff
 
 Updated 2026-10-16 by Codex. Branch work/cashnarra-v1.
-Commits: 3395aa3 Phase 02; 8d685c8 Phase 03; 9807f90 Phase 04. Phase 05 prepared for commit; resolve SHA with git log.
-Current phase: 06 — Supabase/RPC/RLS security hardening
+Commits: Phase02 3395aa3, Phase03 8d685c8, Phase04 9807f90, Phase05 e950df3. Phase06 prepared for commit; resolve SHA with git log.
+Current phase: 07 — Reports, goals, exports and accessibility
 Status: IN PROGRESS
 
 INCOMPLETE — DO NOT TREAT AS PHASE COMPLETE
 
 ## Exact next action
-Read harness/build/06-security.md (already read). Official guidance search found PostgreSQL 17 CREATE FUNCTION and Supabase database/functions; open those pages before SQL edits. Review existing definer functions/grants, add a narrow hardening migration if needed, then run disposable test:db and actual local test:supabase. Never reset/migration-up cashnarra-development: migration history incomplete. Apply only reviewed additive local migration if needed, preserving workspaces.
+Execute harness/build/07-reports-goals-accessibility.md (read). Inspect report/export/goal tests and dialog/form semantics. Add targeted missing regression coverage and fix actual keyboard/reflow/error-association failures. Run appropriate tests, browser checks, lint/typecheck/build. Record screen-reader/physical AT NOT RUN if unavailable. Then proceed Phase08 independent verification; voice without representative quality cannot receive complete verdict.
 
 ## Evidence
-Phase 05 PASS: 94 unit tests, lint/typecheck, full 26-browser suite, build. Initial callback typing failure fixed and rechecked. Metadata summary plus owned single-state loading replaces bulk app refresh; move destination lazy loading; refresh race guard. Synthetic measurement in build-log (3.05 MB all versus 306 KB selected+summary); server/render time NOT RUN. Legacy bulk GET retained for compatibility, app uses scoped paths.
-
-## External
-Phase 02 live narration quality EXTERNAL. Phase 03 physical microphone/provider/representative Ghanaian quality EXTERNAL/NOT RUN; protocol in context/03-voice-quality.md. No live AI calls or production changes. Phase 09 EXTERNAL. Preserve Cursor's Phase 01 credit_expense work.
+Phase06 disposable test:db PASS with ACL/path assertions and financial/isolation checks. Actual local test:supabase PASS before/after migration 010. Only additive 010 applied to localhost:58322; 20 existing workspace rows preserved. Local migration history still incomplete: no blanket reset/migration-up. Details context/06-security-evidence.md.
+Phase05 full26 browser suite,94 unit tests,lint/typecheck/build PASS. No provider calls/production actions. Live narration and physical/live voice quality EXTERNAL; never set quality approval from mocks. Cursor credit_expense work preserved.

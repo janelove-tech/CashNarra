@@ -12,14 +12,15 @@ Baseline: `main` @ `3b4d1f89fed8c079cc3571aeff6276bfe5f04d92`
 | 03 — Voice input V1 | COMPLETE (quality EXTERNAL) | harness/build/03-voice-input.md | | |
 | 04 — Core narration/review UI refactor | COMPLETE | harness/build/04-core-ui-refactor.md | | |
 | 05 — Data loading and offline hardening | COMPLETE | harness/build/05-data-and-offline.md | | |
-| 06 — Supabase/RPC/RLS security hardening | IN PROGRESS | harness/build/06-security.md | | |
-| 07 — Reports, goals, exports and accessibility | NOT STARTED | harness/build/07-reports-goals-accessibility.md | | |
+| 06 — Supabase/RPC/RLS security hardening | COMPLETE | harness/build/06-security.md | | |
+| 07 — Reports, goals, exports and accessibility | IN PROGRESS | harness/build/07-reports-goals-accessibility.md | | |
 | 08 — Independent V1 release verification | NOT STARTED | harness/build/08-release-verification.md | | |
 | 09 — External launch gates | EXTERNAL | harness/build/09-external-launch-gates.md | | |
 
 Only one coding phase should be IN PROGRESS. Phase 09 stays EXTERNAL until the user or business decisions in that phase file exist.
 
 Voice is in V1. Phase 03 is required before a V1 code-complete verdict. It is not a later release.
+
 
 
 
