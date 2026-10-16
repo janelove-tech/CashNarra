@@ -3,7 +3,7 @@ import { mkdir, readFile, writeFile, rename } from "node:fs/promises";
 import path from "node:path";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { fixture } from "@/domain/fixture";
-import type { Receipt, Workspace } from "@/domain/types";
+import type { Receipt, Workspace, WorkspaceSummary } from "@/domain/types";
 export type Context = {
   userId: string;
   demo: boolean;
@@ -74,11 +74,37 @@ export async function list(ctx: Context): Promise<Workspace[]> {
   return (data ?? []).map((x) => x.state as Workspace);
 }
 export async function get(ctx: Context, id: string) {
+  if (!ctx.demo) {
+    const minimized = await ctx.db!.rpc("minimize_my_sources");
+    if (minimized.error)
+      throw new Error("Could not apply narration privacy settings.");
+    const { data, error } = await ctx
+      .db!.from("workspaces")
+      .select("state")
+      .eq("id", id)
+      .eq("owner_id", ctx.userId)
+      .maybeSingle();
+    if (error || !data || data.state.ownerId !== ctx.userId)
+      throw new Error("Workspace unavailable.");
+    return data.state as Workspace;
+  }
   const w = (await list(ctx)).find(
     (w) => w.id === id && w.ownerId === ctx.userId,
   );
   if (!w) throw new Error("Workspace unavailable.");
   return w;
+}
+export async function summaries(ctx: Context): Promise<WorkspaceSummary[]> {
+  if (ctx.demo)
+    return (await list(ctx))
+      .filter((w) => w.ownerId === ctx.userId)
+      .map(({ id, name, type, version }) => ({ id, name, type, version }));
+  const { data, error } = await ctx
+    .db!.from("workspaces")
+    .select("id,name:state->>name,type:state->>type,version")
+    .eq("owner_id", ctx.userId);
+  if (error) throw new Error("Could not load your workspaces.");
+  return (data ?? []) as WorkspaceSummary[];
 }
 export async function receipt(
   ctx: Context,

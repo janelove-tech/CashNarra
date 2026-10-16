@@ -1,5 +1,12 @@
 import { context, sameOrigin } from "@/server/auth";
-import { commit, commitMove, get, list, receipt } from "@/server/store";
+import {
+  commit,
+  commitMove,
+  get,
+  list,
+  receipt,
+  summaries,
+} from "@/server/store";
 import { prepareMove } from "@/domain/move";
 import { applyBatch, validateWorkspace } from "@/domain/ledger";
 import { emptyWorkspace } from "@/domain/fixture";
@@ -19,8 +26,15 @@ export async function GET(req: Request) {
           u.searchParams.get("request")!,
         ),
       });
+    if (u.searchParams.has("workspace"))
+      return Response.json({
+        workspace: await get(ctx, u.searchParams.get("workspace")!),
+      });
     return Response.json({
-      workspaces: await list(ctx),
+      workspaces:
+        u.searchParams.get("view") === "summaries"
+          ? await summaries(ctx)
+          : await list(ctx),
       userId: ctx.userId,
       demo: ctx.demo,
       aiEnabled: !ctx.demo && process.env.AI_ENABLED === "true",

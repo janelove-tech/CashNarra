@@ -144,3 +144,8 @@ export type Obligation = {
   remaining: string;
   date: string;
 };
+
+export type WorkspaceSummary = Pick<
+  Workspace,
+  "id" | "name" | "type" | "version"
+>;

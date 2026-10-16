@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import {
   House,
@@ -39,7 +39,12 @@ import {
 } from "@/domain/ledger";
 import { D, sum } from "@/domain/money";
 import { forecast } from "@/domain/goals";
-import type { EventInput, RecordEvent, Workspace } from "@/domain/types";
+import type {
+  EventInput,
+  RecordEvent,
+  Workspace,
+  WorkspaceSummary,
+} from "@/domain/types";
 import type { Extraction } from "@/server/ai";
 import { clearDrafts, draftStorage, type Draft } from "@/lib/drafts";
 import { supabase } from "@/lib/supabase";
@@ -95,27 +100,45 @@ export default function CashNarra() {
   const revisionRef = useRef(0),
     draftReady = useRef(false),
     heading = useRef<HTMLHeadingElement>(null);
+  const [spaceSummaries, setSpaceSummaries] = useState<WorkspaceSummary[]>([]);
+  const loadRevision = useRef(0);
   const w = spaces.find((w) => w.id === wid);
   const goal = w?.goals.find((g) => g.id === goalId);
-  async function refresh() {
-    const res = await fetch("/api/workspaces", { cache: "no-store" }),
+  const refresh = useCallback(async (target: string) => {
+    const request = ++loadRevision.current;
+    const res = await fetch("/api/workspaces?view=summaries", {
+        cache: "no-store",
+      }),
       data = await res.json();
     if (!res.ok) throw new Error(data.error);
-    setSpaces(data.workspaces);
+    const selectedId = data.workspaces.some(
+      (x: WorkspaceSummary) => x.id === target,
+    )
+      ? target
+      : (data.workspaces[0]?.id ?? "");
+    let selected: Workspace | null = null;
+    if (selectedId) {
+      const response = await fetch(
+        `/api/workspaces?workspace=${encodeURIComponent(selectedId)}`,
+        { cache: "no-store" },
+      );
+      const state = await response.json();
+      if (!response.ok) throw new Error(state.error);
+      selected = state.workspace;
+    }
+    if (request !== loadRevision.current) return data;
+    setSpaceSummaries(data.workspaces);
+    setSpaces(selected ? [selected] : []);
     setOwner(data.userId);
     setDemo(data.demo);
     setAi(data.aiEnabled);
     setVoice(data.voiceEnabled);
-    setWid((current) =>
-      data.workspaces.some((x: Workspace) => x.id === current)
-        ? current
-        : (data.workspaces[0]?.id ?? ""),
-    );
+    setWid(selectedId);
     return data;
-  }
+  }, []);
   useEffect(() => {
     Promise.resolve()
-      .then(refresh)
+      .then(() => refresh(""))
       .then((data) => {
         if (data.demo) setDate("2026-10-13");
       })
@@ -123,10 +146,12 @@ export default function CashNarra() {
       .finally(() => setLoaded(true));
     if ("serviceWorker" in navigator)
       navigator.serviceWorker.register("/sw.js").catch(() => {});
-  }, []);
+  }, [refresh]);
   useEffect(() => {
     const channel = new BroadcastChannel("cashnarra-session");
     channel.onmessage = () => {
+      loadRevision.current++;
+      setSpaceSummaries([]);
       revisionRef.current++;
       setRevision(revisionRef.current);
       setSelected(null);
@@ -272,7 +297,9 @@ export default function CashNarra() {
         failure.rejected = data.outcome === "rejected";
         throw failure;
       }
-      await refresh();
+      await refresh(
+        operation.action === "create" ? wid : operation.workspaceId,
+      );
       setRetryOperation(null);
       setStatus("Saved. Your records have been updated.");
       return data.receipt;
@@ -428,7 +455,7 @@ export default function CashNarra() {
     } catch (e) {
       if ((e as Error & { rejected?: boolean }).rejected) {
         setPending(null);
-        await refresh().catch(() => {});
+        await refresh(wid).catch(() => {});
         setStatus(
           "Save rejected. Your edits remain here; review them against the refreshed records.",
         );
@@ -449,7 +476,7 @@ export default function CashNarra() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       if (data.receipt) {
-        await refresh();
+        await refresh(wid);
         await saved();
       } else {
         setStatus(
@@ -462,7 +489,7 @@ export default function CashNarra() {
       setError((e as Error).message);
       if ((e as Error & { rejected?: boolean }).rejected) {
         setPending(null);
-        await refresh().catch(() => {});
+        await refresh(wid).catch(() => {});
         setStatus("Save rejected. Your edits remain available for review.");
       }
     } finally {
@@ -1801,7 +1828,7 @@ export default function CashNarra() {
       )}
       {modal === "workspace" && (
         <Dialog title="Your workspaces" onClose={() => setModal("")}>
-          {spaces.map((x) => (
+          {spaceSummaries.map((x) => (
             <Button
               key={x.id}
               onClick={() => {
@@ -1812,8 +1839,9 @@ export default function CashNarra() {
                   setModal("");
                   return;
                 }
-                setWid(x.id);
-                navigate("today");
+                void refresh(x.id)
+                  .then(() => navigate("today"))
+                  .catch((e) => setError(e.message));
               }}
             >
               {hidden ? "Workspace" : x.name} · {x.type}
@@ -2001,7 +2029,7 @@ export default function CashNarra() {
         <Dialog title="Move a record safely" onClose={() => setModal("")}>
           <MoveForm
             source={w}
-            spaces={spaces}
+            spaces={spaceSummaries}
             record={selected}
             onMove={async (data) => {
               await perform(data as Operation);

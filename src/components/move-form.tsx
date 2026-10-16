@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
-import type { Workspace, RecordEvent } from "@/domain/types";
+import { useState, useEffect } from "react";
+import type { Workspace, RecordEvent, WorkspaceSummary } from "@/domain/types";
 import { Button, Amount } from "./ui";
 import s from "./app.module.css";
 export default function MoveForm({
@@ -10,7 +10,7 @@ export default function MoveForm({
   onMove,
 }: {
   source: Workspace;
-  spaces: Workspace[];
+  spaces: WorkspaceSummary[];
   record: RecordEvent;
   onMove: (data: Record<string, unknown>) => Promise<unknown>;
 }) {
@@ -18,7 +18,25 @@ export default function MoveForm({
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
     [request, setRequest] = useState<Record<string, unknown> | null>(null);
-  const target = spaces.find((w) => w.id === destination);
+  const [loadedTarget, setLoadedTarget] = useState<Workspace | null>(null);
+  const target = loadedTarget?.id === destination ? loadedTarget : null;
+  useEffect(() => {
+    if (!destination) return;
+    const controller = new AbortController();
+    fetch(`/api/workspaces?workspace=${encodeURIComponent(destination)}`, {
+      cache: "no-store",
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error);
+        if (!controller.signal.aborted) setLoadedTarget(data.workspace);
+      })
+      .catch((e) => {
+        if (!controller.signal.aborted) setError(e.message);
+      });
+    return () => controller.abort();
+  }, [destination]);
   return (
     <form
       onSubmit={async (e) => {
@@ -95,7 +113,7 @@ export default function MoveForm({
         instead. Linked debts and transfers need coordinated corrections.
       </p>
       <p role="alert">{error}</p>
-      <Button primary type="submit" disabled={busy}>
+      <Button primary type="submit" disabled={busy || !target}>
         {request ? "Retry original move" : "Save reviewed move"}
       </Button>
     </form>
