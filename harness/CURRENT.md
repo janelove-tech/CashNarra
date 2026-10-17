@@ -3,7 +3,7 @@
 Updated: 2026-10-17 — Codex
 Branch: work/cashnarra-v1
 Baseline: 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
-Reconciled starting HEAD: ba750a91b14a62851427e89013d99b679ade227e
+Reconciled starting HEAD: fc25cfb1db54bf2bcf27b1b50e093271a19813c4
 Current HEAD: the commit containing this handoff; resolve with git rev-parse HEAD.
 Current phase: 08 — release verification; Phase 09 remains EXTERNAL
 Status: EXTERNAL — representative recordings and manual accessibility evidence
@@ -11,12 +11,12 @@ Verdict: NOT V1 COMPLETE
 
 ## Git reconciliation
 
-Resumed clean at ba750a9, eleven commits ahead of the local origin reference. Preserved all Cursor/Codex work and followed the recorded voice-evaluation prerequisite. Added an offline intake checker and private manifest instructions; no product runtime or provider configuration changes. No fetch/push, deployment, migration or paid call.
+Resumed clean at fc25cfb, twelve commits ahead of the local origin reference. Read the prescribed handoff and voice protocol, then reconciled Git. The expected .local/voice-evaluation/manifest.json is still absent. Preserved all Cursor/Codex work. No code changes, repeated tests, paid calls, fetch/push, deployment or migration. Existing passing results remain historical evidence; the exact next action needs actual consented recordings, not another synthetic rerun.
 
 ## Latest evidence
 
 - HISTORICAL PASS: eight non-text contrast browser journeys at 320, 390, 768 and 1440px, light/dark. Measured field boundaries inside/outside, button SVG strokes, and keyboard-focus outline at a minimum 3:1. Today, Records, Money Stories, Plan, narration and manual-record dialog covered (48 measured states across eight journeys). See tests/e2e/non-text-contrast.spec.ts and harness/context/08-local-release-evidence.md.
-- PASS: three new offline voice-intake tests, typecheck and lint. The default intake command correctly exits NOT READY because private recordings/manifest are absent. This is a verified guard, not a voice-quality PASS.
+- HISTORICAL PASS: three offline voice-intake tests, typecheck and lint. The default intake command correctly exits NOT READY because private recordings/manifest are absent. This is a verified guard, not a voice-quality PASS.
 - HISTORICAL PASS: 104 unit tests and production build; database/Supabase integration and prior text contrast/zoom/browser checks. Not rerun for this test-only change.
 - HISTORICAL PASS: one unchanged 28-case synthetic narration corpus using gpt-6-luna; inspected account/party/debt references. Deprecated model failed its four runs. See harness/context/08-evaluation-runner.md. No general-quality or voice approval.
 - EXTERNAL: representative voice recordings; no WAV/WebM/MP3 or consent-named files found under .local this continuation.
