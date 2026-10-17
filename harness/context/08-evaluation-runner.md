@@ -46,3 +46,20 @@ The payable case incorrectly named Kojo while fixture opening debt belongs to Ad
 ## Offline validation
 
 Seven added tests cover upward charge rounding and invalid usage; missing/reinitialised budgets; concurrent runs; unknown/lost response reservations; ceiling enforcement; one-time settlements; corrupted/interrupted journals; and shared production request boundaries (some tests cover multiple cases). All 102 unit tests passed. No test invokes OpenAI. Read CURRENT/build-log for the final build and browser results.
+
+## Live evaluation return — 2026-10-17
+
+Key now present in ignored .env.local; AI_ENABLED and VOICE_ENABLED remain false. Initial attempt stopped before a capture, retaining 425431 microUSD of uncertain usage. A non-generative empty Responses request diagnosed Node certificate validation failure. NODE_USE_SYSTEM_CA=1 uses Windows trusted certificates without bypassing TLS; the empty request then returned 400 missing model. Do not set NODE_TLS_REJECT_UNAUTHORIZED=0. Existing US$5 cumulative approval continues, and the original reservation is retained.
+
+Added allowlisted error categories/status/codes; no provider bodies/messages/headers are printed. Tests verify secret-bearing errors cannot leak through diagnostics. All 104 unit tests passed, typecheck/lint and production build passed (Windows sandbox required elevated tests/build). No schema, deterministic ledger, posting or review permission was weakened.
+
+Private synthetic captures under .local/evaluation/runs (not committed):
+- eed10c82-a2b0-4270-b2b7-4091db715293: original prompt, FAIL, 15 kind + 2 clarification matches, 2 silent guesses, 1 invalid output.
+- 37bdd244-367f-49dd-8d24-b4eabfe70af3: revised interpretation, FAIL, 14 kind + 6 clarification matches, 1 silent guess, 0 invalid.
+- dd9edf0f-160b-4dd9-ae3c-061f80f50c0b: explicit field rules, FAIL, 15 kind + 7 clarification matches, 0 silent guesses/invalid outputs. Remaining errors: momo-sale, credit-sale, partial-debt, stock-credit, credit-expense, loan. These include unnecessary questions as well as a paid-sale misclassification; do not weaken the corpus to pass.
+
+Further general examples are under evaluation. Captures contain full request hashes and usage for reproducibility. Synthetic corpus success cannot establish representative voice quality or launch readiness.
+
+Final experiment dbfb6da3-277c-423f-a1d1-316e39517151: FAIL, 21 kind + 4 clarification matches, 3 silent guesses, 0 invalid. General examples improved definite classification but regressed clarification safety, so that addition was removed. Retained the explicit-field-rule prompt tested in dd9edf0f (22/28, zero silent guesses in that run). No prompt is approved for release. Do not cherry-pick the 25/28 headline or enable AI. Further work should compare a supported replacement model under reviewed pricing and the same cumulative budget rather than continue fitting examples to this corpus.
+
+Cumulative journal: 493565 microUSD committed, comprising 68134 microUSD calculated successful usage plus 425431 microUSD uncertain initial reservation. Remaining ceiling 4506435 microUSD. Actual provider invoice is not independently reconciled. All raw captures remain private/ignored. No consented voice recordings supplied; voice evaluation NOT RUN.

@@ -5,6 +5,7 @@ import { createHash } from "node:crypto";
 import { resolve, join } from "node:path";
 import OpenAI from "openai";
 import { z } from "zod";
+import { evaluationError } from "./lib/evaluation-error";
 import { fixture } from "../src/domain/fixture";
 import {
   extractionRequest,
@@ -171,7 +172,8 @@ async function main() {
     await budget.close();
   }
 }
-main().catch(() => {
+main().catch((error: unknown) => {
+  console.error(JSON.stringify(evaluationError(error)));
   // Provider errors may contain request text/credentials. Keep console generic.
   console.error(
     "Evaluation stopped. Check local key, budget journal/lock, approved model and private capture files. No automatic retry; uncertain calls remain reserved.",

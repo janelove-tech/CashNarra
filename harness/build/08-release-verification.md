@@ -51,3 +51,7 @@ Use exactly one:
 - `NOT V1 COMPLETE`
 
 Voice without representative quality evidence cannot support a complete verdict. External launch gates may still remain after the code verdict.
+
+## Live return — 2026-10-17
+
+Phase 08 resumed when the local key became available. Four live synthetic runs failed the release-quality threshold. Read harness/context/08-evaluation-runner.md and CURRENT for exact evidence, retained prompt, budget and next action. Automated checks pass, but narration quality remains FAIL; representative voice remains EXTERNAL. Verdict: NOT V1 COMPLETE.
