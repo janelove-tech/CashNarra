@@ -9,6 +9,7 @@ export async function POST(req: Request) {
     const ctx = await context();
     if (
       ctx.demo ||
+      process.env.LOCAL_AI_BUDGET === "true" ||
       process.env.AI_ENABLED !== "true" ||
       !process.env.OPENAI_API_KEY
     )

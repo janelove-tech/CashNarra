@@ -1,4 +1,7 @@
 import OpenAI from "openai";
+import { resolve } from "node:path";
+import { randomBytes } from "node:crypto";
+import { EvaluationBudget } from "../../scripts/lib/evaluation-budget";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
 import { eventSchema, type Workspace } from "@/domain/types";
@@ -284,9 +287,42 @@ export async function realExtract(
     timeout: 30000,
     maxRetries: 0,
   });
-  const response = await client.responses.parse(
-    extractionRequest(text, w, date, mode, replaceIds),
-  );
+  const request = extractionRequest(text, w, date, mode, replaceIds);
+  const localBudget = process.env.LOCAL_AI_BUDGET === "true";
+  if (
+    localBudget &&
+    (request.model !== "gpt-6-luna" ||
+      Buffer.byteLength(JSON.stringify(request)) > 100_000)
+  )
+    throw new Error(
+      "This story exceeds the local testing limits. Try a shorter story.",
+    );
+  const budget = localBudget
+    ? await EvaluationBudget.acquire(resolve(".local/evaluation"))
+    : null;
+  let response;
+  try {
+    // Same cumulative approved allowance as evaluations; never initialise here.
+    // Store no narration, workspace IDs or fingerprints of financial content.
+    const reservation = budget
+      ? await budget.reserve("local-story", randomBytes(32).toString("hex"))
+      : null;
+    response = await client.responses.parse(request);
+    if (budget && reservation) {
+      if (!response.usage) throw new Error("Missing usage");
+      await budget.settle(
+        reservation,
+        response.usage.input_tokens,
+        response.usage.output_tokens,
+      );
+    }
+  } catch {
+    throw new Error(
+      "Your story could not be processed. Your words are still here. The testing allowance may be unavailable; you can add a manual record.",
+    );
+  } finally {
+    await budget?.close();
+  }
   if (!response.output_parsed)
     throw new Error(
       "No usable interpretation returned. Your words are still here.",

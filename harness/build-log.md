@@ -246,3 +246,9 @@ Read the prescribed handoff, phase and referenced voice protocol, then reconcile
 ## Voice-input prerequisite checkpoint — 2026-10-17 — Codex
 
 Read the required handoff sequence and referenced voice protocol; Git clean at fc25cfb, twelve ahead of local origin. Checked the exact next action: .local/voice-evaluation/manifest.json is absent. No authentic speaker recordings/consent can be manufactured by coding. Preserved all work and updated CURRENT; no product changes or repeated validation, provider calls/spend, push or deployment. Existing passes remain historical. Await actual private intake and consent review for representative voice; manual accessibility and Phase 09 gates remain outstanding. NOT V1 COMPLETE.
+
+## Authorised local typed narration — 2026-10-17 — Codex
+
+User explicitly requested enabling their own stories after encountering mock-only processing. Enabled AI_ENABLED=true, OPENAI_MODEL=gpt-6-luna and LOCAL_AI_BUDGET=true in ignored local configuration only. Added cumulative pre-call reservation/usage settlement to realExtract using the existing US$5 evaluation journal, 100KB request bound and tested model; no source text or source fingerprints written to that journal. Uncertain calls keep reservations; no retries. Explanations are disabled in this local-budget mode; voice remains disabled. Existing per-user daily quota, ownership, interpretation validation and reviewed deterministic save remain in force. Restarted verified local server on 3100 with system certificate trust.
+
+PASS: nine budget/narration tests, typecheck, lint, production build and one real synthetic adapter smoke check (no records saved). Cumulative committed/reserved now US$0.513872, including uncertain prior reservation; remaining US$4.486128. Local interactive story calls share this ceiling. This is not production launch or general voice-quality approval. Updated CURRENT; no push/deploy.
