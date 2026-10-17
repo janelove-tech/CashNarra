@@ -11,11 +11,11 @@ Verdict: NOT V1 COMPLETE
 
 ## Git reconciliation
 
-Started clean at 49a02f6, nine commits ahead of the local origin ref. Preserved all Cursor/Codex work. No fetch, push, deployment, migration or provider call. Read the prescribed handoff sequence; did not restart the audit. Only added browser verification and updated evidence. Restored next-env.d.ts generated dev-path drift to its starting value.
+Resumed at 49a02f6 with the previous contrast tests and evidence uncommitted. The earlier commit had been blocked by approval-service quota; normal approval now succeeded and preserved that work as 495ee1a. Extended the same tests to Records, Money Stories and Plan. Preserved all Cursor/Codex work. No fetch, push, deployment, migration or provider call. Read the prescribed handoff sequence; did not restart the audit. Only added browser verification and updated evidence. Restored next-env.d.ts generated dev-path drift to its starting value.
 
 ## Latest evidence
 
-- PASS: eight non-text contrast browser journeys at 320, 390, 768 and 1440px, light/dark. Measured field boundaries inside/outside, button SVG strokes, and keyboard-focus outline at a minimum 3:1. Today, narration and manual-record dialog covered. See tests/e2e/non-text-contrast.spec.ts and harness/context/08-local-release-evidence.md.
+- PASS: eight non-text contrast browser journeys at 320, 390, 768 and 1440px, light/dark. Measured field boundaries inside/outside, button SVG strokes, and keyboard-focus outline at a minimum 3:1. Today, Records, Money Stories, Plan, narration and manual-record dialog covered (48 measured states across eight journeys). See tests/e2e/non-text-contrast.spec.ts and harness/context/08-local-release-evidence.md.
 - PASS: typecheck and lint after adding the tests.
 - HISTORICAL PASS: 104 unit tests and production build; database/Supabase integration and prior text contrast/zoom/browser checks. Not rerun for this test-only change.
 - HISTORICAL PASS: one unchanged 28-case synthetic narration corpus using gpt-6-luna; inspected account/party/debt references. Deprecated model failed its four runs. See harness/context/08-evaluation-runner.md. No general-quality or voice approval.

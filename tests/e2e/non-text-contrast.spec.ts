@@ -116,6 +116,22 @@ for (const width of [320, 390, 768, 1440])
           .getByRole("button", { name: "Switch to dark appearance" })
           .click();
       await measure(page, "today icons");
+      for (const name of [
+        "Records",
+        width < 760 ? "Stories" : "Money Stories",
+        "Plan",
+      ]) {
+        await page
+          .getByRole("button", { name, exact: true })
+          .filter({ visible: true })
+          .click();
+        await measure(page, `${name} fields and icons`);
+      }
+      await page
+        .getByRole("button", { name: "Today", exact: true })
+        .filter({ visible: true })
+        .focus();
+      await page.keyboard.press("Enter");
       await page
         .getByRole("button", { name: "Tell your story", exact: true })
         .click();

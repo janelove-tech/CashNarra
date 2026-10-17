@@ -59,3 +59,5 @@ Phase 08 resumed when the local key became available. Four live synthetic runs f
 Replacement comparison now PASS for the one 28-case synthetic corpus using gpt-6-luna. This supersedes the live-narration FAIL only for that tested replacement/corpus; the deprecated configured model still failed. No representative voice evidence or enablement. Read latest CURRENT and evaluation evidence.
 
 2026-10-17 non-text verification: eight scoped browser journeys PASS for field boundaries, button icons and dialog keyboard focus at 320/390/768/1440px light/dark. Details/limitations in harness/context/08-local-release-evidence.md. Full state coverage and real screen-reader testing remain NOT RUN; voice recordings remain EXTERNAL. Verdict unchanged.
+
+Expanded non-text checks now include Records, Money Stories and Plan: 48 measured states in eight passing journeys. No claim of full interaction-state, chart or screen-reader coverage. See latest local release evidence and CURRENT.

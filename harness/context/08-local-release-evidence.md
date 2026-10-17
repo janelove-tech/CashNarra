@@ -49,3 +49,7 @@ PASS: tests/e2e/non-text-contrast.spec.ts, eight Edge journeys at 320/390/768/14
 The first attempt measured animated theme backgrounds midway through transitions and failed three dark scenarios. Waiting for active animations and fonts to finish resolved the measurement timing; all eight then passed. Product styles were not changed. No screenshot/physical-device/screen-reader certification is implied. Checkbox rendering, disabled controls, all hover/error/selected states, charts and other pages are not covered by this scoped check. Full non-text audit stays incomplete.
 
 PASS: typecheck, lint. Runtime application unchanged; previous unit/database/build results remain HISTORICAL PASS. Restored generated next-env.d.ts dev-path drift. No paid calls, provider enablement, migration or deployment.
+
+### Extended view coverage — 2026-10-17
+
+The eight light/dark/width journeys now also measure Records, Money Stories and Plan: six states per journey, 48 measured states total. PASS: all eight expanded journeys (33.4s), typecheck and lint. A first expanded run timed out because Next.js development overlay intercepted the mobile Today pointer click; keyboard focus + Enter resolves the development-only overlap and exercises real navigation without force-clicking. No product style changes. Coverage exclusions above still apply to checkboxes, disabled controls, full interaction-state matrix, charts and actual screen-reader use. No consented recordings were found under .local; no provider calls or extra spend.
