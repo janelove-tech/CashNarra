@@ -6,7 +6,7 @@ Baseline: 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
 Reconciled starting HEAD: cc713c747afd937dccb837e565e4bc99cf460688
 Current HEAD: the commit containing this handoff; resolve with git rev-parse HEAD.
 Current phase: 08 — live narration evaluation resumed; Phase 09 remains external
-Status: INCOMPLETE — live quality FAIL
+Status: EXTERNAL — representative voice recordings and remaining release evidence
 Verdict: NOT V1 COMPLETE
 
 ## Git reconciliation
@@ -23,7 +23,7 @@ Historical automated pass: `3020daf`. Fresh-install, text-contrast, and 200% zoo
 |---|---|
 | Fresh install through browser and production build | PASS at `df2ae47`; do not rerun unless product code changes |
 | Offline capture runner | PASS; 102 unit tests; readiness report only |
-| Live narration | FAIL; key present, four captured runs; retained prompt 22/28, no silent guesses in that run. See evaluation evidence. |
+| Live narration | PASS for one synthetic 28-case gpt-6-luna run; deprecated model failed. No general-quality or voice approval. |
 | Representative voice | EXTERNAL; no consented recordings |
 | Screen reader and non-text contrast | NOT RUN |
 | Development braces advisory | FAIL; do not force Next lint to v14 |
@@ -40,7 +40,9 @@ Key present; AI/voice remain disabled. Preserved Cursor work. Node TLS fixed for
 
 ## Exact next action
 
-Continue Phase 08: consult the referenced model-check document and current official replacement-model pricing; prepare a bounded comparative evaluation without weakening the corpus. The current deprecated model failed release quality after targeted instruction fixes. Preserve all four private runs and budget reservations. Do not claim the retained 22/28 run is a pass. Representative voice remains EXTERNAL until consented recordings arrive; screen-reader/non-text-contrast evidence and Phase 09 decisions remain outstanding.
+Latest comparison: gpt-6-luna passed 28/28 unchanged synthetic cases; all account/party/debt references inspected. See 08-evaluation-runner.md, run 388f7100-40b5-4814-8376-d65affb4b5da. Production configuration remains unchanged and disabled. Final cumulative committed/reserved US$0.513235; remaining US$4.486765. This supersedes the intermediate four-run budget above.
+
+Next: representative consented voice recordings are still required for the shared transcript pipeline evaluation. Preserve the journal and all five private runs. Voice runner must use the same cumulative budget with verified audio cost bounds; do not create another budget. Screen-reader/non-text contrast evidence and Phase 09 external decisions remain outstanding. Do not rerun the completed synthetic corpus merely to report progress. A single corpus pass does not authorize general release or provider enablement.
 
 Do not invent an approval, enable a production provider, deploy, push, or reset the local database.
 

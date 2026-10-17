@@ -25,7 +25,7 @@ async function main() {
   const args = process.argv.slice(2);
   if (
     args.length > 1 ||
-    (args[0] && !["--live", "--initialise-budget"].includes(args[0]))
+    (args[0] && !["--live", "--compare-luna", "--initialise-budget"].includes(args[0]))
   )
     throw new Error("Invalid evaluation option.");
   if (existsSync(".env.local")) process.loadEnvFile(".env.local");
@@ -98,8 +98,11 @@ async function main() {
         c.mode ?? "extract",
         c.mode ? originals : [],
       );
+      // Evaluation only; production configuration remains unchanged. Existing
+      // journal rates conservatively exceed Luna standard long-context rates.
+      if (args[0] === "--compare-luna") request.model = "gpt-6-luna";
       if (
-        request.model !== MODEL ||
+        request.model !== (args[0] === "--compare-luna" ? "gpt-6-luna" : MODEL) ||
         request.service_tier !== "default" ||
         request.max_output_tokens !== MAX_OUTPUT ||
         request.store !== false ||
