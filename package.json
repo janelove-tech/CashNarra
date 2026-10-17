@@ -18,6 +18,7 @@
     "test:supabase": "tsx scripts/test-supabase.ts",
     "eval:narration": "tsx scripts/score-narration.ts",
     "eval:capture": "tsx scripts/capture-narration.ts",
+    "eval:voice-intake": "tsx scripts/check-voice-intake.ts",
     "doctor": "tsx scripts/doctor.ts"
   },
   "dependencies": {

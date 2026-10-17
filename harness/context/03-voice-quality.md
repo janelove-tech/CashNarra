@@ -11,3 +11,38 @@ Report separately: amount exact-match, account/party/debt-name exact-match, fina
 Manual device matrix: explicit permission; deny; cancel pending permission then allow late; stop/cancel; replacement; discard retaining words; private download; close while recording/uploading; unsupported WebM browser; insecure non-local HTTP; device disconnect; offline; empty speech; 60-second and 3 MB boundaries. Verify microphone indicator off after close/stop. Never simulate success in the product.
 
 Common pipeline inspection: VoiceCapture calls onTranscript only on Use reviewed words; CashNarra changeDraft appends those words and navigates to capture. Interpretation, material clarification, review and deterministic authoritative save are the existing text pipeline. No POST /api/workspaces occurs from VoiceCapture or /api/transcribe. Typed input is always reachable.
+
+## Offline recording intake — 2026-10-17
+
+`npm run eval:voice-intake` checks `.local/voice-evaluation/manifest.json` and files in that same private directory. It makes no network calls, loads no credentials, changes no quality flags and never touches the evaluation budget. Missing intake exits nonzero with NOT READY; this is not an evaluation failure or quality result.
+
+Prepare recordings with consenting people before live evaluation. Agree on deletion dates before collection. Store actual consent evidence privately as the referenced JSON file; do not put names, signatures or recordings in Git. Use opaque speaker/device/clip identifiers. The checker verifies metadata assertions and file existence, not the authenticity or legal sufficiency of consent. A person must review that evidence before any upload. Files are not automatically deleted by this checker; the operator must honour the agreed deletion dates.
+
+Example entry below is intentionally unapproved. Copy to the private manifest and replace values from actual consent and recordings; do not simply turn the consent flags on to pass a test. Repeat entries for the corpus, at least five Ghanaian-English speakers and multiple devices. Each speaker needs normal/fast delivery and quiet/background conditions; filenames must be unique. Expected synthetic words and financial meaning come from the referenced corpusId in 02-narration-corpus.json. Optional later edits, transcripts and provider results belong in separate private evaluation captures, not this intake manifest.
+
+```json
+{
+  "version": 1,
+  "clips": [{
+    "id": "clip-001",
+    "speakerId": "speaker-001",
+    "deviceId": "device-001",
+    "browser": "Record the actual browser and version",
+    "corpusId": "cash-sale",
+    "file": "clip-001.webm",
+    "consentFile": "consent-001.json",
+    "consent": {
+      "syntheticStoriesOnly": false,
+      "localEvaluation": false,
+      "providerTranscription": false,
+      "recordedOn": "YYYY-MM-DD",
+      "deleteOn": "YYYY-MM-DD"
+    },
+    "accent": "Ghanaian English",
+    "speed": "normal",
+    "noise": "quiet"
+  }]
+}
+```
+
+Use the application's supported WebM/Opus format, up to 60 seconds and 3 MB. The checker reuses src/server/recording.ts to inspect audio structure and duration, rather than trusting a supplied duration. It bounds file sizes, rejects paths outside the resolved intake directory and reports only opaque coverage IDs/counts. A metadata/file PASS still requires human consent review and the budget-controlled transcription → editable transcript → shared narration pipeline evaluation. Live voice capture/scoring remains to be connected to the existing cumulative budget after audio pricing is verified; this command does not perform it.

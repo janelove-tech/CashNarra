@@ -61,3 +61,5 @@ Replacement comparison now PASS for the one 28-case synthetic corpus using gpt-6
 2026-10-17 non-text verification: eight scoped browser journeys PASS for field boundaries, button icons and dialog keyboard focus at 320/390/768/1440px light/dark. Details/limitations in harness/context/08-local-release-evidence.md. Full state coverage and real screen-reader testing remain NOT RUN; voice recordings remain EXTERNAL. Verdict unchanged.
 
 Expanded non-text checks now include Records, Money Stories and Plan: 48 measured states in eight passing journeys. No claim of full interaction-state, chart or screen-reader coverage. See latest local release evidence and CURRENT.
+
+2026-10-17 voice preparation: offline intake checker implemented and tested. Read harness/context/03-voice-quality.md for the private manifest template and exact command. Missing intake is NOT READY, not a quality result. Live transcription and representative voice still EXTERNAL; no paid call or quality approval.
