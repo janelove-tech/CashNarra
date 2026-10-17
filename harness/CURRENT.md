@@ -3,47 +3,34 @@
 Updated: 2026-10-17 — Codex
 Branch: work/cashnarra-v1
 Baseline: 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
-Reconciled starting HEAD: cc713c747afd937dccb837e565e4bc99cf460688
+Reconciled starting HEAD: 49a02f64997a025ca54f4ae4b805e0daf1a012ba
 Current HEAD: the commit containing this handoff; resolve with git rev-parse HEAD.
-Current phase: 08 — live narration evaluation resumed; Phase 09 remains external
-Status: EXTERNAL — representative voice recordings and remaining release evidence
+Current phase: 08 — release verification; Phase 09 remains EXTERNAL
+Status: EXTERNAL — representative recordings and manual accessibility evidence
 Verdict: NOT V1 COMPLETE
 
 ## Git reconciliation
 
-2026-10-17 checkpoint: Cursor committed the preserved runner as `68c792a`; worktree was clean, six commits ahead of the local origin tracking ref. No fetch/push or product changes. A presence-only check of process plus `.env.local` still found no OPENAI_API_KEY; AI and voice remain disabled. No matching WebM/WAV/MP3 or consent files found under `.local`. No paid calls or new spend. Prior passing validations are HISTORICAL PASS for this documentation-only checkpoint; not rerun. Follow the parked next action below rather than restarting implementation or repeating checks.
+Started clean at 49a02f6, nine commits ahead of the local origin ref. Preserved all Cursor/Codex work. No fetch, push, deployment, migration or provider call. Read the prescribed handoff sequence; did not restart the audit. Only added browser verification and updated evidence. Restored next-env.d.ts generated dev-path drift to its starting value.
 
-Codex commit `df2ae47` was clean in the handoff text, but the worktree held an uncommitted evaluation runner. That work was preserved: shared extraction request, offline scorer correction, payable corpus counterparty, and the budget-bounded capture CLI. `next-env.d.ts` had drifted to `.next/dev/types` and was restored. No fetch or push. Do not redo Phases 00–07 or the local release checks recorded at `df2ae47`.
+## Latest evidence
 
-## Phase 08 — parked, not discarded
+- PASS: eight non-text contrast browser journeys at 320, 390, 768 and 1440px, light/dark. Measured field boundaries inside/outside, button SVG strokes, and keyboard-focus outline at a minimum 3:1. Today, narration and manual-record dialog covered. See tests/e2e/non-text-contrast.spec.ts and harness/context/08-local-release-evidence.md.
+- PASS: typecheck and lint after adding the tests.
+- HISTORICAL PASS: 104 unit tests and production build; database/Supabase integration and prior text contrast/zoom/browser checks. Not rerun for this test-only change.
+- HISTORICAL PASS: one unchanged 28-case synthetic narration corpus using gpt-6-luna; inspected account/party/debt references. Deprecated model failed its four runs. See harness/context/08-evaluation-runner.md. No general-quality or voice approval.
+- EXTERNAL: representative voice recordings; no WAV/WebM/MP3 or consent-named files found under .local this continuation.
+- NOT RUN: real screen-reader evaluation, full non-text/state/device audit. New contrast checks are scoped measurements, not accessibility certification.
+- FAIL (historical): development braces advisory; do not force a downgrade of Next lint to v14.
 
-Historical automated pass: `3020daf`. Fresh-install, text-contrast, and 200% zoom evidence: `df2ae47` and `harness/context/08-local-release-evidence.md`. Offline capture runner: this handoff commit and `harness/context/08-evaluation-runner.md`.
+## Provider and budget boundary
 
-| Check | Result |
-|---|---|
-| Fresh install through browser and production build | PASS at `df2ae47`; do not rerun unless product code changes |
-| Offline capture runner | PASS; 102 unit tests; readiness report only |
-| Live narration | PASS for one synthetic 28-case gpt-6-luna run; deprecated model failed. No general-quality or voice approval. |
-| Representative voice | EXTERNAL; no consented recordings |
-| Screen reader and non-text contrast | NOT RUN |
-| Development braces advisory | FAIL; do not force Next lint to v14 |
-
-The US$5 approval is cumulative and already recorded. Do not request it again. Do not run `npm run eval:capture -- --live` until a local key exists in ignored `.env.local`. Do not reinitialise `.local/evaluation/budget.jsonl`. Voice quality approval stays false.
-
-## Phase 09
-
-Phase 09 can be tracked while Phase 08 is parked. The decision register in `harness/build/09-external-launch-gates.md` is that continuation. It does not depend on the parked evidence. It also cannot be closed from repository inspection, and there is no Phase 10. The capture runner does not resolve any launch gate.
-
-## Superseding live evaluation checkpoint — 2026-10-17
-
-Key present; AI/voice remain disabled. Preserved Cursor work. Node TLS fixed for evaluation with NODE_USE_SYSTEM_CA=1 (no verification bypass). Safe error diagnostics added and tested. 104 unit tests, typecheck, lint, production build PASS; DB/browser checks remain HISTORICAL PASS because no ledger/UI changes. Initial reservation retained. Cumulative committed US$0.493565: calculated successful usage US$0.068134 plus uncertain US$0.425431. Remaining US$4.506435. Never reinitialise the journal. Four live runs failed; the examples experiment was reverted for increased silent guesses. Full run IDs, results and failure analysis: harness/context/08-evaluation-runner.md.
+Application provider configuration was not changed. Preserve the cumulative US$5 approval, all five private captures and .local/evaluation/budget.jsonl. Last recorded committed/reserved US$0.513235; remaining US$4.486765. Includes US$0.425431 uncertain initial reservation; successful usage is conservatively costed. No new calls or spend this continuation. Do not reinitialise the journal or assume uncertain charges were zero. Voice quality approval stays false.
 
 ## Exact next action
 
-Latest comparison: gpt-6-luna passed 28/28 unchanged synthetic cases; all account/party/debt references inspected. See 08-evaluation-runner.md, run 388f7100-40b5-4814-8376-d65affb4b5da. Production configuration remains unchanged and disabled. Final cumulative committed/reserved US$0.513235; remaining US$4.486765. This supersedes the intermediate four-run budget above.
+Representative consented recordings are required for voice quality evaluation through editable transcript → shared interpretation → material clarification → review → deterministic save. Follow harness/context/03-voice-quality.md: at least five Ghanaian-English speakers, varied devices/noise/speed, synthetic stories, private consent and deletion schedule. A voice runner must share the existing budget with verified audio cost bounds; never create a second allowance. Do not substitute synthetic voices or mocked browser audio for representative speaker evidence.
 
-Next: representative consented voice recordings are still required for the shared transcript pipeline evaluation. Preserve the journal and all five private runs. Voice runner must use the same cumulative budget with verified audio cost bounds; do not create another budget. Screen-reader/non-text contrast evidence and Phase 09 external decisions remain outstanding. Do not rerun the completed synthetic corpus merely to report progress. A single corpus pass does not authorize general release or provider enablement.
-
-Do not invent an approval, enable a production provider, deploy, push, or reset the local database.
+Manual screen-reader evidence and remaining control/state contrast coverage are still open. Preserve the new eight passing browser checks; do not rerun completed synthetic AI evaluation merely to report progress. Phase 09 business/provider/regulatory decisions remain external and cannot be resolved by code inspection. Do not enable production providers, push, deploy or reset a database.
 
 INCOMPLETE — DO NOT TREAT AS PHASE COMPLETE.

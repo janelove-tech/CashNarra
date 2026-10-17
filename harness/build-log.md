@@ -230,3 +230,7 @@ Resumed from clean cc713c7 (seven ahead), preserved Cursor work. Key now present
 ## Replacement comparison — 2026-10-17 — Codex
 
 Official replacement-model rates checked; added evaluation-only --compare-luna using the same cumulative budget and conservatively higher old rates. Production configuration unchanged. PASS: 28/28 unchanged synthetic cases, no silent guesses or invalid outputs; inspected account, party and obligation references. Private run 388f7100-40b5-4814-8376-d65affb4b5da. Typecheck PASS. Total conservative committed/reserved US$0.513235; remaining US$4.486765. Representative voice still EXTERNAL pending consented recordings; no quality enablement, production deployment or push. Updated CURRENT for zero-context continuation. NOT V1 COMPLETE.
+
+## Scoped non-text contrast — 2026-10-17 — Codex
+
+Reconciled clean 49a02f6, nine ahead of local origin. No audit restart. Representative recordings still absent under .local. Completed an unblocked Phase 08 verification item: eight browser contrast journeys, four widths/light-dark, field boundaries/icons/keyboard focus. Initial transition-timing failures fixed in test harness; all eight PASS. Typecheck/lint PASS. Product unchanged, prior build/unit/database evidence HISTORICAL PASS. No provider calls/spend, push or deployment. Updated CURRENT and stale PLANS evaluation status. NOT V1 COMPLETE; representative voice and manual accessibility evidence remain outstanding.

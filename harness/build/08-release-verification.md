@@ -57,3 +57,5 @@ Voice without representative quality evidence cannot support a complete verdict.
 Phase 08 resumed when the local key became available. Four live synthetic runs failed the release-quality threshold. Read harness/context/08-evaluation-runner.md and CURRENT for exact evidence, retained prompt, budget and next action. Automated checks pass, but narration quality remains FAIL; representative voice remains EXTERNAL. Verdict: NOT V1 COMPLETE.
 
 Replacement comparison now PASS for the one 28-case synthetic corpus using gpt-6-luna. This supersedes the live-narration FAIL only for that tested replacement/corpus; the deprecated configured model still failed. No representative voice evidence or enablement. Read latest CURRENT and evaluation evidence.
+
+2026-10-17 non-text verification: eight scoped browser journeys PASS for field boundaries, button icons and dialog keyboard focus at 320/390/768/1440px light/dark. Details/limitations in harness/context/08-local-release-evidence.md. Full state coverage and real screen-reader testing remain NOT RUN; voice recordings remain EXTERNAL. Verdict unchanged.
