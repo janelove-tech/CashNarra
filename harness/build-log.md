@@ -218,3 +218,7 @@ User explicitly approved US$5 cumulative narration/voice evaluation spend; recor
 Preserved the uncommitted runner on top of clean `df2ae47`. Production extraction and the opt-in CLI now share one request builder. Scoring no longer treats validation-added questions as a definite model match. The payable corpus case names Adjei Packaging, the fixture counterparty. Added a fail-closed cumulative budget journal and `npm run eval:capture`.
 
 PASS: 102 unit tests, typecheck, lint, and the default capture command. That command reported 28 cases, key absent, and made no provider call. `next-env.d.ts` was restored. The existing US$5 ceiling stays; local spend remains US$0. Live narration and voice stay EXTERNAL. Phase 09 remains an unresolved register and does not wait on this runner to be listed. Verdict remains NOT V1 COMPLETE.
+
+## Parked handoff reconciliation — 2026-10-17 — Codex
+
+Read the shared instructions, goals, plan, current handoff, latest log and phase register. Git confirmed Cursor commit `68c792a1d6794f617814a722966d16df77bbf397`, clean worktree, six commits ahead of the local origin tracking ref. Preserved the committed runner. Presence-only configuration check: API key absent, AI/voice disabled. No matching test recordings or consent files under `.local`. No provider calls, spend, production actions, fetch or push. Existing tests remain HISTORICAL PASS; no product changes warranted rerunning them. Updated CURRENT with the exact external prerequisites. Phase 08 parked; Phase 09 EXTERNAL; verdict NOT V1 COMPLETE.

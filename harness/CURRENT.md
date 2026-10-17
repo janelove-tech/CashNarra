@@ -1,15 +1,17 @@
 # CashNarra current development handoff
 
-Updated: 2026-10-16 — Cursor
+Updated: 2026-10-17 — Codex
 Branch: work/cashnarra-v1
 Baseline: 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
-Reconciled starting HEAD: df2ae479cf66820fa3f3e8fdfa3e4c4b6fa072a2
+Reconciled starting HEAD: 68c792a1d6794f617814a722966d16df77bbf397
 Current HEAD: the commit containing this handoff; resolve with git rev-parse HEAD.
 Current phase: 09 — external launch gates. Phase 08 stays parked
 Status: EXTERNAL
 Verdict: NOT V1 COMPLETE
 
 ## Git reconciliation
+
+2026-10-17 checkpoint: Cursor committed the preserved runner as `68c792a`; worktree was clean, six commits ahead of the local origin tracking ref. No fetch/push or product changes. A presence-only check of process plus `.env.local` still found no OPENAI_API_KEY; AI and voice remain disabled. No matching WebM/WAV/MP3 or consent files found under `.local`. No paid calls or new spend. Prior passing validations are HISTORICAL PASS for this documentation-only checkpoint; not rerun. Follow the parked next action below rather than restarting implementation or repeating checks.
 
 Codex commit `df2ae47` was clean in the handoff text, but the worktree held an uncommitted evaluation runner. That work was preserved: shared extraction request, offline scorer correction, payable corpus counterparty, and the budget-bounded capture CLI. `next-env.d.ts` had drifted to `.next/dev/types` and was restored. No fetch or push. Do not redo Phases 00–07 or the local release checks recorded at `df2ae47`.
 
