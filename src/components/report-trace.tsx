@@ -1,5 +1,6 @@
 import type { Workspace } from "@/domain/types";
 import { report, obligations, labels } from "@/domain/ledger";
+import { readingDate } from "@/domain/periods";
 import { Amount, Button } from "./ui";
 export default function ReportTrace({
   workspace,
@@ -22,7 +23,7 @@ export default function ReportTrace({
   return (
     <>
       <p>
-        {from} to {to} · GHS. Dates use Ghana time.
+        {readingDate(from)} to {readingDate(to)} · GHS. Dates use Ghana time.
       </p>
       <p>
         Received <Amount value={r.received} hidden={hidden} /> minus paid out{" "}
@@ -52,7 +53,8 @@ export default function ReportTrace({
       ))}
       <h3>What was still owed at the end</h3>
       <p>
-        The amount originally owed, less payments recorded by {to}. This
+        The amount originally owed, less payments recorded by {readingDate(to)}.
+        This
         includes debts you brought into CashNarra.
       </p>
       {obligations(past).map((o) => (
@@ -91,7 +93,8 @@ export default function ReportTrace({
             />{" "}
             starting on{" "}
             {workspace.accounts.find((x) => x.id === a.id)?.openingDate};{" "}
-            <Amount value={a.balance} hidden={hidden} /> recorded at period end.
+            <Amount value={a.balance} hidden={hidden} /> recorded on{" "}
+            {readingDate(to)}.
           </p>
           <details>
             <summary>Records for {a.name}</summary>

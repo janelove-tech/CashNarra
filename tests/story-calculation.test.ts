@@ -57,6 +57,60 @@ it("calculates exact percentages from the chosen period without counting transfe
   ).toBe("0.00");
 });
 
+it("includes other income in the basis and says so", () => {
+  const w = emptyWorkspace("owner");
+  const record = (
+    kind: RecordEvent["kind"],
+    amount: string,
+    description: string,
+  ): RecordEvent => ({
+    ...event(kind, amount, description, null, { date: "2026-10-19" }),
+    sourceId: "source",
+    version: 1,
+    removed: false,
+    replaces: null,
+  });
+  w.records = [
+    record("sale", "100.00", "Shop sales"),
+    record("income", "40.00", "Commission"),
+    record("transfer", "15.00", "Cash to MoMo"),
+    record("owner_in", "25.00", "Owner added cash"),
+    record("receivable_payment", "8.00", "Older balance paid"),
+  ];
+  const revenue = storyCalculation(w, {
+    recordId: "proposal",
+    percent: "10",
+    from: "2026-10-01",
+    to: "2026-10-31",
+    basis: "revenue",
+  }).options[0];
+  expect(revenue.total).toBe("140.00");
+  expect(revenue.amount).toBe("14.00");
+  expect(revenue.label).toBe(
+    "Sales and other income, including unpaid sales",
+  );
+  expect(revenue.exclusions).toMatch(/older balances/);
+  expect(revenue.records.map((item) => item.description)).toEqual([
+    "Shop sales",
+    "Commission",
+  ]);
+  const receipts = storyCalculation(w, {
+    recordId: "proposal",
+    percent: "10",
+    from: "2026-10-01",
+    to: "2026-10-31",
+    basis: "receipts",
+  }).options[0];
+  expect(receipts.total).toBe("148.00");
+  expect(receipts.label).toMatch(/other income/);
+  expect(receipts.exclusions).toMatch(/unpaid sales/);
+  expect(receipts.records.map((item) => item.description)).toEqual([
+    "Shop sales",
+    "Commission",
+    "Older balance paid",
+  ]);
+});
+
 it("records a percentage on the sales period and keeps a later day as the planned payment", () => {
   expect(
     placeCalculation("2026-10-19", "2026-10-20", "2026-10-17", "2026-10-19"),

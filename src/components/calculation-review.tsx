@@ -2,21 +2,12 @@
 import { useState } from "react";
 import type { StoryCalculation } from "@/domain/story-calculation";
 import { formatMoney } from "@/domain/money";
+import { rangeLabel, readingDate } from "@/domain/periods";
 import { Amount, Button } from "./ui";
 import s from "./app.module.css";
 
-function spoken(iso: string) {
-  return new Date(iso + "T12:00:00Z").toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
-  });
-}
-function shortBasis(basis: string) {
-  return basis === "revenue"
-    ? "Sales, including unpaid sales"
-    : "Money received from customers";
+function sentenceBasis(label: string) {
+  return label.charAt(0).toLowerCase() + label.slice(1);
 }
 
 export default function CalculationReview({
@@ -32,13 +23,12 @@ export default function CalculationReview({
 }) {
   const [choice, setChoice] = useState(c.options.length === 1 ? 0 : -1);
   const option = c.options[choice];
-  const period =
-    c.from === c.to ? spoken(c.from) : `${spoken(c.from)} – ${spoken(c.to)}`;
+  const period = rangeLabel(c.from, c.to);
   return (
     <section className={s.calcCard} aria-label="Check this calculation">
       <p>
         {period}
-        {c.payOn ? ` · pay on ${spoken(c.payOn)}` : ""}
+        {c.payOn ? ` · pay on ${readingDate(c.payOn)}` : ""}
       </p>
       {c.options.length > 1 && (
         <div className={s.choiceGrid}>
@@ -51,7 +41,7 @@ export default function CalculationReview({
               disabled={disabled}
               onClick={() => setChoice(i)}
             >
-              <span>{shortBasis(o.basis)}</span>
+              <span>{o.label}</span>
               <Amount value={o.total} hidden={hidden} />
             </button>
           ))}
@@ -60,7 +50,7 @@ export default function CalculationReview({
       {option && (
         <>
           <p>
-            {c.percent}% of {shortBasis(option.basis).toLowerCase()}
+            {c.percent}% of {sentenceBasis(option.label)}
           </p>
           <Amount value={option.amount} hidden={hidden} large />
           <p>
@@ -70,7 +60,7 @@ export default function CalculationReview({
             {option.records.map((r) => (
               <p key={r.id}>
                 <span>
-                  {spoken(r.date)}
+                  {readingDate(r.date)}
                   <br />
                   {hidden ? "Record hidden" : r.description}
                 </span>
@@ -81,13 +71,14 @@ export default function CalculationReview({
               <p>No saved records in these dates.</p>
             )}
           </div>
+          <p>{option.exclusions}</p>
           <Button
             primary
             disabled={disabled || option.amount === "0.00"}
             onClick={() =>
               onConfirm(
                 option.amount,
-                `${c.percent}% of ${option.label.toLowerCase()} from ${c.from} to ${c.to}: ${option.total} × ${c.percent}% = ${option.amount}. Saved records only. Owed on ${c.recordedOn}.${c.payOn ? ` Planned payment ${c.payOn}.` : ""}`,
+                `${c.percent}% of ${sentenceBasis(option.label)} from ${c.from} to ${c.to}: ${option.total} × ${c.percent}% = ${option.amount}. ${option.exclusions} Saved records only. Owed on ${c.recordedOn}.${c.payOn ? ` Planned payment ${c.payOn}.` : ""}`,
               )
             }
           >

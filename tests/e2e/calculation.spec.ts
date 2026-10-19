@@ -46,6 +46,8 @@ test("shows included records and requires confirmation before accepting a percen
     page.getByRole("heading", { name: "Check this amount." }),
   ).toBeVisible();
   await expect(page.getByText("GH₵480.00").first()).toBeVisible();
+  await expect(page.getByText(/other income/i).first()).toBeVisible();
+  await expect(page.getByText(/older balances/i)).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Save this record" }),
   ).toBeDisabled();

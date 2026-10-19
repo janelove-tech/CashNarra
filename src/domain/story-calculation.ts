@@ -62,6 +62,10 @@ export function storyCalculation(w: Workspace, request: CalculationRequest) {
           kind === "revenue"
             ? "Sales and other income, including unpaid sales"
             : "Customer payments and other income received",
+        exclusions:
+          kind === "revenue"
+            ? "Leaves out payments of older balances, transfers, loans and owner money."
+            : "Leaves out unpaid sales, transfers, loans and owner money.",
         total,
         amount: money(D(total).times(percent).div(100).toFixed(2)),
         records: records.map((r) => ({

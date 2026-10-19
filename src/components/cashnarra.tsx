@@ -29,6 +29,12 @@ import DraftBackup from "./draft-backup";
 import { draftBackup } from "@/lib/draft-backup";
 import { debtDate } from "@/domain/planning";
 import { calendarDate } from "@/domain/dates";
+import {
+  rangeLabel,
+  readingDate,
+  storyWindow,
+  type StoryPeriod,
+} from "@/domain/periods";
 import { event, sample, unclearSample } from "@/domain/fixture";
 import {
   accountBalance,
@@ -73,12 +79,16 @@ export default function CashNarra() {
     [loaded, setLoaded] = useState(false),
     [error, setError] = useState(""),
     [status, setStatus] = useState(""),
+    [receipt, setReceipt] = useState<{ page: string; message: string } | null>(
+      null,
+    ),
     [busy, setBusy] = useState(false),
     [hidden, setHidden] = useState(false),
     [theme, setTheme] = useState("light"),
     [modal, setModal] = useState(""),
     [date, setDate] = useState(new Date().toISOString().slice(0, 10)),
-    [period, setPeriod] = useState("day"),
+    [storyDate, setStoryDate] = useState(new Date().toISOString().slice(0, 10)),
+    [period, setPeriod] = useState<StoryPeriod>("day"),
     [search, setSearch] = useState(""),
     [filter, setFilter] = useState("all"),
     [text, setText] = useState(""),
@@ -96,7 +106,9 @@ export default function CashNarra() {
     [goalId, setGoalId] = useState(""),
     [scenario, setScenario] = useState("600.00"),
     [accountId, setAccountId] = useState(""),
-    [recordPeriod, setRecordPeriod] = useState(false),
+    [evidence, setEvidence] = useState<{ from: string; to: string } | null>(
+      null,
+    ),
     [retryOperation, setRetryOperation] = useState<Operation | null>(null);
   const revisionRef = useRef(0),
     draftReady = useRef(false),
@@ -141,7 +153,10 @@ export default function CashNarra() {
     Promise.resolve()
       .then(() => refresh(""))
       .then((data) => {
-        if (data.demo) setDate("2026-10-13");
+        if (data.demo) {
+          setDate("2026-10-13");
+          setStoryDate("2026-10-13");
+        }
       })
       .catch((e) => setError(e.message))
       .finally(() => setLoaded(true));
@@ -270,16 +285,23 @@ export default function CashNarra() {
       setQuestions([]);
       setCalculations([]);
     }
+    setReceipt(null);
     setStatus(
       persistent
         ? "Draft pending device storage"
         : "Draft in this tab · not saved",
     );
   }
+  function showReceipt(message: string, onPage = page) {
+    setStatus("");
+    setReceipt({ page: onPage, message });
+  }
   function navigate(id: string) {
     setPage(id);
     setModal("");
     setError("");
+    setReceipt((current) => (current && current.page !== id ? null : current));
+    setStatus((current) => (current.startsWith("Saved") ? "" : current));
   }
   async function perform(operation: Operation) {
     if (retryOperation && retryOperation.key !== operation.key)
@@ -304,7 +326,7 @@ export default function CashNarra() {
         operation.action === "create" ? wid : operation.workspaceId,
       );
       setRetryOperation(null);
-      setStatus("Saved. Your records have been updated.");
+      showReceipt("Saved. Your records have been updated.");
       return data.receipt;
     } catch (e) {
       if (!(e as Error & { rejected?: boolean }).rejected)
@@ -403,7 +425,7 @@ export default function CashNarra() {
     setPending(null);
     setAllowDuplicates(false);
     await draftStorage("delete", owner, wid).catch((e) => setError(e.message));
-    setStatus("Saved · records confirmed");
+    showReceipt("Saved · records confirmed", "stories");
     setPage("stories");
   }
   async function saveBatch() {
@@ -521,36 +543,36 @@ export default function CashNarra() {
     setPage("review");
     setModal("");
   }
-  const from =
-    period === "month"
-      ? date.slice(0, 7) + "-01"
-      : period === "week"
-        ? new Date(
-            new Date(date + "T12:00:00Z").getTime() -
-              ((new Date(date + "T12:00:00Z").getUTCDay() + 6) % 7) * 86400000,
-          )
-            .toISOString()
-            .slice(0, 10)
-        : date;
-  const to =
-    period === "month"
-      ? new Date(
-          Date.UTC(Number(date.slice(0, 4)), Number(date.slice(5, 7)), 0),
+  const today = new Date().toISOString().slice(0, 10);
+  const dayLabel = date === today ? "Today" : readingDate(date);
+  const view = storyWindow(storyDate, period, today);
+  const dayReport = w ? report(w, date, date) : null;
+  const storyReport =
+    w && view.from && view.to ? report(w, view.from, view.to) : null;
+  const laterRecords =
+    w && view.futureFrom && view.futureTo
+      ? w.records.filter(
+          (record) =>
+            !record.removed &&
+            record.date >= view.futureFrom! &&
+            record.date <= view.futureTo!,
         )
-          .toISOString()
-          .slice(0, 10)
-      : period === "week"
-        ? new Date(new Date(from + "T12:00:00Z").getTime() + 6 * 86400000)
-            .toISOString()
-            .slice(0, 10)
-        : date;
-  const r = w ? report(w, from, to) : null;
+      : [];
+  const exportRange = evidence
+    ? evidence
+    : view.from && view.to
+      ? { from: view.from, to: view.to }
+      : page === "records"
+        ? { from: date, to: date }
+        : null;
   const total = w ? report(w, "0001-01-01", "9999-12-31").total : null;
   const active =
     w?.records.filter((r) => !r.removed && !r.kind.startsWith("opening_")) ??
     [];
   const filtered = active
-    .filter((r) => !recordPeriod || (r.date >= from && r.date <= to))
+    .filter(
+      (r) => !evidence || (r.date >= evidence.from && r.date <= evidence.to),
+    )
     .filter(
       (r) =>
         (filter === "all" ||
@@ -750,6 +772,9 @@ export default function CashNarra() {
           </header>
           <main id="main" className={s.content}>
             <div role="status" aria-live="polite">
+              {receipt?.page === page && (
+                <p className={s.status}>{receipt.message}</p>
+              )}
               {status && (
                 <p className={status.startsWith("Saved") ? s.status : s.notice}>
                   {status}
@@ -772,7 +797,7 @@ export default function CashNarra() {
                   onClick={async () => {
                     try {
                       await perform(retryOperation);
-                      setStatus("Saved · original action receipt confirmed");
+                      showReceipt("Saved · original action receipt confirmed");
                     } catch {}
                   }}
                 >
@@ -822,24 +847,24 @@ export default function CashNarra() {
                         className={s.balanceStat}
                         onClick={() => {
                           setFilter("in");
-                          setRecordPeriod(true);
+                          setEvidence({ from: date, to: date });
                           navigate("records");
                         }}
                       >
-                        <small>Money in · selected day</small>
-                        <Amount value={r!.received} hidden={hidden} />
+                        <small>Money in · {dayLabel}</small>
+                        <Amount value={dayReport!.received} hidden={hidden} />
                         <small>Including old-balance payments</small>
                       </button>
                       <button
                         className={s.balanceStat}
                         onClick={() => {
                           setFilter("out");
-                          setRecordPeriod(true);
+                          setEvidence({ from: date, to: date });
                           navigate("records");
                         }}
                       >
-                        <small>Money out · selected day</small>
-                        <Amount value={r!.paid} hidden={hidden} />
+                        <small>Money out · {dayLabel}</small>
+                        <Amount value={dayReport!.paid} hidden={hidden} />
                         <small>Transfers between accounts excluded</small>
                       </button>
                     </div>
@@ -920,8 +945,8 @@ export default function CashNarra() {
                             <em>made clearer.</em>
                           </h2>
                           {[
-                            ["Money in", r!.received],
-                            ["Money out", r!.paid],
+                            ["Money in", dayReport!.received],
+                            ["Money out", dayReport!.paid],
                           ].map(([label, value], i) => (
                             <div key={label}>
                               <div className={s.barLabel}>
@@ -936,9 +961,11 @@ export default function CashNarra() {
                                       ? "0%"
                                       : `${D(value)
                                           .div(
-                                            (D(r!.received).gte(r!.paid)
-                                              ? D(r!.received)
-                                              : D(r!.paid)
+                                            (D(dayReport!.received).gte(
+                                              dayReport!.paid,
+                                            )
+                                              ? D(dayReport!.received)
+                                              : D(dayReport!.paid)
                                             ).plus("0.01"),
                                           )
                                           .mul(100)
@@ -949,8 +976,9 @@ export default function CashNarra() {
                             </div>
                           ))}
                           <p>
-                            Money in minus money out:{" "}
-                            <Amount value={r!.net} hidden={hidden} />. This is
+                            {dayLabel}. Money in minus money out:{" "}
+                            <Amount value={dayReport!.net} hidden={hidden} />.
+                            This is
                             not profit.
                           </p>
                           <Button onClick={() => navigate("stories")}>
@@ -1235,10 +1263,10 @@ export default function CashNarra() {
                         Add record
                       </Button>
                     </div>
-                    {recordPeriod && (
+                    {evidence && (
                       <p>
-                        Period: {from}–{to}.{" "}
-                        <Button onClick={() => setRecordPeriod(false)}>
+                        Showing {rangeLabel(evidence.from, evidence.to)}.{" "}
+                        <Button onClick={() => setEvidence(null)}>
                           Show all dates
                         </Button>
                       </p>
@@ -1375,7 +1403,15 @@ export default function CashNarra() {
                       <select
                         aria-label="Story period"
                         value={period}
-                        onChange={(e) => setPeriod(e.target.value)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (
+                            value === "day" ||
+                            value === "week" ||
+                            value === "month"
+                          )
+                            setPeriod(value);
+                        }}
                       >
                         <option value="day">Daily</option>
                         <option value="week">Weekly</option>
@@ -1384,155 +1420,216 @@ export default function CashNarra() {
                       <input
                         aria-label="Story date"
                         type="date"
-                        value={date}
+                        value={storyDate}
                         onChange={(e) => {
                           if (calendarDate(e.target.value))
-                            setDate(e.target.value);
+                            setStoryDate(e.target.value);
                         }}
                       />
                     </div>
                     <section className={s.storyCover}>
                       <small>
-                        {hidden ? "Workspace" : w.name} · {from} to {to} · GHS
+                        {hidden ? "Workspace" : w.name} · {view.heading} · GHS
                       </small>
-                      <h2>
-                        <Amount value={r!.received} hidden={hidden} /> came in.
-                        <br />
-                        <em>Here’s the story.</em>
-                      </h2>
-                      <p>
-                        {
-                          r!.records.filter(
-                            (x) => !x.kind.startsWith("opening_"),
-                          ).length
-                        }{" "}
-                        saved records in this period.{" "}
-                        <Amount value={r!.paid} hidden={hidden} /> paid from
-                        your accounts.
-                      </p>
-                      <small>
-                        Based on what you have entered so far. Unrecorded days
-                        may still have activity.
-                      </small>
-                    </section>
-                    <section className={s.chapter}>
-                      <h2>01 · What moved</h2>
-                      <p>
-                        Money in minus money out was{" "}
-                        <Amount value={r!.net} hidden={hidden} />. It is money
-                        received minus money paid out.
-                      </p>
-                      <Button
-                        onClick={() => {
-                          setFilter("in");
-                          setRecordPeriod(true);
-                          navigate("records");
-                        }}
-                      >
-                        See money received
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setFilter("out");
-                          setRecordPeriod(true);
-                          navigate("records");
-                        }}
-                      >
-                        See money paid out
-                      </Button>
-                      <details>
-                        <summary>
-                          Included records, formula and exclusions
-                        </summary>
-                        <p>
-                          {r!.exclusions} Workspace version {r!.version}; period{" "}
-                          {from}–{to}; Africa/Accra.
-                        </p>
-                        {rows(r!.records)}
-                      </details>
-                    </section>
-                    <section className={s.chapter}>
-                      <h2>02 · Received does not always mean sold</h2>
-                      <p>
-                        Sales value:{" "}
-                        <Amount
-                          value={r!.sales}
-                          hidden={hidden}
-                          onInspect={() => setModal("trace")}
-                        />
-                        . This includes credit sales. Old-balance payments,
-                        loans and owner money are separate from sales.
-                      </p>
-                      <div className={s.metrics}>
-                        <div>
-                          <small>People owe you on {to}</small>
-                          <Amount
-                            value={r!.peopleOwe}
-                            hidden={hidden}
-                            onInspect={() => setModal("trace")}
-                          />
-                        </div>
-                        <div>
-                          <small>You owe on {to}</small>
-                          <Amount
-                            value={r!.userOwes}
-                            hidden={hidden}
-                            onInspect={() => setModal("trace")}
-                          />
-                        </div>
-                      </div>
-                      {obligations(w)
-                        .filter((o) => D(o.remaining).gt(0) && o.date > to)
-                        .map((o) => (
-                          <p key={o.id}>
-                            {hidden ? "A balance" : o.party.replace(/\s*(?:\.{3}|…)+$/u, "")}{" "}
-                            ·{" "}
-                            <Amount value={o.remaining} hidden={hidden} /> is
-                            recorded on {o.date}, after {to}. It is not included
-                            in the totals above.
+                      {storyReport ? (
+                        <>
+                          <h2>
+                            <Amount
+                              value={storyReport.received}
+                              hidden={hidden}
+                            />{" "}
+                            came in.
+                            <br />
+                            <em>Here’s the story.</em>
+                          </h2>
+                          <p>
+                            {
+                              storyReport.records.filter(
+                                (x) => !x.kind.startsWith("opening_"),
+                              ).length
+                            }{" "}
+                            saved records in these dates.{" "}
+                            <Amount
+                              value={storyReport.paid}
+                              hidden={hidden}
+                            />{" "}
+                            paid from your accounts.
                           </p>
-                        ))}
-                      <Button onClick={() => navigate("records")}>
-                        Inspect outstanding balances
-                      </Button>
-                    </section>
-                    <section className={s.chapter}>
-                      <h2>03 · A useful picture. Clear boundaries.</h2>
-                      {ai && (
-                        <PeriodExplanation
-                          key={w.id + from + to + w.version}
-                          workspaceId={w.id}
-                          from={from}
-                          to={to}
-                          onRecord={(id) => {
-                            setSelected(
-                              w.records.find((r) => r.id === id) ?? null,
-                            );
-                            setModal("detail");
-                          }}
-                        />
+                        </>
+                      ) : (
+                        <>
+                          <h2>These dates have not arrived.</h2>
+                          <p>
+                            Saved records with these dates are listed below.
+                            They are not treated as money already received or
+                            owed.
+                          </p>
+                        </>
                       )}
-                      <p>
-                        Recorded balances at period end:{" "}
-                        <Amount
-                          value={r!.total}
-                          hidden={hidden}
-                          onInspect={() => setModal("trace")}
-                        />
-                        . Starting balances plus later records. Not checked
-                        against your bank or MoMo.
-                      </p>
-                      <p>
-                        Profit is unavailable. Cost of sales, inventory consumed
-                        and other necessary information are missing.
-                      </p>
-                      <Button onClick={() => navigate("accounts")}>
-                        Trace account balances
-                      </Button>
-                      <Button onClick={() => setModal("checkin")}>
-                        Review this period’s activity
-                      </Button>
+                      <small>
+                        Based on what you have entered. Unrecorded days may
+                        still have activity.
+                      </small>
                     </section>
+                    {storyReport && (
+                      <section className={s.chapter}>
+                        <h2>01 · What moved</h2>
+                        <p>
+                          Money in minus money out was{" "}
+                          <Amount value={storyReport.net} hidden={hidden} />. It
+                          is money received minus money paid out.
+                        </p>
+                        <Button
+                          onClick={() => {
+                            setFilter("in");
+                            setEvidence({
+                              from: view.from!,
+                              to: view.to!,
+                            });
+                            navigate("records");
+                          }}
+                        >
+                          See money received
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setFilter("out");
+                            setEvidence({
+                              from: view.from!,
+                              to: view.to!,
+                            });
+                            navigate("records");
+                          }}
+                        >
+                          See money paid out
+                        </Button>
+                        <details>
+                          <summary>
+                            Included records, formula and exclusions
+                          </summary>
+                          <p>
+                            {storyReport.exclusions} Workspace version{" "}
+                            {storyReport.version}; period{" "}
+                            {rangeLabel(view.from!, view.to!)}; Africa/Accra.
+                          </p>
+                          {rows(storyReport.records)}
+                        </details>
+                      </section>
+                    )}
+                    {storyReport && (
+                      <section className={s.chapter}>
+                        <h2>02 · Received does not always mean sold</h2>
+                        <p>
+                          Sales value:{" "}
+                          <Amount
+                            value={storyReport.sales}
+                            hidden={hidden}
+                            onInspect={() => setModal("trace")}
+                          />
+                          . This includes credit sales. Old-balance payments,
+                          loans and owner money are separate from sales.
+                        </p>
+                        <div className={s.metrics}>
+                          <div>
+                            <small>{view.peopleOweLabel}</small>
+                            <Amount
+                              value={storyReport.peopleOwe}
+                              hidden={hidden}
+                              onInspect={() => setModal("trace")}
+                            />
+                          </div>
+                          <div>
+                            <small>{view.oweLabel}</small>
+                            <Amount
+                              value={storyReport.userOwes}
+                              hidden={hidden}
+                              onInspect={() => setModal("trace")}
+                            />
+                          </div>
+                        </div>
+                        {view.status === "so-far" && (
+                          <div>
+                            <h3>Recorded for later dates</h3>
+                            {laterRecords.length ? (
+                              rows(laterRecords)
+                            ) : (
+                              <p>
+                                No saved records are dated after{" "}
+                                {readingDate(view.to!)} in this period.
+                              </p>
+                            )}
+                          </div>
+                        )}
+                        {obligations(w)
+                          .filter(
+                            (o) =>
+                              D(o.remaining).gt(0) && o.date > view.nominalTo,
+                          )
+                          .map((o) => (
+                            <p key={o.id}>
+                              {hidden
+                                ? "A balance"
+                                : o.party.replace(/\s*(?:\.{3}|…)+$/u, "")}{" "}
+                              · <Amount value={o.remaining} hidden={hidden} /> is
+                              recorded on {readingDate(o.date)}, after{" "}
+                              {readingDate(view.nominalTo)}. It is not included
+                              in the totals above.
+                            </p>
+                          ))}
+                        <Button onClick={() => navigate("records")}>
+                          Inspect outstanding balances
+                        </Button>
+                      </section>
+                    )}
+                    {!storyReport && (
+                      <section className={s.chapter}>
+                        <h2>Recorded for later dates</h2>
+                        {laterRecords.length ? (
+                          rows(laterRecords)
+                        ) : (
+                          <p>No saved records use these dates.</p>
+                        )}
+                      </section>
+                    )}
+                    {storyReport && (
+                      <section className={s.chapter}>
+                        <h2>03 · A useful picture. Clear boundaries.</h2>
+                        {ai && (
+                          <PeriodExplanation
+                            key={w.id + view.from + view.to + w.version}
+                            workspaceId={w.id}
+                            from={view.from!}
+                            to={view.to!}
+                            onRecord={(id) => {
+                              setSelected(
+                                w.records.find((r) => r.id === id) ?? null,
+                              );
+                              setModal("detail");
+                            }}
+                          />
+                        )}
+                        <p>
+                          {view.balanceLabel}:{" "}
+                          <Amount
+                            value={storyReport.total}
+                            hidden={hidden}
+                            onInspect={() => setModal("trace")}
+                          />
+                          . Starting balances plus later records through this
+                          date. Not checked against your bank or MoMo.
+                        </p>
+                        <p>
+                          Profit is unavailable. Cost of sales, inventory
+                          consumed and other necessary information are missing.
+                        </p>
+                        <Button onClick={() => navigate("accounts")}>
+                          Trace account balances
+                        </Button>
+                        <Button onClick={() => setModal("checkin")}>
+                          Review this period’s activity
+                        </Button>
+                      </section>
+                    )}
                   </>
                 )}
                 {page === "accounts" && (
@@ -2027,12 +2124,12 @@ export default function CashNarra() {
           </form>
         </Dialog>
       )}
-      {modal === "trace" && w && (
+      {modal === "trace" && w && view.from && view.to && (
         <Dialog title="Behind these figures" onClose={() => setModal("")}>
           <ReportTrace
             workspace={w}
-            from={from}
-            to={to}
+            from={view.from}
+            to={view.to}
             hidden={hidden}
             onRecord={(id) => {
               setSelected(w.records.find((r) => r.id === id) ?? null);
@@ -2528,35 +2625,44 @@ export default function CashNarra() {
       )}
       {modal === "export" && w && (
         <Dialog title="Export a private report" onClose={() => setModal("")}>
-          <p>
-            {from} to {to} · {w.name} · GHS. Includes amounts and references to
-            the records behind them. Anyone you share the downloaded file with
-            can pass it on.
-          </p>
-          <div className={s.actions}>
-            {["csv", "pdf", "xlsx"].map((type) => (
-              <Button
-                key={type}
-                onClick={async () => {
-                  try {
-                    const { downloadReport } = await import("@/lib/exports");
-                    await downloadReport(
-                      w,
-                      from,
-                      to,
-                      type as "csv" | "pdf" | "xlsx",
-                    );
-                    setStatus("Private report downloaded.");
-                  } catch (e) {
-                    setError((e as Error).message);
-                  }
-                  setModal("");
-                }}
-              >
-                {type.toUpperCase()}
-              </Button>
-            ))}
-          </div>
+          {exportRange ? (
+            <>
+              <p>
+                {rangeLabel(exportRange.from, exportRange.to)} · {w.name} · GHS.
+                Includes amounts and references to the records behind them.
+                Anyone you share the downloaded file with can pass it on.
+              </p>
+              <div className={s.actions}>
+                {["csv", "pdf", "xlsx"].map((type) => (
+                  <Button
+                    key={type}
+                    onClick={async () => {
+                      try {
+                        const { downloadReport } = await import("@/lib/exports");
+                        await downloadReport(
+                          w,
+                          exportRange.from,
+                          exportRange.to,
+                          type as "csv" | "pdf" | "xlsx",
+                        );
+                        setStatus("Private report downloaded.");
+                      } catch (e) {
+                        setError((e as Error).message);
+                      }
+                      setModal("");
+                    }}
+                  >
+                    {type.toUpperCase()}
+                  </Button>
+                ))}
+              </div>
+            </>
+          ) : (
+            <p>
+              These dates have not arrived, so there is no completed period to
+              download.
+            </p>
+          )}
         </Dialog>
       )}
     </>

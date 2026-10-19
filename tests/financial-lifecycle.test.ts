@@ -73,7 +73,9 @@ it("rejects a workspace move that would leave source goals overallocated", () =>
   const before = JSON.stringify(w);
   expect(() =>
     prepareMove(w, dest, sale.id, "destination", "Misfiled sale", "key"),
-  ).toThrow(/assignments/);
+  ).toThrow(
+    /After this change, Cash would be −GH₵450.00, but GH₵400.00 is already marked for Cash goal/,
+  );
   expect(JSON.stringify(w)).toBe(before);
 });
 it("zero and negative scenarios give no completion date and never change actual allocations", () => {
