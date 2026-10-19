@@ -1,9 +1,9 @@
 # CashNarra current development handoff
 
-Updated: 2026-10-19 — Cursor, after the percentage-date correction
+Updated: 2026-10-19 — Cursor, release prerequisites rechecked
 Branch: work/cashnarra-v1
 Baseline: 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
-Reconciled starting HEAD: 694e2ff7e26850e81cb7fd6164bab164dc037df0
+Reconciled starting HEAD: 76482506f90012dceebd4a368b53dcf6b4323f3c
 Current HEAD: the commit containing this handoff; resolve with git rev-parse HEAD.
 Current phase: 08 — release verification; Phase 09 remains EXTERNAL
 Status: EXTERNAL — representative recordings and manual accessibility evidence
@@ -11,7 +11,7 @@ Verdict: NOT V1 COMPLETE
 
 ## Git reconciliation
 
-Resumed at clean `694e2ff`, fourteen commits ahead of the local origin reference. The worktree held an interrupted product change: everyday goal and report wording, record-backed percentage calculations, and a three-minute recording limit. That work was preserved, finished, tested, and committed here. No fetch or push. Do not redo Phases 00–07 or the historical release checks.
+Resumed at clean `7648250`, eighteen commits ahead of the local origin reference. No uncommitted product work. No fetch or push. Do not redo Phases 00–07, the historical release checks, or the 19 October wording, calculation, review and goal-mark commits.
 
 ## Product change in this commit
 
@@ -23,7 +23,7 @@ Resumed at clean `694e2ff`, fourteen commits ahead of the local origin reference
 
 - PASS this turn: 111 unit tests, typecheck, lint, and 42 Edge browser tests, including the new percentage confirmation journey.
 - HISTORICAL PASS: fresh install, text contrast, 200% zoom, database and Supabase integration, and the gpt-6-luna synthetic narration comparison. Do not rerun them only to report progress.
-- EXTERNAL: representative consented voice recordings. `.local/voice-evaluation/manifest.json` is still required before `npm run eval:voice-intake`.
+- EXTERNAL: representative consented voice recordings. Rechecked 2026-10-19: `.local/voice-evaluation/manifest.json` is absent. The only audio under `.local` is `.local/voice-smoke/synthetic.wav` and `synthetic.webm`; those are not consent or a speaker corpus. `npm run eval:voice-intake` returned NOT READY and made no provider call. The intake file cap now matches the product limit of three minutes and 8 MB.
 - NOT RUN: a person using a screen reader. Scoped contrast measurements are not certification.
 - FAIL (historical): development braces advisory. Do not force Next lint to v14.
 

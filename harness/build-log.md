@@ -270,3 +270,7 @@ The calculation screen still stacked two headings, a dropdown, hidden records an
 ## Goal-mark save message — 2026-10-19 — Cursor
 
 Saving the school-fees withdrawal was rejected because goal marks would then exceed the account balance. The old sentence did not name the account, the amounts, or Plan. The rejection now states the balance after the change, the marked amount, and the goal name. PASS: domain tests, 15 in that file. NOT V1 COMPLETE.
+
+## Release prerequisites rechecked — 2026-10-19 — Cursor
+
+Read the handoff, plan, phase and voice protocol, then reconciled clean `7648250`. Manifest absent. Two synthetic smoke clips are not consented recordings. Voice remains disabled and quality unapproved. Intake checker now uses the product 8 MB cap; the protocol and README no longer say 60 seconds and 3 MB. PASS: three intake unit tests. `npm run eval:voice-intake` correctly returned NOT READY. No provider call, push, deploy or database reset. Phase 08 and Phase 09 remain blocked on user evidence. NOT V1 COMPLETE.

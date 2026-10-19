@@ -2,6 +2,7 @@
 import { readFile, realpath, stat } from "node:fs/promises";
 import { resolve, relative, isAbsolute, join } from "node:path";
 import { validateVoiceManifest } from "./lib/voice-intake";
+import { RECORDING_BYTES } from "../src/lib/recording-limits";
 import { validateRecording } from "../src/server/recording";
 
 async function main() {
@@ -31,7 +32,7 @@ async function main() {
   for (const clip of intake.manifest.clips) {
     await privateFile(clip.consentFile, 100_000);
     validateRecording(
-      await privateFile(clip.file, 3 * 1024 * 1024),
+      await privateFile(clip.file, RECORDING_BYTES),
       "audio/webm",
     );
   }
