@@ -258,3 +258,7 @@ PASS: nine budget/narration tests, typecheck, lint, production build and one rea
 Resumed from clean `694e2ff` with the interrupted product work uncommitted. Preserved it. Finished the wording pass, kept percentage totals in deterministic code, and left transcription disabled after the earlier 401 missing_scope result. No new provider call and no budget-journal change.
 
 PASS: 111 unit tests, typecheck, lint, and 42 Edge browser tests. Sample Plan page shows the shorter goal explanation and the included-money list, with no visible “svg” label. Recording remains three minutes; voice quality is not approved. Phase 08 representative recordings and screen-reader evidence stay external. Phase 09 stays unresolved. NOT V1 COMPLETE.
+
+## Percentage date and owe presentation — 2026-10-19 — Cursor
+
+The user showed a 16% accounts-firm bill of GH₵5,920 dated 20 October while Money Stories for 19 October said nothing was owed. The later day was the planned payment, so the period total excluded it. New calculations record the bill on the activity date inside the sales period and keep the later day as the planned payment. Money Stories names the period-end date and lists later balances. Zero balances are not shown as money still owed. Confirmed calculation notes stay on their own lines. PASS: 112 unit tests, typecheck, lint, calculation browser test and one save journey. No provider call and no rewrite of the already saved record. NOT V1 COMPLETE.

@@ -1,6 +1,9 @@
 import { expect, it } from "vitest";
 import { emptyWorkspace, event } from "../src/domain/fixture";
-import { storyCalculation } from "../src/domain/story-calculation";
+import {
+  placeCalculation,
+  storyCalculation,
+} from "../src/domain/story-calculation";
 import type { RecordEvent } from "../src/domain/types";
 
 it("calculates exact percentages from the chosen period without counting transfers or old debt twice", () => {
@@ -52,6 +55,15 @@ it("calculates exact percentages from the chosen period without counting transfe
       basis: "revenue",
     }).options[0].total,
   ).toBe("0.00");
+});
+
+it("records a percentage on the sales period and keeps a later day as the planned payment", () => {
+  expect(
+    placeCalculation("2026-10-19", "2026-10-20", "2026-10-17", "2026-10-19"),
+  ).toEqual({ recordedOn: "2026-10-19", payOn: "2026-10-20" });
+  expect(
+    placeCalculation("2026-10-19", "2026-10-19", "2026-10-17", "2026-10-19"),
+  ).toEqual({ recordedOn: "2026-10-19", payOn: null });
 });
 
 it("rounds once to pesewas and rejects missing or invalid dates and percentages", () => {

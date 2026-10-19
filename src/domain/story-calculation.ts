@@ -3,6 +3,30 @@ import { D, money, sum } from "./money";
 import { calendarDate } from "./dates";
 import type { Workspace } from "./types";
 
+export function placeCalculation(
+  activityDate: string,
+  proposedDate: string,
+  from: string,
+  to: string,
+) {
+  if (!calendarDate(from) || !calendarDate(to) || from > to)
+    throw new Error("Choose the first and last day for this calculation.");
+  const inside = (value: string) =>
+    calendarDate(value) && value >= from && value <= to;
+  const recordedOn = inside(proposedDate)
+    ? proposedDate
+    : inside(activityDate)
+      ? activityDate
+      : to;
+  return {
+    recordedOn,
+    payOn:
+      calendarDate(proposedDate) && proposedDate > recordedOn
+        ? proposedDate
+        : null,
+  };
+}
+
 export const calculationRequestSchema = z.object({
   recordId: z.string(),
   percent: z.string(),
@@ -55,6 +79,8 @@ export function storyCalculation(w: Workspace, request: CalculationRequest) {
     from,
     to,
     version: w.version,
+    recordedOn: to,
+    payOn: null as string | null,
     options,
   };
 }

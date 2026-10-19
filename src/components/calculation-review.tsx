@@ -21,7 +21,11 @@ export default function CalculationReview({
     <section aria-label="Check this calculation">
       <h2>Let’s check the amount</h2>
       <p>
-        {c.from} to {c.to}, including both days.
+        {c.from} to {c.to}, including both days. This amount is owed on{" "}
+        {c.recordedOn}.
+        {c.payOn
+          ? ` ${c.payOn} is the day you plan to pay, so it still counts before that day.`
+          : ""}
       </p>
       <label>
         What should the percentage apply to?
@@ -79,7 +83,7 @@ export default function CalculationReview({
             onClick={() =>
               onConfirm(
                 option.amount,
-                `${c.percent}% of ${option.label.toLowerCase()} from ${c.from} to ${c.to}: ${option.total} × ${c.percent}% = ${option.amount}. Saved records only.`,
+                `${c.percent}% of ${option.label.toLowerCase()} from ${c.from} to ${c.to}: ${option.total} × ${c.percent}% = ${option.amount}. Saved records only. Owed on ${c.recordedOn}.${c.payOn ? ` Planned payment ${c.payOn}.` : ""}`,
               )
             }
           >

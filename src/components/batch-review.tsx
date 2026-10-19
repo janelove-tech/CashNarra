@@ -54,15 +54,26 @@ export default function BatchReview({
   onBack,
   onDiscard,
 }: Props) {
+  const checking = calculations.some(
+    (c) =>
+      events.some((e) => e.id === c.recordId) &&
+      questions.some((q) => q.recordId === c.recordId && q.field === "amount"),
+  );
   return (
     <section className={s.flow}>
       <h1 ref={heading} tabIndex={-1}>
-        {questions.length ? "Just one detail." : "Your story, organised."}
+        {checking
+          ? "Check this amount."
+          : questions.length
+            ? "Just one detail."
+            : "Your story, organised."}
       </h1>
       <p>
-        {questions.length
-          ? "Your answer changes how the record is understood."
-          : "Check every record. Select a row to change it."}
+        {checking
+          ? "The figure comes from your saved records. Nothing is saved until you confirm."
+          : questions.length
+            ? "Your answer changes how the record is understood."
+            : "Check every record. Select a row to change it."}
       </p>
       {calculations.some((c) => c.version !== w.version) && (
         <p role="alert">

@@ -1153,8 +1153,15 @@ export default function CashNarra() {
                         return;
                       }
                       changeDraft();
+                      const recordedOn = calculations?.find(
+                        (c) => c.recordId === id,
+                      )?.recordedOn;
                       setEvents((prev) =>
-                        prev.map((e) => (e.id === id ? { ...e, amount } : e)),
+                        prev.map((e) =>
+                          e.id === id
+                            ? { ...e, amount, date: recordedOn || e.date }
+                            : e,
+                        ),
                       );
                       setQuestions((prev) =>
                         prev.filter(
@@ -1162,7 +1169,8 @@ export default function CashNarra() {
                         ),
                       );
                       setText(
-                        (prev) => prev + "\nConfirmed calculation: " + note,
+                        (prev) =>
+                          prev.trimEnd() + "\n\nConfirmed with your records:\n" + note,
                       );
                     }}
                     events={events}
@@ -1258,10 +1266,19 @@ export default function CashNarra() {
                       <Button onClick={() => setModal("workspace-tools")}>
                         Manage people and payment dates
                       </Button>
-                      {obligations(w).map((o) => (
+                      {!obligations(w).some((o) => D(o.remaining).gt(0)) && (
+                        <p>Nothing is still owed.</p>
+                      )}
+                      {obligations(w)
+                        .filter((o) => D(o.remaining).gt(0))
+                        .map((o) => (
                         <div className={s.settingsRow} key={o.id}>
                           <div>
-                            <strong>{hidden ? "Counterparty" : o.party}</strong>
+                            <strong>
+                              {hidden
+                                ? "Name hidden"
+                                : o.party.replace(/\s*(?:\.{3}|…)+$/u, "")}
+                            </strong>
                             <p>
                               {o.direction === "receivable"
                                 ? "People owe you"
@@ -1383,7 +1400,8 @@ export default function CashNarra() {
                           ).length
                         }{" "}
                         saved records in this period.{" "}
-                        <Amount value={r!.paid} hidden={hidden} /> went out.
+                        <Amount value={r!.paid} hidden={hidden} /> paid from
+                        your accounts.
                       </p>
                       <small>
                         Based on what you have entered so far. Unrecorded days
@@ -1440,7 +1458,7 @@ export default function CashNarra() {
                       </p>
                       <div className={s.metrics}>
                         <div>
-                          <small>People owe you · period end</small>
+                          <small>People owe you on {to}</small>
                           <Amount
                             value={r!.peopleOwe}
                             hidden={hidden}
@@ -1448,7 +1466,7 @@ export default function CashNarra() {
                           />
                         </div>
                         <div>
-                          <small>You owe · period end</small>
+                          <small>You owe on {to}</small>
                           <Amount
                             value={r!.userOwes}
                             hidden={hidden}
@@ -1456,6 +1474,17 @@ export default function CashNarra() {
                           />
                         </div>
                       </div>
+                      {obligations(w)
+                        .filter((o) => D(o.remaining).gt(0) && o.date > to)
+                        .map((o) => (
+                          <p key={o.id}>
+                            {hidden ? "A balance" : o.party.replace(/\s*(?:\.{3}|…)+$/u, "")}{" "}
+                            ·{" "}
+                            <Amount value={o.remaining} hidden={hidden} /> is
+                            recorded on {o.date}, after {to}. It is not included
+                            in the totals above.
+                          </p>
+                        ))}
                       <Button onClick={() => navigate("records")}>
                         Inspect outstanding balances
                       </Button>

@@ -1,6 +1,6 @@
 # CashNarra current development handoff
 
-Updated: 2026-10-19 — Cursor
+Updated: 2026-10-19 — Cursor, after the percentage-date correction
 Branch: work/cashnarra-v1
 Baseline: 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
 Reconciled starting HEAD: 694e2ff7e26850e81cb7fd6164bab164dc037df0
@@ -30,6 +30,10 @@ Resumed at clean `694e2ff`, fourteen commits ahead of the local origin reference
 ## Provider and budget boundary
 
 The existing cumulative US$5 approval still covers narration and voice. Last recorded committed/reserved amount before this turn: US$0.513872; remaining US$4.486128, including the uncertain initial reservation. This turn made no provider call and did not change `.local/evaluation/budget.jsonl`. Do not reinitialise the journal. `AI_ENABLED`, `OPENAI_MODEL=gpt-6-luna`, and `LOCAL_AI_BUDGET` may remain in ignored `.env.local` for typed local testing only. Production providers, launch, and voice-quality approval stay off.
+
+## Percentage date correction
+
+A calculated bill is recorded on the activity date inside the named sales period. A later day named only as the payment day is kept as the planned payment, not the expense date. Money Stories labels “You owe” with the period end date and lists balances recorded after that date. Fully paid balances are left out of “Money still owed.” An already saved record is not rewritten.
 
 ## Exact next action
 

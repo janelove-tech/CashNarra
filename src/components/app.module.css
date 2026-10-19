@@ -471,6 +471,13 @@
   gap: 20px;
   align-items: center;
 }
+.settingsRow > div:first-child {
+  flex: 1;
+  min-width: 0;
+}
+.settingsRow strong {
+  overflow-wrap: anywhere;
+}
 .settingsRow p {
   margin: 4px 0;
   color: var(--cn-text-secondary);

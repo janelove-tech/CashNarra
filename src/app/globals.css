@@ -108,6 +108,7 @@ blockquote {
   background: var(--cn-brand-soft);
   border-radius: 16px;
   overflow-wrap: anywhere;
+  white-space: pre-wrap;
 }
 hr {
   border: 0;
