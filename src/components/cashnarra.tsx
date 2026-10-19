@@ -18,6 +18,7 @@ import {
   Mic,
 } from "lucide-react";
 import { Button, Amount, Dialog, RecordRow } from "./ui";
+import ProfitReview from "./profit-review";
 import RecordForm from "./record-form";
 import BatchReview from "./batch-review";
 import MoveForm from "./move-form";
@@ -1834,9 +1835,15 @@ export default function CashNarra() {
                           date. Not checked against your bank or MoMo.
                         </p>
                         <p>
-                          Profit is unavailable. Cost of sales, inventory
-                          consumed and other necessary information are missing.
+                          {w.type === "Business"
+                            ? "Money in minus money out is not profit. Profit stays unknown until you review the cost of what was sold and anything else the records do not contain."
+                            : "This personal workspace does not calculate profit. It shows money in, money out and what is still owed."}
                         </p>
+                        {w.type === "Business" && view.from && view.to && (
+                          <Button onClick={() => setModal("profit")}>
+                            Review profit or loss
+                          </Button>
+                        )}
                         <Button onClick={() => navigate("accounts")}>
                           See how this balance adds up
                         </Button>
@@ -2975,6 +2982,16 @@ export default function CashNarra() {
               Remove original words now
             </Button>
           </div>
+        </Dialog>
+      )}
+      {modal === "profit" && w && view.from && view.to && (
+        <Dialog title="Profit or loss" onClose={() => setModal("")}>
+          <ProfitReview
+            workspace={w}
+            from={view.from}
+            to={view.to}
+            hidden={hidden}
+          />
         </Dialog>
       )}
       {modal === "export" && w && (

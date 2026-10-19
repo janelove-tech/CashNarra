@@ -1,6 +1,6 @@
 # CashNarra current development handoff
 
-Updated: 2026-10-19 — Codex, review findings 6–26
+Updated: 2026-10-19 — Codex, reviewed business profit or loss
 Branch: work/cashnarra-v1
 Baseline: 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
 Reconciled starting HEAD: 70d99415a84c779e453c2b475067654ef4cbf9f6
@@ -15,7 +15,9 @@ Resumed at clean `70d9941`. Trust findings 1–4 are in `a3deaae`. Preserve e25f
 
 ## Product change in this commit
 
-Review findings 6–23 and 25 from the 19 October UI review and the additional journeys file are in the product. Clarifications can be answered on the review. Draft backups keep those questions. Closing a voice recording asks before discarding it. Sign-out checks both results before clearing drafts. Auth, first workspace, personal labels, pasted amounts, narration context, goal marks, stories, records, settings and check-in follow the review. A 401 keeps the draft and says sign-in is needed.
+A business workspace can review profit or loss for the Money Stories period. Sales, other income, recorded expenses and interest come from saved records. Stock and equipment purchases are shown separately and are not treated as the cost of the period. Cost of goods sold, equipment used up and any other missing cost stay unknown until the user supplies them; zero is accepted only as an explicit “none”. Profit stays blank while any required check is missing, and a positive extra figure needs a note. The estimate is not saved and does not post a journal. Personal workspaces do not offer it. The ordinary cash report still returns profit as null.
+
+The previous commit implemented review findings 6–23 and 25.
 
 Finding 24, measured performance of large workspaces, is NOT RUN. Finding 26, a person using a screen reader, stays EXTERNAL. No certification is claimed.
 
@@ -25,7 +27,7 @@ Earlier product facts still in force: percentages come from saved records and ne
 
 ## Latest evidence
 
-- PASS this turn: 121 unit tests, typecheck, lint, and 27 Edge tests covering journeys, planning, calculation, trust findings, recovery, six-area privacy and keyboard dialog. Not a fresh full `npm run test:e2e`. Injected sign-out failure, a 100-event review, large-workspace timing and a fresh signup email are NOT RUN.
+- PASS this turn: 4 profit-or-loss unit tests, typecheck, lint, and 1 Edge test on the sample business story. The reviewed result was GH₵1,920.00 after a GH₵400.00 cost of goods sold, with stock of GH₵700.00 kept out of that cost. An incomplete review showed no profit figure. Not a fresh full `npm run test:e2e`.
 - HISTORICAL PASS: fresh install, text contrast, 200% zoom, database and Supabase integration, and the gpt-6-luna synthetic narration comparison. Do not rerun them only to report progress.
 - EXTERNAL: representative consented voice recordings. Rechecked 2026-10-19: `.local/voice-evaluation/manifest.json` is absent. The only audio under `.local` is `.local/voice-smoke/synthetic.wav` and `synthetic.webm`; those are not consent or a speaker corpus. `npm run eval:voice-intake` returned NOT READY and made no provider call. The intake file cap now matches the product limit of three minutes and 8 MB.
 - NOT RUN: a person using a screen reader. Scoped contrast measurements are not certification.
