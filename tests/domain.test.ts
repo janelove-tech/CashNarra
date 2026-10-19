@@ -101,6 +101,22 @@ describe("Ama Works and exact financial meaning", () => {
     ).toThrow();
     expect(accountBalance(w, "cash")).toBe("450.00");
   });
+  it("says which goal marks no longer fit after a withdrawal", () => {
+    const w = fixture();
+    expect(() =>
+      applyBatch(
+        w,
+        batch(w, [event("owner_out", "2000.00", "Taken home", "bank")]),
+      ),
+    ).toThrow(
+      /After this change, Bank would be GH₵500.00, but GH₵1,200.00 is already marked for New equipment/,
+    );
+    const unknown = fixture();
+    unknown.accounts.find((a) => a.id === "bank")!.opening = null;
+    expect(() => validateWorkspace(unknown)).toThrow(
+      /Bank has no known balance, but GH₵1,200.00 is marked for New equipment/,
+    );
+  });
   it("corrects earlier periods, removes effects and preserves sources", () => {
     const w = fixture(),
       old = w.records.find((r) => r.kind === "expense")!;

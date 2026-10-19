@@ -1,4 +1,4 @@
-import { D, money, sum } from "./money";
+import { D, formatMoney, money, sum } from "./money";
 import { calendarDate, calendarMonth } from "./dates";
 import {
   eventSchema,
@@ -323,18 +323,23 @@ export function validateWorkspace(w: Workspace) {
       "This payment exceeds the remaining balance. Refresh and review it.",
     );
   for (const a of w.accounts) {
+    const goals = w.goals.filter((g) => g.accountId === a.id);
     const assigned = sum(
-      w.goals
-        .filter((g) => g.accountId === a.id)
-        .flatMap((g) => g.allocations.map((x) => x.amount)),
+      goals.flatMap((g) => g.allocations.map((x) => x.amount)),
     );
+    if (D(assigned).lte(0)) continue;
     const bal = accountBalance(w, a.id);
-    if (
-      D(assigned).lt(0) ||
-      (D(assigned).gt(0) && (bal === null || D(assigned).gt(bal)))
-    )
+    const names = goals
+      .filter((g) => D(sum(g.allocations.map((x) => x.amount))).gt(0))
+      .map((g) => g.name)
+      .join(", ");
+    if (bal === null)
       throw new Error(
-        "Goal assignments exceed known recorded funds. Reduce assignments first.",
+        `${a.name} has no known balance, but ${formatMoney(assigned)} is marked for ${names || "a goal"}. A goal mark is only a note, and it cannot be more than the money recorded in that account. Enter a starting balance or reduce the marks on Plan, then try this save again.`,
+      );
+    if (D(assigned).gt(bal))
+      throw new Error(
+        `After this change, ${a.name} would be ${formatMoney(bal)}, but ${formatMoney(assigned)} is already marked for ${names || "a goal"}. Those marks stay in the account; they are not set aside by the bank. Reduce the marks on Plan so they fit the balance, then save this record.`,
       );
   }
 }

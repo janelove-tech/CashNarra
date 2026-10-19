@@ -266,3 +266,7 @@ The user showed a 16% accounts-firm bill of GH₵5,920 dated 20 October while Mo
 ## Review presentation — 2026-10-19 — Cursor
 
 The calculation screen still stacked two headings, a dropdown, hidden records and “Needs review” in place of the figure. It now shows the period in ordinary dates, the result in large type, and the included records in a list. One clear basis needs no selector; two bases are buttons. The proposed row shows the amount as “To confirm” and keeps long descriptions to two lines. PASS: typecheck, lint, 112 unit tests, and 16 browser tests covering calculation, journeys and the record dialog. NOT V1 COMPLETE.
+
+## Goal-mark save message — 2026-10-19 — Cursor
+
+Saving the school-fees withdrawal was rejected because goal marks would then exceed the account balance. The old sentence did not name the account, the amounts, or Plan. The rejection now states the balance after the change, the marked amount, and the goal name. PASS: domain tests, 15 in that file. NOT V1 COMPLETE.
