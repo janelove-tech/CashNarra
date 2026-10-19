@@ -288,3 +288,9 @@ Implemented review findings 1–4. Today keeps its own day and evidence range. M
 ## Today story composer — 2026-10-19 — Codex
 
 Replaced the sample-shaped button on Today with the story field itself. Typed words stay in that field and open in the story editor. Voice remains next to it, and the screen says transcription is unavailable before recording starts. PASS: composer browser test, trust browser tests, 320px layout, and the manual-review and clarification journeys. No provider call. Findings 6–14 remain. NOT V1 COMPLETE.
+
+## Review findings 6–26 — 2026-10-19 — Codex
+
+Implemented the remaining UI review and the additional journey findings that can be done in code. In-place answers cover a missing account, an open balance, paid or still owed, and an uncertain unpaid part of a total. Draft format 2 keeps questions; an older backup must be checked before saving. Voice close confirms before discarding a clip or words. Sign-out checks the Auth result and the logout response before clearing drafts. Auth headings, first-workspace guidance, personal labels, pasted amounts, named-account context, goal marks, period facts, record grouping, settings and check-in copy are in place. A 401 keeps the draft. Finding 24 scale measurement is NOT RUN. Finding 26 screen-reader use stays EXTERNAL.
+
+PASS: 121 unit tests, typecheck, lint, and 27 Edge tests (journeys, planning, calculation, trust, recovery, privacy and keyboard). No provider call, push, deploy or database reset. NOT V1 COMPLETE.

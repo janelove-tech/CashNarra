@@ -25,11 +25,11 @@ test("privacy requests are visible and repeat submissions do not queue duplicate
     .getByRole("button", { name: "Settings and privacy", exact: true })
     .click();
   await page
-    .getByRole("button", { name: "Record access request", exact: true })
+    .getByRole("button", { name: "Request a copy of my data", exact: true })
     .click();
   await expect(page.getByText(/access request · pending review/)).toBeVisible();
   await page
-    .getByRole("button", { name: "Record access request", exact: true })
+    .getByRole("button", { name: "Request a copy of my data", exact: true })
     .click();
   await expect(page.getByText(/already awaiting review/)).toBeVisible();
   expect(

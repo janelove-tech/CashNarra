@@ -1,4 +1,17 @@
+import type { StoryCalculation } from "@/domain/story-calculation";
 import type { EventInput } from "@/domain/types";
+export type DraftQuestion = {
+  recordId: string;
+  field:
+    | "accountId"
+    | "toAccountId"
+    | "party"
+    | "kind"
+    | "amount"
+    | "obligationId"
+    | "date";
+  question: string;
+};
 export type Draft = {
   ownerId: string;
   workspaceId: string;
@@ -9,6 +22,10 @@ export type Draft = {
   replaceIds: string[];
   reason: string;
   pendingRequest?: unknown;
+  questions?: DraftQuestion[];
+  calculations?: StoryCalculation[];
+  /** False for backups saved before questions were kept. */
+  questionsPreserved?: boolean;
 };
 const dbName = "cashnarra-drafts-v1";
 async function database(): Promise<IDBDatabase> {

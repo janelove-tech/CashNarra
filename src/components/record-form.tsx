@@ -1,9 +1,9 @@
 "use client";
 import { useState, useRef, useId } from "react";
 import type { EventInput, Workspace } from "@/domain/types";
+import { kindLabel, obligations, posting } from "@/domain/ledger";
+import { money, parseEntryAmount } from "@/domain/money";
 import { kinds } from "@/domain/types";
-import { labels, obligations, posting } from "@/domain/ledger";
-import { money } from "@/domain/money";
 import { Button } from "./ui";
 import s from "./app.module.css";
 export default function RecordForm({
@@ -49,7 +49,10 @@ export default function RecordForm({
       onSubmit={(ev) => {
         ev.preventDefault();
         try {
-          const v = { ...e, amount: money(e.amount, true) };
+          const v = {
+            ...e,
+            amount: money(parseEntryAmount(e.amount), true),
+          };
           posting(v, workspace.accounts);
           onSave(v);
         } catch (x) {
@@ -101,9 +104,34 @@ export default function RecordForm({
         value={e.kind}
         onChange={(x) => update("kind", x.target.value)}
       >
-        {kinds.map((k) => (
+        {(workspace.type === "Personal"
+          ? [
+              "income",
+              "expense",
+              "transfer",
+              "loan_received",
+              "loan_principal",
+              "receivable_payment",
+              "payable_payment",
+              "credit_sale",
+              ...kinds.filter(
+                (kind) =>
+                  ![
+                    "income",
+                    "expense",
+                    "transfer",
+                    "loan_received",
+                    "loan_principal",
+                    "receivable_payment",
+                    "payable_payment",
+                    "credit_sale",
+                  ].includes(kind),
+              ),
+            ]
+          : kinds
+        ).map((k) => (
           <option key={k} value={k}>
-            {labels[k]}
+            {kindLabel(k as EventInput["kind"], workspace.type)}
           </option>
         ))}
       </select>

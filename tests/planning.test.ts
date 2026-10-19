@@ -251,3 +251,35 @@ it("backs up reviewed edits and original pending receipt identity with strict ow
     "missing part",
   );
 });
+it("keeps unanswered questions in a new draft and marks an old backup for review", () => {
+  const w = fixture();
+  const draft: Draft = {
+    ownerId: w.ownerId,
+    workspaceId: w.id,
+    text: "Was this paid or still owed?",
+    date: "2026-10-13",
+    revision: 2,
+    events: [{ ...w.records[0], id: "proposal" }],
+    replaceIds: [],
+    reason: "",
+    questions: [
+      {
+        recordId: "proposal",
+        field: "kind",
+        question: "Was this paid or still owed?",
+      },
+    ],
+  };
+  const restored = restoreBackup(draftBackup(draft), w.ownerId, w.id);
+  expect(restored.questions?.[0]?.question).toBe(
+    "Was this paid or still owed?",
+  );
+  expect(restored.questionsPreserved).toBe(true);
+  const older = JSON.parse(draftBackup(draft));
+  older.format = "cashnarra-draft-1";
+  delete older.draft.questions;
+  delete older.draft.calculations;
+  const legacy = restoreBackup(JSON.stringify(older), w.ownerId, w.id);
+  expect(legacy.questions).toEqual([]);
+  expect(legacy.questionsPreserved).toBe(false);
+});

@@ -1,12 +1,12 @@
 # CashNarra current development handoff
 
-Updated: 2026-10-19 — Codex, trust findings and Today composer
+Updated: 2026-10-19 — Codex, review findings 6–26
 Branch: work/cashnarra-v1
 Baseline: 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
 Reconciled starting HEAD: 70d99415a84c779e453c2b475067654ef4cbf9f6
 Current HEAD: the commit containing this handoff; resolve with git rev-parse HEAD.
 Current phase: 08 — release verification; Phase 09 remains EXTERNAL
-Status: INCOMPLETE — trust findings 1–5 implemented; findings 6–14 and representative voice remain open
+Status: INCOMPLETE — review findings 1–23 and 25 are implemented in product code; 24 and 26 stay unmeasured
 Verdict: NOT V1 COMPLETE
 
 ## Git reconciliation
@@ -15,15 +15,17 @@ Resumed at clean `70d9941`. Trust findings 1–4 are in `a3deaae`. Preserve e25f
 
 ## Product change in this commit
 
-- Today’s story invitation is a text field. The words carry into the story editor. Voice stays beside that field. The screen says whether transcription is available before recording starts. Transcription is not invented when it is off.
+Review findings 6–23 and 25 from the 19 October UI review and the additional journeys file are in the product. Clarifications can be answered on the review. Draft backups keep those questions. Closing a voice recording asks before discarding it. Sign-out checks both results before clearing drafts. Auth, first workspace, personal labels, pasted amounts, narration context, goal marks, stories, records, settings and check-in follow the review. A 401 keeps the draft and says sign-in is needed.
 
-The previous commit separated Today’s day from Money Stories, labelled an open period through today, kept the save receipt on the completed action, and made percentage labels include other income.
+Finding 24, measured performance of large workspaces, is NOT RUN. Finding 26, a person using a screen reader, stays EXTERNAL. No certification is claimed.
+
+The previous commit made Today’s story invitation a text field and stated whether transcription is available before recording.
 
 Earlier product facts still in force: percentages come from saved records and need confirmation; recording limit is three minutes and 8 MB; transcription stays off after HTTP 401 `missing_scope`. Do not retry transcription without an audio-capable key. Text remains the fallback.
 
 ## Latest evidence
 
-- PASS this turn: the Today composer browser test, the four trust browser tests, a 320px layout check, and the manual-review and clarification journeys. Unit tests were not rerun after the composer-only change. The prior commit’s 118 unit tests, typecheck and 22 Edge tests still cover findings 1–4. Not a fresh full `npm run test:e2e`.
+- PASS this turn: 121 unit tests, typecheck, lint, and 27 Edge tests covering journeys, planning, calculation, trust findings, recovery, six-area privacy and keyboard dialog. Not a fresh full `npm run test:e2e`. Injected sign-out failure, a 100-event review, large-workspace timing and a fresh signup email are NOT RUN.
 - HISTORICAL PASS: fresh install, text contrast, 200% zoom, database and Supabase integration, and the gpt-6-luna synthetic narration comparison. Do not rerun them only to report progress.
 - EXTERNAL: representative consented voice recordings. Rechecked 2026-10-19: `.local/voice-evaluation/manifest.json` is absent. The only audio under `.local` is `.local/voice-smoke/synthetic.wav` and `synthetic.webm`; those are not consent or a speaker corpus. `npm run eval:voice-intake` returned NOT READY and made no provider call. The intake file cap now matches the product limit of three minutes and 8 MB.
 - NOT RUN: a person using a screen reader. Scoped contrast measurements are not certification.
@@ -41,7 +43,14 @@ A calculated bill is recorded on the activity date inside the named sales period
 
 ## Exact next action
 
-Findings 1–5 from `harness/context/08-ui-ux-review-2026-10-19.md` are implemented. Next buildable unit is finding 6: answer a missing account, and an uncertain unpaid amount, in place. Offer the account choices without opening the full record form. Keep direct editing available. Preserve reviewed edits when a save fails. Then finding 7: “Put towards this goal” and “Take off this goal”, both with positive amounts, showing how much is available to mark. Do not imply a bank transfer. Confirm against current code before editing. Use synthetic tests. Representative recordings are not a blocker.
+Findings 1–23 and 25 are implemented. Do not reopen them unless a test fails. The remaining Phase 08 work is external evidence, not another UI pass:
+
+1. Consented recordings and the private manifest in `harness/context/03-voice-quality.md`, then `npm run eval:voice-intake`. A voice runner must share the existing budget with verified audio cost bounds.
+2. An audio-capable local API key before any transcription retry. Do not set `VOICE_QUALITY_APPROVED`.
+3. A person-led screen-reader pass (finding 26). Keyboard tests are not that pass.
+4. Optional measurement of synthetic 100, 1,000 and 5,000 record workspaces (finding 24) before any rendering change. Do not rewrite the ledger for it.
+
+Phase 09 stays in `harness/build/09-external-launch-gates.md` until the user decides.
 
 No database migrations/reset, push or deployment in this turn.
 

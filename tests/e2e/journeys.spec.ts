@@ -50,13 +50,13 @@ test("manual review, authoritative save, correction, source history and private 
     .filter({ visible: true })
     .click();
   await page
-    .getByRole("button", { name: /Synthetic test delivery Operating expense/ })
+    .getByRole("button", { name: /Synthetic test delivery Business expense/ })
     .click();
   await page
     .getByRole("button", { name: "Correct record", exact: true })
     .click();
   await page
-    .getByRole("button", { name: /Synthetic test delivery Operating expense/ })
+    .getByRole("button", { name: /Synthetic test delivery Business expense/ })
     .click();
   await page.getByLabel("Amount · GHS", { exact: true }).fill("10.00");
   await page.getByRole("button", { name: "Review this record" }).click();
@@ -96,9 +96,7 @@ test("mock clarification and unsupported input remain drafts", async ({
   await expect(
     page.getByRole("button", { name: "Save 8 records" }),
   ).toBeDisabled();
-  await page.getByRole("button", { name: "Fill this in" }).click();
-  await page.getByLabel("Account", { exact: true }).selectOption("momo");
-  await page.getByRole("button", { name: "Review this record" }).click();
+  await page.getByRole("button", { name: "MoMo", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Your story, organised." }),
   ).toBeVisible();

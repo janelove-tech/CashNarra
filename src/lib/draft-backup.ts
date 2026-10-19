@@ -2,22 +2,55 @@ import { z } from "zod";
 import { eventSchema } from "@/domain/types";
 import { calendarDate } from "@/domain/dates";
 import type { Draft } from "./drafts";
-const schema = z.object({
-  format: z.literal("cashnarra-draft-1"),
-  draft: z.object({
-    ownerId: z.string(),
-    workspaceId: z.string(),
-    text: z.string().max(12000),
-    date: z.string().refine(calendarDate),
-    revision: z.number().int().nonnegative(),
-    events: z.array(eventSchema).max(100),
-    replaceIds: z.array(z.string()).max(100),
-    reason: z.string().max(1000),
-    pendingRequest: z.unknown().optional(),
-  }),
+const questionSchema = z.object({
+  recordId: z.string(),
+  field: z.enum([
+    "accountId",
+    "toAccountId",
+    "party",
+    "kind",
+    "amount",
+    "obligationId",
+    "date",
+  ]),
+  question: z.string().max(500),
 });
+const draftBody = z.object({
+  ownerId: z.string(),
+  workspaceId: z.string(),
+  text: z.string().max(12000),
+  date: z.string().refine(calendarDate),
+  revision: z.number().int().nonnegative(),
+  events: z.array(eventSchema).max(100),
+  replaceIds: z.array(z.string()).max(100),
+  reason: z.string().max(1000),
+  pendingRequest: z.unknown().optional(),
+  questions: z.array(questionSchema).max(100).optional(),
+  calculations: z
+    .array(z.object({ recordId: z.string() }).passthrough())
+    .max(20)
+    .optional(),
+});
+const schema = z.discriminatedUnion("format", [
+  z.object({ format: z.literal("cashnarra-draft-2"), draft: draftBody }),
+  z.object({
+    format: z.literal("cashnarra-draft-1"),
+    draft: draftBody.omit({ questions: true, calculations: true }),
+  }),
+]);
 export function draftBackup(draft: Draft) {
-  return JSON.stringify({ format: "cashnarra-draft-1", draft }, null, 2);
+  return JSON.stringify(
+    {
+      format: "cashnarra-draft-2",
+      draft: {
+        ...draft,
+        questions: draft.questions ?? [],
+        calculations: draft.calculations ?? [],
+      },
+    },
+    null,
+    2,
+  );
 }
 export function restoreBackup(
   text: string,
@@ -40,6 +73,7 @@ export function restoreBackup(
       "This is not a complete CashNarra draft backup. Your current draft has not changed.",
     );
   const { draft } = result.data;
+  const questionsPreserved = result.data.format === "cashnarra-draft-2";
   if (draft.ownerId !== owner || draft.workspaceId !== workspace)
     throw new Error(
       "Open the same account and workspace that made this backup.",
@@ -111,5 +145,10 @@ export function restoreBackup(
         );
     }
   }
-  return draft;
+  return {
+    ...draft,
+    questions: "questions" in draft ? draft.questions : [],
+    calculations: "calculations" in draft ? draft.calculations : [],
+    questionsPreserved,
+  } as Draft;
 }

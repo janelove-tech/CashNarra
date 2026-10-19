@@ -12,6 +12,14 @@ export function money(value: unknown, positive = false): string {
     throw new Error("Amount must be greater than zero.");
   return d.toFixed(2);
 }
+/** Accept a pasted GHS amount, then return the canonical exact-decimal string. */
+export function parseEntryAmount(value: string): string {
+  const compact = value.trim().replace(/\s+/g, "");
+  const withoutCurrency = compact.replace(/^(?:GH₵|GHS|₵)/i, "");
+  if (!/^-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d{1,2})?$/.test(withoutCurrency))
+    throw new Error("Enter an exact amount with at most two decimal places.");
+  return money(withoutCurrency.replace(/,/g, ""));
+}
 export const sum = (values: string[]) =>
   values.reduce((a, b) => a.plus(b), D("0")).toFixed(2);
 export function formatMoney(value: string | null) {

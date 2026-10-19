@@ -43,7 +43,7 @@ import {
   obligations,
   report,
 } from "@/domain/ledger";
-import { D, sum } from "@/domain/money";
+import { D, formatMoney, money, parseEntryAmount, sum } from "@/domain/money";
 import { forecast } from "@/domain/goals";
 import type {
   EventInput,
@@ -102,6 +102,10 @@ export default function CashNarra() {
     [selected, setSelected] = useState<RecordEvent | null>(null),
     [persistent, setPersistent] = useState(false),
     [allowDuplicates, setAllowDuplicates] = useState(false),
+    [needsFreshReview, setNeedsFreshReview] = useState(false),
+    [voiceLeave, setVoiceLeave] = useState(false),
+    [voiceWork, setVoiceWork] = useState(false),
+    [accountFilter, setAccountFilter] = useState(""),
     [pending, setPending] = useState<Operation | null>(null),
     [goalId, setGoalId] = useState(""),
     [scenario, setScenario] = useState("600.00"),
@@ -212,6 +216,11 @@ export default function CashNarra() {
           setRetryOperation(
             restored && restored.action !== "batch" ? restored : null,
           );
+          setQuestions(d.questions ?? []);
+          setCalculations(d.calculations ?? []);
+          setNeedsFreshReview(
+            d.questionsPreserved === false && d.events.length > 0,
+          );
           setPersistent(true);
           setStatus("Recovered draft on this device. Review it before saving.");
         }
@@ -236,6 +245,9 @@ export default function CashNarra() {
       events,
       replaceIds,
       reason,
+      questions,
+      calculations,
+      questionsPreserved: true,
       pendingRequest: pending ?? retryOperation ?? undefined,
     };
     const timer = setTimeout(() => {
@@ -256,6 +268,8 @@ export default function CashNarra() {
     events,
     replaceIds,
     reason,
+    questions,
+    calculations,
     pending,
     retryOperation,
     busy,
@@ -317,6 +331,13 @@ export default function CashNarra() {
           body: JSON.stringify(operation),
         }),
         data = await res.json();
+      if (res.status === 401) {
+        const failure = new Error(
+          "Sign in again to finish. This draft stays here until you sign in again.",
+        ) as Error & { rejected?: boolean; session?: boolean };
+        failure.session = true;
+        throw failure;
+      }
       if (!res.ok) {
         const failure = new Error(data.error) as Error & { rejected?: boolean };
         failure.rejected = data.outcome === "rejected";
@@ -329,7 +350,8 @@ export default function CashNarra() {
       showReceipt("Saved. Your records have been updated.");
       return data.receipt;
     } catch (e) {
-      if (!(e as Error & { rejected?: boolean }).rejected)
+      if ((e as Error & { session?: boolean }).session) setRetryOperation(null);
+      else if (!(e as Error & { rejected?: boolean }).rejected)
         setRetryOperation(operation);
       else setRetryOperation(null);
       setError((e as Error).message);
@@ -373,6 +395,10 @@ export default function CashNarra() {
       if (rev !== revisionRef.current) {
         return;
       }
+      if (res.status === 401)
+        throw new Error(
+          "Sign in again to finish. Your draft is still here.",
+        );
       if (!res.ok) throw new Error(data.error);
       setEvents(data.events);
       setQuestions(data.questions);
@@ -405,6 +431,9 @@ export default function CashNarra() {
       events,
       replaceIds,
       reason,
+      questions,
+      calculations,
+      questionsPreserved: true,
       pendingRequest: pending ?? retryOperation ?? undefined,
     };
     const url = URL.createObjectURL(
@@ -467,6 +496,9 @@ export default function CashNarra() {
             events,
             replaceIds,
             reason,
+            questions,
+            calculations,
+            questionsPreserved: true,
             pendingRequest: op,
           });
         } catch (e) {
@@ -575,6 +607,9 @@ export default function CashNarra() {
     )
     .filter(
       (r) =>
+        (accountFilter === "" ||
+          r.accountId === accountFilter ||
+          r.toAccountId === accountFilter) &&
         (filter === "all" ||
           (filter === "in" &&
             [
@@ -624,6 +659,7 @@ export default function CashNarra() {
             ? undefined
             : w?.accounts.find((a) => a.id === record.accountId)?.name
         }
+        workspaceType={w?.type}
         onClick={() => {
           if (draft) manual(record);
           else {
@@ -733,7 +769,9 @@ export default function CashNarra() {
           <header className={s.topbar}>
             <div className={s.breadcrumb}>
               {hidden ? "Workspace" : w?.name} ›{" "}
-              {nav.find((n) => n.id === page)?.label ?? "Your story"}
+              {page === "settings"
+                ? "Settings"
+                : (nav.find((n) => n.id === page)?.label ?? "Your story")}
             </div>
             <Link className={s.mobileLogo} href="/">
               <img
@@ -766,7 +804,14 @@ export default function CashNarra() {
                 aria-label="Workspace, accounts and settings"
                 onClick={() => setModal("workspace")}
               >
-                <span className={s.badge}>AW</span>
+                <span className={s.badge}>
+                  {(w?.name ?? "Workspace")
+                    .split(/\s+/)
+                    .map((part) => part[0] ?? "")
+                    .join("")
+                    .slice(0, 2)
+                    .toUpperCase()}
+                </span>
               </button>
             </div>
           </header>
@@ -784,6 +829,18 @@ export default function CashNarra() {
             {error && (
               <p role="alert" className={`${s.notice} ${s.error}`}>
                 {error}
+                {/marked for/i.test(error) && (
+                  <>
+                    {" "}
+                    <Button
+                      onClick={() => {
+                        navigate("plan");
+                      }}
+                    >
+                      Adjust goal marks
+                    </Button>
+                  </>
+                )}
               </p>
             )}
             {retryOperation && retryOperation.action !== "batch" && (
@@ -809,8 +866,15 @@ export default function CashNarra() {
               <>
                 <h1>Create your first workspace.</h1>
                 <p>
-                  Choose personal or business. Account openings can stay
-                  unknown.
+                  A workspace is a separate set of records. A personal
+                  workspace can hold salary, household spending and money you
+                  lend. A business workspace can hold sales, stock and what
+                  customers still owe.
+                </p>
+                <p>
+                  Start with one account and today’s story. An unknown opening
+                  balance does not stop you recording activity. It does mean
+                  the account balance cannot be complete until you add one.
                 </p>
                 <Button primary onClick={() => setModal("workspace")}>
                   Create workspace
@@ -1001,7 +1065,9 @@ export default function CashNarra() {
                               days you checked in
                             </p>
                             <small>
-                              A check-in does not mean all activity is captured.
+                              Anything else to add? A check-in only marks the
+                              day you looked. You can catch up on another day
+                              whenever you remember it.
                             </small>
                             <div className={s.actions}>
                               <Button onClick={() => setModal("checkin")}>
@@ -1065,6 +1131,9 @@ export default function CashNarra() {
                         events,
                         replaceIds,
                         reason,
+                        questions,
+                        calculations,
+                        questionsPreserved: true,
                         pendingRequest: pending ?? retryOperation ?? undefined,
                       }}
                       locked={!!pending || !!retryOperation || busy}
@@ -1083,9 +1152,15 @@ export default function CashNarra() {
                         setRetryOperation(
                           op && op.action !== "batch" ? op : null,
                         );
-                        setQuestions([]);
+                        setQuestions(d.questions ?? []);
+                        setCalculations(d.calculations ?? []);
+                        setNeedsFreshReview(
+                          d.questionsPreserved === false && d.events.length > 0,
+                        );
                         setStatus(
-                          "Draft restored. Check the words and records before saving.",
+                          d.questionsPreserved === false && d.events.length
+                            ? "Draft restored. This older backup did not keep unanswered questions, so check every record before saving."
+                            : "Draft restored. Check the words and records before saving.",
                         );
                         if (d.events.length || op) setPage("review");
                       }}
@@ -1224,6 +1299,46 @@ export default function CashNarra() {
                     allowDuplicates={allowDuplicates}
                     recordRows={rows(events, true)}
                     manual={manual}
+                    needsFreshReview={needsFreshReview}
+                    acceptFreshReview={() => setNeedsFreshReview(false)}
+                    onAnswer={(recordId, field, patch, note) => {
+                      if (pending) return;
+                      let next = patch;
+                      if (patch.amount !== undefined) {
+                        try {
+                          next = {
+                            ...patch,
+                            amount: money(parseEntryAmount(patch.amount), true),
+                          };
+                        } catch (e) {
+                          setError((e as Error).message);
+                          return;
+                        }
+                      }
+                      if (note && text.length + note.length + 8 > 12000) {
+                        setError(
+                          "Shorten your story a little so we can keep this answer with it.",
+                        );
+                        return;
+                      }
+                      changeDraft();
+                      setEvents((prev) =>
+                        prev.map((item) =>
+                          item.id === recordId ? { ...item, ...next } : item,
+                        ),
+                      );
+                      setQuestions((prev) =>
+                        prev.filter((q) => {
+                          if (q.recordId !== recordId) return true;
+                          if (q.field === field) return false;
+                          if (next.accountId === null && q.field === "accountId")
+                            return false;
+                          return true;
+                        }),
+                      );
+                      if (note)
+                        setText((prev) => prev.trimEnd() + "\n\n" + note);
+                    }}
                     setReason={setReason}
                     changeDraft={changeDraft}
                     setAllowDuplicates={setAllowDuplicates}
@@ -1252,6 +1367,18 @@ export default function CashNarra() {
                         onChange={(e) => setSearch(e.target.value)}
                       />
                       <select
+                        aria-label="Filter by account"
+                        value={accountFilter}
+                        onChange={(e) => setAccountFilter(e.target.value)}
+                      >
+                        <option value="">All accounts</option>
+                        {w.accounts.map((account) => (
+                          <option key={account.id} value={account.id}>
+                            {account.name}
+                          </option>
+                        ))}
+                      </select>
+                      <select
                         aria-label="Filter records"
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
@@ -1267,6 +1394,18 @@ export default function CashNarra() {
                         <Plus size={17} />
                         Add record
                       </Button>
+                      {(search || filter !== "all" || accountFilter || evidence) && (
+                        <Button
+                          onClick={() => {
+                            setSearch("");
+                            setFilter("all");
+                            setAccountFilter("");
+                            setEvidence(null);
+                          }}
+                        >
+                          Reset filters
+                        </Button>
+                      )}
                     </div>
                     {evidence && (
                       <p>
@@ -1276,7 +1415,22 @@ export default function CashNarra() {
                         </Button>
                       </p>
                     )}
-                    {rows(filtered)}
+                    {Object.entries(
+                      filtered.reduce<Record<string, typeof filtered>>(
+                        (groups, record) => {
+                          (groups[record.date] ??= []).push(record);
+                          return groups;
+                        },
+                        {},
+                      ),
+                    )
+                      .sort(([left], [right]) => right.localeCompare(left))
+                      .map(([day, records]) => (
+                        <section key={day}>
+                          <h2>{day === today ? "Today" : readingDate(day)}</h2>
+                          {rows(records)}
+                        </section>
+                      ))}
                     {!filtered.length && (
                       <p className={s.empty}>
                         No matching records. Missing activity is not treated as
@@ -1478,6 +1632,64 @@ export default function CashNarra() {
                     </section>
                     {storyReport && (
                       <section className={s.chapter}>
+                        <h2>What this period shows</h2>
+                        <p>
+                          Money in minus money out was{" "}
+                          <Amount value={storyReport.net} hidden={hidden} />.
+                        </p>
+                        <ul>
+                          {storyReport.records
+                            .filter((record) =>
+                              [
+                                "expense",
+                                "stock",
+                                "asset",
+                                "owner_out",
+                                "interest",
+                                "payable_payment",
+                                "loan_principal",
+                              ].includes(record.kind),
+                            )
+                            .sort((left, right) =>
+                              D(right.amount).cmp(D(left.amount)),
+                            )
+                            .slice(0, 3)
+                            .map((record) => (
+                              <li key={record.id}>
+                                {record.description}:{" "}
+                                <Amount value={record.amount} hidden={hidden} />
+                              </li>
+                            ))}
+                        </ul>
+                        <p>
+                          {storyReport.records.some(
+                            (record) => record.kind === "credit_sale",
+                          ) ? (
+                            <>
+                              Unpaid sales in this period:{" "}
+                              <Amount
+                                value={sum(
+                                  storyReport.records
+                                    .filter(
+                                      (record) => record.kind === "credit_sale",
+                                    )
+                                    .map((record) => record.amount),
+                                )}
+                                hidden={hidden}
+                              />
+                              .{" "}
+                            </>
+                          ) : (
+                            "No unpaid sales are recorded in this period. "
+                          )}
+                          Still owed through this date:{" "}
+                          <Amount value={storyReport.userOwes} hidden={hidden} />
+                          .
+                        </p>
+                      </section>
+                    )}
+                    {storyReport && (
+                      <section className={s.chapter}>
                         <h2>01 · What moved</h2>
                         <p>
                           Money in minus money out was{" "}
@@ -1509,9 +1721,7 @@ export default function CashNarra() {
                           See money paid out
                         </Button>
                         <details>
-                          <summary>
-                            Included records, formula and exclusions
-                          </summary>
+                          <summary>How we worked this out</summary>
                           <p>
                             {storyReport.exclusions} Workspace version{" "}
                             {storyReport.version}; period{" "}
@@ -1582,7 +1792,7 @@ export default function CashNarra() {
                             </p>
                           ))}
                         <Button onClick={() => navigate("records")}>
-                          Inspect outstanding balances
+                          See what’s still owed
                         </Button>
                       </section>
                     )}
@@ -1628,7 +1838,7 @@ export default function CashNarra() {
                           consumed and other necessary information are missing.
                         </p>
                         <Button onClick={() => navigate("accounts")}>
-                          Trace account balances
+                          See how this balance adds up
                         </Button>
                         <Button onClick={() => setModal("checkin")}>
                           Review this period’s activity
@@ -1779,7 +1989,7 @@ export default function CashNarra() {
                                   setModal("allocation");
                                 }}
                               >
-                                Add money to this goal
+                                Put towards this goal
                               </Button>
                               <Button
                                 onClick={() => {
@@ -1794,7 +2004,7 @@ export default function CashNarra() {
                             <small>If you keep adding money at this pace</small>
                             <h3 style={{ marginTop: 10 }}>
                               {f.count === null
-                                ? "No useful date yet"
+                                ? "Not enough history to estimate yet"
                                 : f.count === 0
                                   ? "You’ve reached this goal"
                                   : `About ${f.count} months at this pace`}
@@ -1807,14 +2017,35 @@ export default function CashNarra() {
                               </p>
                             )}
                             <p>{f.reason}</p>
-                            <Button
-                              onClick={() => {
-                                setGoalId(g.id);
-                                setModal("scenario");
-                              }}
-                            >
-                              Explore a what-if
-                            </Button>
+                            {f.count === null ? (
+                              <div className={s.actions}>
+                                <Button
+                                  onClick={() => {
+                                    setGoalId(g.id);
+                                    setModal("goal-review");
+                                  }}
+                                >
+                                  Review past months
+                                </Button>
+                                <Button
+                                  onClick={() => {
+                                    setGoalId(g.id);
+                                    setModal("scenario");
+                                  }}
+                                >
+                                  Try a monthly amount
+                                </Button>
+                              </div>
+                            ) : (
+                              <Button
+                                onClick={() => {
+                                  setGoalId(g.id);
+                                  setModal("scenario");
+                                }}
+                              >
+                                Explore a what-if
+                              </Button>
+                            )}
                           </section>
                           <aside>
                             <h3>Your plan, at your pace</h3>
@@ -1902,8 +2133,10 @@ export default function CashNarra() {
                       <div>
                         <strong>Shared device</strong>
                         <p>
-                          Draft persistence is {persistent ? "on" : "off"}.
-                          Turning it off clears stored drafts.
+                          {persistent
+                            ? "Keep unfinished stories on this device."
+                            : "Unfinished stories are not kept on this device."}{" "}
+                          Turning shared-device mode on clears stored drafts.
                         </p>
                       </div>
                       <Button
@@ -1936,10 +2169,17 @@ export default function CashNarra() {
                           simple("retention", { days: Number(e.target.value) })
                         }
                       >
+                        {w.retentionDays === 0 && (
+                          <option value={0}>
+                            Original words already removed
+                          </option>
+                        )}
                         <option value={30}>30 days</option>
                         <option value={7}>7 days</option>
-                        <option value={0}>Remove text now</option>
                       </select>
+                      <Button onClick={() => setModal("retention-now")}>
+                        Remove original words now
+                      </Button>
                     </div>
                     <div className={s.settingsRow}>
                       <div>
@@ -1967,7 +2207,7 @@ export default function CashNarra() {
                         <Button
                           onClick={() => simple("request", { kind: "access" })}
                         >
-                          Record access request
+                          Request a copy of my data
                         </Button>
                         <Button onClick={() => setModal("deletion")}>
                           Request account-data deletion
@@ -2316,25 +2556,39 @@ export default function CashNarra() {
           </form>
         </Dialog>
       )}
-      {modal === "allocation" && goal && (
+      {modal === "allocation" && goal && w && (
         <Dialog
-          title={`Add money · ${goal.name}`}
+          title={`Mark money · ${goal.name}`}
           onClose={() => setModal("")}
         >
           <form
             onSubmit={(e) => {
               e.preventDefault();
               const f = new FormData(e.currentTarget);
-              simple("allocation", {
-                goalId: goal.id,
-                amount: f.get("amount"),
-                date: f.get("date"),
-              });
+              try {
+                const parsed = money(
+                  parseEntryAmount(String(f.get("amount"))),
+                  true,
+                );
+                simple("allocation", {
+                  goalId: goal.id,
+                  amount:
+                    f.get("direction") === "take"
+                      ? D(parsed).neg().toFixed(2)
+                      : parsed,
+                  date: f.get("date"),
+                });
+              } catch (err) {
+                setError((err as Error).message);
+              }
             }}
           >
-            <label htmlFor="allocation">
-              Amount · GHS (use a minus sign to take money off this goal)
-            </label>
+            <label htmlFor="allocation-direction">What should this mark do?</label>
+            <select id="allocation-direction" name="direction" defaultValue="put">
+              <option value="put">Put towards this goal</option>
+              <option value="take">Take off this goal</option>
+            </select>
+            <label htmlFor="allocation">Amount · GHS</label>
             <input id="allocation" name="amount" inputMode="decimal" required />
             <label htmlFor="allocation-date">Date</label>
             <input
@@ -2345,11 +2599,32 @@ export default function CashNarra() {
               required
             />
             <p className={s.notice}>
-              Money you mark for all goals cannot be more than the known
-              balance. Nothing leaves your account.
+              {(() => {
+                const account = w.accounts.find(
+                  (item) => item.id === goal.accountId,
+                );
+                const available = account
+                  ? accountBalance(w, account.id)
+                  : null;
+                const markedHere = sum(goal.allocations.map((item) => item.amount));
+                const markedElsewhere = sum(
+                  w.goals
+                    .filter(
+                      (item) =>
+                        item.id !== goal.id &&
+                        item.accountId === goal.accountId,
+                    )
+                    .flatMap((item) =>
+                      item.allocations.map((entry) => entry.amount),
+                    ),
+                );
+                return `${account?.name ?? "This account"} has ${
+                  available === null ? "an unknown balance" : formatMoney(available)
+                }. ${formatMoney(markedHere)} is already marked for this goal, and ${formatMoney(markedElsewhere)} is marked for other goals on the same account. A mark is a note. It does not move money or protect savings at the bank.`;
+              })()}
             </p>
             <Button primary type="submit" disabled={busy}>
-              Save amount
+              Save mark
             </Button>
           </form>
         </Dialog>
@@ -2480,9 +2755,9 @@ export default function CashNarra() {
               <option value="rest">Rest / business closed</option>
             </select>
             <p>
-              Choose the day you checked. Previous choices stay in your history.
-              A check-in does not prove that every transaction has been
-              recorded.
+              Anything else to add? I’m done for today is optional. You can
+              catch up on another day later. A check-in does not mean your
+              finances are complete.
             </p>
             <Button primary type="submit">
               Record check-in
@@ -2586,16 +2861,25 @@ export default function CashNarra() {
             <Button onClick={() => setModal("")}>Stay</Button>
             <Button
               primary
+              disabled={busy}
               onClick={async () => {
                 if (pending || retryOperation) {
                   setError("Check the unconfirmed action before signing out.");
                   setModal("");
                   return;
                 }
+                setBusy(true);
                 try {
+                  if (!demo) {
+                    const { error: signOutError } = await supabase().auth.signOut();
+                    if (signOutError) throw signOutError;
+                  }
+                  const response = await fetch("/api/logout", { method: "POST" });
+                  if (!response.ok)
+                    throw new Error(
+                      "Sign-out did not finish. You are still signed in. Try again.",
+                    );
                   await clearDrafts();
-                  if (!demo) await supabase().auth.signOut();
-                  await fetch("/api/logout", { method: "POST" });
                   const channel = new BroadcastChannel("cashnarra-session");
                   channel.postMessage("signed-out");
                   channel.close();
@@ -2603,11 +2887,16 @@ export default function CashNarra() {
                   setEvents([]);
                   location.href = "/";
                 } catch (e) {
-                  setError((e as Error).message);
+                  setError(
+                    (e as Error).message ||
+                      "Sign-out did not finish. Your unfinished story is still on this device.",
+                  );
+                } finally {
+                  setBusy(false);
                 }
               }}
             >
-              Erase local drafts and sign out
+              Sign out
             </Button>
           </div>
         </Dialog>
@@ -2615,17 +2904,77 @@ export default function CashNarra() {
       {modal === "voice" && w && (
         <Dialog
           title="A short story, in your voice"
-          onClose={() => setModal("")}
+          onClose={() => {
+            if (voiceWork) setVoiceLeave(true);
+            else {
+              setVoiceLeave(false);
+              setModal("");
+            }
+          }}
         >
           <VoiceCapture
             transcriptionEnabled={voice}
             workspaceId={w.id}
+            onWork={setVoiceWork}
             onTranscript={(value) => {
               changeDraft(text ? text + " " + value : value);
+              setVoiceWork(false);
+              setVoiceLeave(false);
               navigate("capture");
             }}
           />
-          <Button onClick={() => navigate("capture")}>Type your story</Button>
+          {voiceLeave && (
+            <div className={s.notice}>
+              <p>
+                This recording or the words you typed are still here. Closing
+                now discards them.
+              </p>
+              <div className={s.actions}>
+                <Button onClick={() => setVoiceLeave(false)}>
+                  Keep working
+                </Button>
+                <Button
+                  onClick={() => {
+                    setVoiceLeave(false);
+                    setVoiceWork(false);
+                    setModal("");
+                  }}
+                >
+                  Discard and close
+                </Button>
+              </div>
+            </div>
+          )}
+          <Button
+            onClick={() => {
+              if (voiceWork) setVoiceLeave(true);
+              else navigate("capture");
+            }}
+          >
+            Type your story
+          </Button>
+        </Dialog>
+      )}
+      {modal === "retention-now" && (
+        <Dialog
+          title="Remove the original words now?"
+          onClose={() => setModal("")}
+        >
+          <p>
+            This removes the saved narration in this workspace. The financial
+            records and correction history stay. You can cancel and keep the
+            words.
+          </p>
+          <div className={s.actions}>
+            <Button onClick={() => setModal("")}>Cancel</Button>
+            <Button
+              primary
+              disabled={busy}
+              onClick={() => simple("retention", { days: 0 })}
+            >
+              Remove original words now
+            </Button>
+          </div>
         </Dialog>
       )}
       {modal === "export" && w && (

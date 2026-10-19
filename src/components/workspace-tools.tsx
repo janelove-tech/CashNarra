@@ -63,10 +63,16 @@ export default function WorkspaceTools({
         <label htmlFor="contact-name">Name or nickname</label>
         <input id="contact-name" name="name" required maxLength={100} />
         <label htmlFor="contact-role">Usually a</label>
-        <select id="contact-role" name="role">
-          <option>Customer</option>
-          <option>Supplier</option>
-          <option>Other</option>
+        <select id="contact-role" name="role" defaultValue="Customer">
+          <option value="Customer">
+            {w.type === "Personal" ? "Someone who pays you" : "Customer"}
+          </option>
+          <option value="Supplier">
+            {w.type === "Personal" ? "Someone you pay" : "Supplier"}
+          </option>
+          <option value="Other">
+            {w.type === "Personal" ? "Someone else" : "Other"}
+          </option>
         </select>
         <Button type="submit" disabled={busy}>
           Save person
@@ -114,9 +120,15 @@ export default function WorkspaceTools({
                   name="role"
                   defaultValue={c.role}
                 >
-                  <option>Customer</option>
-                  <option>Supplier</option>
-                  <option>Other</option>
+                  <option value="Customer">
+                    {w.type === "Personal" ? "Someone who pays you" : "Customer"}
+                  </option>
+                  <option value="Supplier">
+                    {w.type === "Personal" ? "Someone you pay" : "Supplier"}
+                  </option>
+                  <option value="Other">
+                    {w.type === "Personal" ? "Someone else" : "Other"}
+                  </option>
                 </select>
                 <Button type="submit" disabled={busy}>
                   Update saved person

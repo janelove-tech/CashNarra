@@ -7,10 +7,12 @@ import { microphoneError, transcriptText } from "@/lib/voice";
 export default function VoiceCapture({
   workspaceId,
   onTranscript,
+  onWork,
   transcriptionEnabled,
 }: {
   workspaceId: string;
   onTranscript: (text: string) => void;
+  onWork?: (active: boolean) => void;
   transcriptionEnabled: boolean;
 }) {
   const recorder = useRef<MediaRecorder | null>(null),
@@ -51,6 +53,9 @@ export default function VoiceCapture({
     window.addEventListener("beforeunload", warn);
     return () => window.removeEventListener("beforeunload", warn);
   }, [clip, text, recording]);
+  useEffect(() => {
+    onWork?.(Boolean(clip || text.trim() || recording));
+  }, [clip, text, recording, onWork]);
   useEffect(
     () => () => {
       if (url) URL.revokeObjectURL(url);

@@ -12,13 +12,13 @@ import {
 export const labels: Record<EventInput["kind"], string> = {
   sale: "Sale received",
   income: "Other earnings",
-  expense: "Operating expense",
+  expense: "Business expense",
   stock: "Stock purchase",
   asset: "Equipment purchase",
   transfer: "Between your accounts",
   credit_sale: "Credit sale",
   credit_purchase: "Unpaid stock purchase",
-  credit_expense: "Unpaid operating expense",
+  credit_expense: "Business expense still to pay",
   receivable_payment: "Old balance received",
   payable_payment: "Old balance paid",
   loan_received: "Loan received",
@@ -30,6 +30,20 @@ export const labels: Record<EventInput["kind"], string> = {
   opening_payable: "Opening supplier balance",
   opening_loan: "Opening loan principal",
 };
+export function kindLabel(
+  kind: EventInput["kind"],
+  type: "Personal" | "Business" = "Business",
+) {
+  if (type === "Personal") {
+    if (kind === "expense") return "Household spending";
+    if (kind === "credit_expense") return "Spending still to pay";
+    if (kind === "income") return "Salary or other money in";
+    if (kind === "owner_in") return "Money you added";
+    if (kind === "owner_out") return "Money you took out";
+    if (kind === "stock") return "Things bought to use later";
+  }
+  return labels[kind];
+}
 const needsAccount = new Set([
   "sale",
   "income",

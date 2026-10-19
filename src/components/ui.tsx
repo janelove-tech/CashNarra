@@ -8,7 +8,7 @@ import {
   X,
 } from "lucide-react";
 import { formatMoney } from "@/domain/money";
-import { labels } from "@/domain/ledger";
+import { kindLabel } from "@/domain/ledger";
 import type { EventInput } from "@/domain/types";
 import s from "./app.module.css";
 export function Button({
@@ -107,7 +107,11 @@ export function Dialog({
           ...ref.current.querySelectorAll<HTMLElement>(
             "a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled])",
           ),
-        ].filter((el) => el.tabIndex >= 0);
+        ].filter((el) => {
+          if (el.tabIndex < 0 || el.closest("[hidden], [aria-hidden='true']"))
+            return false;
+          return true;
+        });
         if (!items.length) return;
         const first = items[0];
         const last = items[items.length - 1];
@@ -147,12 +151,14 @@ export function RecordRow({
   onClick,
   account,
   pendingAmount,
+  workspaceType = "Business",
 }: {
   record: EventInput;
   hidden?: boolean;
   onClick: () => void;
   account?: string;
   pendingAmount?: string;
+  workspaceType?: "Personal" | "Business";
 }) {
   const outgoing = [
       "expense",
@@ -184,9 +190,15 @@ export function RecordRow({
         <Icon size={19} aria-hidden />
       </span>
       <span className={s.rowText}>
-        <strong>{record.description}</strong>
+        <strong>
+          {record.kind === "receivable_payment" && record.party
+            ? `Payment from ${record.party}`
+            : record.kind === "payable_payment" && record.party
+              ? `Payment to ${record.party}`
+              : record.description}
+        </strong>
         <small>
-          {labels[record.kind]}
+          {kindLabel(record.kind, workspaceType)}
           {account ? " · " + account : ""}
         </small>
       </span>

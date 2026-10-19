@@ -7,7 +7,10 @@ import s from "@/components/app.module.css";
 export default function Auth() {
   const [mode, setMode] = useState("signin"),
     [message, setMessage] = useState(""),
-    [busy, setBusy] = useState(false);
+    [busy, setBusy] = useState(false),
+    [email, setEmail] = useState(""),
+    [reveal, setReveal] = useState(false),
+    [canResend, setCanResend] = useState(true);
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     Promise.resolve().then(() => {
@@ -28,7 +31,15 @@ export default function Auth() {
         />
       </Link>
       <div className={s.flow} style={{ maxWidth: 460, paddingTop: 60 }}>
-        <h1>Make room for clarity.</h1>
+        <h1>
+          {mode === "signup"
+            ? "Create your account."
+            : mode === "recover"
+              ? "Recover your account."
+              : mode === "update"
+                ? "Choose a new password."
+                : "Sign in."}
+        </h1>
         <p>
           Your story belongs to you. Sign in to keep your personal and business
           records separate.
@@ -40,11 +51,11 @@ export default function Auth() {
             setBusy(true);
             setMessage("");
             try {
-              const db = supabase(),
-                email = String(f.get("email")),
-                password = String(f.get("password"));
+                const db = supabase(),
+                address = email || String(f.get("email")),
+                password = String(f.get("password") ?? "");
               if (mode === "recover") {
-                const { error } = await db.auth.resetPasswordForEmail(email, {
+                const { error } = await db.auth.resetPasswordForEmail(address, {
                   redirectTo: location.origin + "/auth/confirm?recovery=1",
                 });
                 if (error) throw error;
@@ -59,13 +70,16 @@ export default function Auth() {
                 const result =
                   mode === "signup"
                     ? await db.auth.signUp({
-                        email,
+                        email: address,
                         password,
                         options: {
                           emailRedirectTo: location.origin + "/auth/confirm",
                         },
                       })
-                    : await db.auth.signInWithPassword({ email, password });
+                    : await db.auth.signInWithPassword({
+                        email: address,
+                        password,
+                      });
                 if (result.error) throw result.error;
                 if (result.data.session) {
                   await fetch("/api/logout", { method: "POST" });
@@ -87,6 +101,8 @@ export default function Auth() {
                 name="email"
                 type="email"
                 autoComplete="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
                 required
               />
             </>
@@ -97,13 +113,19 @@ export default function Auth() {
               <input
                 id="password"
                 name="password"
-                type="password"
+                type={reveal ? "text" : "password"}
                 minLength={8}
                 autoComplete={
                   mode === "signin" ? "current-password" : "new-password"
                 }
                 required
               />
+              <Button type="button" onClick={() => setReveal((value) => !value)}>
+                {reveal ? "Hide password" : "Show password"}
+              </Button>
+              {mode !== "signin" && (
+                <p>Use at least 8 characters.</p>
+              )}
             </>
           )}
           {mode === "signup" && (
@@ -130,23 +152,69 @@ export default function Auth() {
           {message ||
             "Your records are private. Use account recovery if you cannot sign in."}
         </p>
+        {message === "Check your email to confirm your account." && (
+          <Button
+            disabled={busy || !canResend}
+            onClick={async () => {
+              setBusy(true);
+              setCanResend(false);
+              window.setTimeout(() => setCanResend(true), 30000);
+              try {
+                const { error } = await supabase().auth.resend({
+                  type: "signup",
+                  email,
+                  options: {
+                    emailRedirectTo: location.origin + "/auth/confirm",
+                  },
+                });
+                if (error) throw error;
+                setMessage(
+                  "If a confirmation email can be sent, another one is on the way. Check your inbox.",
+                );
+              } catch (x) {
+                setMessage((x as Error).message);
+              } finally {
+                setBusy(false);
+              }
+            }}
+          >
+            Send the confirmation email again
+          </Button>
+        )}
         <div className={s.actions}>
-          {[
-            ["signin", "Sign in"],
-            ["signup", "Create account"],
-            ["recover", "Forgot password?"],
-          ].map(([id, label]) => (
+          {mode !== "signin" && (
             <Button
-              key={id}
               disabled={busy}
               onClick={() => {
-                setMode(id);
+                setMode("signin");
                 setMessage("");
               }}
             >
-              {label}
+              Already have an account? Sign in.
             </Button>
-          ))}
+          )}
+          {mode !== "signup" && mode !== "update" && (
+            <Button
+              disabled={busy}
+              onClick={() => {
+                setMode("signup");
+                setMessage("");
+              }}
+            >
+              Create account
+            </Button>
+          )}
+          {mode !== "recover" && (
+            <Button
+              disabled={busy}
+              onClick={() => {
+                setMode("recover");
+                setMessage("");
+              }}
+            >
+              Forgot password?
+            </Button>
+          )}
           <Link href="/app">Open records</Link>
         </div>
       </div>
