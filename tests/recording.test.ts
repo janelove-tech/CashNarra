@@ -44,14 +44,15 @@ function clip(count: number, step = 20, flags = 0, type = 2) {
 }
 it("counts Opus packets even without duration metadata", () => {
   expect(validateRecording(clip(50), "audio/webm")).toBe(1);
-  expect(validateRecording(clip(3000), "audio/webm")).toBe(60);
+  expect(validateRecording(clip(9000), "audio/webm")).toBe(180);
+  expect(validateRecording(clip(50, 17), "audio/webm")).toBe(1);
 });
 it("rejects excess packet duration and gaps beyond the limit", () => {
-  expect(() => validateRecording(clip(3001), "audio/webm")).toThrow(
-    "60 seconds",
+  expect(() => validateRecording(clip(9001), "audio/webm")).toThrow(
+    "three minutes",
   );
-  expect(() => validateRecording(clip(2, 60000), "audio/webm")).toThrow(
-    "60 seconds",
+  expect(() => validateRecording(clip(2, 180000), "audio/webm")).toThrow(
+    "three minutes",
   );
 });
 it("fails closed on overlapping timing, lacing, video and unsupported containers", () => {

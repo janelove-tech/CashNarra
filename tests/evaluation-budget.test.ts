@@ -27,6 +27,20 @@ async function withDirectory(work: (directory: string) => Promise<void>) {
 }
 const hash = "a".repeat(64);
 
+it("shares the approved budget with bounded audio charges and settles only once", async () =>
+  withDirectory(async (dir) => {
+    const b = await EvaluationBudget.acquire(dir, true);
+    const id = await b.reserve("local-voice", hash);
+    await expect(b.settleAudio(id, 181)).rejects.toThrow();
+    await b.settleAudio(id, 61);
+    expect((await b.state()).committed).toBe(12000);
+    await expect(b.settleAudio(id, 61)).rejects.toThrow();
+    await b.close();
+    const reopened = await EvaluationBudget.acquire(dir);
+    expect((await reopened.state()).committed).toBe(12000);
+    await reopened.close();
+  }));
+
 it("rounds charges upwards and rejects impossible usage", () => {
   expect(usageCost(1, 1)).toBe(2);
   expect(usageCost(1000, 1000)).toBe(2000);

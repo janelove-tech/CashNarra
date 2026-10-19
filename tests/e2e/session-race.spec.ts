@@ -4,7 +4,7 @@ test("late processing cannot restore private review after cross-tab sign-out", a
   context,
 }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Try the synthetic demo" }).click();
+  await page.getByRole("button", { name: "Explore with sample data" }).click();
   await page
     .getByRole("button", { name: "Tell your story", exact: true })
     .click();

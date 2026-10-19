@@ -84,6 +84,7 @@ export default function CashNarra() {
     [text, setText] = useState(""),
     [events, setEvents] = useState<EventInput[]>([]),
     [questions, setQuestions] = useState<Extraction["questions"]>([]),
+    [calculations, setCalculations] = useState<Extraction["calculations"]>([]),
     [replaceIds, setReplaceIds] = useState<string[]>([]),
     [reason, setReason] = useState("Entered incorrectly"),
     [revision, setRevision] = useState(0),
@@ -157,6 +158,7 @@ export default function CashNarra() {
       setSelected(null);
       setModal("");
       setQuestions([]);
+      setCalculations([]);
       setReplaceIds([]);
       setStatus("Signed out in another tab.");
       setSpaces([]);
@@ -266,6 +268,7 @@ export default function CashNarra() {
       setText(nextText);
       setEvents([]);
       setQuestions([]);
+      setCalculations([]);
     }
     setStatus(
       persistent
@@ -351,6 +354,7 @@ export default function CashNarra() {
       if (!res.ok) throw new Error(data.error);
       setEvents(data.events);
       setQuestions(data.questions);
+      setCalculations(data.calculations ?? []);
       setStatus(
         data.questions.length
           ? "Needs clarification"
@@ -613,7 +617,7 @@ export default function CashNarra() {
           aria-current={page === id ? "page" : undefined}
           onClick={() => navigate(id)}
         >
-          <Icon size={20} />
+          <Icon size={20} aria-hidden />
           {mobile && id === "stories" ? "Stories" : label}
         </button>
       ))}
@@ -621,7 +625,7 @@ export default function CashNarra() {
         <>
           <hr />
           <button className={s.navLink} onClick={() => navigate("accounts")}>
-            <Landmark size={20} />
+            <Landmark size={20} aria-hidden />
             Accounts
           </button>
         </>
@@ -644,7 +648,7 @@ export default function CashNarra() {
           Sign in
         </Link>{" "}
         <Link href="/" className={s.button}>
-          Try the synthetic demo
+          Explore with sample data
         </Link>
       </main>
     );
@@ -938,7 +942,7 @@ export default function CashNarra() {
                             </div>
                           ))}
                           <p>
-                            Recorded net movement:{" "}
+                            Money in minus money out:{" "}
                             <Amount value={r!.net} hidden={hidden} />. This is
                             not profit.
                           </p>
@@ -954,7 +958,7 @@ export default function CashNarra() {
                                 w.checkins.filter((c) => c.kind !== "rest")
                                   .length
                               }{" "}
-                              deliberate check-ins recorded
+                              days you checked in
                             </p>
                             <small>
                               A check-in does not mean all activity is captured.
@@ -986,7 +990,7 @@ export default function CashNarra() {
                               )}
                               hidden={hidden}
                             />
-                            <small> assigned, not moved</small>
+                            <small> marked for this goal, not moved</small>
                             <div>
                               <button
                                 className={s.sectionLink}
@@ -1085,7 +1089,7 @@ export default function CashNarra() {
                     </small>
                     {!ai && (
                       <p className={s.notice}>
-                        Mock processing supports the labelled examples only.
+                        This demo can read the two sample stories.
                         Manual recording works for other input.
                       </p>
                     )}
@@ -1139,6 +1143,28 @@ export default function CashNarra() {
                   <BatchReview
                     heading={heading}
                     questions={questions}
+                    calculations={calculations}
+                    confirmCalculation={(id, amount, note) => {
+                      if (pending) return;
+                      if (text.length + note.length + 32 > 12000) {
+                        setError(
+                          "Shorten your story a little so we can keep the calculation with it.",
+                        );
+                        return;
+                      }
+                      changeDraft();
+                      setEvents((prev) =>
+                        prev.map((e) => (e.id === id ? { ...e, amount } : e)),
+                      );
+                      setQuestions((prev) =>
+                        prev.filter(
+                          (q) => q.recordId !== id || q.field !== "amount",
+                        ),
+                      );
+                      setText(
+                        (prev) => prev + "\nConfirmed calculation: " + note,
+                      );
+                    }}
                     events={events}
                     replaceIds={replaceIds}
                     reason={reason}
@@ -1298,14 +1324,14 @@ export default function CashNarra() {
                             event(
                               "opening_receivable",
                               "",
-                              "Opening balance",
+                              "Balance from before CashNarra",
                               null,
                               { date },
                             ),
                           )
                         }
                       >
-                        Add opening obligation
+                        Add a balance from before CashNarra
                       </Button>
                     </section>
                   </>
@@ -1360,13 +1386,14 @@ export default function CashNarra() {
                         <Amount value={r!.paid} hidden={hidden} /> went out.
                       </p>
                       <small>
-                        Recorded activity so far. Missing days are not zero.
+                        Based on what you have entered so far. Unrecorded days
+                        may still have activity.
                       </small>
                     </section>
                     <section className={s.chapter}>
                       <h2>01 · What moved</h2>
                       <p>
-                        Recorded net movement was{" "}
+                        Money in minus money out was{" "}
                         <Amount value={r!.net} hidden={hidden} />. It is money
                         received minus money paid out.
                       </p>
@@ -1456,8 +1483,8 @@ export default function CashNarra() {
                           hidden={hidden}
                           onInspect={() => setModal("trace")}
                         />
-                        . Declared openings plus saved movements; not externally
-                        verified.
+                        . Starting balances plus later records. Not checked
+                        against your bank or MoMo.
                       </p>
                       <p>
                         Profit is unavailable. Cost of sales, inventory consumed
@@ -1519,9 +1546,11 @@ export default function CashNarra() {
                           />
                           <p>Manually tracked · {a.type} · GHS</p>
                           <details>
-                            <summary>Opening and recorded movements</summary>
+                            <summary>
+                              Starting balance and later records
+                            </summary>
                             <p>
-                              Declared opening on {a.openingDate}:{" "}
+                              Starting balance on {a.openingDate}:{" "}
                               <Amount value={a.opening} hidden={hidden} />
                             </p>
                             {rows(
@@ -1538,7 +1567,7 @@ export default function CashNarra() {
                               setModal("opening");
                             }}
                           >
-                            Review opening balance
+                            Check starting balance
                           </Button>
                         </article>
                       ))}
@@ -1578,9 +1607,9 @@ export default function CashNarra() {
                       return (
                         <div className={s.goalGrid} key={g.id}>
                           <section className={s.panel}>
-                            <span className={s.badge}>Assigned, not moved</span>
+                            <span className={s.badge}>Tracked here, not moved</span>
                             <h2 style={{ marginTop: 18 }}>{g.name}</h2>
-                            <small>Money assigned to this goal</small>
+                            <small>Money added for this goal</small>
                             <div>
                               <Amount
                                 value={f.assigned}
@@ -1593,7 +1622,7 @@ export default function CashNarra() {
                               target
                             </p>
                             <progress
-                              aria-label={`${g.name} assigned progress`}
+                              aria-label={`${g.name} progress`}
                               max={100}
                               value={
                                 hidden
@@ -1612,7 +1641,7 @@ export default function CashNarra() {
                                   setModal("allocation");
                                 }}
                               >
-                                Assign money to this goal
+                                Add money to this goal
                               </Button>
                               <Button
                                 onClick={() => {
@@ -1624,13 +1653,13 @@ export default function CashNarra() {
                               </Button>
                             </div>
                             <hr />
-                            <small>At your recorded contribution pace</small>
+                            <small>If you keep adding money at this pace</small>
                             <h3 style={{ marginTop: 10 }}>
                               {f.count === null
                                 ? "No useful date yet"
                                 : f.count === 0
-                                  ? "Target assigned"
-                                  : `About ${f.count} monthly contributions`}
+                                  ? "You’ve reached this goal"
+                                  : `About ${f.count} months at this pace`}
                             </h3>
                             {f.period && (
                               <p>
@@ -1650,28 +1679,50 @@ export default function CashNarra() {
                             </Button>
                           </section>
                           <aside>
-                            <h3>Behind this estimate</h3>
+                            <h3>Your plan, at your pace</h3>
                             <p>
-                              As of {date}. Target unchanged. Monthly
-                              contributions, no withdrawals, interest, fees,
-                              returns or future price changes.
-                            </p>
-                            <p>
-                              Assigning money is a note in CashNarra. The money
-                              stays in your account and is not reserved by your
-                              bank or MoMo provider.
-                            </p>
-                            <p>
-                              You still need to allow for debts and other bills.
-                              This estimate does not tell you whether you can
-                              afford each contribution.
+                              Your money stays in your account. CashNarra helps
+                              you keep track of how much you want to put towards
+                              this goal.
                             </p>
                             <details>
-                              <summary>See money assigned to this goal</summary>
+                              <summary>How we worked this out</summary>
+                              <p>
+                                This estimate starts on{" "}
+                                {new Date(
+                                  date + "T12:00:00Z",
+                                ).toLocaleDateString("en-GB", {
+                                  day: "numeric",
+                                  month: "short",
+                                  year: "numeric",
+                                  timeZone: "UTC",
+                                })}{" "}
+                                and assumes you add money each month towards the
+                                same target.
+                              </p>
+                              <p>
+                                It leaves out withdrawals, interest, fees,
+                                returns and price changes. Check what you can
+                                spare after debts and bills. Money marked for a
+                                goal is not locked away by your bank or MoMo
+                                provider.
+                              </p>
+                            </details>
+                            <details>
+                              <summary>
+                                Money you’ve put towards this goal
+                              </summary>
                               {g.allocations.map((a) => (
                                 <p key={a.id}>
-                                  {a.date} ·{" "}
-                                  <Amount value={a.amount} hidden={hidden} />
+                                  {new Date(
+                                    a.date + "T12:00:00Z",
+                                  ).toLocaleDateString("en-GB", {
+                                    day: "numeric",
+                                    month: "short",
+                                    year: "numeric",
+                                    timeZone: "UTC",
+                                  })}{" "}
+                                  · <Amount value={a.amount} hidden={hidden} />
                                 </p>
                               ))}
                             </details>
@@ -1703,7 +1754,7 @@ export default function CashNarra() {
                     <div className={s.settingsRow}>
                       <div>
                         <strong>Hide amounts</strong>
-                        <p>Screen privacy, not encryption.</p>
+                        <p>Keep amounts out of sight while you use the app.</p>
                       </div>
                       <Button onClick={() => setHidden(!hidden)}>
                         {hidden ? "Show amounts" : "Hide amounts"}
@@ -1914,18 +1965,18 @@ export default function CashNarra() {
               <option>Bank</option>
               <option>MoMo</option>
             </select>
-            <label htmlFor="opening">Opening amount · GHS</label>
+            <label htmlFor="opening">Starting amount · GHS</label>
             <input
               id="opening"
               name="amount"
               inputMode="decimal"
-              placeholder="Enter a known opening"
+              placeholder="Enter a known starting amount"
             />
             <label className={s.checkLabel}>
               <input type="checkbox" name="unknown" defaultChecked />I don’t
-              know the opening balance yet
+              know the starting balance yet
             </label>
-            <label htmlFor="opening-date">Opening date</label>
+            <label htmlFor="opening-date">Starting date</label>
             <input
               id="opening-date"
               name="date"
@@ -1933,9 +1984,9 @@ export default function CashNarra() {
               defaultValue={date}
               required
             />
-            <p>Use an opening before the activity you want to record.</p>
+            <p>Choose a date before the activity you want to record.</p>
             <Button primary type="submit" disabled={busy}>
-              Create recorded account
+              Add account
             </Button>
           </form>
         </Dialog>
@@ -2040,7 +2091,7 @@ export default function CashNarra() {
       )}
       {modal === "opening" && w && (
         <Dialog
-          title="Review the declared opening"
+          title="Check your starting balance"
           onClose={() => setModal("")}
         >
           <form
@@ -2055,7 +2106,7 @@ export default function CashNarra() {
             }}
           >
             <p>
-              This changes the declared opening on{" "}
+              This changes the starting balance you entered for{" "}
               {w.accounts.find((a) => a.id === accountId)?.openingDate},
               including affected earlier reports. It is not new income.
             </p>
@@ -2073,7 +2124,7 @@ export default function CashNarra() {
             <label htmlFor="opening-reason">Reason for this correction</label>
             <input id="opening-reason" name="reason" required maxLength={300} />
             <Button primary type="submit" disabled={busy}>
-              Save declared opening
+              Save starting balance
             </Button>
             {w.openingHistory
               ?.filter((h) => h.before.id === accountId)
@@ -2118,7 +2169,8 @@ export default function CashNarra() {
               ))}
             </select>
             <p className={s.notice}>
-              You can assign recorded money later. No funds move.
+              You can mark money for this goal later. It will stay in your
+              account.
             </p>
             <Button primary type="submit" disabled={busy}>
               Create goal
@@ -2128,7 +2180,7 @@ export default function CashNarra() {
       )}
       {modal === "allocation" && goal && (
         <Dialog
-          title={`Assign money · ${goal.name}`}
+          title={`Add money · ${goal.name}`}
           onClose={() => setModal("")}
         >
           <form
@@ -2143,7 +2195,7 @@ export default function CashNarra() {
             }}
           >
             <label htmlFor="allocation">
-              Amount · GHS (negative to release)
+              Amount · GHS (use a minus sign to take money off this goal)
             </label>
             <input id="allocation" name="amount" inputMode="decimal" required />
             <label htmlFor="allocation-date">Date</label>
@@ -2155,8 +2207,8 @@ export default function CashNarra() {
               required
             />
             <p className={s.notice}>
-              Assignments across all goals cannot exceed the known recorded
-              balance. No money moves.
+              Money you mark for all goals cannot be more than the known
+              balance. Nothing leaves your account.
             </p>
             <Button primary type="submit" disabled={busy}>
               Save amount
@@ -2175,8 +2227,8 @@ export default function CashNarra() {
               Check Records for missing activity, mistakes and repeated entries.
             </li>
             <li>
-              Check what you actually assigned to this goal. Assigning nothing
-              is different from not knowing.
+              Check the money you marked for this goal. Marking nothing is
+              different from not knowing.
             </li>
             <li>
               Check unpaid balances and other payments you need to make before
@@ -2186,7 +2238,7 @@ export default function CashNarra() {
           <p>
             CashNarra uses the middle amount from the last three full months you
             checked. It cannot confirm that your records are complete or that
-            you can afford future contributions.
+            you can afford the next amounts.
           </p>
           <form
             onSubmit={(e) => {
@@ -2200,7 +2252,7 @@ export default function CashNarra() {
             }}
           >
             <label htmlFor="review-month">
-              Month checked, even if you assigned no money
+              Month checked, even if you added no money
             </label>
             <input id="review-month" name="month" type="month" required />
             <label className={s.checkLabel}>
@@ -2223,13 +2275,13 @@ export default function CashNarra() {
       )}
       {modal === "scenario" && goal && (
         <Dialog
-          title="What if you assigned a little more?"
+          title="What if you added a little more?"
           onClose={() => setModal("")}
         >
           <span className={s.badge}>
-            Scenario only · actual records stay unchanged
+            Just a try · your saved records stay as they are
           </span>
-          <label htmlFor="scenario">Assumed monthly contribution · GHS</label>
+          <label htmlFor="scenario">Monthly amount to try · GHS</label>
           <input
             id="scenario"
             value={scenario}
@@ -2243,8 +2295,8 @@ export default function CashNarra() {
                 <div className={s.notice}>
                   <h3>
                     {f.count === null
-                      ? "No completion estimate"
-                      : `${f.count} monthly contributions`}
+                      ? "No date yet"
+                      : `About ${f.count} months`}
                   </h3>
                   <p>{f.period ? `Around ${f.period}.` : ""}</p>
                   <p>{f.reason}</p>

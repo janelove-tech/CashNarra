@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "./ui";
 import s from "./app.module.css";
+import { RECORDING_BYTES, RECORDING_SECONDS } from "@/lib/recording-limits";
 import { microphoneError, transcriptText } from "@/lib/voice";
 export default function VoiceCapture({
   workspaceId,
@@ -104,10 +105,10 @@ export default function VoiceCapture({
       setSeconds(0);
       rec.ondataavailable = (e) => {
         size += e.data.size;
-        if (size > 3 * 1024 * 1024) {
+        if (size > RECORDING_BYTES) {
           cancelled.current = true;
           stop(true);
-          setError("Recording exceeded 3 MB. Try a shorter story.");
+          setError("Recording exceeded 8 MB. Try a shorter story.");
         } else chunks.push(e.data);
       };
       rec.onstop = () => {
@@ -135,8 +136,8 @@ export default function VoiceCapture({
       setRecording(true);
       timer.current = setInterval(() => {
         const elapsed = Math.floor((Date.now() - started.current) / 1000);
-        setSeconds(Math.min(60, elapsed));
-        if (elapsed >= 60) stop();
+        setSeconds(Math.min(RECORDING_SECONDS, elapsed));
+        if (elapsed >= RECORDING_SECONDS) stop();
       }, 250);
     } catch (e) {
       if (attempt === permissionRevision.current)
@@ -198,9 +199,9 @@ export default function VoiceCapture({
   return (
     <>
       <p>
-        Up to 60 seconds and 3 MB. Recording starts only when you choose Start.
-        Your clip stays on this device unless you choose to send it for
-        transcription or share a downloaded copy.
+        Record for up to three minutes. Choose Start when you are ready. Your
+        clip stays on this device unless you choose to send it for transcription
+        or share a downloaded copy.
       </p>
       {!transcriptionEnabled && (
         <p>
@@ -217,7 +218,7 @@ export default function VoiceCapture({
       )}
       <p role="status">
         {recording
-          ? `Recording · ${seconds} / 60 seconds`
+          ? `Recording · ${seconds} / ${RECORDING_SECONDS} seconds`
           : busy
             ? "Transcribing…"
             : waiting
@@ -367,7 +368,7 @@ export default function VoiceCapture({
       <p role="alert">{error}</p>
       <p className={s.notice}>
         Download any clip you want to keep before closing this recording window.
-        Failed transcription does not save financial records.
+        You will review the words and records before anything is saved.
       </p>
     </>
   );

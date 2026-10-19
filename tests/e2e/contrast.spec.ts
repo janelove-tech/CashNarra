@@ -36,7 +36,7 @@ for (const width of [390, 1440]) {
       await page.goto("/");
       await contrast(page, "landing");
       await page
-        .getByRole("button", { name: "Try the synthetic demo" })
+        .getByRole("button", { name: "Explore with sample data" })
         .click();
       await expect(
         page.getByRole("button", { name: /Recorded account balances/ }),

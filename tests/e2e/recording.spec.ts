@@ -8,7 +8,7 @@ test("offers real local recording without claiming transcription or opening the 
     if (req.url().includes("/api/transcribe")) uploads.push(req.url());
   });
   await page.goto("/");
-  await page.getByRole("button", { name: "Try the synthetic demo" }).click();
+  await page.getByRole("button", { name: "Explore with sample data" }).click();
   await page.getByRole("button", { name: "Voice", exact: true }).click();
   const dialog = page.getByRole("dialog", {
     name: "A short story, in your voice",

@@ -36,7 +36,7 @@ for (const theme of ["light", "dark"]) {
         contentType: "application/json",
       });
       await page
-        .getByRole("button", { name: "Try the synthetic demo" })
+        .getByRole("button", { name: "Explore with sample data" })
         .click();
       await expect(
         page.getByRole("button", { name: /Recorded account balances/ }),

@@ -35,6 +35,13 @@ const header = {
 const entry = z.discriminatedUnion("type", [
   z
     .object({
+      type: z.literal("audio_usage"),
+      id: z.string().uuid(),
+      seconds: z.number().positive().max(180),
+    })
+    .strict(),
+  z
+    .object({
       type: z.literal("reserve"),
       id: z.string().uuid(),
       caseId: z.string().min(1),
@@ -71,7 +78,10 @@ export function budgetState(contents: string) {
     } else {
       const call = calls.get(e.id);
       if (!call || call.settled) throw new Error("Unknown or repeated usage.");
-      call.micros = usageCost(e.input, e.output);
+      call.micros =
+        e.type === "audio_usage"
+          ? Math.ceil(e.seconds / 60) * 6000
+          : usageCost(e.input, e.output);
       call.settled = true;
     }
     if ([...calls.values()].reduce((sum, c) => sum + c.micros, 0) > CEILING)
@@ -147,5 +157,11 @@ export class EvaluationBudget {
   async close() {
     await this.lock.close();
     await unlink(join(this.directory, "budget.lock"));
+  }
+  async settleAudio(id: string, seconds: number) {
+    const usage = entry.parse({ type: "audio_usage", id, seconds });
+    const call = (await this.state()).calls.get(id);
+    if (!call || call.settled) throw new Error("Unknown or repeated usage.");
+    await this.append(usage);
   }
 }

@@ -179,7 +179,7 @@ export function RecordRow({
   return (
     <button className={s.row} onClick={onClick}>
       <span className={`${s.recordIcon} ${outgoing ? s.out : ""}`}>
-        <Icon size={19} />
+        <Icon size={19} aria-hidden />
       </span>
       <span className={s.rowText}>
         <strong>{record.description}</strong>

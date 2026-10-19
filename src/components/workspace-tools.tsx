@@ -211,7 +211,7 @@ export default function WorkspaceTools({
       <h3>Change a goal</h3>
       <p>
         Changing a target changes the estimate, not the money you have already
-        assigned.
+        marked for this goal.
       </p>
       {hidden && <p>Show amounts to edit your goal targets.</p>}
       {!w.goals.length && (
@@ -264,18 +264,18 @@ export default function WorkspaceTools({
       )}
       <h3>Months checked for goal estimates</h3>
       <p>
-        Found missing information? Mark that month as needing another look. Its
-        assigned money stays unchanged, but CashNarra will wait for your review
-        before using it for an estimate again.
+        Found something missing? Mark that month to look at again. The money you
+        marked stays as it is, and CashNarra waits until you check the month
+        before using it in the estimate.
       </p>
       {w.goals.map((g) => (
         <section key={g.id}>
           <h4>{g.name}</h4>
           <details>
-            <summary>Monthly amounts behind this estimate</summary>
+            <summary>How we worked this out</summary>
             <p>
-              Only checked months can support an estimate. An unchecked month
-              remains unknown even when some assignments are recorded.
+              Only months you have checked can support an estimate. A month you
+              have not checked stays unknown, even if some amounts are recorded.
             </p>
             {Array.from({ length: 3 }, (_, i) => {
               const current = new Date(today + "T12:00:00Z");
@@ -299,7 +299,7 @@ export default function WorkspaceTools({
                         .map((a) => a.amount),
                     )}
                   />{" "}
-                  assigned ·{" "}
+                  marked ·{" "}
                   {g.reviewedMonths.includes(month)
                     ? "Checked"
                     : "Needs checking"}

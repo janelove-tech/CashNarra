@@ -13,7 +13,7 @@ export function forecast(goal: Goal, asOf: string, scenario?: string) {
       count: 0,
       period: null,
       pace: "0.00",
-      reason: "Your recorded allocations meet this target.",
+      reason: "You have marked enough money for this goal.",
       assigned,
     };
   const anchor = new Date(asOf + "T12:00:00Z");
@@ -32,7 +32,7 @@ export function forecast(goal: Goal, asOf: string, scenario?: string) {
       period: null,
       pace: null,
       reason:
-        "Check the last three full months and your planned payments first. A missing month does not mean you assigned no money.",
+        "Check the last three full months and the payments you still need to make. A month you have not checked does not mean you added no money.",
       assigned,
     };
   const pace =
@@ -56,7 +56,7 @@ export function forecast(goal: Goal, asOf: string, scenario?: string) {
       pace: pace.toFixed(2),
       reason:
         scenario === undefined
-          ? "There is no completion date at this monthly amount. Try a positive amount to see a what-if estimate."
+          ? "There is no completion date at this monthly amount. Try a larger amount to see a what-if."
           : "What-if only: there is no completion date at this monthly amount. Saved records stay unchanged. This is not a guarantee.",
       assigned,
     };
@@ -67,7 +67,7 @@ export function forecast(goal: Goal, asOf: string, scenario?: string) {
       period: null,
       pace: pace.toFixed(2),
       reason:
-        "More than 100 years at this assumption; no useful completion period.",
+        "At this amount, it would take more than 100 years. Try a larger monthly amount or a smaller target.",
       assigned,
     };
   const period = new Date(

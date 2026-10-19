@@ -6,11 +6,15 @@ const f = vi.hoisted(() => ({
   validate: vi.fn(),
   form: vi.fn(),
 }));
-vi.mock("openai", () => ({
-  default: class {
-    audio = { transcriptions: { create: f.create } };
-  },
-}));
+vi.mock("openai", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("openai")>();
+  return {
+    default: class {
+      static APIError = actual.default.APIError;
+      audio = { transcriptions: { create: f.create } };
+    },
+  };
+});
 vi.mock("../src/server/auth", () => ({
   sameOrigin: vi.fn(),
   context: async () => ({ demo: false, db: { rpc: f.reserve } }),

@@ -1,5 +1,6 @@
 // Deliberately narrow: browser WebM with a single non-laced Opus audio track.
 // Inspect packet durations as well as timestamps; container duration is untrusted.
+import { RECORDING_BYTES, RECORDING_SECONDS } from "../lib/recording-limits";
 export function validateRecording(bytes: Uint8Array, mime: string): number {
   const invalid = () =>
     new Error(
@@ -8,7 +9,7 @@ export function validateRecording(bytes: Uint8Array, mime: string): number {
   if (
     mime !== "audio/webm" ||
     bytes.length < 16 ||
-    bytes.length > 3 * 1024 * 1024
+    bytes.length > RECORDING_BYTES
   )
     throw invalid();
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
@@ -143,15 +144,20 @@ export function validateRecording(bytes: Uint8Array, mime: string): number {
                 throw invalid();
               const startMs =
                 ((clusterTime + view.getInt16(header)) * scale) / 1000000;
-              if (startMs < 0 || (packets && startMs < lastEndMs - 2))
+              // Chromium packet timestamps can jitter by a few milliseconds.
+              // Decoded packet duration is independently summed and capped below.
+              if (startMs < 0 || (packets && startMs < lastEndMs - 5))
                 throw invalid();
               const duration = packetDuration(header + 3, q);
               totalMs += duration;
               lastEndMs = startMs + duration;
               packets++;
-              if (totalMs > 60000 || lastEndMs > 60000)
+              if (
+                totalMs > RECORDING_SECONDS * 1000 ||
+                lastEndMs > RECORDING_SECONDS * 1000
+              )
                 throw new Error(
-                  "Recording exceeds 60 seconds. Use a shorter clip.",
+                  "That recording is over three minutes. Try a shorter clip.",
                 );
             } else if (k !== 0xec && k !== 0xbf) throw invalid();
           });

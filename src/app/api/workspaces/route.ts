@@ -14,6 +14,7 @@ import { money } from "@/domain/money";
 import type { Batch, Goal } from "@/domain/types";
 import { boundedJson } from "@/server/request";
 import { updatePlanning } from "@/domain/planning";
+import { voiceAvailable } from "@/server/voice-access";
 export async function GET(req: Request) {
   try {
     const ctx = await context();
@@ -38,11 +39,7 @@ export async function GET(req: Request) {
       userId: ctx.userId,
       demo: ctx.demo,
       aiEnabled: !ctx.demo && process.env.AI_ENABLED === "true",
-      voiceEnabled:
-        !ctx.demo &&
-        process.env.VOICE_ENABLED === "true" &&
-        process.env.VOICE_QUALITY_APPROVED === "true" &&
-        !!process.env.OPENAI_API_KEY,
+      voiceEnabled: !ctx.demo && voiceAvailable(),
     });
   } catch (e) {
     return Response.json({ error: (e as Error).message }, { status: 401 });

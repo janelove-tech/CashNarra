@@ -252,3 +252,9 @@ Read the required handoff sequence and referenced voice protocol; Git clean at f
 User explicitly requested enabling their own stories after encountering mock-only processing. Enabled AI_ENABLED=true, OPENAI_MODEL=gpt-6-luna and LOCAL_AI_BUDGET=true in ignored local configuration only. Added cumulative pre-call reservation/usage settlement to realExtract using the existing US$5 evaluation journal, 100KB request bound and tested model; no source text or source fingerprints written to that journal. Uncertain calls keep reservations; no retries. Explanations are disabled in this local-budget mode; voice remains disabled. Existing per-user daily quota, ownership, interpretation validation and reviewed deterministic save remain in force. Restarted verified local server on 3100 with system certificate trust.
 
 PASS: nine budget/narration tests, typecheck, lint, production build and one real synthetic adapter smoke check (no records saved). Cumulative committed/reserved now US$0.513872, including uncertain prior reservation; remaining US$4.486128. Local interactive story calls share this ceiling. This is not production launch or general voice-quality approval. Updated CURRENT; no push/deploy.
+
+## Everyday wording, percentage confirmation, longer clips — 2026-10-19 — Cursor
+
+Resumed from clean `694e2ff` with the interrupted product work uncommitted. Preserved it. Finished the wording pass, kept percentage totals in deterministic code, and left transcription disabled after the earlier 401 missing_scope result. No new provider call and no budget-journal change.
+
+PASS: 111 unit tests, typecheck, lint, and 42 Edge browser tests. Sample Plan page shows the shorter goal explanation and the included-money list, with no visible “svg” label. Recording remains three minutes; voice quality is not approved. Phase 08 representative recordings and screen-reader evidence stay external. Phase 09 stays unresolved. NOT V1 COMPLETE.

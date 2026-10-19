@@ -49,39 +49,62 @@ test("real local Supabase login, workspace, unknown account, opening obligation 
   await page.getByRole("button", { name: "Manage accounts" }).click();
   await page.getByRole("button", { name: "Add account", exact: true }).click();
   await page.getByLabel("Account nickname").fill("Personal cash");
-  await page.getByLabel("I don’t know the opening balance yet").check();
-  await page.getByRole("button", { name: "Create recorded account" }).click();
+  await page.getByLabel("I don’t know the starting balance yet").check();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Add account" })
+    .click();
   await expect(
     page.getByText("Unknown", { exact: true }).first(),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Review opening balance" }).click();
+  await page.getByRole("button", { name: "Check starting balance" }).click();
   await page
     .getByLabel("Correct amount · GHS (blank if unknown)")
     .fill("100.00");
   await page
     .getByLabel("Reason for this correction")
     .fill("Counted opening cash");
-  await page.getByRole("button", { name: "Save declared opening" }).click();
+  await page.getByRole("button", { name: "Save starting balance" }).click();
   await expect(page.getByRole("dialog")).not.toBeVisible();
   await expect(
     page.getByText("GH₵100.00", { exact: true }).first(),
   ).toBeVisible();
-  await page.getByRole('button',{name:'Records',exact:true}).filter({visible:true}).click();
-  await page.getByRole('button',{name:'Add opening obligation'}).click();
-  await page.getByLabel('Amount · GHS',{exact:true}).fill('20.00');
-  await page.getByLabel('Person or business (when money is owed)').fill('Synthetic friend');
-  await page.getByRole('button',{name:'Review this record'}).click();
-  await page.getByRole('button',{name:'Save reviewed 1 records'}).click();
-  await expect(page.getByRole('status')).toContainText('records confirmed');
-  await page.getByRole('button',{name:'Records',exact:true}).filter({visible:true}).click();
-  await page.getByRole('button',{name:'Record payment',exact:true}).click();
-  await page.getByRole('button',{name:'Review this record'}).click();
-  await page.getByRole('button',{name:'Save reviewed 1 records'}).click();
-  await expect(page.getByRole('status')).toContainText('records confirmed');
-  const snapshot=await(await page.request.get('/api/workspaces')).json();
-  const personal=snapshot.workspaces.find((w:{name:string})=>w.name===workspaceName);
-  expect(personal.records.filter((r:{kind:string})=>r.kind==='sale')).toHaveLength(0);
-  expect(personal.records.filter((r:{kind:string})=>r.kind==='receivable_payment')).toHaveLength(1);
+  await page
+    .getByRole("button", { name: "Records", exact: true })
+    .filter({ visible: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Add a balance from before CashNarra" })
+    .click();
+  await page.getByLabel("Amount · GHS", { exact: true }).fill("20.00");
+  await page
+    .getByLabel("Person or business (when money is owed)")
+    .fill("Synthetic friend");
+  await page.getByRole("button", { name: "Review this record" }).click();
+  await page.getByRole("button", { name: "Save reviewed 1 records" }).click();
+  await expect(page.getByRole("status")).toContainText("records confirmed");
+  await page
+    .getByRole("button", { name: "Records", exact: true })
+    .filter({ visible: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Record payment", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Review this record" }).click();
+  await page.getByRole("button", { name: "Save reviewed 1 records" }).click();
+  await expect(page.getByRole("status")).toContainText("records confirmed");
+  const snapshot = await (await page.request.get("/api/workspaces")).json();
+  const personal = snapshot.workspaces.find(
+    (w: { name: string }) => w.name === workspaceName,
+  );
+  expect(
+    personal.records.filter((r: { kind: string }) => r.kind === "sale"),
+  ).toHaveLength(0);
+  expect(
+    personal.records.filter(
+      (r: { kind: string }) => r.kind === "receivable_payment",
+    ),
+  ).toHaveLength(1);
   await page
     .getByRole("button", { name: "Settings and privacy", exact: true })
     .click();

@@ -9,7 +9,7 @@ test("loads summary metadata and one authorised state without bulk refresh", asy
       reads.push(new URL(r.url()).search);
   });
   await page.goto("/");
-  await page.getByRole("button", { name: "Try the synthetic demo" }).click();
+  await page.getByRole("button", { name: "Explore with sample data" }).click();
   await expect(
     page.getByRole("heading", { name: "Let’s make sense of your money." }),
   ).toBeVisible();
@@ -33,7 +33,7 @@ test("loads summary metadata and one authorised state without bulk refresh", asy
   const otherPage = await other.newPage();
   await otherPage.goto("/");
   await otherPage
-    .getByRole("button", { name: "Try the synthetic demo" })
+    .getByRole("button", { name: "Explore with sample data" })
     .click();
   expect(
     (await other.request.get(`/api/workspaces?workspace=${id}`)).status(),

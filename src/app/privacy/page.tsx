@@ -11,26 +11,25 @@ export default function Privacy() {
         />
       </Link>
       <article className={s.flow} style={{ paddingTop: 48 }}>
-        <h1>Your records, with clear boundaries.</h1>
+        <h1>Your money story is personal.</h1>
         <p>
           This is a local development build. The synthetic demo is for fictional
           data only. The operating company and privacy contact have not yet been
           supplied; real customer onboarding is not launch-ready.
         </p>
-        <h2>What is processed</h2>
+        <h2>What we use</h2>
         <p>
-          Account identity, manually entered financial facts, names or aliases
-          you choose, narration and review history support your records. Do not
-          enter payment PINs, bank credentials, identity documents or
-          unnecessary sensitive details.
+          Your sign-in details, money stories, names you enter and changes you
+          make help us organise your records. Do not enter payment PINs, bank
+          credentials, identity documents or unnecessary sensitive details.
         </p>
         <p>
           Supabase handles sign-in and stores your records. If AI is switched
           on, OpenAI receives your story and the account or debt details needed
           to suggest records. You check those suggestions before saving. We ask
           OpenAI not to save the response for later use, but that does not mean
-          it keeps no data at all. The service providers’ storage locations and data
-          policies must be confirmed before this app is opened to real
+          it keeps no data at all. The service providers’ storage locations and
+          data policies must be confirmed before this app is opened to real
           customers.
         </p>
         <h2>Device drafts and exports</h2>
@@ -42,7 +41,7 @@ export default function Privacy() {
           and fonts are kept for faster loading. Downloaded reports are private
           files; anyone you send them to can redistribute them.
         </p>
-        <h2>Retention and your requests</h2>
+        <h2>How long your words stay</h2>
         <p>
           Your original words are kept for 30 days by default in this
           development version. You can choose a shorter time in Settings. Saved
@@ -60,12 +59,15 @@ export default function Privacy() {
           estimates based on amounts you choose, not promises or a check that
           you can afford them.
         </p>
-        <p>
-          Company/operator, DPC, provider, BoG/PFTSP, GRA approval and
-          Ghana-held tax-record arrangements, retention and NITA applicability
-          remain pre-launch questions. Development completion is not regulatory
-          approval or accessibility certification.
-        </p>
+        <details>
+          <summary>Before CashNarra opens to the public</summary>
+          <p>
+            The company responsible for your data, its privacy contact, provider
+            arrangements and applicable Ghanaian registration and record-keeping
+            requirements still need to be confirmed. Building the app does not
+            mean it has regulatory approval or accessibility certification.
+          </p>
+        </details>
         <Link href="/">Back to CashNarra</Link>
       </article>
     </main>

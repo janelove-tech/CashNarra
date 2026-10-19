@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 async function demo(page: Page) {
   await page.goto("/");
-  await page.getByRole("button", { name: "Try the synthetic demo" }).click();
+  await page.getByRole("button", { name: "Explore with sample data" }).click();
   await expect(
     page.getByRole("heading", { name: "Let’s make sense of your money." }),
   ).toBeVisible();
@@ -18,7 +18,7 @@ test("account balance evidence opens its transfer record", async ({ page }) => {
   await page.getByRole("button", { name: "GH₵2,400.00", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: "Behind these figures" });
   await dialog
-    .getByText("Included movements for Bank", { exact: true })
+    .getByText("Records for Bank", { exact: true })
     .click();
   await expect(
     dialog.getByText(/transfers remain excluded/).filter({ visible: true }),
@@ -86,8 +86,8 @@ test("mock clarification and unsupported input remain drafts", async ({
   await expect(
     page
       .getByRole("alert")
-      .filter({ hasText: "Mock processing supports only" }),
-  ).toContainText("Mock processing supports only");
+      .filter({ hasText: "This demo can read the two sample stories" }),
+  ).toContainText("This demo can read the two sample stories");
   await page.getByRole("button", { name: "Try an unclear version" }).click();
   await page.getByRole("button", { name: "Understand my story" }).click();
   await expect(
@@ -235,3 +235,4 @@ test("two synthetic users cannot read or mutate the other workspace", async ({
   expect(write.status()).toBe(409);
   await other.close();
 });
+

@@ -5,9 +5,12 @@ import type { Extraction } from "@/server/ai";
 import { duplicates } from "@/domain/ledger";
 import { Button, Amount } from "./ui";
 import s from "./app.module.css";
+import CalculationReview from "./calculation-review";
 type Props = {
   heading: RefObject<HTMLHeadingElement | null>;
   questions: Extraction["questions"];
+  calculations?: Extraction["calculations"];
+  confirmCalculation?: (id: string, amount: string, note: string) => void;
   events: EventInput[];
   replaceIds: string[];
   reason: string;
@@ -30,6 +33,8 @@ type Props = {
 export default function BatchReview({
   heading,
   questions,
+  calculations = [],
+  confirmCalculation,
   events,
   replaceIds,
   reason,
@@ -59,23 +64,54 @@ export default function BatchReview({
           ? "Your answer changes how the record is understood."
           : "Check every record. Select a row to change it."}
       </p>
-      {questions.map((q) => (
-        <div key={q.recordId + q.field} className={s.panel}>
-          <h2>{q.question}</h2>
-          <Button
-            onClick={() => manual(events.find((e) => e.id === q.recordId))}
-          >
-            Add the missing detail
-          </Button>
-        </div>
-      ))}
+      {calculations.some((c) => c.version !== w.version) && (
+        <p role="alert">
+          Your records have changed since this calculation. Go back to your
+          story and process it again to use the latest figures.
+        </p>
+      )}
+      {calculations
+        .filter(
+          (c) =>
+            events.some((e) => e.id === c.recordId) &&
+            questions.some(
+              (q) => q.recordId === c.recordId && q.field === "amount",
+            ),
+        )
+        .map((c) => (
+          <CalculationReview
+            key={c.recordId}
+            calculation={c}
+            hidden={hidden}
+            disabled={pending || busy || c.version !== w.version}
+            onConfirm={(amount, note) =>
+              confirmCalculation?.(c.recordId, amount, note)
+            }
+          />
+        ))}
+      {questions
+        .filter(
+          (q) =>
+            q.field !== "amount" ||
+            !calculations.some((c) => c.recordId === q.recordId),
+        )
+        .map((q) => (
+          <div key={q.recordId + q.field} className={s.panel}>
+            <h2>{q.question}</h2>
+            <Button
+              onClick={() => manual(events.find((e) => e.id === q.recordId))}
+            >
+              Add the missing detail
+            </Button>
+          </div>
+        ))}
       <span className={s.badge}>
         {events.length} proposed records · not saved yet
       </span>
       {replaceIds.length > 0 && (
         <div className={s.notice}>
-          This replaces {replaceIds.length} saved record(s). Prior versions
-          remain in correction history.
+          This updates {replaceIds.length} saved record(s). You can still see
+          the earlier versions in history.
           <label htmlFor="reason">Reason</label>
           <input
             id="reason"
@@ -92,14 +128,14 @@ export default function BatchReview({
       {events.length === 0 && (
         <p className={s.empty}>
           {replaceIds.length
-            ? "The incorrect financial effect will be removed."
+            ? "This record will stop counting towards your totals. Its history stays available."
             : "No proposed records yet."}
         </p>
       )}
       <details>
         <summary>Read the original story</summary>
         <blockquote>
-          {hidden ? "Source hidden while amounts are masked." : text}
+          {hidden ? "Your story is hidden while amounts are hidden." : text}
         </blockquote>
       </details>
       {duplicates(w, events).length > 0 && (
@@ -110,13 +146,11 @@ export default function BatchReview({
               {d.existing.description} · {d.existing.date} ·{" "}
               <Amount value={d.existing.amount} hidden={hidden} />
               <br />
-              Existing record: {d.existing.id}
-              <br />
-              Source:{" "}
+              Original story:{" "}
               {hidden
                 ? "Hidden"
                 : (w.sources.find((s) => s.id === d.existing.sourceId)?.text ??
-                  "Removed under retention setting")}
+                  "Deleted following your story privacy setting")}
             </p>
           ))}
           <label className={s.checkLabel}>
@@ -125,13 +159,12 @@ export default function BatchReview({
               checked={allowDuplicates}
               onChange={(e) => setAllowDuplicates(e.target.checked)}
             />
-            I compared the evidence. Keep these as new records.
+            These are separate transactions. Save them as new records.
           </label>
         </div>
       )}
       <p className={s.notice}>
-        The whole batch saves together. Transfers are not spending. Old debt
-        payments are not new sales.
+        All these records will be saved together when you confirm.
       </p>
       <div className={s.actions}>
         {pending ? (

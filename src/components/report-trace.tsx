@@ -26,11 +26,11 @@ export default function ReportTrace({
       </p>
       <p>
         Received <Amount value={r.received} hidden={hidden} /> minus paid out{" "}
-        <Amount value={r.paid} hidden={hidden} /> = recorded net movement{" "}
+        <Amount value={r.paid} hidden={hidden} /> = change in money{" "}
         <Amount value={r.net} hidden={hidden} />.
       </p>
       <p>{r.exclusions}</p>
-      <h3>Records behind money in, money out and sales</h3>
+      <h3>Records included in money in, money out and sales</h3>
       {r.records.map((e) => (
         <div key={e.id}>
           <Button onClick={() => onRecord(e.id)}>{e.description}</Button>
@@ -50,15 +50,15 @@ export default function ReportTrace({
           </p>
         </div>
       ))}
-      <h3>Outstanding balances at period end</h3>
+      <h3>What was still owed at the end</h3>
       <p>
-        Original balance minus linked payments through {to}; includes earlier
-        openings.
+        The amount originally owed, less payments recorded by {to}. This
+        includes debts you brought into CashNarra.
       </p>
       {obligations(past).map((o) => (
         <div key={o.id}>
           <Button onClick={() => onRecord(o.id)}>
-            {hidden ? "Counterparty" : o.party} · original balance
+            {hidden ? "Name hidden" : o.party} · original balance
           </Button>
           <p>
             <Amount value={o.original} hidden={hidden} /> originally;{" "}
@@ -75,8 +75,9 @@ export default function ReportTrace({
       ))}
       <h3>Recorded accounts</h3>
       <p>
-        Declared opening plus all included account movements through period end.
-        Unknown openings stay unknown.
+        Your starting balance, plus money in and minus money out up to the last
+        day. If you have not entered a starting balance, we cannot show a full
+        balance.
       </p>
       {r.balances.map((a) => (
         <div key={a.id}>
@@ -88,12 +89,12 @@ export default function ReportTrace({
               }
               hidden={hidden}
             />{" "}
-            opening on{" "}
+            starting on{" "}
             {workspace.accounts.find((x) => x.id === a.id)?.openingDate};{" "}
             <Amount value={a.balance} hidden={hidden} /> recorded at period end.
           </p>
           <details>
-            <summary>Included movements for {a.name}</summary>
+            <summary>Records for {a.name}</summary>
             <p>
               Includes earlier periods and transfers affecting this account;
               transfers remain excluded from workspace money in and out.

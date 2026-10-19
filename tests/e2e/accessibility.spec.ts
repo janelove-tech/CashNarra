@@ -5,7 +5,7 @@ test("record errors are associated and focusable; dialog stays keyboard-containe
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize({ width: 320, height: 900 });
   await page.goto("/");
-  await page.getByRole("button", { name: "Try the synthetic demo" }).click();
+  await page.getByRole("button", { name: "Explore with sample data" }).click();
   await page
     .getByRole("button", { name: "Tell your story", exact: true })
     .click();

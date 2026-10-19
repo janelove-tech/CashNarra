@@ -45,7 +45,7 @@ export default function Landing() {
           </p>
           <div className={s.actions}>
             <Button primary onClick={demo} disabled={busy}>
-              Try the synthetic demo <ArrowRight size={18} />
+              Explore with sample data <ArrowRight size={18} />
             </Button>
             <Link className={s.button} href="/auth">
               Start my records
@@ -97,7 +97,7 @@ export default function Landing() {
         <div>
           <h2>See what it could take.</h2>
           <p>
-            Choose a goal, note how much you have assigned to it, and try
+            Choose a goal, note how much you have set aside for it, and try
             different monthly amounts. Your money stays where it is.
           </p>
         </div>

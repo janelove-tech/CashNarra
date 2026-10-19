@@ -3,7 +3,7 @@ test("planning dialog stays usable at narrow widths in both appearances", async 
   page,
 }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Try the synthetic demo" }).click();
+  await page.getByRole("button", { name: "Explore with sample data" }).click();
   for (const dark of [false, true]) {
     if (dark)
       await page
@@ -36,7 +36,7 @@ test("private draft download restores words without posting records", async ({
   page,
 }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Try the synthetic demo" }).click();
+  await page.getByRole("button", { name: "Explore with sample data" }).click();
   await page
     .getByRole("button", { name: "Tell your story", exact: true })
     .click();
@@ -93,7 +93,7 @@ test("people, goal changes, payment dates, preferences and check-in history are 
   page,
 }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Try the synthetic demo" }).click();
+  await page.getByRole("button", { name: "Explore with sample data" }).click();
   await page
     .getByRole("button", { name: "Settings and privacy", exact: true })
     .click();
@@ -170,9 +170,9 @@ test("people, goal changes, payment dates, preferences and check-in history are 
     dialog.getByText("Payment date cleared", { exact: false }),
   ).toBeVisible();
   await dialog
-    .getByText("Monthly amounts behind this estimate", { exact: true })
+    .getByText("How we worked this out", { exact: true })
     .click();
-  await expect(dialog.getByText(/2026-09 ·.*assigned · Checked/)).toBeVisible();
+  await expect(dialog.getByText(/2026-09 ·.*marked · Checked/)).toBeVisible();
   await dialog
     .getByRole("button", { name: "Check 2026-09 again", exact: true })
     .click();

@@ -106,7 +106,7 @@ for (const width of [320, 390, 768, 1440])
       await page.setViewportSize({ width, height: 1000 });
       await page.goto("/");
       await page
-        .getByRole("button", { name: "Try the synthetic demo" })
+        .getByRole("button", { name: "Explore with sample data" })
         .click();
       await expect(
         page.getByRole("button", { name: /Recorded account balances/ }),
