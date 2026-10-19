@@ -81,7 +81,7 @@ test("real local Supabase login, workspace, unknown account, opening obligation 
     .getByLabel("Person or business (when money is owed)")
     .fill("Synthetic friend");
   await page.getByRole("button", { name: "Review this record" }).click();
-  await page.getByRole("button", { name: "Save reviewed 1 records" }).click();
+  await page.getByRole("button", { name: "Save this record" }).click();
   await expect(page.getByRole("status")).toContainText("records confirmed");
   await page
     .getByRole("button", { name: "Records", exact: true })
@@ -91,7 +91,7 @@ test("real local Supabase login, workspace, unknown account, opening obligation 
     .getByRole("button", { name: "Record payment", exact: true })
     .click();
   await page.getByRole("button", { name: "Review this record" }).click();
-  await page.getByRole("button", { name: "Save reviewed 1 records" }).click();
+  await page.getByRole("button", { name: "Save this record" }).click();
   await expect(page.getByRole("status")).toContainText("records confirmed");
   const snapshot = await (await page.request.get("/api/workspaces")).json();
   const personal = snapshot.workspaces.find(

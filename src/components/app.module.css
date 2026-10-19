@@ -272,7 +272,11 @@
 .rowText strong {
   font-size: 13px;
   font-weight: 500;
-  display: block;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .rowText small,
 .rowRight small {
@@ -390,6 +394,51 @@
   padding: 20px 0;
   border-block: 1px solid var(--cn-border);
   margin: 22px 0;
+}
+.calcCard {
+  margin: 8px 0 20px;
+  padding: 8px 0 4px;
+}
+.calcCard .large {
+  display: block;
+  margin: 4px 0;
+}
+.calcList {
+  margin: 8px 0 16px;
+}
+.calcList p {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  margin: 0;
+  padding: 12px 0;
+  border-top: 1px solid var(--cn-border);
+}
+.calcList p span {
+  min-width: 0;
+}
+.choiceGrid {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.choice {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 14px;
+  text-align: left;
+  border: 1px solid var(--cn-border);
+  border-radius: 14px;
+  background: transparent;
+}
+.choice[aria-pressed="true"] {
+  border-color: var(--cn-action);
+  background: var(--cn-brand-soft);
 }
 .metrics > div {
   display: grid;

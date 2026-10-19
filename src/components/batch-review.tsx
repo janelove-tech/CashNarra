@@ -65,14 +65,14 @@ export default function BatchReview({
         {checking
           ? "Check this amount."
           : questions.length
-            ? "Just one detail."
+            ? "One thing to fill in."
             : "Your story, organised."}
       </h1>
       <p>
         {checking
-          ? "The figure comes from your saved records. Nothing is saved until you confirm."
+          ? "Nothing is saved until you use the amount."
           : questions.length
-            ? "Your answer changes how the record is understood."
+            ? "This changes the record."
             : "Check every record. Select a row to change it."}
       </p>
       {calculations.some((c) => c.version !== w.version) && (
@@ -109,15 +109,20 @@ export default function BatchReview({
         .map((q) => (
           <div key={q.recordId + q.field} className={s.panel}>
             <h2>{q.question}</h2>
+            <p>
+              {events.find((e) => e.id === q.recordId)?.description ??
+                "This proposed record"}
+            </p>
             <Button
               onClick={() => manual(events.find((e) => e.id === q.recordId))}
             >
-              Add the missing detail
+              Fill this in
             </Button>
           </div>
         ))}
       <span className={s.badge}>
-        {events.length} proposed records · not saved yet
+        {events.length} proposed {events.length === 1 ? "record" : "records"} ·
+        not saved yet
       </span>
       {replaceIds.length > 0 && (
         <div className={s.notice}>
@@ -174,9 +179,13 @@ export default function BatchReview({
           </label>
         </div>
       )}
-      <p className={s.notice}>
-        All these records will be saved together when you confirm.
-      </p>
+      {!checking && (
+        <p className={s.notice}>
+          {events.length === 1
+            ? "This record is saved when you confirm."
+            : "These records are saved together when you confirm."}
+        </p>
+      )}
       <div className={s.actions}>
         {pending ? (
           <Button primary onClick={recover} disabled={busy}>
@@ -192,8 +201,11 @@ export default function BatchReview({
               (!events.length && !replaceIds.length)
             }
           >
-            Save reviewed{" "}
-            {events.length ? `${events.length} records` : "removal"}
+            {events.length === 1
+              ? "Save this record"
+              : events.length
+                ? `Save ${events.length} records`
+                : "Save removal"}
           </Button>
         )}
         <Button onClick={() => manual()} disabled={!!pending}>

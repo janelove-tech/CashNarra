@@ -590,6 +590,13 @@ export default function CashNarra() {
         key={record.id}
         record={record}
         hidden={hidden}
+        pendingAmount={
+          draft && !record.amount
+            ? calculations?.find(
+                (c) => c.recordId === record.id && c.options.length === 1,
+              )?.options[0]?.amount
+            : undefined
+        }
         account={
           hidden
             ? undefined

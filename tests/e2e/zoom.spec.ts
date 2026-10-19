@@ -82,7 +82,7 @@ for (const theme of ["light", "dark"]) {
       );
       await dialog.getByRole("button", { name: "Review this record" }).click();
       await expect(
-        page.getByRole("button", { name: "Save reviewed 1 records" }),
+        page.getByRole("button", { name: "Save this record" }),
       ).toBeEnabled();
       await page
         .getByRole("button", { name: "Today", exact: true })

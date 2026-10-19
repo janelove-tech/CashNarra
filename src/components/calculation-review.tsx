@@ -1,7 +1,23 @@
 "use client";
 import { useState } from "react";
 import type { StoryCalculation } from "@/domain/story-calculation";
+import { formatMoney } from "@/domain/money";
 import { Amount, Button } from "./ui";
+import s from "./app.module.css";
+
+function spoken(iso: string) {
+  return new Date(iso + "T12:00:00Z").toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+function shortBasis(basis: string) {
+  return basis === "revenue"
+    ? "Sales, including unpaid sales"
+    : "Money received from customers";
+}
 
 export default function CalculationReview({
   calculation: c,
@@ -14,72 +30,60 @@ export default function CalculationReview({
   disabled: boolean;
   onConfirm: (amount: string, note: string) => void;
 }) {
-  const [choice, setChoice] = useState(c.options.length === 1 ? "0" : "");
-  const [checked, setChecked] = useState(false);
-  const option = choice === "" ? null : c.options[Number(choice)];
+  const [choice, setChoice] = useState(c.options.length === 1 ? 0 : -1);
+  const option = c.options[choice];
+  const period =
+    c.from === c.to ? spoken(c.from) : `${spoken(c.from)} – ${spoken(c.to)}`;
   return (
-    <section aria-label="Check this calculation">
-      <h2>Let’s check the amount</h2>
+    <section className={s.calcCard} aria-label="Check this calculation">
       <p>
-        {c.from} to {c.to}, including both days. This amount is owed on{" "}
-        {c.recordedOn}.
-        {c.payOn
-          ? ` ${c.payOn} is the day you plan to pay, so it still counts before that day.`
-          : ""}
+        {period}
+        {c.payOn ? ` · pay on ${spoken(c.payOn)}` : ""}
       </p>
-      <label>
-        What should the percentage apply to?
-        <select
-          value={choice}
-          disabled={disabled}
-          onChange={(e) => {
-            setChoice(e.target.value);
-            setChecked(false);
-          }}
-        >
-          <option value="">Choose which money you mean</option>
+      {c.options.length > 1 && (
+        <div className={s.choiceGrid}>
           {c.options.map((o, i) => (
-            <option key={o.basis} value={i}>
-              {o.label}
-            </option>
+            <button
+              key={o.basis}
+              type="button"
+              className={s.choice}
+              aria-pressed={choice === i}
+              disabled={disabled}
+              onClick={() => setChoice(i)}
+            >
+              <span>{shortBasis(o.basis)}</span>
+              <Amount value={o.total} hidden={hidden} />
+            </button>
           ))}
-        </select>
-      </label>
+        </div>
+      )}
       {option && (
         <>
           <p>
-            <Amount value={option.total} hidden={hidden} /> × {c.percent}% ={" "}
-            <Amount value={option.amount} hidden={hidden} />
+            {c.percent}% of {shortBasis(option.basis).toLowerCase()}
           </p>
-          <details>
-            <summary>See the {option.records.length} included records</summary>
+          <Amount value={option.amount} hidden={hidden} large />
+          <p>
+            from <Amount value={option.total} hidden={hidden} />
+          </p>
+          <div className={s.calcList}>
             {option.records.map((r) => (
               <p key={r.id}>
-                {r.date} · {hidden ? "Record hidden" : r.description} ·{" "}
+                <span>
+                  {spoken(r.date)}
+                  <br />
+                  {hidden ? "Record hidden" : r.description}
+                </span>
                 <Amount value={r.amount} hidden={hidden} />
               </p>
             ))}
             {!option.records.length && (
-              <p>No matching saved records in this period.</p>
+              <p>No saved records in these dates.</p>
             )}
-          </details>
-          <p>
-            Only saved records are included, once each. Check that any money
-            mentioned in your story is already listed. Loans, transfers and your
-            money you put in yourself is left out.
-          </p>
-          <p>This uses the percentage you gave, not a tax assessment.</p>
-          <label>
-            <input
-              type="checkbox"
-              checked={checked}
-              disabled={disabled}
-              onChange={(e) => setChecked(e.target.checked)}
-            />{" "}
-            These are the dates and records I meant.
-          </label>
+          </div>
           <Button
-            disabled={disabled || !checked || option.amount === "0.00"}
+            primary
+            disabled={disabled || option.amount === "0.00"}
             onClick={() =>
               onConfirm(
                 option.amount,
@@ -87,7 +91,7 @@ export default function CalculationReview({
               )
             }
           >
-            Use this amount
+            Use {hidden ? "this amount" : formatMoney(option.amount)}
           </Button>
         </>
       )}

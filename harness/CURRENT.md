@@ -33,7 +33,7 @@ The existing cumulative US$5 approval still covers narration and voice. Last rec
 
 ## Percentage date correction
 
-A calculated bill is recorded on the activity date inside the named sales period. A later day named only as the payment day is kept as the planned payment, not the expense date. Money Stories labels “You owe” with the period end date and lists balances recorded after that date. Fully paid balances are left out of “Money still owed.” An already saved record is not rewritten.
+A calculated bill is recorded on the activity date inside the named sales period. A later day named only as the payment day is kept as the planned payment, not the expense date. Money Stories labels “You owe” with the period end date and lists balances recorded after that date. Fully paid balances are left out of “Money still owed.” An already saved record is not rewritten. The review screen shows the calculated amount, ordinary dates and the included records directly; a second heading, dropdown and “Needs review” placeholder are no longer the confirmation.
 
 ## Exact next action
 

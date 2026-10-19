@@ -146,11 +146,13 @@ export function RecordRow({
   hidden = false,
   onClick,
   account,
+  pendingAmount,
 }: {
   record: EventInput;
   hidden?: boolean;
   onClick: () => void;
   account?: string;
+  pendingAmount?: string;
 }) {
   const outgoing = [
       "expense",
@@ -189,11 +191,17 @@ export function RecordRow({
         </small>
       </span>
       <span className={s.rowRight}>
-        <Amount
-          value={outgoing ? "-" + record.amount : record.amount}
-          hidden={hidden}
-        />
-        <small>{record.date}</small>
+        {record.amount || pendingAmount ? (
+          <Amount
+            value={
+              (outgoing ? "-" : "") + (record.amount || pendingAmount || "")
+            }
+            hidden={hidden}
+          />
+        ) : (
+          <small>Confirm above</small>
+        )}
+        <small>{record.amount ? record.date : pendingAmount ? "To confirm" : record.date}</small>
       </span>
     </button>
   );

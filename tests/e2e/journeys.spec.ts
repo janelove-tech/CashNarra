@@ -42,7 +42,7 @@ test("manual review, authoritative save, correction, source history and private 
     .fill("Synthetic test delivery");
   await page.getByLabel("Amount · GHS", { exact: true }).fill("12.34");
   await page.getByRole("button", { name: "Review this record" }).click();
-  await page.getByRole("button", { name: "Save reviewed 1 records" }).click();
+  await page.getByRole("button", { name: "Save this record" }).click();
   await expect(page.getByRole("status")).toContainText("records confirmed");
   await expect(page.getByText("GH₵942.34", { exact: true })).toBeVisible();
   await page
@@ -60,7 +60,7 @@ test("manual review, authoritative save, correction, source history and private 
     .click();
   await page.getByLabel("Amount · GHS", { exact: true }).fill("10.00");
   await page.getByRole("button", { name: "Review this record" }).click();
-  await page.getByRole("button", { name: "Save reviewed 1 records" }).click();
+  await page.getByRole("button", { name: "Save this record" }).click();
   await expect(page.getByRole("status")).toContainText("records confirmed");
   await expect(page.getByText("GH₵940.00", { exact: true })).toBeVisible();
   for (const format of ["CSV", "PDF", "XLSX"]) {
@@ -91,12 +91,12 @@ test("mock clarification and unsupported input remain drafts", async ({
   await page.getByRole("button", { name: "Try an unclear version" }).click();
   await page.getByRole("button", { name: "Understand my story" }).click();
   await expect(
-    page.getByRole("heading", { name: "Just one detail." }),
+    page.getByRole("heading", { name: "One thing to fill in." }),
   ).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Save reviewed 8 records" }),
+    page.getByRole("button", { name: "Save 8 records" }),
   ).toBeDisabled();
-  await page.getByRole("button", { name: "Add the missing detail" }).click();
+  await page.getByRole("button", { name: "Fill this in" }).click();
   await page.getByLabel("Account", { exact: true }).selectOption("momo");
   await page.getByRole("button", { name: "Review this record" }).click();
   await expect(
@@ -158,7 +158,7 @@ test("lost save response recovers the records confirmed without posting twice", 
       await route.abort("failed");
     } else await route.continue();
   });
-  await page.getByRole("button", { name: "Save reviewed 1 records" }).click();
+  await page.getByRole("button", { name: "Save this record" }).click();
   await expect(page.getByRole("status")).toContainText("Save not confirmed");
   await page
     .getByRole("button", { name: "Check original save request" })
@@ -205,7 +205,7 @@ test("offline draft recovery and later explicit reviewed save", async ({
     .fill("Reviewed after reconnecting");
   await page.getByLabel("Amount · GHS", { exact: true }).fill("1.00");
   await page.getByRole("button", { name: "Review this record" }).click();
-  await page.getByRole("button", { name: "Save reviewed 1 records" }).click();
+  await page.getByRole("button", { name: "Save this record" }).click();
   await expect(page.getByRole("status")).toContainText("records confirmed");
 });
 test("two synthetic users cannot read or mutate the other workspace", async ({

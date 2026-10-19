@@ -43,20 +43,15 @@ test("shows included records and requires confirmation before accepting a percen
     .fill("Synthetic percentage example");
   await page.getByRole("button", { name: "Understand my story" }).click();
   await expect(
-    page.getByRole("heading", { name: "Let’s check the amount" }),
+    page.getByRole("heading", { name: "Check this amount." }),
   ).toBeVisible();
+  await expect(page.getByText("GH₵480.00").first()).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Use this amount", exact: true }),
+    page.getByRole("button", { name: "Save this record" }),
   ).toBeDisabled();
+  await page.getByRole("button", { name: "Use GH₵480.00", exact: true }).click();
   await expect(
-    page.getByRole("button", { name: "Save reviewed 1 records" }),
-  ).toBeDisabled();
-  await page.getByLabel("These are the dates and records I meant.").check();
-  await page
-    .getByRole("button", { name: "Use this amount", exact: true })
-    .click();
-  await expect(
-    page.getByRole("button", { name: "Save reviewed 1 records" }),
+    page.getByRole("button", { name: "Save this record" }),
   ).toBeEnabled();
   await expect(
     page.getByRole("button", { name: /Synthetic percentage payment/ }),
