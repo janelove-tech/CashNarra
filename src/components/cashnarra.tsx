@@ -886,16 +886,16 @@ export default function CashNarra() {
                             <br />
                             Tell it in your own words.
                           </p>
-                          <button
+                          <label htmlFor="today-story">Your money story</label>
+                          <textarea
+                            id="today-story"
                             className={s.capture}
-                            onClick={() =>
-                              navigate(events.length ? "review" : "capture")
-                            }
-                          >
-                            {text
-                              ? "Your draft is here. Continue when you’re ready."
-                              : "“I sold 900 cash, paid for delivery, and Abena paid part of her balance…”"}
-                          </button>
+                            value={text}
+                            maxLength={12000}
+                            disabled={!!pending || busy}
+                            placeholder="I sold 900 cash, paid for delivery, and Abena paid part of her balance…"
+                            onChange={(e) => changeDraft(e.target.value)}
+                          />
                           <div className={s.actions}>
                             <Button
                               primary
@@ -913,6 +913,11 @@ export default function CashNarra() {
                               <span>Voice</span>
                             </Button>
                           </div>
+                          <small>
+                            {voice
+                              ? "Transcription is available. You review the words before anything is saved."
+                              : "Transcription is not available yet. Type here, or record and type the words yourself."}
+                          </small>
                           <small>
                             You review the records before they’re saved.
                           </small>

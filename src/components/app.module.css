@@ -217,6 +217,13 @@
   color: var(--cn-text-secondary);
   margin: 22px 0 14px;
 }
+textarea.capture {
+  color: var(--cn-text);
+  min-height: 96px;
+}
+textarea.capture::placeholder {
+  color: var(--cn-text-secondary);
+}
 .actions {
   display: flex;
   gap: 10px;

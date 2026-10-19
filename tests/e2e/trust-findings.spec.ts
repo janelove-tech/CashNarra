@@ -55,6 +55,32 @@ test("an open month says so far and separates later dates", async ({ page }) => 
   ).toContainText("2,300.00");
 });
 
+test("Today’s story field keeps the words and explains transcription first", async ({
+  page,
+}) => {
+  await demo(page);
+  await expect(
+    page.getByText(
+      "Transcription is not available yet. Type here, or record and type the words yourself.",
+    ),
+  ).toBeVisible();
+  await page
+    .getByLabel("Your money story", { exact: true })
+    .fill("Synthetic composer note");
+  await page.getByRole("button", { name: "Tell your story", exact: true }).click();
+  await expect(page.getByLabel("Your money story", { exact: true })).toHaveValue(
+    "Synthetic composer note",
+  );
+  await visible(page, "Today").click();
+  await page.getByRole("button", { name: "Voice", exact: true }).click();
+  await expect(
+    page.getByText("Automatic transcription is not enabled here yet."),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Start recording", exact: true }),
+  ).toBeVisible();
+});
+
 test("a saved story does not stay saved on a new empty story", async ({
   page,
 }) => {

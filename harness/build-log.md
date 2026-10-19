@@ -284,3 +284,7 @@ Reconciled concurrent Cursor commits through efd6f25 and preserved them. Earlier
 ## Trust findings for dates, receipts and calculation labels — 2026-10-19 — Codex
 
 Implemented review findings 1–4. Today keeps its own day and evidence range. Money Stories keeps its own date and period. An open month or week is reported through today, with later-dated records listed apart from the figures; a future period does not present an owed total. The save receipt stays on the completed action and is cleared when a new story starts. Percentage labels retain other income and state the exclusions; included kinds are unchanged. A stale workspace-move test now expects the existing goal-mark rejection. PASS: 118 unit tests, typecheck, edited-file lint, and 22 Edge tests covering the new journeys, calculation confirmation, save/recovery, layout and planning. No provider call, push, deploy or database reset. Findings 5–14 remain. NOT V1 COMPLETE.
+
+## Today story composer — 2026-10-19 — Codex
+
+Replaced the sample-shaped button on Today with the story field itself. Typed words stay in that field and open in the story editor. Voice remains next to it, and the screen says transcription is unavailable before recording starts. PASS: composer browser test, trust browser tests, 320px layout, and the manual-review and clarification journeys. No provider call. Findings 6–14 remain. NOT V1 COMPLETE.
