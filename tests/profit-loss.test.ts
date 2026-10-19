@@ -66,6 +66,26 @@ it("calculates profit only from reviewed sales, costs and recorded expenses", ()
   expect(report.missing).toEqual([]);
 });
 
+it("uses the recorded expenses when nothing else is missing", () => {
+  const report = profitLoss(
+    fixture(),
+    "2026-10-13",
+    "2026-10-13",
+    {
+      costOfSales: "0.00",
+      depreciation: "0.00",
+      otherCosts: "0.00",
+      salesComplete: true,
+      costsComplete: true,
+      note: "",
+    },
+    today,
+  );
+  expect(report.expenses).toBe("80.00");
+  expect(report.stockPurchased).toBe("700.00");
+  expect(report.profit).toBe("2320.00");
+});
+
 it("refuses a profit when an entered cost has no explanation", () => {
   const report = profitLoss(fixture(), "2026-10-13", "2026-10-13", {
     costOfSales: "400.00",

@@ -2990,6 +2990,7 @@ export default function CashNarra() {
             workspace={w}
             from={view.from}
             to={view.to}
+            today={today}
             hidden={hidden}
           />
         </Dialog>

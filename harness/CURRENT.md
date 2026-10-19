@@ -15,7 +15,7 @@ Resumed at clean `70d9941`. Trust findings 1–4 are in `a3deaae`. Preserve e25f
 
 ## Product change in this commit
 
-A business workspace can review profit or loss for the Money Stories period. Sales, other income, recorded expenses and interest come from saved records. Stock and equipment purchases are shown separately and are not treated as the cost of the period. Cost of goods sold, equipment used up and any other missing cost stay unknown until the user supplies them; zero is accepted only as an explicit “none”. Profit stays blank while any required check is missing, and a positive extra figure needs a note. The estimate is not saved and does not post a journal. Personal workspaces do not offer it. The ordinary cash report still returns profit as null.
+A business workspace can review profit or loss for the Money Stories period. The review first shows the costs already in the records and asks whether those are complete. Yes calculates profit from those records. No asks only for a cost that is not already recorded. Stock and equipment purchases stay out of the result unless the user adds the part that was used. A positive extra figure needs a note. The estimate is not saved and does not post a journal. Personal workspaces do not offer it. The ordinary cash report still returns profit as null.
 
 The previous commit implemented review findings 6–23 and 25.
 

@@ -298,3 +298,7 @@ PASS: 121 unit tests, typecheck, lint, and 27 Edge tests (journeys, planning, ca
 ## Reviewed business profit or loss — 2026-10-19 — Codex
 
 The original concept included profit or loss. The reporting decision kept it unavailable while cost of goods sold and similar facts are missing. Money Stories for a business workspace now opens a review. Saved records supply sales, other income, expenses and interest. The user supplies the missing costs, or explicitly says none. Profit is calculated only when every check is present, and the estimate is not written to the ledger. Personal workspaces stay out of it. PASS: 4 unit tests, typecheck, lint, and one Edge test on the sample story. No provider call. NOT V1 COMPLETE.
+
+## Profit uses recorded costs first — 2026-10-19 — Codex
+
+The first review asked for cost of goods sold, equipment used up and other costs before using the expenses already saved. It now shows those recorded amounts and asks whether they are complete. Yes works out the profit from the records. No asks only for a cost that is not already there. On the sample story, yes gives GH₵2,320.00 from sales of GH₵2,400.00 and the GH₵80.00 delivery expense; the GH₵700.00 stock purchase stays out. Adding a GH₵400.00 cost of goods sold then gives GH₵1,920.00. PASS: 5 unit tests, typecheck, and the Edge review. NOT V1 COMPLETE.
