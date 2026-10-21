@@ -44,6 +44,8 @@ test("private draft download restores words without posting records", async ({
   await page
     .getByLabel("Your money story", { exact: true })
     .fill("Unfinished private story");
+  // Backup and restore sit behind the Draft backup control.
+  await page.getByText("Draft backup", { exact: true }).click();
   await page
     .getByText("Back up or restore this unfinished story", { exact: true })
     .click();

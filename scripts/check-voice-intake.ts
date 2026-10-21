@@ -2,7 +2,10 @@
 import { readFile, realpath, stat } from "node:fs/promises";
 import { resolve, relative, isAbsolute, join } from "node:path";
 import { validateVoiceManifest } from "./lib/voice-intake";
-import { RECORDING_BYTES } from "../src/lib/recording-limits";
+import {
+  EVALUATION_RECORDING_SECONDS,
+  RECORDING_BYTES,
+} from "../src/lib/recording-limits";
 import { validateRecording } from "../src/server/recording";
 
 async function main() {
@@ -34,6 +37,7 @@ async function main() {
     validateRecording(
       await privateFile(clip.file, RECORDING_BYTES),
       "audio/webm",
+      EVALUATION_RECORDING_SECONDS,
     );
   }
   console.log(

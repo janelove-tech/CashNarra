@@ -10,6 +10,8 @@ export function evaluationError(error: unknown) {
     const codes = [
       "invalid_api_key",
       "insufficient_quota",
+      "credit_balance_exhausted",
+      "billing_hard_limit_reached",
       "rate_limit_exceeded",
       "model_not_found",
       "permission_denied",

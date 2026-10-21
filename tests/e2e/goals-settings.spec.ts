@@ -16,12 +16,19 @@ test("a goal shows the marked amount and remaining without moving money", async 
   await expect(page.getByText("GH₵1,200.00").first()).toBeVisible();
   await expect(page.getByText("GH₵4,800.00").first()).toBeVisible();
   await expect(page.getByText("20.0%")).toBeVisible();
+  await expect(page.getByText("Target", { exact: true })).toBeVisible();
+  await expect(page.getByText("Set aside", { exact: true })).toBeVisible();
+  await expect(page.getByText("Remaining", { exact: true })).toBeVisible();
   await expect(
     page.getByText("This does not move or reserve money in your bank or MoMo."),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Try a monthly amount" }).click();
+  await page.getByRole("button", { name: "Explore what-if" }).click();
   await expect(page.getByRole("dialog")).toContainText(
     "your saved records stay as they are",
+  );
+  await expect(page.getByLabel(/Try a different amount/)).toBeVisible();
+  await expect(page.getByRole("dialog")).toContainText(
+    /Recorded pace|no recorded monthly pace/,
   );
   await page.keyboard.press("Escape");
   await page
@@ -35,7 +42,13 @@ test("a goal shows the marked amount and remaining without moving money", async 
     page.getByRole("heading", { name: "Recording and drafts" }),
   ).toBeVisible();
   await expect(page.getByRole("heading", { name: "Your data" })).toBeVisible();
-  await page.getByRole("button", { name: "Use shared-device mode" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Data and privacy" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Delete original stories" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Shared device" }).click();
   await expect(
     page.getByRole("dialog", { name: "Clear drafts on this device?" }),
   ).toBeVisible();

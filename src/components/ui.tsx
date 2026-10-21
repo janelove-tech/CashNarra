@@ -9,25 +9,29 @@ import {
 } from "lucide-react";
 import { formatMoney } from "@/domain/money";
 import { kindLabel } from "@/domain/ledger";
+import { readingDate } from "@/domain/periods";
 import type { EventInput } from "@/domain/types";
 import s from "./app.module.css";
 export function Button({
   children,
   onClick,
   primary = false,
+  quiet = false,
   disabled = false,
   type = "button",
 }: {
   children: ReactNode;
   onClick?: () => void;
   primary?: boolean;
+  /** A text-only secondary action beside a primary one. */
+  quiet?: boolean;
   disabled?: boolean;
   type?: "submit" | "button";
 }) {
   return (
     <button
       type={type}
-      className={`${s.button} ${primary ? s.primary : ""}`}
+      className={`${s.button} ${primary ? s.primary : ""} ${quiet ? s.quiet : ""}`}
       onClick={onClick}
       disabled={disabled}
     >
@@ -153,6 +157,13 @@ export function Dialog({
     </dialog>
   );
 }
+function rowDate(iso: string) {
+  try {
+    return readingDate(iso);
+  } catch {
+    return iso;
+  }
+}
 export function RecordRow({
   record,
   hidden = false,
@@ -160,6 +171,8 @@ export function RecordRow({
   account,
   pendingAmount,
   workspaceType = "Business",
+  onChange,
+  showDate = true,
 }: {
   record: EventInput;
   hidden?: boolean;
@@ -167,6 +180,9 @@ export function RecordRow({
   account?: string;
   pendingAmount?: string;
   workspaceType?: "Personal" | "Business";
+  onChange?: () => void;
+  /** Off inside a list that is already grouped by day. */
+  showDate?: boolean;
 }) {
   const outgoing = [
       "expense",
@@ -192,7 +208,7 @@ export function RecordRow({
         : outgoing
           ? ArrowUpRight
           : ArrowDownLeft;
-  return (
+  const row = (
     <button className={s.row} onClick={onClick}>
       <span className={`${s.recordIcon} ${outgoing ? s.out : ""}`}>
         <Icon size={19} aria-hidden />
@@ -222,8 +238,21 @@ export function RecordRow({
         ) : (
           <small>Confirm above</small>
         )}
-        <small>{record.amount ? record.date : pendingAmount ? "To confirm" : record.date}</small>
+        {!record.amount && pendingAmount ? (
+          <small>To confirm</small>
+        ) : showDate ? (
+          <small>{rowDate(record.date)}</small>
+        ) : null}
       </span>
     </button>
+  );
+  if (!onChange) return row;
+  return (
+    <div className={s.rowWithAction}>
+      {row}
+      <button type="button" className={s.quietAction} onClick={onChange}>
+        Change
+      </button>
+    </div>
   );
 }

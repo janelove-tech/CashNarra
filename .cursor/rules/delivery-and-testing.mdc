@@ -1,0 +1,22 @@
+---
+description: CashNarra current instructions, bounded testing, recovery, and evidence of completion
+alwaysApply: true
+---
+
+# Delivery and testing
+
+- Follow repository startup and source precedence. Inspect the current local worktree before using GitHub files; preserve newer unpushed work.
+- Current user instructions override historical status notes. Reconcile rather than silently following an obsolete pause, budget, or voice-off instruction.
+- The current dated testing authorization is in AGENTS.md. It is cumulative across prior usage and unresolved holds; no journal reset, second allowance, or automatic monthly renewal.
+- Provider balance, provider spending/rate limits, the local testing ceiling, and customer plan allowances are separate controls. Identify which control blocked a request before changing it.
+- After the owner reports a top-up, use the controlled recovery in `docs/READER_RECOVERY.md`. Do not keep blind-clicking or erase all pauses. Do not silently replay an earlier financial story.
+- Record provider usage before parsing/review can fail. Keep uncertain billable attempts unresolved. A restored customer allowance does not erase a company cost.
+- A completed transcript is reused. Text edits, failed story reading, double clicks, and lost responses must not automatically retranscribe a clip.
+- Do not request a key already configured and valid. If a genuinely missing key blocks the task, guide the owner to the official page and actual ignored local field; they enter the secret in their editor and reply Done. Do independent work while waiting.
+- No production deployment, account upgrade, automatic top-up, customer payment, or paid transcription fallback is implied by local testing authorization.
+- Before calling a UI change complete, inspect its rendered copy and affected states. Use focused browser checks for the actual task, plus relevant existing tests; do not write tests that merely mirror string replacements.
+- Meaningful checks include a reachable dialog CTA, visible keyboard focus, one error announcement, real account-wide quota scope, retained drafts, and no duplicate provider send.
+- State tested widths, height/zoom where relevant, real versus mocked provider use, actual spend evidence, and unresolved limitations. Never relabel HISTORICAL PASS or NOT RUN as PASS.
+- Update the current handoff and build log. In the final reply, lead with what works, what changed, and any exact blocker in ordinary English. Do not paste a technical log instead of an answer.
+
+Installing these rules is only part of the task. Apply the recovery and UI fixes, inspect them, and supply evidence. Rules guide the agent; tests and review catch violations.

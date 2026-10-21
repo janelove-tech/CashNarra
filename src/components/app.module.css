@@ -185,6 +185,21 @@
   color: var(--cn-text-secondary);
   max-width: 375px;
 }
+.storyDate {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-top: 16px;
+}
+.storyDate label {
+  display: grid;
+  gap: 6px;
+}
+.storyDate input {
+  min-height: 44px;
+}
 .eyebrow {
   display: flex;
   align-items: center;
@@ -231,6 +246,52 @@ textarea.capture::placeholder {
   align-items: center;
   flex-wrap: wrap;
   margin-top: 18px;
+}
+.reviewActions {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  padding-top: 12px;
+  background: var(--cn-background);
+}
+.rowWithAction {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rowWithAction .row {
+  flex: 1;
+  min-width: 0;
+}
+.quietAction {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--cn-border-control);
+  border-radius: 12px;
+  background: var(--cn-surface);
+  color: var(--cn-text);
+  font-weight: 700;
+}
+.goalFacts {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.goalFacts div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+  align-items: baseline;
+}
+.goalFacts dt {
+  color: var(--cn-text-secondary);
+}
+.goalFacts dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 .sectionHead {
   display: flex;
@@ -339,6 +400,10 @@ textarea.capture::placeholder {
   margin: 7px 0 15px;
   background: var(--cn-border);
 }
+.bar[data-empty="true"] {
+  height: 1px;
+  margin: 12px 0 18px;
+}
 .bar span {
   display: block;
   height: 100%;
@@ -358,6 +423,11 @@ textarea.capture::placeholder {
 .flow {
   max-width: 760px;
   margin: auto;
+}
+.storyInput {
+  min-height: 8rem;
+  max-height: 40vh;
+  field-sizing: content;
 }
 .panel {
   padding: 24px;
@@ -636,6 +706,14 @@ textarea.capture::placeholder {
 .dialogBody > p:last-child {
   margin-bottom: 0;
 }
+.voicePrimary {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  background: var(--cn-surface);
+  padding-top: 12px;
+}
 .exportChoices {
   display: grid;
   gap: 10px;
@@ -728,10 +806,14 @@ textarea.capture::placeholder {
   color: var(--cn-story-muted);
 }
 .movement {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
   margin: 0 0 16px;
+}
+.movement > div {
+  flex: 1 1 11rem;
+  min-width: max-content;
 }
 .movement span {
   display: block;
@@ -744,7 +826,7 @@ textarea.capture::placeholder {
   font-size: 28px;
   font-weight: 600;
   line-height: 36px;
-  white-space: normal;
+  white-space: nowrap;
 }
 .movement [data-metric="received"] .amount,
 .movement [data-metric="net"][data-sign="in"] .amount {
@@ -804,9 +886,12 @@ textarea.capture::placeholder {
   padding: 24px 0;
   border-bottom: 1px solid var(--cn-border);
   display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+.settingsDanger {
+  margin-top: 8px;
 }
 .settingsRow > div:first-child {
   flex: 1;
@@ -1325,7 +1410,7 @@ textarea.capture::placeholder {
     display: block;
   }
   .movement {
-    grid-template-columns: 1fr;
+    gap: 12px 16px;
   }
   .sidebar {
     display: none;
@@ -1376,6 +1461,9 @@ textarea.capture::placeholder {
   .composer .actions .primary {
     flex: 1;
     min-height: 48px;
+  }
+  .reviewActions {
+    bottom: var(--cn-layout-bottomNavigation);
   }
   .bottomNav {
     display: flex;
@@ -1561,3 +1649,267 @@ textarea.capture::placeholder {
   }
 }
 .amountLink{font:inherit;border:0;background:transparent;padding:4px 0;min-height:44px;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:4px;color:inherit}
+
+/* --- 21 October 2026 UI pass: shared grammar ------------------------------ */
+.quiet {
+  border-color: transparent;
+  background: transparent;
+  color: var(--cn-action);
+  padding-inline: 10px;
+}
+.quiet:hover {
+  background: var(--cn-brand-soft);
+}
+.sidebar {
+  overflow-y: auto;
+}
+.sidebarBottom .navLink {
+  align-items: flex-start;
+  line-height: 20px;
+}
+.sidebarBottom .navLink svg {
+  margin-top: 2px;
+}
+.pageIntro {
+  margin-bottom: 24px;
+}
+.pageIntro h1 {
+  font-size: 24px;
+  line-height: 32px;
+  margin: 0 0 4px;
+}
+.pageIntro p {
+  margin: 0;
+  color: var(--cn-text-secondary);
+}
+.composer h2 {
+  margin-top: 0;
+}
+.composer > p {
+  margin-bottom: 0;
+}
+.storyDate {
+  align-items: center;
+  margin-top: 20px;
+}
+.storyDate > label:first-child {
+  margin: 0;
+  font-weight: 600;
+}
+.storyDate .dateField {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-weight: 500;
+  color: var(--cn-text-secondary);
+}
+.dateField input {
+  width: 11.5em;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding-block: 8px;
+  color: var(--cn-text);
+}
+textarea.capture {
+  margin: 10px 0 0;
+  field-sizing: content;
+  max-height: 40vh;
+}
+.composer .actions {
+  margin-top: 14px;
+}
+.hint,
+.composer .hint {
+  margin: 12px 0 0;
+  color: var(--cn-text-secondary);
+  font-size: 13px;
+  line-height: 20px;
+  max-width: none;
+}
+.dayHeading {
+  margin: 28px 0 0;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--cn-text-secondary);
+}
+.dayHeading:first-of-type {
+  margin-top: 8px;
+}
+.debtGroup h3 {
+  margin: 24px 0 0;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--cn-text-secondary);
+}
+.debtRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 16px;
+  align-items: center;
+  padding: 14px 0 10px;
+  border-bottom: 1px solid var(--cn-border);
+}
+.debtRow strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 22px;
+  overflow-wrap: anywhere;
+}
+.debtRow small {
+  display: block;
+  color: var(--cn-text-secondary);
+  font-size: 13px;
+  line-height: 20px;
+}
+.debtRow .amount {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 22px;
+  text-align: right;
+}
+.debtActions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 4px;
+  margin-left: -10px;
+}
+.debtActions .button {
+  min-height: 40px;
+}
+.reviewTools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 4px;
+  margin: 4px 0 12px -10px;
+}
+.reviewActions {
+  padding-bottom: 12px;
+  border-top: 1px solid var(--cn-border);
+}
+.lineList {
+  margin: 8px 0 16px;
+  max-width: 720px;
+}
+.lineList p {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  margin: 0;
+  padding: 10px 0;
+  border-top: 1px solid var(--cn-border);
+  color: var(--cn-text);
+}
+.lineList p span:first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.lineList .amount {
+  font-weight: 600;
+}
+.compare {
+  display: grid;
+  gap: 12px;
+  margin: 12px 0 4px;
+  padding: 14px 16px;
+  border: 1px solid var(--cn-border);
+  border-radius: 12px;
+}
+.compare > div {
+  display: grid;
+  gap: 2px;
+}
+.compare small {
+  font-weight: 600;
+  color: var(--cn-text-secondary);
+}
+.compare strong {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 18px;
+  line-height: 26px;
+  letter-spacing: -0.02em;
+}
+.dupList {
+  list-style: none;
+  margin: 8px 0 4px;
+  padding: 0;
+}
+.dupList li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--cn-border);
+  color: var(--cn-text);
+}
+.dupList li span:first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.reference {
+  margin-top: 16px;
+}
+.reference summary {
+  min-height: 40px;
+  padding: 8px 0;
+  color: var(--cn-text-secondary);
+  font-size: 13px;
+}
+.reference small {
+  overflow-wrap: anywhere;
+}
+.usageRows {
+  list-style: none;
+  margin: 16px 0 20px;
+  padding: 0;
+  max-width: 560px;
+}
+.usageRows li {
+  padding: 10px 0;
+  border-top: 1px solid var(--cn-border);
+}
+.panelNarrow {
+  max-width: 720px;
+}
+@media (max-width: 760px) {
+  .composer h2 {
+    font-size: 24px;
+    line-height: 30px;
+  }
+  .composer > p {
+    font-size: 14px;
+    line-height: 20px;
+  }
+  .storyDate {
+    margin-top: 14px;
+  }
+  .storyDate .dateField {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .pageIntro {
+    margin-bottom: 18px;
+  }
+  .pageIntro h1 {
+    font-size: 22px;
+    line-height: 28px;
+  }
+  .rowWithAction .quietAction {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+  .reviewActions {
+    padding-top: 10px;
+  }
+}

@@ -8,25 +8,42 @@ test("public sample stays in the browser and does not open a demo session", asyn
     if (request.url().includes("/api/demo") || request.url().includes("/api/understand"))
       demoCalls.push(request.url());
   });
+  page.on("request", (request) => {
+    if (request.url().includes("/api/transcribe")) demoCalls.push(request.url());
+  });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   await expect(
     page.getByRole("heading", {
-      name: "Tell us what happened with your money. We’ll help you make sense of it.",
+      name: "Tell your money story. See the numbers.",
     }),
   ).toBeVisible();
-  const sample = page.getByRole("article");
+  await page.getByRole("button", { name: "Try an example" }).focus();
+  await page.keyboard.press("Enter");
+  const reveal = page.getByRole("button", { name: "See the records" });
+  await expect(reveal).toBeFocused();
+  await expect(reveal).toHaveCSS("outline-style", "solid");
+  await expect(page.getByText("Cash sale", { exact: true })).toHaveCount(0);
+  await reveal.click();
+  const sample = page.getByRole("article", { name: "Fictional example" });
   await expect(sample.getByText("Cash sale", { exact: true })).toBeVisible();
-  await expect(sample.getByText("not a new sale").first()).toBeVisible();
-  await expect(sample.getByText("Net movement GH₵1,020.00")).toBeVisible();
-  await page.getByRole("button", { name: "Try a trickier story" }).click();
+  await expect(sample.getByText("It is not a new sale.")).toBeVisible();
+  await expect(sample.getByText("Sales stay GH₵900.00.")).toBeVisible();
+  await expect(sample.getByText("GH₵1,100.00")).toBeVisible();
+  await expect(sample.getByText("GH₵1,020.00")).toBeVisible();
+  await page.getByRole("button", { name: "Try a missing detail" }).click();
   await expect(
     page.getByText("Choose the delivery account before this example shows a money total."),
   ).toBeVisible();
+  await expect(sample.getByText("GH₵1,020.00")).toHaveCount(0);
   await page.getByRole("button", { name: "MoMo", exact: true }).click();
-  await expect(page.getByText("Payment for delivery · MoMo")).toBeVisible();
-  await expect(page.getByText("Net movement GH₵1,020.00")).toBeVisible();
-  await page.getByRole("link", { name: "Record my own story" }).click();
+  await expect(sample.getByText("MoMo · Payment for delivery")).toBeVisible();
+  await expect(sample.getByText("GH₵1,020.00")).toBeVisible();
+  await page.getByRole("button", { name: "Reset the story example" }).click();
+  await expect(page.getByText("Cash sale", { exact: true })).toHaveCount(0);
+  await expect(reveal).toBeFocused();
+  await reveal.click();
+  await sample.getByRole("link", { name: "Start free" }).click();
   await expect(page).toHaveURL(/\/auth\?mode=signup/);
   await expect(
     page.getByRole("heading", { name: "Start your money records." }),
@@ -34,6 +51,19 @@ test("public sample stays in the browser and does not open a demo session", asyn
   await expect(page.getByText("At least 8 characters.")).toBeVisible();
   await expect(page.getByRole("link", { name: "Open records" })).toHaveCount(0);
   expect(demoCalls).toEqual([]);
+});
+
+test("Choose Plus opens the review and does not start Plus", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: "Choose Plus" }).click();
+  await expect(page).toHaveURL(/\/pricing\/plus/);
+  await expect(page.getByRole("heading", { name: "Review Plus" })).toBeVisible();
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(
+    page.getByText(
+      "Plus is not started. Payment is not connected, so your Free plan stays as it is.",
+    ),
+  ).toBeVisible();
 });
 
 test("sign-in keeps one primary action and a nearby password reset", async ({

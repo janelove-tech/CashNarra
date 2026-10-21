@@ -75,8 +75,9 @@ test("Today’s story field keeps the words and explains transcription first", a
   await visible(page, "Today").click();
   await page.getByRole("button", { name: "Voice", exact: true }).click();
   await expect(
-    page.getByText("Automatic transcription is not enabled here yet."),
+    page.getByText("Voice is not available yet. You can type your story."),
   ).toBeVisible();
+  await expect(page.getByText(/Ready · 0 \/ \d+ seconds/)).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Start recording", exact: true }),
   ).toBeVisible();
@@ -97,4 +98,24 @@ test("a saved story does not stay saved on a new empty story", async ({
   await page.getByRole("button", { name: "Tell your story", exact: true }).click();
   await expect(page.getByLabel("Your money story", { exact: true })).toHaveValue("");
   await expect(page.getByRole("status").filter({ hasText: "Saved" })).toHaveCount(0);
+});
+
+test("a day with no records does not show zero money movement", async ({
+  page,
+}) => {
+  await demo(page);
+  await page.locator("#today-date").fill("2026-10-12");
+  await expect(
+    page.getByText(
+      "No records for this day. That does not mean nothing happened.",
+    ),
+  ).toBeVisible();
+  const moneyIn = page.getByRole("button", { name: /Money in · 12 Oct 2026/ });
+  await expect(moneyIn).toContainText("No records for this day");
+  await expect(moneyIn).not.toContainText("GH₵0.00");
+  await expect(page.getByText("Not recorded").first()).toBeVisible();
+  await page.locator("#today-date").fill("2026-10-13");
+  await expect(
+    page.getByRole("button", { name: /Money in · 13 Oct 2026/ }),
+  ).toContainText("GH₵");
 });

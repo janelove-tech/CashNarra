@@ -1,0 +1,32 @@
+---
+description: CashNarra customer words, useful errors, and plain owner updates
+alwaysApply: true
+---
+
+# Customer language
+
+- Write ordinary English for a person keeping money records. Use short, direct sentences and the action or benefit first.
+- Keep the same name for the same thing. Distinguish financial planning from subscription billing. Do not introduce unexplained terms just to sound professional.
+- Keep provider billing, internal guards, configuration variables, testing journals, database terms, and development-phase notes in owner/developer views.
+- Pricing shows the finished Free and Plus offering. Do not add preview, coming-soon, not-for-sale, or availability notes. Keep Unlimited absent publicly. Resolve launch readiness privately.
+- State each benefit clearly; add one smaller readable explanation when needed. Unlimited financial records does not mean unlimited AI requests.
+- State a limit when it affects the person's action. Do not repeat quota, privacy, and storage explanations throughout a short flow. Keep essential consent and truthful financial distinctions visible.
+- One problem produces one useful error message: what happened, what is preserved, and the available next action. Do not stack generic and specific errors for the same failure.
+- A company provider failure is not a customer allowance failure. Do not tell customers to buy credit, upgrade, or replace keys to fix company billing.
+- Do not claim Saved, payment received, transcription complete, or request resolved before the corresponding evidence exists.
+- Treat the owner's new facts as current instructions. After a reported top-up, verify recovery instead of repeating a historical no-credit result as a fresh fact.
+- Apply this plain-language style to buttons, validation, status text, empty states, settings, emails, exports, and agent progress/final replies.
+
+## Approved wording patterns
+
+| Avoid in the customer app | Use when it matches the actual state |
+| --- | --- |
+| The story reader has no remaining credit | We couldn't read this story. Your words are still here. You can add a record yourself. |
+| Processing failed, followed by another error banner | One specific message beside the attempted action |
+| Use reviewed words | Use these words |
+| There are already words in the editor; clear them before another transcript | Your words are ready. Check and edit them below. |
+| Review rhythm | Reminders |
+| No penalties, points or claims of complete finances | Choose when you'd like to check your records. |
+| Daily processing guard / mock entitlements | The relevant customer allowance, or nothing on pricing |
+
+In an owner troubleshooting message, the exact OpenAI error may be necessary; explain its practical meaning first. Do not remove a material distinction such as sales versus cash received or net movement versus profit to shorten copy.

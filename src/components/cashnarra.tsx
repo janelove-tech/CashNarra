@@ -18,6 +18,7 @@ import {
   ArrowRight,
   ChevronDown,
   Mic,
+  CreditCard,
 } from "lucide-react";
 import { Button, Amount, Dialog, RecordRow } from "./ui";
 import ProfitReview from "./profit-review";
@@ -26,6 +27,8 @@ import BatchReview from "./batch-review";
 import MoveForm from "./move-form";
 import VoiceCapture from "./voice-capture";
 import PeriodExplanation from "./period-explanation";
+import { PlanUsage } from "./plan-usage";
+import { planUsageModel } from "@/domain/customer-plans";
 import ReportTrace from "./report-trace";
 import WorkspaceTools from "./workspace-tools";
 import DraftBackup from "./draft-backup";
@@ -74,6 +77,21 @@ const nav = [
   { id: "stories", label: "Money Stories", Icon: BookOpen },
   { id: "plan", label: "Plan", Icon: Target },
 ];
+/** Where the person is, for the header. Every screen names itself. */
+const placeNames: Record<string, string> = {
+  today: "Today",
+  records: "Records",
+  stories: "Money Stories",
+  plan: "Plan",
+  accounts: "Accounts",
+  usage: "Subscription",
+  settings: "Settings",
+  capture: "Tell your story",
+  review: "Check your records",
+};
+/** Draft and reading progress belong with the story, not on every screen. */
+const storyPages = ["today", "capture", "review"];
+const storyStatus = /^(Draft|Recovered draft|Waiting|Needs clarification|Understood|Saving|Save )/;
 type Operation = {
   action: string;
   workspaceId: string;
@@ -88,6 +106,10 @@ export default function CashNarra() {
     [demo, setDemo] = useState(false),
     [ai, setAi] = useState(false),
     [voice, setVoice] = useState(false),
+    [voiceSeconds, setVoiceSeconds] = useState(60),
+    [transcriptionProvider, setTranscriptionProvider] = useState<
+      "groq" | null
+    >(null),
     [page, setPage] = useState("today"),
     [loaded, setLoaded] = useState(false),
     [error, setError] = useState(""),
@@ -163,6 +185,10 @@ export default function CashNarra() {
     setDemo(data.demo);
     setAi(data.aiEnabled);
     setVoice(data.voiceEnabled);
+    setVoiceSeconds(data.voiceNoteSeconds === 120 ? 120 : 60);
+    setTranscriptionProvider(
+      data.transcriptionProvider === "groq" ? "groq" : null,
+    );
     setWid(selectedId);
     return data;
   }, []);
@@ -424,10 +450,10 @@ export default function CashNarra() {
       setPage("review");
     } catch (e) {
       if (rev !== revisionRef.current) return;
-      setError((e as Error).message);
+      setError(navigator.onLine ? (e as Error).message : "");
       setStatus(
         navigator.onLine
-          ? "Processing failed. Your draft is still here."
+          ? ""
           : "Waiting for a connection. Your draft is still here.",
       );
     } finally {
@@ -614,6 +640,7 @@ export default function CashNarra() {
   const active =
     w?.records.filter((r) => !r.removed && !r.kind.startsWith("opening_")) ??
     [];
+  const dayHasRecords = active.some((record) => record.date === date);
   const filtered = active
     .filter(
       (r) => !evidence || (r.date >= evidence.from && r.date <= evidence.to),
@@ -654,12 +681,13 @@ export default function CashNarra() {
           .toLowerCase()
           .includes(search.toLowerCase()),
     );
-  function rows(records: EventInput[], draft = false) {
+  function rows(records: EventInput[], draft = false, showDate = true) {
     return records.map((record) => (
       <RecordRow
         key={record.id}
         record={record}
         hidden={hidden}
+        showDate={showDate}
         pendingAmount={
           draft && !record.amount
             ? calculations?.find(
@@ -680,6 +708,7 @@ export default function CashNarra() {
             setModal("detail");
           }
         }}
+        onChange={draft ? () => manual(record) : undefined}
       />
     ));
   }
@@ -767,8 +796,20 @@ export default function CashNarra() {
           </button>
           {navigation()}
           <div className={s.sidebarBottom}>
-            <button className={s.navLink} onClick={() => navigate("settings")}>
-              <Settings size={20} />
+            <button
+              className={s.navLink}
+              aria-current={page === "usage" ? "page" : undefined}
+              onClick={() => navigate("usage")}
+            >
+              <CreditCard size={20} aria-hidden />
+              Subscription
+            </button>
+            <button
+              className={s.navLink}
+              aria-current={page === "settings" ? "page" : undefined}
+              onClick={() => navigate("settings")}
+            >
+              <Settings size={20} aria-hidden />
               Settings and privacy
             </button>
             <small>
@@ -781,10 +822,7 @@ export default function CashNarra() {
         <div>
           <header className={s.topbar}>
             <div className={s.breadcrumb}>
-              {hidden ? "Workspace" : w?.name} ›{" "}
-              {page === "settings"
-                ? "Settings"
-                : (nav.find((n) => n.id === page)?.label ?? "Your story")}
+              {hidden ? "Workspace" : w?.name} › {placeNames[page] ?? "Today"}
             </div>
             <Link className={s.mobileLogo} href="/">
               <img
@@ -833,11 +871,12 @@ export default function CashNarra() {
               {receipt?.page === page && (
                 <p className={s.status}>{receipt.message}</p>
               )}
-              {status && (
-                <p className={status.startsWith("Saved") ? s.status : s.notice}>
-                  {status}
-                </p>
-              )}
+              {status &&
+                (storyPages.includes(page) || !storyStatus.test(status)) && (
+                  <p className={status.startsWith("Saved") ? s.status : s.notice}>
+                    {status}
+                  </p>
+                )}
             </div>
             {error && (
               <p role="alert" className={`${s.notice} ${s.error}`}>
@@ -937,35 +976,41 @@ export default function CashNarra() {
               <>
                 {page === "today" && (
                   <>
-                    <div className={s.pageHead}>
-                      <div>
-                        <h1 ref={heading} tabIndex={-1}>
-                          Let’s make sense of your money.
-                        </h1>
-                        <p>
-                          {demo
-                            ? "Ama Works · Tuesday, 13 October 2026"
-                            : "Start with the day you remember."}
-                        </p>
-                      </div>
+                    <div className={s.pageIntro}>
+                      <h1 ref={heading} tabIndex={-1}>
+                        Let’s make sense of your money.
+                      </h1>
+                      <p>
+                        {(hidden ? "Workspace" : w.name) +
+                          " · " +
+                          (date === today
+                            ? `Today · ${readingDate(date)}`
+                            : readingDate(date))}
+                      </p>
                     </div>
                     <div className={s.composer}>
-                      <img
-                        className={s.watermark}
-                        src="/brand/cashnarra-symbol.svg"
-                        alt=""
-                      />
-                      <span className={s.eyebrow}>
-                        <img src="/brand/cashnarra-symbol.svg" alt="" />
-                        Your next story
-                      </span>
-                      <h2>What happened with your money today?</h2>
+                      <h2>What happened with your money?</h2>
                       <p>
-                        A sale, a payment, a little of both.
-                        <br />
-                        Tell it in your own words.
+                        A sale, a payment, a little of both. Tell it in your
+                        own words.
                       </p>
-                      <label htmlFor="today-story">Your money story</label>
+                      <div className={s.storyDate}>
+                        <label htmlFor="today-story">Your money story</label>
+                        <label htmlFor="today-date" className={s.dateField}>
+                          <span>Date of activity</span>
+                          <input
+                            id="today-date"
+                            type="date"
+                            value={date}
+                            onChange={(e) => {
+                              if (calendarDate(e.target.value))
+                                setDate(e.target.value);
+                              changeDraft();
+                            }}
+                            disabled={!!pending || busy}
+                          />
+                        </label>
+                      </div>
                       <textarea
                         id="today-story"
                         className={s.capture}
@@ -978,28 +1023,38 @@ export default function CashNarra() {
                       <div className={s.actions}>
                         <Button
                           primary
-                          onClick={() =>
-                            navigate(events.length ? "review" : "capture")
+                          disabled={
+                            busy || !!pending || (!text.trim() && !events.length)
                           }
+                          onClick={() => {
+                            if (events.length) navigate("review");
+                            else void understand();
+                          }}
                         >
-                          <Plus size={18} />
-                          {events.length
-                            ? "Finish your draft"
-                            : "Tell your story"}
+                          {busy
+                            ? "Waiting for processing…"
+                            : events.length
+                              ? "Finish your draft"
+                              : "Understand my story"}
                         </Button>
                         <Button onClick={() => setModal("voice")}>
-                          <Mic size={18} />
+                          <Mic size={18} aria-hidden />
                           <span>Voice</span>
                         </Button>
+                        {!events.length && (
+                          <Button quiet onClick={() => navigate("capture")}>
+                            Tell your story
+                          </Button>
+                        )}
                       </div>
-                      <small>
+                      <p className={s.hint}>
                         {voice
                           ? "Transcription is available. You review the words before anything is saved."
-                          : "Transcription is not available yet. Type here, or record and type the words yourself."}
-                      </small>
-                      <small>
-                        You review the records before they’re saved.
-                      </small>
+                          : "Transcription is not available yet. Type here, or record and type the words yourself."}{" "}
+                        {events.length
+                          ? "Your draft is waiting. Finish it to check the records."
+                          : "You review the records before they’re saved."}
+                      </p>
                     </div>
                     <div className={s.balanceBand}>
                       <button
@@ -1021,7 +1076,11 @@ export default function CashNarra() {
                         }}
                       >
                         <small>Money in · {dayLabel}</small>
-                        <Amount value={dayReport!.received} hidden={hidden} />
+                        {dayHasRecords ? (
+                          <Amount value={dayReport!.received} hidden={hidden} />
+                        ) : (
+                          <small>No records for this day</small>
+                        )}
                         <small>Including old-balance payments</small>
                       </button>
                       <button
@@ -1033,7 +1092,11 @@ export default function CashNarra() {
                         }}
                       >
                         <small>Money out · {dayLabel}</small>
-                        <Amount value={dayReport!.paid} hidden={hidden} />
+                        {dayHasRecords ? (
+                          <Amount value={dayReport!.paid} hidden={hidden} />
+                        ) : (
+                          <small>No records for this day</small>
+                        )}
                         <small>Transfers between accounts excluded</small>
                       </button>
                     </div>
@@ -1073,35 +1136,51 @@ export default function CashNarra() {
                             <div key={label}>
                               <div className={s.barLabel}>
                                 <span>{label}</span>
-                                <Amount value={value} hidden={hidden} />
+                                {dayHasRecords ? (
+                                  <Amount value={value} hidden={hidden} />
+                                ) : (
+                                  <span>Not recorded</span>
+                                )}
                               </div>
-                              <div className={s.bar}>
-                                <span
-                                  className={i ? s.barOut : undefined}
-                                  style={{
-                                    width: hidden
-                                      ? "0%"
-                                      : `${D(value)
-                                          .div(
-                                            (D(dayReport!.received).gte(
-                                              dayReport!.paid,
-                                            )
-                                              ? D(dayReport!.received)
-                                              : D(dayReport!.paid)
-                                            ).plus("0.01"),
+                              <div
+                                className={s.bar}
+                                data-empty={
+                                  hidden || D(value).isZero()
+                                    ? "true"
+                                    : "false"
+                                }
+                              >
+                                {hidden || D(value).isZero() ? null : (
+                                  <span
+                                    className={i ? s.barOut : undefined}
+                                    style={{
+                                      width: `${D(value)
+                                        .div(
+                                          (D(dayReport!.received).gte(
+                                            dayReport!.paid,
                                           )
-                                          .mul(100)
-                                          .toNumber()}%`,
-                                  }}
-                                />
+                                            ? D(dayReport!.received)
+                                            : D(dayReport!.paid)
+                                          ).plus("0.01"),
+                                        )
+                                        .mul(100)
+                                        .toNumber()}%`,
+                                    }}
+                                  />
+                                )}
                               </div>
                             </div>
                           ))}
                           <p>
-                            {dayLabel}. Money in minus money out:{" "}
-                            <Amount value={dayReport!.net} hidden={hidden} />.
-                            This is
-                            not profit.
+                            {dayHasRecords ? (
+                              <>
+                                {dayLabel}. Net movement{" "}
+                                <Amount value={dayReport!.net} hidden={hidden} />.
+                                This is not profit.
+                              </>
+                            ) : (
+                              "No records for this day. That does not mean nothing happened."
+                            )}
                           </p>
                           <Button onClick={() => navigate("stories")}>
                             Read your story <ArrowRight size={15} />
@@ -1111,11 +1190,12 @@ export default function CashNarra() {
                           <section className={s.rhythm}>
                             <h3>Your rhythm</h3>
                             <p>
-                              {
-                                w.checkins.filter((c) => c.kind !== "rest")
-                                  .length
-                              }{" "}
-                              days you checked in
+                              {(() => {
+                                const days = w.checkins.filter(
+                                  (c) => c.kind !== "rest",
+                                ).length;
+                                return `${days} ${days === 1 ? "day" : "days"} you checked in`;
+                              })()}
                             </p>
                             <small>
                               Anything else to add? A check-in only marks the
@@ -1174,50 +1254,6 @@ export default function CashNarra() {
                       at once.
                     </p>
                     <label htmlFor="story-date">Date of activity</label>
-                    <DraftBackup
-                      draft={{
-                        ownerId: owner,
-                        workspaceId: wid,
-                        text,
-                        date,
-                        revision,
-                        events,
-                        replaceIds,
-                        reason,
-                        questions,
-                        calculations,
-                        questionsPreserved: true,
-                        pendingRequest: pending ?? retryOperation ?? undefined,
-                      }}
-                      locked={!!pending || !!retryOperation || busy}
-                      onRestore={(d) => {
-                        const next =
-                          Math.max(revisionRef.current, d.revision) + 1;
-                        revisionRef.current = next;
-                        setRevision(next);
-                        setText(d.text);
-                        setDate(d.date);
-                        setEvents(d.events);
-                        setReplaceIds(d.replaceIds);
-                        setReason(d.reason);
-                        const op = d.pendingRequest as Operation | undefined;
-                        setPending(op?.action === "batch" ? op : null);
-                        setRetryOperation(
-                          op && op.action !== "batch" ? op : null,
-                        );
-                        setQuestions(withSuggestions(d.questions ?? []));
-                        setCalculations(d.calculations ?? []);
-                        setNeedsFreshReview(
-                          d.questionsPreserved === false && d.events.length > 0,
-                        );
-                        setStatus(
-                          d.questionsPreserved === false && d.events.length
-                            ? "Draft restored. This older backup did not keep unanswered questions, so check every record before saving."
-                            : "Draft restored. Check the words and records before saving.",
-                        );
-                        if (d.events.length || op) setPage("review");
-                      }}
-                    />
                     <input
                       id="story-date"
                       type="date"
@@ -1231,6 +1267,7 @@ export default function CashNarra() {
                     />
                     <label htmlFor="narration">Your money story</label>
                     <textarea
+                      className={s.storyInput}
                       id="narration"
                       value={text}
                       maxLength={12000}
@@ -1238,29 +1275,23 @@ export default function CashNarra() {
                       disabled={!!pending}
                       placeholder="Today I…"
                     />
-                    <label className={s.checkLabel}>
-                      <input
-                        type="checkbox"
-                        checked={persistent}
-                        onChange={async (e) => {
-                          setPersistent(e.target.checked);
-                          if (!e.target.checked)
-                            await clearDrafts().catch((x) =>
-                              setError(x.message),
-                            );
-                        }}
-                      />
-                      Keep drafts on this private device
-                    </label>
-                    <small>
-                      Off on shared devices. Browser storage is not a backup.
-                    </small>
                     {!ai && (
                       <p className={s.notice}>
-                        This demo can read the two sample stories.
-                        Manual recording works for other input.
+                        This demo can read the two sample stories. Manual
+                        recording works for other input.
                       </p>
                     )}
+                    <div className={s.actions}>
+                      <Button
+                        primary
+                        onClick={understand}
+                        disabled={busy || !text.trim() || !!pending}
+                      >
+                        {busy
+                          ? "Waiting for processing…"
+                          : "Understand my story"}
+                      </Button>
+                    </div>
                     <div className={s.actions}>
                       {demo && (
                         <>
@@ -1274,17 +1305,6 @@ export default function CashNarra() {
                       )}
                       <Button onClick={() => manual()}>
                         Add a manual record
-                      </Button>
-                    </div>
-                    <div className={s.actions}>
-                      <Button
-                        primary
-                        onClick={understand}
-                        disabled={busy || !text.trim() || !!pending}
-                      >
-                        {busy
-                          ? "Waiting for processing…"
-                          : "Understand my story"}
                       </Button>
                       <Button
                         onClick={() =>
@@ -1301,6 +1321,72 @@ export default function CashNarra() {
                         Copy draft
                       </Button>
                     </div>
+                    <details>
+                      <summary>Draft backup</summary>
+                      <label className={s.checkLabel}>
+                        <input
+                          type="checkbox"
+                          checked={persistent}
+                          onChange={async (e) => {
+                            setPersistent(e.target.checked);
+                            if (!e.target.checked)
+                              await clearDrafts().catch((x) =>
+                                setError(x.message),
+                              );
+                          }}
+                        />
+                        Keep drafts on this private device
+                      </label>
+                      <small>
+                        Off on shared devices. Browser storage is not a backup.
+                      </small>
+                      <DraftBackup
+                        draft={{
+                          ownerId: owner,
+                          workspaceId: wid,
+                          text,
+                          date,
+                          revision,
+                          events,
+                          replaceIds,
+                          reason,
+                          questions,
+                          calculations,
+                          questionsPreserved: true,
+                          pendingRequest:
+                            pending ?? retryOperation ?? undefined,
+                        }}
+                        locked={!!pending || !!retryOperation || busy}
+                        onRestore={(d) => {
+                          const next =
+                            Math.max(revisionRef.current, d.revision) + 1;
+                          revisionRef.current = next;
+                          setRevision(next);
+                          setText(d.text);
+                          setDate(d.date);
+                          setEvents(d.events);
+                          setReplaceIds(d.replaceIds);
+                          setReason(d.reason);
+                          const op = d.pendingRequest as Operation | undefined;
+                          setPending(op?.action === "batch" ? op : null);
+                          setRetryOperation(
+                            op && op.action !== "batch" ? op : null,
+                          );
+                          setQuestions(withSuggestions(d.questions ?? []));
+                          setCalculations(d.calculations ?? []);
+                          setNeedsFreshReview(
+                            d.questionsPreserved === false &&
+                              d.events.length > 0,
+                          );
+                          setStatus(
+                            d.questionsPreserved === false && d.events.length
+                              ? "Draft restored. This older backup did not keep unanswered questions, so check every record before saving."
+                              : "Draft restored. Check the words and records before saving.",
+                          );
+                          if (d.events.length || op) setPage("review");
+                        }}
+                      />
+                    </details>
                     <p className={s.notice}>
                       Review names and sensitive details before processing.{" "}
                       <Link href="/privacy">Who processes your story?</Link>
@@ -1548,12 +1634,12 @@ export default function CashNarra() {
                       .sort(([left], [right]) => right.localeCompare(left))
                       .map(([day, records]) => (
                         <section key={day}>
-                          <h2>
+                          <h2 className={s.dayHeading}>
                             {day === today
                               ? `Today · ${readingDate(day)}`
                               : readingDate(day)}
                           </h2>
-                          {rows(records)}
+                          {rows(records, false, false)}
                         </section>
                       ))}
                     {!filtered.length && (
@@ -1581,96 +1667,123 @@ export default function CashNarra() {
                         </div>
                       ))}
                     </details>
-                    <section className={s.chapter}>
-                      <h2>People & balances</h2>
+                    <section className={`${s.chapter} ${s.debtGroup}`}>
+                      <div className={s.sectionHead}>
+                        <h2>People & balances</h2>
+                        <Button onClick={() => setModal("workspace-tools")}>
+                          Add a person or a due date
+                        </Button>
+                      </div>
                       <p>People owe you, and amounts you owe.</p>
-                      <Button onClick={() => setModal("workspace-tools")}>
-                        Add a person or a due date
-                      </Button>
                       {!obligations(w).some((o) => D(o.remaining).gt(0)) && (
                         <p>Nothing is still owed.</p>
                       )}
-                      {obligations(w)
-                        .filter((o) => D(o.remaining).gt(0))
-                        .map((o) => (
-                        <div className={s.settingsRow} key={o.id}>
-                          <div>
-                            <strong>
-                              {hidden
-                                ? "Name hidden"
-                                : o.party.replace(/\s*(?:\.{3}|…)+$/u, "")}
-                            </strong>
-                            <p>
-                              {o.direction === "receivable"
+                      {(["receivable", "payable"] as const).map((direction) => {
+                        const open = obligations(w).filter(
+                          (o) =>
+                            o.direction === direction && D(o.remaining).gt(0),
+                        );
+                        if (!open.length) return null;
+                        return (
+                          <div key={direction}>
+                            <h3>
+                              {direction === "receivable"
                                 ? "People owe you"
-                                : "You owe"}{" "}
-                              · {o.date}
-                            </p>
-                            <Amount value={o.remaining} hidden={hidden} />
-                            {debtDate(w, o.id) && (
-                              <p>
-                                Due {debtDate(w, o.id)}
-                                {debtDate(w, o.id)! <
-                                  new Date().toISOString().slice(0, 10) &&
-                                D(o.remaining).gt(0)
-                                  ? " · Past the date you set"
-                                  : ""}
-                              </p>
-                            )}
-                          </div>
-                          <Button
-                            onClick={() =>
-                              manual(
-                                event(
-                                  o.direction === "receivable"
-                                    ? "receivable_payment"
-                                    : [
-                                          "loan_received",
-                                          "opening_loan",
-                                        ].includes(
-                                          w.records.find((r) => r.id === o.id)
-                                            ?.kind ?? "",
+                                : "You owe"}
+                            </h3>
+                            {open.map((o) => {
+                              const due = debtDate(w, o.id);
+                              const overdue = !!due && due < today;
+                              return (
+                                <div className={s.debtRow} key={o.id}>
+                                  <div>
+                                    <strong>
+                                      {hidden
+                                        ? "Name hidden"
+                                        : o.party.replace(
+                                            /\s*(?:\.{3}|…)+$/u,
+                                            "",
+                                          )}
+                                    </strong>
+                                    <small>
+                                      {direction === "receivable"
+                                        ? "Owes you since "
+                                        : "You have owed since "}
+                                      {readingDate(o.date)}
+                                      {due
+                                        ? ` · due ${readingDate(due)}${overdue ? " · past the date you set" : ""}`
+                                        : ""}
+                                    </small>
+                                  </div>
+                                  <Amount value={o.remaining} hidden={hidden} />
+                                  <div className={s.debtActions}>
+                                    <Button
+                                      quiet
+                                      onClick={() =>
+                                        manual(
+                                          event(
+                                            direction === "receivable"
+                                              ? "receivable_payment"
+                                              : [
+                                                    "loan_received",
+                                                    "opening_loan",
+                                                  ].includes(
+                                                    w.records.find(
+                                                      (r) => r.id === o.id,
+                                                    )?.kind ?? "",
+                                                  )
+                                                ? "loan_principal"
+                                                : "payable_payment",
+                                            o.remaining,
+                                            `${o.party} balance payment`,
+                                            w.accounts[0]?.id ?? null,
+                                            {
+                                              date,
+                                              party: o.party,
+                                              obligationId: o.id,
+                                            },
+                                          ),
                                         )
-                                      ? "loan_principal"
-                                      : "payable_payment",
-                                  o.remaining,
-                                  `${o.party} balance payment`,
-                                  w.accounts[0]?.id ?? null,
-                                  { date, party: o.party, obligationId: o.id },
-                                ),
-                              )
-                            }
-                            disabled={D(o.remaining).isZero()}
-                          >
-                            Record payment
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              setSelected(
-                                w.records.find((r) => r.id === o.id) ?? null,
+                                      }
+                                    >
+                                      Record payment
+                                    </Button>
+                                    <Button
+                                      quiet
+                                      onClick={() => {
+                                        setSelected(
+                                          w.records.find((r) => r.id === o.id) ??
+                                            null,
+                                        );
+                                        setModal("detail");
+                                      }}
+                                    >
+                                      View original balance
+                                    </Button>
+                                  </div>
+                                </div>
                               );
-                              setModal("detail");
-                            }}
-                          >
-                            View original balance
-                          </Button>
-                        </div>
-                      ))}
-                      <Button
-                        onClick={() =>
-                          manual(
-                            event(
-                              "opening_receivable",
-                              "",
-                              "Balance from before CashNarra",
-                              null,
-                              { date },
-                            ),
-                          )
-                        }
-                      >
-                        Add a balance from before CashNarra
-                      </Button>
+                            })}
+                          </div>
+                        );
+                      })}
+                      <div className={s.actions}>
+                        <Button
+                          onClick={() =>
+                            manual(
+                              event(
+                                "opening_receivable",
+                                "",
+                                "Balance from before CashNarra",
+                                null,
+                                { date },
+                              ),
+                            )
+                          }
+                        >
+                          Add a balance from before CashNarra
+                        </Button>
+                      </div>
                     </section>
                   </>
                 )}
@@ -1722,14 +1835,14 @@ export default function CashNarra() {
                           <h2>Here’s what moved this period.</h2>
                           <div className={s.movement}>
                             <div data-metric="received">
-                              <span>Money received</span>
+                              <span>Money in</span>
                               <Amount
                                 value={storyReport.received}
                                 hidden={hidden}
                               />
                             </div>
                             <div data-metric="paid">
-                              <span>Money paid out</span>
+                              <span>Money out</span>
                               <Amount value={storyReport.paid} hidden={hidden} />
                             </div>
                             <div
@@ -1753,7 +1866,7 @@ export default function CashNarra() {
                                 (x) => !x.kind.startsWith("opening_"),
                               ).length
                             }{" "}
-                            saved records. Unrecorded activity may be missing.
+                            saved {storyReport.records.filter((x) => !x.kind.startsWith("opening_")).length === 1 ? "record" : "records"}. Unrecorded activity may be missing.
                             Net movement is money received minus money paid out.
                             It is not profit.
                           </p>
@@ -1768,19 +1881,18 @@ export default function CashNarra() {
                           </p>
                         </>
                       )}
-                      <small>
-                        Based on what you have entered. Unrecorded days may
-                        still have activity.
-                      </small>
+                      {storyReport ? null : (
+                        <small>
+                          Based on what you have entered. Unrecorded days may
+                          still have activity.
+                        </small>
+                      )}
                     </section>
                     {storyReport && (
                       <section className={s.chapter}>
                         <h2>What this period shows</h2>
-                        <p>
-                          Money in minus money out was{" "}
-                          <Amount value={storyReport.net} hidden={hidden} />.
-                        </p>
-                        <ul>
+                        <p>The largest amounts paid out.</p>
+                        <div className={s.lineList}>
                           {storyReport.records
                             .filter((record) =>
                               [
@@ -1798,12 +1910,12 @@ export default function CashNarra() {
                             )
                             .slice(0, 3)
                             .map((record) => (
-                              <li key={record.id}>
-                                {record.description}:{" "}
+                              <p key={record.id}>
+                                <span>{record.description}</span>
                                 <Amount value={record.amount} hidden={hidden} />
-                              </li>
+                              </p>
                             ))}
-                        </ul>
+                        </div>
                         <p>
                           {storyReport.records.some(
                             (record) => record.kind === "credit_sale",
@@ -2035,7 +2147,9 @@ export default function CashNarra() {
                             ) : (
                               <Landmark size={20} aria-hidden />
                             )}
-                            <span>{a.type}</span>
+                            <span>
+                              {a.type === "Bank" ? "Bank account" : a.type}
+                            </span>
                           </span>
                           <h2 style={{ marginTop: 12 }}>
                             {hidden ? "Account" : a.name}
@@ -2147,30 +2261,39 @@ export default function CashNarra() {
                               Tracked here, not moved
                             </span>
                             <h2 style={{ marginTop: 18 }}>{g.name}</h2>
-                            <small>Money you've set aside in CashNarra</small>
-                            <div>
-                              <Amount
-                                value={f.assigned}
-                                hidden={hidden}
-                                large
-                              />
-                            </div>
-                            <p>
-                              of <Amount value={g.target} hidden={hidden} />{" "}
-                              target
-                              {hidden ? "" : ` · ${percent}%`}
-                            </p>
+                            <dl className={s.goalFacts}>
+                              <div>
+                                <dt>Target</dt>
+                                <dd>
+                                  <Amount value={g.target} hidden={hidden} />
+                                </dd>
+                              </div>
+                              <div>
+                                <dt>Set aside</dt>
+                                <dd>
+                                  <Amount value={f.assigned} hidden={hidden} />
+                                </dd>
+                              </div>
+                              <div>
+                                <dt>Remaining</dt>
+                                <dd>
+                                  <Amount
+                                    value={
+                                      remaining.lte(0)
+                                        ? "0.00"
+                                        : remaining.toFixed(2)
+                                    }
+                                    hidden={hidden}
+                                  />
+                                </dd>
+                              </div>
+                            </dl>
                             <p>
                               {remaining.lte(0)
                                 ? "The marked amount has reached the target."
-                                : <>
-                                    Remaining{" "}
-                                    <Amount
-                                      value={remaining.toFixed(2)}
-                                      hidden={hidden}
-                                    />
-                                    .
-                                  </>}
+                                : hidden
+                                  ? "The share of the target is hidden with the amounts."
+                                  : `${percent}% of the target is marked.`}
                             </p>
                             <p>
                               This does not move or reserve money in your bank
@@ -2201,7 +2324,7 @@ export default function CashNarra() {
                                   setModal("scenario");
                                 }}
                               >
-                                Try a monthly amount
+                                Explore what-if
                               </Button>
                               <Button
                                 onClick={() => {
@@ -2278,6 +2401,16 @@ export default function CashNarra() {
                     })}
                   </>
                 )}
+                {page === "usage" && (
+                  <PlanUsage
+                    headingRef={heading}
+                    model={planUsageModel({
+                      now: new Date(),
+                      workspaceCount: spaceSummaries.length,
+                      voiceEnabled: voice,
+                    })}
+                  />
+                )}
                 {page === "settings" && (
                   <>
                     <h1 ref={heading} tabIndex={-1}>
@@ -2285,11 +2418,26 @@ export default function CashNarra() {
                     </h1>
                     <p>Appearance, drafts, and your data.</p>
                     <section className={s.settingsGroup}>
+                      <h2>Subscription</h2>
+                      <div className={s.settingsRow}>
+                        <div>
+                          <strong>One plan for this account</strong>
+                          <p>
+                            Every workspace shares it. This is not a separate
+                            bill for the workspace you have open.
+                          </p>
+                        </div>
+                        <Button onClick={() => navigate("usage")}>
+                          View plan and usage
+                        </Button>
+                      </div>
+                    </section>
+                    <section className={s.settingsGroup}>
                       <h2>Appearance</h2>
                       <div className={s.settingsRow}>
                         <div>
-                          <strong>Appearance</strong>
-                          <p>Use light or dark appearance.</p>
+                          <strong>Light or dark</strong>
+                          <p>Choose the look you find easier to read.</p>
                         </div>
                         <select
                           aria-label="Appearance"
@@ -2327,12 +2475,12 @@ export default function CashNarra() {
                           </p>
                         </div>
                         <Button onClick={() => setModal("shared-device")}>
-                          Use shared-device mode
+                          Shared device
                         </Button>
                       </div>
                       <div className={s.settingsRow}>
                         <div>
-                          <strong>How long to keep your original words</strong>
+                          <strong>Keep original stories for</strong>
                           <p>
                             Your saved amounts and correction history are kept
                             separately. Removing the words now is a separate
@@ -2354,18 +2502,30 @@ export default function CashNarra() {
                           <option value={30}>30 days</option>
                           <option value={7}>7 days</option>
                         </select>
+                      </div>
+                    </section>
+                    <section className={s.settingsGroup}>
+                      <h2>Data and privacy</h2>
+                      <div className={`${s.settingsRow} ${s.settingsDanger}`}>
+                        <div>
+                          <strong>Delete original stories</strong>
+                          <p>
+                            This removes the saved narration in this workspace.
+                            The financial records and correction history stay.
+                          </p>
+                        </div>
                         <Button onClick={() => setModal("retention-now")}>
-                          Remove original words now
+                          Delete original stories
                         </Button>
                       </div>
                     </section>
                     <section className={s.settingsGroup}>
-                      <h2>Review rhythm</h2>
+                      <h2>Reminders</h2>
                       <div className={s.settingsRow}>
                         <div>
                           <strong>Check-in and catch-up</strong>
                           <p>
-                            No penalties, points or claims of complete finances.
+                            Choose when you’d like to check your records.
                           </p>
                         </div>
                         <Button onClick={() => setModal("checkin")}>
@@ -2377,7 +2537,6 @@ export default function CashNarra() {
                       <h2>People, due dates and goals</h2>
                       <div className={s.settingsRow}>
                         <div>
-                          <strong>People, due dates and goals</strong>
                           <p>
                             Names you reuse, when a balance is due, and the
                             months you have checked for a goal.
@@ -2391,7 +2550,7 @@ export default function CashNarra() {
                     <section className={s.settingsGroup}>
                       <h2>Your data</h2>
                       <p>
-                        <Link href="/privacy">Read the processing notice</Link>
+                        <Link href="/privacy">How your information is used</Link>
                       </p>
                       <div className={s.actions}>
                         <Button onClick={() => setModal("export")}>
@@ -2405,9 +2564,6 @@ export default function CashNarra() {
                         <Button onClick={() => setModal("deletion")}>
                           Request account-data deletion
                         </Button>
-                        <Button onClick={() => setModal("logout")}>
-                          Sign out
-                        </Button>
                       </div>
                       {w.requests.map((r) => (
                         <p key={r.id}>
@@ -2415,10 +2571,24 @@ export default function CashNarra() {
                         </p>
                       ))}
                       <p className={s.notice}>
-                        Requests are recorded for operator review. No records
-                        are automatically erased or emailed. This local build
-                        has no staffed support service.
+                        A request is recorded. No records are automatically
+                        erased or emailed.
                       </p>
+                    </section>
+                    <section className={s.settingsGroup}>
+                      <h2>Account</h2>
+                      <div className={s.settingsRow}>
+                        <div>
+                          <strong>Sign out of this device</strong>
+                          <p>
+                            Your saved records stay in your account. Finish or
+                            copy an unfinished story first.
+                          </p>
+                        </div>
+                        <Button onClick={() => setModal("logout")}>
+                          Sign out
+                        </Button>
+                      </div>
                     </section>
                   </>
                 )}
@@ -2469,12 +2639,18 @@ export default function CashNarra() {
               {hidden ? "Workspace" : x.name} · {x.type}
             </Button>
           ))}
+          <p>
+            One subscription covers every workspace on this account.
+          </p>
           <div className={s.actions}>
             <Button onClick={() => navigate("accounts")}>
               Manage accounts
             </Button>
             <Button onClick={() => navigate("settings")}>
               Settings and privacy
+            </Button>
+            <Button onClick={() => navigate("usage")}>
+              Subscription for this account
             </Button>
           </div>
           <hr />
@@ -2580,30 +2756,47 @@ export default function CashNarra() {
         <Dialog title={selected.description} onClose={() => setModal("")}>
           <Amount value={selected.amount} hidden={hidden} large />
           <p>
-            {labels[selected.kind]} · {selected.date}
+            {labels[selected.kind]} · {readingDate(selected.date)}
+            {selected.accountId
+              ? ` · ${hidden ? "Account hidden" : (w.accounts.find((a) => a.id === selected.accountId)?.name ?? "")}`
+              : ""}
+            {selected.party && !hidden ? ` · ${selected.party}` : ""}
           </p>
-          <small>Record {selected.id}</small>
+          <h3>From your story</h3>
           <blockquote>
             {hidden
               ? "Source hidden"
               : (w.sources.find((s) => s.id === selected.sourceId)?.text ??
                 "Original words removed according to your privacy setting")}
           </blockquote>
-          <h3>Correction history</h3>
-          {w.history
-            .filter(
+          {(() => {
+            const changes = w.history.filter(
               (h) =>
                 h.before.id === selected.id ||
                 h.replacementIds.includes(selected.id),
-            )
-            .map((h, i) => (
-              <p key={i}>
-                {h.at} · {h.reason}
-                <br />
-                Previous amount:{" "}
-                <Amount value={h.before.amount} hidden={hidden} />
-              </p>
-            ))}
+            );
+            return (
+              <>
+                <h3>Correction history</h3>
+                {changes.length ? (
+                  changes.map((h, i) => (
+                    <p key={i}>
+                      {readingDate(h.at.slice(0, 10))} · {h.reason}
+                      <br />
+                      Previous amount:{" "}
+                      <Amount value={h.before.amount} hidden={hidden} />
+                    </p>
+                  ))
+                ) : (
+                  <p className={s.muted}>No corrections yet.</p>
+                )}
+              </>
+            );
+          })()}
+          <details className={s.reference}>
+            <summary>Reference</summary>
+            <small>Record {selected.id}</small>
+          </details>
           {!w.records.find((r) => r.id === selected.id)?.removed && (
             <div className={s.actions}>
               <Button onClick={() => beginCorrection(selected)}>
@@ -2886,44 +3079,84 @@ export default function CashNarra() {
       )}
       {modal === "scenario" && goal && (
         <Dialog
-          title="What if you added a little more?"
+          title="What if you saved a different amount?"
           onClose={() => setModal("")}
         >
+          <p>See how a different monthly amount could change your goal date.</p>
           <span className={s.badge}>
             Just a try · your saved records stay as they are
           </span>
-          <label htmlFor="scenario">Monthly amount to try · GHS</label>
-          <input
-            id="scenario"
-            value={scenario}
-            inputMode="decimal"
-            onChange={(e) => setScenario(e.target.value)}
-          />
           {(() => {
+            const summarise = (f: ReturnType<typeof forecast>) =>
+              f.count === null
+                ? "No date yet"
+                : f.count === 0
+                  ? "Already reached"
+                  : f.period
+                    ? `About ${f.count} ${f.count === 1 ? "month" : "months"} · around ${new Intl.DateTimeFormat("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(Date.UTC(Number(f.period.slice(0, 4)), Number(f.period.slice(5, 7)) - 1, 1)))}`
+                    : `About ${f.count} months`;
+            const recorded = forecast(goal, date);
+            let tried: ReturnType<typeof forecast> | null = null;
+            let problem = "";
             try {
-              const f = forecast(goal, date, scenario);
-              return (
-                <div className={s.notice}>
-                  <h3>
-                    {f.count === null
-                      ? "No date yet"
-                      : `About ${f.count} months`}
-                  </h3>
-                  <p>{f.period ? `Around ${f.period}.` : ""}</p>
-                  <p>{f.reason}</p>
-                </div>
-              );
+              tried = forecast(goal, date, scenario);
             } catch {
-              return (
-                <p role="alert">
-                  Enter an amount with up to two decimal places.
-                </p>
-              );
+              problem = "Enter an amount with up to two decimal places.";
             }
+            return (
+              <>
+                <div className={s.compare}>
+                  <div>
+                    <small>Recorded pace</small>
+                    {recorded.pace && recorded.count !== null ? (
+                      <>
+                        <strong>{summarise(recorded)}</strong>
+                        <span>
+                          At <Amount value={recorded.pace} hidden={hidden} /> a
+                          month, from the months you checked.
+                        </span>
+                      </>
+                    ) : (
+                      <span>
+                        There is no recorded monthly pace yet. You can still try
+                        an amount.
+                      </span>
+                    )}
+                  </div>
+                  <div>
+                    <small>Your try</small>
+                    {tried ? (
+                      <>
+                        <strong>{summarise(tried)}</strong>
+                        <span>
+                          At <Amount value={tried.pace ?? "0.00"} hidden={hidden} />{" "}
+                          a month, the amount below.
+                        </span>
+                      </>
+                    ) : (
+                      <span role="alert">{problem}</span>
+                    )}
+                  </div>
+                </div>
+                <label htmlFor="scenario">
+                  Try a different amount{w ? ` · ${w.currency}` : ""}
+                </label>
+                <input
+                  id="scenario"
+                  value={scenario}
+                  inputMode="decimal"
+                  aria-invalid={problem ? true : undefined}
+                  onChange={(e) => setScenario(e.target.value)}
+                />
+                {tried && <p className={s.hint}>{tried.reason}</p>}
+              </>
+            );
           })()}
-          <Button onClick={() => setScenario("600.00")}>
-            Reset assumption
-          </Button>
+          <div className={s.actions}>
+            <Button quiet onClick={() => setScenario("600.00")}>
+              Reset to GH₵600.00
+            </Button>
+          </div>
         </Dialog>
       )}
       {modal === "checkin" && (
@@ -3019,9 +3252,8 @@ export default function CashNarra() {
           onClose={() => setModal("")}
         >
           <p>
-            This adds your request to the review list; it does not delete your
-            records now. Some financial records may need to be kept by law. This
-            development version does not yet have a team handling requests.
+            This records your request. It does not delete your records now.
+            Some financial records may need to be kept by law.
           </p>
           <Button
             primary
@@ -3140,6 +3372,8 @@ export default function CashNarra() {
         >
           <VoiceCapture
             transcriptionEnabled={voice}
+            transcriptionProvider={transcriptionProvider}
+            maxSeconds={voiceSeconds}
             workspaceId={w.id}
             onWork={setVoiceWork}
             onTranscript={(value) => {

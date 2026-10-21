@@ -17,14 +17,16 @@ test("offers real local recording without claiming transcription or opening the 
   await expect(
     dialog.getByRole("button", { name: "Start recording", exact: true }),
   ).toBeEnabled();
+  // The dialog says plainly that voice is off here and shows the limit
+  // before any recording starts. No transcription control is offered.
   await expect(
-    dialog.getByText("Microphone is off.", { exact: true }),
+    dialog.getByText("Voice is not available yet. You can type your story.", {
+      exact: true,
+    }),
   ).toBeVisible();
+  await expect(dialog.getByText(/Ready · 0 \/ \d+ seconds/)).toBeVisible();
   await expect(
-    dialog.getByText(/Automatic transcription is not enabled here yet/),
-  ).toBeVisible();
-  await expect(
-    dialog.getByRole("button", { name: "Transcribe recording", exact: true }),
+    dialog.getByRole("button", { name: "Turn into words", exact: true }),
   ).toHaveCount(0);
   await dialog
     .getByRole("button", { name: "Type your story", exact: true })

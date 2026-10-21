@@ -85,3 +85,12 @@ it("does not process an aborted request", async () => {
   ).toBe(422);
   expect(f.create).not.toHaveBeenCalled();
 });
+it("does not send a Groq selection through the OpenAI client", async () => {
+  vi.stubEnv("TRANSCRIPTION_PROVIDER", "groq");
+  vi.stubEnv("GROQ_API_KEY", "synthetic-groq-test");
+  expect(
+    (await POST(new Request("http://localhost", { method: "POST" }))).status,
+  ).toBe(422);
+  expect(f.create).not.toHaveBeenCalled();
+  expect(f.reserve).not.toHaveBeenCalled();
+});

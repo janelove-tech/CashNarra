@@ -8,6 +8,9 @@ export function microphoneError(error: unknown): string {
     return "The microphone could not be opened. Check whether another app is using it, then try again.";
   return "Recording could not start. Try again or type your story.";
 }
+export function keepReviewedTranscript(text: string) {
+  return text.trim().length > 0;
+}
 export function transcriptText(result: unknown): string {
   if (
     !result ||

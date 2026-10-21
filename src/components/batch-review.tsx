@@ -3,6 +3,7 @@ import type { ReactNode, RefObject } from "react";
 import type { EventInput, Workspace } from "@/domain/types";
 import type { Extraction } from "@/server/ai";
 import { duplicates } from "@/domain/ledger";
+import { readingDate } from "@/domain/periods";
 import {
   accountCreatePrompt,
   accountTypeForName,
@@ -100,15 +101,27 @@ export default function BatchReview({
           ? "Check this amount."
           : questions.length
             ? "One thing to fill in."
-            : "Your story, organised."}
+            : events.length === 1
+              ? "Check this record"
+              : events.length
+                ? `Check these ${events.length} records`
+                : "Nothing to save yet."}
       </h1>
       <p>
         {checking
           ? "Nothing is saved until you use the amount."
           : questions.length
             ? "This changes the record."
-            : "Check every record. Select a row to change it."}
+            : "Check every record. Use Change beside a row, or select the row."}
       </p>
+      <div className={s.reviewTools}>
+        <Button quiet onClick={() => onBack()}>
+          Back to words
+        </Button>
+        <Button quiet onClick={() => onDiscard()}>
+          Discard draft
+        </Button>
+      </div>
       {calculations.some((c) => c.version !== w.version) && (
         <p role="alert">
           Your records have changed since this calculation. Go back to your
@@ -361,6 +374,14 @@ export default function BatchReview({
           />
         </div>
       )}
+      {text.trim() && (
+        <details open>
+          <summary>From your story</summary>
+          <blockquote>
+            {hidden ? "Your story is hidden while amounts are hidden." : text}
+          </blockquote>
+        </details>
+      )}
       {recordRows}
       {events.length === 0 && (
         <p className={s.empty}>
@@ -369,27 +390,46 @@ export default function BatchReview({
             : "No proposed records yet."}
         </p>
       )}
-      <details>
-        <summary>Read the original story</summary>
-        <blockquote>
-          {hidden ? "Your story is hidden while amounts are hidden." : text}
-        </blockquote>
-      </details>
       {duplicates(w, events).length > 0 && (
         <div className={s.notice}>
           <h3>This may already be recorded.</h3>
-          {duplicates(w, events).map((d, i) => (
-            <p key={i}>
-              {d.existing.description} · {d.existing.date} ·{" "}
-              <Amount value={d.existing.amount} hidden={hidden} />
-              <br />
-              Original story:{" "}
-              {hidden
-                ? "Hidden"
-                : (w.sources.find((s) => s.id === d.existing.sourceId)?.text ??
-                  "Deleted following your story privacy setting")}
-            </p>
-          ))}
+          <p>
+            Saved records with the same amount and date. Check them before
+            saving again.
+          </p>
+          <ul className={s.dupList}>
+            {duplicates(w, events).map((d, i) => (
+              <li key={i}>
+                <span>
+                  {d.existing.description} · {readingDate(d.existing.date)}
+                </span>
+                <Amount value={d.existing.amount} hidden={hidden} />
+              </li>
+            ))}
+          </ul>
+          {(() => {
+            const stories = [
+              ...new Set(
+                duplicates(w, events).map(
+                  (d) =>
+                    w.sources.find((s) => s.id === d.existing.sourceId)?.text ??
+                    "Original words removed according to your privacy setting",
+                ),
+              ),
+            ];
+            return (
+              <details>
+                <summary>
+                  {stories.length === 1
+                    ? "Original story of the saved records"
+                    : "Original stories of the saved records"}
+                </summary>
+                {stories.map((story) => (
+                  <blockquote key={story}>{hidden ? "Hidden" : story}</blockquote>
+                ))}
+              </details>
+            );
+          })()}
           <label className={s.checkLabel}>
             <input
               type="checkbox"
@@ -407,7 +447,7 @@ export default function BatchReview({
             : "These records are saved together when you confirm."}
         </p>
       )}
-      <div className={s.actions}>
+      <div className={`${s.actions} ${s.reviewActions}`}>
         {pending ? (
           <Button primary onClick={recover} disabled={busy}>
             Check original save request
@@ -430,11 +470,9 @@ export default function BatchReview({
                 : "Save removal"}
           </Button>
         )}
-        <Button onClick={() => manual()} disabled={!!pending}>
+        <Button quiet onClick={() => manual()} disabled={!!pending}>
           Add record
         </Button>
-        <Button onClick={() => onBack()}>Back to words</Button>
-        <Button onClick={() => onDiscard()}>Discard draft</Button>
       </div>
     </section>
   );
@@ -469,7 +507,16 @@ function AccountCreate({
   const exists =
     !!suggested && accounts.some((account) => sameName(account.name, suggested));
   const field = `create-account-${formId}`;
+  // A story that names an account this workspace does not have opens the
+  // form straight away. Otherwise the choices above are enough, and the
+  // form waits behind one quiet control.
   return (
+    <details open={!!suggested && !exists}>
+      <summary>
+        {suggested && !exists
+          ? `Create ${suggested}`
+          : "Use an account that is not listed"}
+      </summary>
     <form
       onSubmit={(event) => {
         event.preventDefault();
@@ -529,10 +576,13 @@ function AccountCreate({
         The account is saved now. This record stays a draft until you save the
         story.
       </p>
-      <Button type="submit" primary disabled={disabled}>
-        Create account and use it
-      </Button>
+      <div className={s.actions}>
+        <Button type="submit" disabled={disabled}>
+          Create account and use it
+        </Button>
+      </div>
     </form>
+    </details>
   );
 }
 
@@ -558,6 +608,12 @@ function BalanceCreate({
       ? "Loan principal before this repayment · GHS"
       : "Amount owed before this payment · GHS";
   return (
+    <details open={!!suggested && !exists}>
+      <summary>
+        {suggested && !exists
+          ? `Add the balance ${suggested} already had`
+          : "Add a balance that is not listed"}
+      </summary>
     <form
       onSubmit={(event) => {
         event.preventDefault();
@@ -597,9 +653,12 @@ function BalanceCreate({
         disabled={disabled}
       />
       <p>Both stay drafts until you save the story.</p>
-      <Button type="submit" primary disabled={disabled}>
-        Create balance and use it
-      </Button>
+      <div className={s.actions}>
+        <Button type="submit" disabled={disabled}>
+          Create balance and use it
+        </Button>
+      </div>
     </form>
+    </details>
   );
 }

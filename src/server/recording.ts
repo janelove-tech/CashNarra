@@ -1,7 +1,15 @@
 // Deliberately narrow: browser WebM with a single non-laced Opus audio track.
 // Inspect packet durations as well as timestamps; container duration is untrusted.
-import { RECORDING_BYTES, RECORDING_SECONDS } from "../lib/recording-limits";
-export function validateRecording(bytes: Uint8Array, mime: string): number {
+import {
+  FREE_VOICE_SECONDS,
+  RECORDING_BYTES,
+  RECORDING_SECONDS,
+} from "../lib/recording-limits";
+export function validateRecording(
+  bytes: Uint8Array,
+  mime: string,
+  maxSeconds = RECORDING_SECONDS,
+): number {
   const invalid = () =>
     new Error(
       "This recording cannot be safely verified. Keep a copy and use text instead.",
@@ -152,12 +160,11 @@ export function validateRecording(bytes: Uint8Array, mime: string): number {
               totalMs += duration;
               lastEndMs = startMs + duration;
               packets++;
-              if (
-                totalMs > RECORDING_SECONDS * 1000 ||
-                lastEndMs > RECORDING_SECONDS * 1000
-              )
+              if (totalMs > maxSeconds * 1000 || lastEndMs > maxSeconds * 1000)
                 throw new Error(
-                  "That recording is over three minutes. Try a shorter clip.",
+                  maxSeconds > FREE_VOICE_SECONDS
+                    ? "That recording is over two minutes. Try a shorter clip."
+                    : "That recording is over one minute. Try a shorter clip.",
                 );
             } else if (k !== 0xec && k !== 0xbf) throw invalid();
           });

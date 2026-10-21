@@ -1,7 +1,14 @@
 import OpenAI from "openai";
 import { resolve } from "node:path";
-import { randomBytes } from "node:crypto";
-import { EvaluationBudget } from "../../scripts/lib/evaluation-budget";
+import { operationKey } from "../../scripts/lib/interpretation-store";
+import {
+  classifyProviderFailure,
+  STORY_UNUSABLE,
+} from "../../scripts/lib/provider-outcome";
+import {
+  runBudgetedStory,
+  StoryAttemptError,
+} from "../../scripts/lib/story-attempt";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
 import { eventSchema, type Workspace } from "@/domain/types";
@@ -122,7 +129,7 @@ export async function explainPeriod(
     timeout: 30000,
     maxRetries: 0,
   });
-  const result = await client.responses.parse({
+  const result = await client.responses.create({
     model: process.env.OPENAI_MODEL || "gpt-4.1-mini-2025-04-14",
     store: false,
     max_output_tokens: 1000,
@@ -139,7 +146,9 @@ export async function explainPeriod(
     }),
     text: { format: zodTextFormat(explanationSchema, "period_explanation") },
   });
-  const output = explanationSchema.parse(result.output_parsed);
+  const output = explanationSchema.parse(
+    JSON.parse(completedOutputText(result)),
+  );
   if (
     output.paragraphs.length > 3 ||
     output.paragraphs.some(
@@ -306,12 +315,44 @@ export function extractionRequest(
     },
   };
 }
+type ProviderResponse = {
+  status?: string | null;
+  output?: Array<{
+    type: string;
+    content?: Array<{ type: string; text?: string }>;
+  }>;
+};
+function proposalText(response: ProviderResponse) {
+  if (response.status && response.status !== "completed")
+    throw new StoryAttemptError(STORY_UNUSABLE);
+  for (const item of response.output ?? []) {
+    if (item.type !== "message" || !item.content) continue;
+    for (const content of item.content)
+      if (content.type === "output_text" && content.text) return content.text;
+  }
+  throw new StoryAttemptError(STORY_UNUSABLE);
+}
+export function completedOutputText(response: ProviderResponse) {
+  return proposalText(response);
+}
+function recoverExtraction(result: unknown): Extraction {
+  const parsed = extractionSchema.parse(result);
+  const calculations = (result as { calculations?: unknown }).calculations;
+  return {
+    ...parsed,
+    calculations: Array.isArray(calculations)
+      ? (calculations as StoryCalculation[])
+      : [],
+  };
+}
 export async function realExtract(
   text: string,
   w: Workspace,
   date: string,
   mode: "extract" | "correction" = "extract",
   replaceIds: string[] = [],
+  beforeSubmit?: () => Promise<void>,
+  recovery?: { permitPause?: "billing_rejected" },
 ): Promise<Extraction> {
   const client = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -328,63 +369,73 @@ export async function realExtract(
     throw new Error(
       "This story exceeds the local testing limits. Try a shorter story.",
     );
-  const budget = localBudget
-    ? await EvaluationBudget.acquire(resolve(".local/evaluation"))
-    : null;
-  let response;
-  try {
-    // Same cumulative approved allowance as evaluations; never initialise here.
-    // Store no narration, workspace IDs or fingerprints of financial content.
-    const reservation = budget
-      ? await budget.reserve("local-story", randomBytes(32).toString("hex"))
-      : null;
-    response = await client.responses.parse(request);
-    if (budget && reservation) {
-      if (!response.usage) throw new Error("Missing usage");
-      await budget.settle(
-        reservation,
-        response.usage.input_tokens,
-        response.usage.output_tokens,
-      );
+  const accept = (response: ProviderResponse) => {
+    let output: unknown;
+    try {
+      output = JSON.parse(proposalText(response));
+    } catch (error) {
+      if (error instanceof StoryAttemptError) throw error;
+      throw new StoryAttemptError(STORY_UNUSABLE);
     }
-  } catch (error) {
-    const detail = error as {
-      status?: number;
-      code?: string;
-      cause?: { code?: string };
-    };
-    const code = detail.code ?? detail.cause?.code ?? null;
-    const connection =
-      error instanceof Error && error.message === "Connection error.";
-    const noCredit = detail.status === 429 && code === "credit_balance_exhausted";
-    console.error(
-      JSON.stringify({
-        understand: "failed",
-        status: detail.status ?? null,
-        code,
-      }),
-    );
-    throw new Error(
-      connection
-        ? "CashNarra could not reach the story reader. Your draft is still here. You can add a manual record."
-        : noCredit
-          ? "The story reader has no remaining credit. Your draft is still here. You can add a manual record."
-          : "Your story could not be processed. Your words are still here. The testing allowance may be unavailable; you can add a manual record.",
-    );
-  } finally {
-    await budget?.close();
+    return reviewExtraction(output, w, date);
+  };
+  if (!localBudget) {
+    await beforeSubmit?.();
+    try {
+      return accept(await client.responses.create(request));
+    } catch (error) {
+      if (error instanceof StoryAttemptError) throw error;
+      throw classifyAndRethrow(error);
+    }
   }
-  if (!response.output_parsed)
-    throw new Error(
-      "No usable interpretation returned. Your words are still here.",
-    );
-  const result = extractionSchema.parse(response.output_parsed);
+  return runBudgetedStory({
+    directory: resolve(".local/evaluation"),
+    operationKey: operationKey({
+      workspaceId: w.id,
+      text,
+      date,
+      mode,
+      replaceIds,
+      accounts: w.accounts.map(({ id, name, type }) => ({ id, name, type })),
+      obligations: obligations(w).map(({ id, party, remaining }) => ({
+        id,
+        party,
+        remaining,
+      })),
+      model: request.model,
+    }),
+    beforeSubmit,
+    submit: async () => client.responses.create(request),
+    accept,
+    recover: recoverExtraction,
+    permitPause: recovery?.permitPause,
+  });
+}
+function classifyAndRethrow(error: unknown): Error {
+  if (
+    error instanceof Error &&
+    !(error instanceof OpenAI.APIError) &&
+    !(error instanceof OpenAI.APIConnectionError)
+  )
+    return error;
+  const failure = classifyProviderFailure(error);
+  const detail = error as { status?: number; code?: string; cause?: { code?: string } };
+  console.error(
+    JSON.stringify({
+      understand: "failed",
+      status: detail.status ?? null,
+      code: detail.code ?? detail.cause?.code ?? null,
+    }),
+  );
+  return new Error(failure.message);
+}
+function reviewExtraction(output: unknown, w: Workspace, date: string) {
+  const result = extractionSchema.parse(output);
   const requests = z
     .array(calculationRequestSchema)
     .max(20)
     .parse(
-      (response.output_parsed as unknown as { calculationRequests: unknown })
-        .calculationRequests,
+      (output as { calculationRequests?: unknown }).calculationRequests,
     );
   result.events.forEach((e) => {
     const calculations = requests.filter((c) => c.recordId === e.id);

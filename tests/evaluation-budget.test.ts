@@ -45,7 +45,8 @@ it("rounds charges upwards and rejects impossible usage", () => {
   expect(usageCost(1, 1)).toBe(2);
   expect(usageCost(1000, 1000)).toBe(2000);
   expect(RESERVATION).toBe(425431);
-  expect(CEILING).toBe(10_000_000);
+  // Owner approval of 21 October 2026: US$20 cumulative, superseding US$10.
+  expect(CEILING).toBe(20_000_000);
   for (const n of [-1, 1.5, NaN, Infinity, 1_047_577])
     expect(() => usageCost(n, 0)).toThrow();
   expect(() => usageCost(0, 4001)).toThrow();

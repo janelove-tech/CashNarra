@@ -1,0 +1,46 @@
+---
+description: CashNarra task hierarchy, dialogs, forms, pricing, and accessible interaction
+alwaysApply: true
+---
+
+# Product UI and UX
+
+- Preserve the approved Narra direction, existing tokens, shared components, violet mark, ink name, and designed report. Improve the actual task; do not substitute generic dashboard cards or a visual rewrite.
+- Before editing, identify the screen's main task, current state, next action, and likely failure. Fix the relevant screenshot finding, not an imagined unrelated problem.
+- Use one dominant action per task state. Keep alternatives secondary and destructive actions separated. Do not give every download, retry, and discard action equal full-width emphasis.
+- Put status next to the object or action it describes. Use one error region per failed operation; clear stale errors when the operation changes state.
+- Keep form labels immediately beside their inputs. Put backup/restore, raw metadata, and less-used options after the main path or behind a clear secondary control.
+- Size short-story inputs for a short story, with room to grow. Do not push the main action off screen with empty space and repeated notices.
+- Dialogs need a clear title, focused body, and reachable primary action. Use one body scroll region if needed; never let the footer or software keyboard cover a control. Recheck short-height viewports.
+- Honor modal keyboard behavior, visible focus, a named close control, and return focus to the opener. Closing or replacing unsaved voice work must not silently discard it.
+- Voice states are distinct: ready to record, recording, clip ready, transcribing, words ready, failed, and uncertain. Show the useful next action for that state. Keep editing text independent from resending audio.
+- On genuine account pages, use real account-wide plan and usage data. Do not fill missing counters with sample numbers. Unknown, zero, pending, and exhausted are different states.
+- Pricing cards must support comparison: reserve consistent price-header space, align matching benefit rows where practical, and align CTAs. Preserve readable wrapping on narrow screens.
+- Show the offer price, crossed-out standard price, and approximate cedi amount together. Keep the rate date small but readable; put shared explanations below the cards once.
+- In settings, use a consistent label/help/control pattern. Stack controls before their width squeezes help text into a narrow column. Separate a destructive action from an ordinary preference selector.
+- Use one label per section; remove redundant heading-plus-identical-row labels. Keep financial planning distinct from subscription navigation.
+- Give decoration a defined role. Do not repeat large brand shapes behind every text section or add progress bars that communicate no meaningful magnitude.
+- Keep controls comfortably tappable, text contrasted, and content usable at 320 CSS pixels and 200% zoom. A 44-pixel touch target is a product preference, not a blanket claim about WCAG's minimum.
+- Preserve accessible names, semantic headings, native controls where suitable, reduced motion, and non-color meaning for money direction and state.
+
+Use `docs/UI_REVIEW.md` for the exact observed problems and `docs/UI_ACCEPTANCE.md` for checks. A clean screenshot at one large viewport is insufficient evidence for a changed dialog or responsive form.
+
+## Current screens
+
+Read `harness/CURRENT.md` and `docs/ux/CASHNARRA_FINAL_HANDOFF.md` before relevant UI work. Preserve newer local work. The landing page is already implemented; keep it and its unfinished checks. The active screen work is the app pass in section 15. Do not start backend recovery, live counters, payments, or owner-console infrastructure from that pass.
+
+- Use the specified copy and one clear action for the current state. A transcript is not a saved record, a review is not a payment, and unknown usage or balance is not zero.
+- Public story and goal examples stay fictional and local. The real catalogue, signup, and Plus review stay as they are. Keep Unlimited off public pages.
+- Preserve cash versus sales, debt settlement versus a new sale, transfers versus spending, and net movement versus profit. Do not invite an automatic paid retry.
+- Check long names, large amounts, narrow widths, focus, and reduced motion on the screens you change.
+
+## Public landing
+
+Landing work stays on the public page. The full reference is `docs/ux/CASHNARRA_FINAL_HANDOFF.md`.
+
+- The landing example is the main action. Start free is the direct route for someone ready to join.
+- The worked story and goal use fixed fictional data and local calculations. They do not sign anyone in, save records, write browser storage, transcribe, or send text to a provider.
+- Show the story records only after See the records. A missing delivery account waits for Cash or MoMo before the summary. Reset returns that example to its unrevealed story.
+- The goal illustration is separate from the story. GH₵1,500.00 remains; GH₵300 a month is about 5 months and GH₵500 a month is about 3 months.
+- Pricing on the landing reuses the public catalogue. Keep the dollar price first, the dated cedi estimate, and no Unlimited plan.
+- One problem gets one plain message. Do not claim a record was saved, a payment was received, or a story was transcribed before that actually happens.

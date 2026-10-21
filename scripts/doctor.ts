@@ -8,11 +8,20 @@ if (!!env.NEXT_PUBLIC_SUPABASE_URL !== !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
   errors.push("Configure both public Supabase URL and anon key.");
 if (env.AI_ENABLED === "true" && !env.OPENAI_API_KEY)
   errors.push("AI is enabled but its server key is missing.");
+const localGroqPilot =
+  env.TRANSCRIPTION_PROVIDER === "groq" &&
+  env.LOCAL_VOICE_TESTING === "true" &&
+  env.LOCAL_AI_BUDGET === "true" &&
+  /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?\/?$/.test(env.SITE_URL || "") &&
+  !!env.GROQ_API_KEY;
 if (
   env.VOICE_ENABLED === "true" &&
+  !localGroqPilot &&
   (env.VOICE_QUALITY_APPROVED !== "true" || !env.OPENAI_API_KEY)
 )
   errors.push("Voice needs a provider key and completed quality approval.");
+if (env.VOICE_ENABLED === "true" && env.TRANSCRIPTION_PROVIDER === "groq" && !localGroqPilot)
+  errors.push("Groq voice stays on this computer until the local pilot settings are complete.");
 if (
   env.AI_DAILY_CALL_LIMIT &&
   (!/^\d+$/.test(env.AI_DAILY_CALL_LIMIT) ||

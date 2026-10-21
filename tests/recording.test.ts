@@ -1,5 +1,6 @@
 import { it, expect } from "vitest";
 import { validateRecording } from "../src/server/recording";
+import { voiceNoteLimitSeconds } from "../src/lib/recording-limits";
 function el(id: number[], payload: number[]) {
   const length = payload.length;
   const size =
@@ -44,15 +45,21 @@ function clip(count: number, step = 20, flags = 0, type = 2) {
 }
 it("counts Opus packets even without duration metadata", () => {
   expect(validateRecording(clip(50), "audio/webm")).toBe(1);
-  expect(validateRecording(clip(9000), "audio/webm")).toBe(180);
+  expect(validateRecording(clip(3000), "audio/webm")).toBe(60);
+  expect(
+    validateRecording(clip(9000), "audio/webm", 180),
+  ).toBe(180);
   expect(validateRecording(clip(50, 17), "audio/webm")).toBe(1);
 });
 it("rejects excess packet duration and gaps beyond the limit", () => {
-  expect(() => validateRecording(clip(9001), "audio/webm")).toThrow(
-    "three minutes",
+  expect(() => validateRecording(clip(3001), "audio/webm")).toThrow(
+    "one minute",
   );
   expect(() => validateRecording(clip(2, 180000), "audio/webm")).toThrow(
-    "three minutes",
+    "one minute",
+  );
+  expect(() => validateRecording(clip(6001), "audio/webm", 120)).toThrow(
+    "two minutes",
   );
 });
 it("fails closed on overlapping timing, lacing, video and unsupported containers", () => {
@@ -61,4 +68,25 @@ it("fails closed on overlapping timing, lacing, video and unsupported containers
   expect(() => validateRecording(clip(1, 20, 0, 1), "audio/webm")).toThrow();
   expect(() => validateRecording(clip(1), "audio/mp4")).toThrow();
   expect(() => validateRecording(clip(1).slice(0, -1), "audio/webm")).toThrow();
+});
+it("uses one minute unless the local server override asks for Plus length", () => {
+  const local = {
+    LOCAL_VOICE_TESTING: "true",
+    LOCAL_AI_BUDGET: "true",
+    SITE_URL: "http://127.0.0.1:3100",
+  };
+  expect(voiceNoteLimitSeconds({ ...local })).toBe(60);
+  expect(
+    voiceNoteLimitSeconds({
+      ...local,
+      CASHNARRA_VOICE_PLUS_DURATION: "true",
+    }),
+  ).toBe(120);
+  expect(
+    voiceNoteLimitSeconds({
+      ...local,
+      SITE_URL: "https://example.com",
+      CASHNARRA_VOICE_PLUS_DURATION: "true",
+    }),
+  ).toBe(60);
 });

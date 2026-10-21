@@ -99,11 +99,30 @@ test("mock clarification and unsupported input remain drafts", async ({
   ).toBeDisabled();
   await page.getByRole("button", { name: "MoMo", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "Your story, organised." }),
+    page.getByRole("heading", { name: /Check these \d+ records/ }),
   ).toBeVisible();
+  await expect(page.getByText("From your story")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Change" }).first()).toBeVisible();
   await expect(page.getByText("This may already be recorded.")).toBeVisible();
 });
-for (const width of [320, 390, 768, 1440])
+test("a short phone and enlarged text keep the story action reachable", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 360, height: 640 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await demo(page);
+  await page.evaluate(() => {
+    document.documentElement.style.zoom = "2";
+  });
+  const action = page.getByRole("button", { name: "Understand my story" });
+  await action.scrollIntoViewIfNeeded();
+  await expect(action).toBeVisible();
+  const motion = await page.locator("body").evaluate((node) => {
+    return getComputedStyle(node).animationDuration;
+  });
+  expect(motion).toBe("0s");
+});
+for (const width of [320, 360, 390, 768, 1024, 1440])
   for (const dark of [false, true])
     test(`layout ${width}px ${dark ? "dark" : "light"} and keyboard dialog`, async ({
       page,
@@ -179,6 +198,7 @@ test("offline draft recovery and later explicit reviewed save", async ({
   await page
     .getByRole("button", { name: "Tell your story", exact: true })
     .click();
+  await page.getByText("Draft backup", { exact: true }).click();
   await page.getByLabel("Keep drafts on this private device").check();
   await page
     .getByLabel("Your money story", { exact: true })

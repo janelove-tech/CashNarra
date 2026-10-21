@@ -2,19 +2,25 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "./ui";
 import s from "./app.module.css";
-import { RECORDING_BYTES, RECORDING_SECONDS } from "@/lib/recording-limits";
-import { microphoneError, transcriptText } from "@/lib/voice";
+import { RECORDING_BYTES } from "@/lib/recording-limits";
+import { microphoneError, keepReviewedTranscript, transcriptText } from "@/lib/voice";
 export default function VoiceCapture({
   workspaceId,
   onTranscript,
   onWork,
   transcriptionEnabled,
+  maxSeconds = 60,
+  transcriptionProvider = null,
 }: {
   workspaceId: string;
   onTranscript: (text: string) => void;
   onWork?: (active: boolean) => void;
   transcriptionEnabled: boolean;
+  maxSeconds?: number;
+  transcriptionProvider?: "groq" | null;
 }) {
+  const limit = maxSeconds === 120 ? 120 : 60;
+  const lengthLabel = limit === 120 ? "two minutes" : "one minute";
   const recorder = useRef<MediaRecorder | null>(null),
     stream = useRef<MediaStream | null>(null),
     timer = useRef<ReturnType<typeof setInterval> | null>(null),
@@ -141,8 +147,8 @@ export default function VoiceCapture({
       setRecording(true);
       timer.current = setInterval(() => {
         const elapsed = Math.floor((Date.now() - started.current) / 1000);
-        setSeconds(Math.min(RECORDING_SECONDS, elapsed));
-        if (elapsed >= RECORDING_SECONDS) stop();
+        setSeconds(Math.min(limit, elapsed));
+        if (elapsed >= limit) stop();
       }, 250);
     } catch (e) {
       if (attempt === permissionRevision.current)
@@ -157,7 +163,8 @@ export default function VoiceCapture({
     }
   }
   async function transcribe() {
-    if (!clip || !transcriptionEnabled || upload.current) return;
+    if (!clip || !transcriptionEnabled || upload.current || keepReviewedTranscript(text))
+      return;
     if (!navigator.onLine) {
       setError(
         "You are offline. Keep this clip and try transcription when you are connected.",
@@ -190,10 +197,9 @@ export default function VoiceCapture({
     } catch {
       if (mounted.current)
         setError(
-          (controller.signal.aborted
-            ? "Transcription stopped. The provider may already have received the clip."
-            : "Transcription did not finish. Try again or type the words yourself.") +
-            " Your recording is still here for playback or download.",
+          controller.signal.aborted
+            ? "We couldn't confirm whether this finished. Keep your recording while we check."
+            : "Transcription did not finish. Try again or type the words yourself. Your recording is still here.",
         );
     } finally {
       clearTimeout(deadline);
@@ -204,31 +210,22 @@ export default function VoiceCapture({
   return (
     <>
       <p>
-        Record for up to three minutes. Choose Start when you are ready. Your
-        clip stays on this device unless you choose to send it for transcription
-        or share a downloaded copy.
+        Record for up to {lengthLabel}. Choose Start when you are ready. Your
+        clip stays on this device until you choose to send it.
       </p>
       {!transcriptionEnabled && (
-        <p>
-          Recording and playback are available. Automatic transcription is not
-          enabled here yet. You can keep a private copy, or type the words
-          below.
-        </p>
-      )}
-      {transcriptionEnabled && (
-        <p>
-          Transcription sends this clip to OpenAI. Review the words before
-          continuing.
-        </p>
+        <p>Voice is not available yet. You can type your story.</p>
       )}
       <p role="status">
-        {recording
-          ? `Recording · ${seconds} / ${RECORDING_SECONDS} seconds`
+        {text.trim()
+          ? "Your words are ready. Check and edit them below."
+          : recording
+          ? `Recording · ${seconds} / ${limit} seconds`
           : busy
-            ? "Transcribing…"
+            ? "Turning your recording into words…"
             : waiting
               ? "Waiting for microphone permission…"
-              : "Microphone is off."}
+              : `Ready · 0 / ${limit} seconds · up to ${lengthLabel}`}
       </p>
       <div className={s.actions}>
         {!recording && (
@@ -307,20 +304,18 @@ export default function VoiceCapture({
               Keep a private copy of this clip
             </a>
           </p>
-          {transcriptionEnabled && (
-            <Button
-              primary
-              onClick={transcribe}
-              disabled={busy || !!text.trim()}
-            >
-              Transcribe recording
-            </Button>
-          )}
-          {transcriptionEnabled && text.trim() && (
+          {transcriptionEnabled && transcriptionProvider === "groq" && !text.trim() && (
             <p>
-              There are already words in the editor. Keep a copy and clear them
-              before requesting another transcript.
+              Your recording is sent to Groq to turn speech into text. Review
+              the words before continuing.
             </p>
+          )}
+          {transcriptionEnabled && !text.trim() && (
+            <div className={s.voicePrimary}>
+              <Button primary onClick={transcribe} disabled={busy}>
+                Turn into words
+              </Button>
+            </div>
           )}
           <Button disabled={busy} onClick={() => stop(true)}>
             Discard this clip
@@ -361,13 +356,15 @@ export default function VoiceCapture({
               Download these words
             </Button>
           )}
-          <Button
-            primary
-            disabled={!text.trim() || busy}
-            onClick={() => onTranscript(text.trim())}
-          >
-            Use reviewed words
-          </Button>
+          <div className={s.voicePrimary}>
+            <Button
+              primary
+              disabled={!text.trim() || busy}
+              onClick={() => onTranscript(text.trim())}
+            >
+              Use these words
+            </Button>
+          </div>
         </>
       )}
       <p role="alert">{error}</p>

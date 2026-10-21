@@ -14,6 +14,7 @@ import { money } from "@/domain/money";
 import type { Batch, Goal } from "@/domain/types";
 import { boundedJson } from "@/server/request";
 import { updatePlanning } from "@/domain/planning";
+import { voiceNoteLimitSeconds } from "@/lib/recording-limits";
 import { voiceAvailable } from "@/server/voice-access";
 export async function GET(req: Request) {
   try {
@@ -40,6 +41,13 @@ export async function GET(req: Request) {
       demo: ctx.demo,
       aiEnabled: !ctx.demo && process.env.AI_ENABLED === "true",
       voiceEnabled: !ctx.demo && voiceAvailable(),
+      voiceNoteSeconds: voiceNoteLimitSeconds(),
+      transcriptionProvider:
+        !ctx.demo &&
+        voiceAvailable() &&
+        process.env.TRANSCRIPTION_PROVIDER === "groq"
+          ? "groq"
+          : null,
     });
   } catch (e) {
     return Response.json({ error: (e as Error).message }, { status: 401 });

@@ -8,9 +8,13 @@ export function localVoiceTesting() {
   );
 }
 export function voiceAvailable() {
-  return (
-    process.env.VOICE_ENABLED === "true" &&
-    !!process.env.OPENAI_API_KEY &&
-    (process.env.VOICE_QUALITY_APPROVED === "true" || localVoiceTesting())
-  );
+  const enabled = process.env.VOICE_ENABLED === "true";
+  const approved =
+    process.env.VOICE_QUALITY_APPROVED === "true" || localVoiceTesting();
+  if (!enabled || !approved) return false;
+  // Groq stays unavailable outside the local budget until hosted admission
+  // exists. Quality approval alone does not send recordings there.
+  if (process.env.TRANSCRIPTION_PROVIDER === "groq")
+    return localVoiceTesting() && !!process.env.GROQ_API_KEY;
+  return !!process.env.OPENAI_API_KEY;
 }

@@ -24,13 +24,6 @@ export async function POST(req: Request) {
       return Response.json(mockExtract(b.text, w, b.date));
     if (!process.env.OPENAI_API_KEY)
       throw new Error("AI is not configured. Use manual recording.");
-    const { error } = await ctx.db!.rpc("reserve_ai_call", {
-      p_limit: Number(process.env.AI_DAILY_CALL_LIMIT || 10),
-    });
-    if (error)
-      throw new Error(
-        "Daily AI allowance reached. Manual recording is available.",
-      );
     return Response.json(
       await realExtract(
         b.text,
@@ -38,6 +31,15 @@ export async function POST(req: Request) {
         b.date,
         b.mode === "correction" ? "correction" : "extract",
         replaceIds,
+        async () => {
+          const { error } = await ctx.db!.rpc("reserve_ai_call", {
+            p_limit: Number(process.env.AI_DAILY_CALL_LIMIT || 10),
+          });
+          if (error)
+            throw new Error(
+              "Daily AI allowance reached. Manual recording is available.",
+            );
+        },
       ),
     );
   } catch (e) {

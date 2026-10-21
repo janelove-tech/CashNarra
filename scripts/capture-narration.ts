@@ -12,14 +12,17 @@ import {
   extractionSchema,
   assignProposalIds,
   validateExtraction,
+  completedOutputText,
 } from "../src/server/ai";
 import {
   EvaluationBudget,
   MODEL,
   MAX_OUTPUT,
   CEILING,
-  RESERVATION,
 } from "./lib/evaluation-budget";
+import { classifyProviderFailure } from "./lib/provider-outcome";
+import { writeProviderPause } from "./lib/provider-pause";
+import { LUNA_RATE, envelopeReserveMicros } from "./lib/provider-rates";
 
 async function main() {
   const args = process.argv.slice(2);
@@ -53,8 +56,8 @@ async function main() {
         evaluation: "NOT RUN",
         cases: corpus.length,
         keyPresent: !!process.env.OPENAI_API_KEY,
-        ceilingUSD: "5.00",
-        reservationMicros: RESERVATION,
+        ceilingUSD: "10.00",
+        reservationMicros: envelopeReserveMicros(),
         instruction:
           "Initialise the approved cumulative budget once, then use --live. No calls in this mode.",
       }),
@@ -70,7 +73,9 @@ async function main() {
     return;
   }
   if (!process.env.OPENAI_API_KEY) throw new Error("Missing local API key.");
-  if (process.env.OPENAI_MODEL && process.env.OPENAI_MODEL !== MODEL)
+  const comparing = args[0] === "--compare-luna";
+  const allowed = comparing ? ["gpt-6-luna", MODEL] : [MODEL];
+  if (process.env.OPENAI_MODEL && !allowed.includes(process.env.OPENAI_MODEL))
     throw new Error(
       "Model pricing must be reviewed before changing evaluation model.",
     );
@@ -98,11 +103,11 @@ async function main() {
         c.mode ?? "extract",
         c.mode ? originals : [],
       );
-      // Evaluation only; production configuration remains unchanged. Existing
-      // journal rates conservatively exceed Luna standard long-context rates.
-      if (args[0] === "--compare-luna") request.model = "gpt-6-luna";
+      // Luna comparisons reserve the short-context envelope. The older model
+      // still reserves its historical full-context hold.
+      if (comparing) request.model = "gpt-6-luna";
       if (
-        request.model !== (args[0] === "--compare-luna" ? "gpt-6-luna" : MODEL) ||
+        request.model !== (comparing ? "gpt-6-luna" : MODEL) ||
         request.service_tier !== "default" ||
         request.max_output_tokens !== MAX_OUTPUT ||
         request.store !== false ||
@@ -112,18 +117,68 @@ async function main() {
       const hash = createHash("sha256")
         .update(JSON.stringify(request))
         .digest("hex");
-      const id = await budget.reserve(c.id, hash);
+      const id = comparing
+        ? await budget.reserveBounded(
+            c.id,
+            hash,
+            envelopeReserveMicros(),
+            LUNA_RATE,
+          )
+        : await budget.reserve(c.id, hash);
       const started = Date.now();
-      // Any timeout, parse, provider or persistence failure stops the run.
-      // Unknown usage remains reserved; there is no automatic retry/refund.
-      const response = await client.responses.parse(request);
-      const raw = extractionSchema.parse(response.output_parsed);
+      let response;
+      try {
+        response = await client.responses.create(request);
+      } catch (error) {
+        const failure = classifyProviderFailure(error);
+        if (failure.kind === "release") {
+          await budget.release(id, failure.reason);
+          if (failure.pause)
+            await writeProviderPause(
+              directory,
+              failure.reason === "auth_rejected"
+                ? "auth_rejected"
+                : "billing_rejected",
+            );
+        }
+        throw error;
+      }
+      if (!response.usage)
+        throw new Error("Missing usage; reservation retained.");
+      if (comparing) {
+        if (response.model !== "gpt-6-luna") {
+          await budget.raiseUnpriced(id);
+          await writeProviderPause(directory, "model_mismatch");
+          throw new Error("Unexpected evaluation model; reservation retained.");
+        }
+        try {
+          await budget.settleLuna(id, {
+            input: response.usage.input_tokens,
+            output: response.usage.output_tokens,
+            cached: response.usage.input_tokens_details.cached_tokens,
+            cacheWrite: response.usage.input_tokens_details.cache_write_tokens,
+            reasoning: response.usage.output_tokens_details.reasoning_tokens,
+          });
+        } catch {
+          await budget.raiseUnpriced(id);
+          await writeProviderPause(directory, "unpriced");
+          throw new Error("Unpriced evaluation usage; reservation retained.");
+        }
+      } else {
+        await budget.settle(
+          id,
+          response.usage.input_tokens,
+          response.usage.output_tokens,
+        );
+      }
+      let raw = null;
       let validated = null;
       try {
+        raw = extractionSchema.parse(JSON.parse(completedOutputText(response)));
         if (raw.events.length > 100) throw new Error("Too many proposals.");
         validated = validateExtraction(assignProposalIds(raw), workspace);
       } catch {
-        /* Preserve invalid output as evidence, not a successful proposal. */
+        validated = null;
       }
       await writeFile(
         join(run, `${c.id}.json`),
@@ -151,13 +206,6 @@ async function main() {
         join(run, "outputs.json"),
         JSON.stringify(results, null, 2),
         { mode: 0o600 },
-      );
-      if (!response.usage)
-        throw new Error("Missing usage; reservation retained.");
-      await budget.settle(
-        id,
-        response.usage.input_tokens,
-        response.usage.output_tokens,
       );
       console.log(
         JSON.stringify({

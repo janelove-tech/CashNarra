@@ -1,0 +1,65 @@
+[
+  {
+    "id": "fifteen-not-fifty",
+    "focus": "amount",
+    "amounts": ["15"],
+    "dates": [],
+    "names": [],
+    "present": ["fifteen cedis"],
+    "absent": ["fifty cedis"]
+  },
+  {
+    "id": "spoken-correction",
+    "focus": "correction",
+    "amounts": ["15"],
+    "dates": [],
+    "names": [],
+    "present": ["sorry, fifteen"],
+    "absent": []
+  },
+  {
+    "id": "negation",
+    "focus": "negation",
+    "amounts": [],
+    "dates": [],
+    "names": ["efua"],
+    "present": ["have not paid"],
+    "absent": []
+  },
+  {
+    "id": "direction",
+    "focus": "who paid",
+    "amounts": ["20"],
+    "dates": [],
+    "names": ["kofi"],
+    "present": ["paid me"],
+    "absent": ["i paid kofi"]
+  },
+  {
+    "id": "debt-direction",
+    "focus": "who owes",
+    "amounts": [],
+    "dates": [],
+    "names": ["ama"],
+    "present": ["still owes me"],
+    "absent": ["i still owe"]
+  },
+  {
+    "id": "momo-and-date",
+    "focus": "account and date",
+    "amounts": ["45.50"],
+    "dates": ["3 october"],
+    "names": ["telecel"],
+    "present": ["momo"],
+    "absent": []
+  },
+  {
+    "id": "phase08-sale-unpaid-transfer",
+    "focus": "sale, unpaid debt and transfer",
+    "amounts": ["500", "100", "200"],
+    "dates": [],
+    "names": ["ama"],
+    "present": ["has not paid", "from cash to momo"],
+    "absent": ["has paid", "from momo to cash"]
+  }
+]

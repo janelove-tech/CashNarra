@@ -65,3 +65,39 @@ One coding phase is normally in progress. Phase 09 stays external until the user
 After each coherent unit, update `harness/CURRENT.md` and `harness/build-log.md`. If you stop mid-phase, write `INCOMPLETE — DO NOT TREAT AS PHASE COMPLETE` and an exact next action. Never put secrets in the harness.
 
 Do not spend money, enable production providers, migrate production data, or deploy production without explicit user approval. Do not reset a non-disposable database.
+
+## Customer language
+
+Customer-facing text must use ordinary English and explain the customer's action or benefit. Use the approved wording in the current pricing handoff. Keep provider details, environment variables, development status, database terms, quota implementation, and diagnostics in owner/developer views.
+
+An inactive purchase does not remove the plan's prices or benefits. Show the complete finished package without preview, coming-soon, not-for-sale, or availability notes on the pricing page. Keep readiness checks private and finish the advertised features before launch. Genuine service errors belong beside the attempted action. Never describe an internal processing guard on a pricing card.
+
+Use one clear benefit heading and a smaller explanation where needed. Distinguish unlimited saved financial records from the stated AI-story allowance. Never promise a successful save, payment, or transcription before there is evidence.
+
+Apply these rules to headings, buttons, tooltips, errors, empty states, emails, exports, and agent progress/final summaries. In messages to the owner, lead with what works, what changed, and the exact blocker; give implementation detail only when it is needed or requested. Before finishing a UI change, review the rendered words as well as the code.
+
+## Product quality and current reader recovery
+
+### Current owner decisions — 21 October 2026
+
+The owner reports topping up the existing OpenAI API account and explicitly approves **US$20 total cumulative local evaluation spend**, including all previous usage and unresolved holds. This supersedes the previous US$10 ceiling. Preserve every historical budget event and approval; do not reset the journal or create a second allowance. The latest user instruction takes precedence over this dated ceiling if it changes later.
+
+The one bounded verification already succeeded on 21 October 2026. Do not repeat it. A later story was held as unpriced; price that returned usage from the published Luna card and keep the exposure until a real price exists. Do not resend that story. See `docs/SUBSCRIPTIONS_WHAT_IF_AND_FOLLOWUP.md`. Use `docs/READER_RECOVERY.md` only when a current billing pause actually matches.
+
+The local Groq key and Free-plan confirmation have been reported supplied, and a transcript was shown. Verify current state before asking for them again. Keep free-only transcription and reuse completed transcripts. No paid fallback, automatic top-up, deployment, or customer charge is authorized by this instruction.
+
+### Product quality is part of implementation
+
+Follow the always-applied rules in `.cursor/rules/`. A task is not finished because code compiles. The affected customer flow must be understandable, reachable, visually coherent, and checked in the rendered app.
+
+Keep ordinary customer language separate from owner diagnostics. Lead each screen with the person's next action or useful result. Give each task one clear primary action. Keep advanced controls secondary, labels beside their fields, and the main dialog action fully visible and reachable. Preserve drafts through errors and recovery.
+
+Customer pricing shows the finished Free and Plus offer without development or availability notes. Unlimited remains private and disabled. Account usage must use genuine account-level counters; examples belong in a separate demo, never as the signed-in account's main meter. Unknown usage is not zero.
+
+Use the screenshot review to fix specific regressions rather than restart an indiscriminate redesign. Preserve truthful financial meaning, exact authoritative calculations, provenance, confirmation, and tenant isolation.
+
+### Evidence before completion
+
+Use the acceptance checks in `docs/UI_ACCEPTANCE.md` for changed flows. Record actual viewport sizes and states tested. Inspect the rendered words and screenshots; include short viewport, zoom, keyboard, and error recovery where relevant. Never label an unrun check PASS, claim a real speech-quality result from mocks, or claim accessibility certification from automated checks.
+
+Update `harness/CURRENT.md` and the build log after each coherent unit. Distinguish what is historical, what was inspected now, what was tested, and what remains blocked. Keep secrets and raw private financial stories out of those logs.

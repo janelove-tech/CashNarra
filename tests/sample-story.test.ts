@@ -14,9 +14,10 @@ describe("public fictional sample", () => {
     expect(totals.paid).toBe("80.00");
     expect(totals.net).toBe("1020.00");
     expect(totals.sales).not.toBe(totals.received);
-    expect(clearEvents.find((event) => event.id === "debt")?.meaning).toContain(
-      "not a new sale",
-    );
+    const debt = clearEvents.find((event) => event.id === "debt");
+    expect(debt?.title).toBe("Payment from Abena");
+    expect(debt?.meaning).toBe("Payment of an old balance");
+    expect(debt?.meaning.toLowerCase()).not.toContain("sale");
   });
 
   it("withholds the delivery account until the example chooses one", () => {

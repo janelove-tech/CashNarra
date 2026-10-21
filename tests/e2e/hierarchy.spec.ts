@@ -12,6 +12,18 @@ test("records, accounts and money stories keep the same figures in a clearer hie
     .getByRole("button", { name: /Recorded account balances/ })
     .boundingBox();
   expect(storyBox && balanceBox && storyBox.y < balanceBox.y).toBe(true);
+  const dateBox = await page.getByLabel("Date of activity").boundingBox();
+  expect(dateBox && storyBox && dateBox.y < storyBox.y + storyBox.height).toBe(
+    true,
+  );
+  await expect(
+    page.getByRole("button", { name: "Understand my story" }),
+  ).toBeDisabled();
+  await page.locator("#today-story").fill("A sale of 20 cash.");
+  await expect(
+    page.getByRole("button", { name: "Understand my story" }),
+  ).toBeEnabled();
+  await page.locator("#today-story").fill("");
   await page
     .getByRole("button", { name: "Stories", exact: true })
     .filter({ visible: true })
@@ -22,8 +34,8 @@ test("records, accounts and money stories keep the same figures in a clearer hie
   const cover = page.locator("section").filter({
     has: page.getByRole("heading", { name: "Here’s what moved this period." }),
   });
-  await expect(cover.getByText("Money received", { exact: true })).toBeVisible();
-  await expect(cover.getByText("Money paid out", { exact: true })).toBeVisible();
+  await expect(cover.getByText("Money in", { exact: true })).toBeVisible();
+  await expect(cover.getByText("Money out", { exact: true })).toBeVisible();
   await expect(cover.getByText("Net movement", { exact: true })).toBeVisible();
   await expect(cover.getByText("It is not profit.")).toBeVisible();
   await expect(cover.locator("[data-metric=received]")).toContainText("GH₵");

@@ -11,10 +11,17 @@
   letter-spacing: -0.04em;
   line-height: 1.12;
 }
+.kicker {
+  margin: 0 0 8px;
+  color: var(--cn-action);
+  font-size: 13px;
+  font-weight: 700;
+}
 .hero h1 {
-  max-width: 14em;
+  max-width: 12em;
   margin: 0 0 16px;
-  font-size: clamp(32px, 4.6vw, 48px);
+  font-size: clamp(40px, 4.2vw, 56px);
+  line-height: 1.08;
 }
 .support,
 .section p,
@@ -46,6 +53,11 @@
   background: var(--cn-action);
   color: var(--cn-on-action);
   cursor: pointer;
+}
+.primary:focus,
+.secondary:focus {
+  outline: 3px solid var(--cn-focus);
+  outline-offset: 4px;
 }
 .secondary {
   border: 1px solid var(--cn-border-control);
@@ -152,6 +164,80 @@
   font-size: 16px;
   line-height: 24px;
 }
+.goal {
+  max-width: 560px;
+  margin-top: 20px;
+}
+.control {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.control li {
+  max-width: 40em;
+  padding-top: 12px;
+  border-top: 2px solid var(--cn-action);
+  font-size: 16px;
+  line-height: 24px;
+}
+.plans {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: stretch;
+  margin-top: 20px;
+}
+.plan {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--cn-border);
+  border-radius: 20px;
+  background: var(--cn-surface);
+}
+.plan h3 {
+  margin: 0;
+  font-size: 20px;
+}
+.plan ul {
+  margin: 8px 0 16px;
+  padding-left: 18px;
+}
+.plan li + li {
+  margin-top: 8px;
+}
+.plan a {
+  margin-top: auto;
+}
+.price {
+  margin: 0;
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 40px;
+}
+.price span {
+  font-size: 16px;
+  font-weight: 600;
+}
+.cedi,
+.standard,
+.standardEmpty {
+  min-height: 24px;
+  margin: 0;
+}
+.standard,
+.standardEmpty,
+.rate {
+  color: var(--cn-text-secondary);
+  font-size: 14px;
+  line-height: 22px;
+}
 .faq {
   display: grid;
   gap: 8px;
@@ -185,7 +271,8 @@
   .hero,
   .steps,
   .metrics,
-  .uses {
+  .uses,
+  .plans {
     grid-template-columns: 1fr;
   }
 }
