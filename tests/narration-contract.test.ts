@@ -9,7 +9,9 @@ it("assigns application IDs while preserving question linkage and authorised ref
   const event = fixtureEvents()[0];
   const input: Extraction = {
     events: [event],
-    questions: [{ recordId: event.id, field: "party", question: "Who?" }],
+    questions: [
+      { recordId: event.id, field: "party", question: "Who?", suggestion: null },
+    ],
     explanation: "",
   };
   const out = assignProposalIds(input);

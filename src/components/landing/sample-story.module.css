@@ -1,0 +1,142 @@
+.sample {
+  background: var(--cn-surface);
+  border: 1px solid var(--cn-border);
+  border-radius: 20px;
+  box-shadow: var(--cn-elevation-overlay);
+  padding: 20px;
+}
+.kicker {
+  margin: 0 0 8px;
+  color: var(--cn-action);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.quote {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--cn-brand-soft);
+  color: var(--cn-text);
+  font-size: 16px;
+  line-height: 24px;
+}
+.sampleActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.quiet,
+.choice,
+.primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.quiet,
+.choice {
+  border: 1px solid var(--cn-border-control);
+  background: var(--cn-surface);
+  color: var(--cn-text);
+}
+.primary {
+  background: var(--cn-action);
+  color: var(--cn-on-action);
+}
+.question {
+  margin: 0 0 16px;
+  padding: 12px;
+  border: 1px solid var(--cn-border);
+  border-radius: 12px;
+  background: var(--cn-surface-subtle);
+}
+.question legend {
+  padding: 0 4px;
+  font-weight: 700;
+}
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.events {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+}
+.events li + li .row {
+  margin-top: 8px;
+}
+.row {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+}
+.node {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--cn-brand-soft);
+  color: var(--cn-action);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 28px;
+  text-align: center;
+}
+.row strong,
+.row small {
+  display: block;
+}
+.row strong {
+  font-size: 15px;
+  line-height: 22px;
+}
+.row small {
+  color: var(--cn-text-secondary);
+  font-size: 13px;
+  line-height: 20px;
+}
+.amount {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 22px;
+  text-align: right;
+}
+.meaning,
+.review,
+.notice {
+  margin: 0 0 12px;
+  font-size: 15px;
+  line-height: 22px;
+}
+.review,
+.notice {
+  color: var(--cn-text-secondary);
+}
+.notice:empty {
+  display: none;
+}
+@media (max-width: 360px) {
+  .row {
+    grid-template-columns: 28px minmax(0, 1fr);
+  }
+  .amount {
+    grid-column: 2;
+    text-align: left;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sample {
+    scroll-behavior: auto;
+  }
+}

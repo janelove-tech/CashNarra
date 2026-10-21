@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { test, expect, type Page } from "@playwright/test";
+import { openSampleWorkspace } from "./demo-entry";
 
 async function contrast(page: Page, name: string) {
   await page.evaluate(() => document.fonts.ready);
@@ -35,9 +36,7 @@ for (const width of [390, 1440]) {
       await page.setViewportSize({ width, height: 1000 });
       await page.goto("/");
       await contrast(page, "landing");
-      await page
-        .getByRole("button", { name: "Explore with sample data" })
-        .click();
+      await openSampleWorkspace(page);
       await expect(
         page.getByRole("button", { name: /Recorded account balances/ }),
       ).toContainText("5,970.00");

@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openSampleWorkspace } from "./demo-entry";
 import { validateRecording } from "../../src/server/recording";
 test("offers real local recording without claiming transcription or opening the microphone", async ({
   page,
@@ -8,7 +9,7 @@ test("offers real local recording without claiming transcription or opening the 
     if (req.url().includes("/api/transcribe")) uploads.push(req.url());
   });
   await page.goto("/");
-  await page.getByRole("button", { name: "Explore with sample data" }).click();
+  await openSampleWorkspace(page);
   await page.getByRole("button", { name: "Voice", exact: true }).click();
   const dialog = page.getByRole("dialog", {
     name: "A short story, in your voice",

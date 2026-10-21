@@ -2,6 +2,8 @@ import { expect, it } from "vitest";
 import { emptyWorkspace, event } from "../src/domain/fixture";
 import { applyBatch, report } from "../src/domain/ledger";
 import {
+  exportChoiceFor,
+  exportWindow,
   periodBounds,
   readingDate,
   storyWindow,
@@ -99,4 +101,95 @@ it("keeps a future-dated bill out of the October-so-far figures", () => {
         record.date <= view.futureTo!,
     ),
   ).toBe(true);
+});
+
+const custom = { day: "2026-10-13", from: "2026-10-01", to: "2026-10-31" };
+
+it("resolves the export shortcuts through today", () => {
+  expect(exportWindow("today", "day", "2026-10-20", custom)).toEqual({
+    from: "2026-10-20",
+    to: "2026-10-20",
+    label: "Today · 20 Oct 2026",
+  });
+  expect(exportWindow("week", "day", "2026-10-20", custom)).toMatchObject({
+    from: "2026-10-19",
+    to: "2026-10-20",
+    label: "This week so far · through 20 Oct 2026",
+  });
+  expect(exportWindow("month", "day", "2026-10-20", custom)).toMatchObject({
+    from: "2026-10-01",
+    to: "2026-10-20",
+    label: "October so far · through 20 Oct 2026",
+  });
+  expect(exportWindow("year", "day", "2026-10-20", custom)).toEqual({
+    from: "2026-01-01",
+    to: "2026-10-20",
+    label: "This year so far · through 20 Oct 2026",
+  });
+  expect(exportWindow("year", "day", "2026-12-31", custom).label).toBe(
+    "1 Jan 2026 – 31 Dec 2026",
+  );
+});
+
+it("resolves one specified day or a date range", () => {
+  expect(exportWindow("specify", "day", "2026-10-20", custom)).toEqual({
+    from: "2026-10-13",
+    to: "2026-10-13",
+    label: "13 Oct 2026",
+  });
+  expect(
+    exportWindow("specify", "range", "2026-10-20", {
+      ...custom,
+      from: "2026-09-01",
+      to: "2026-09-30",
+    }),
+  ).toEqual({
+    from: "2026-09-01",
+    to: "2026-09-30",
+    label: "1 Sep 2026 – 30 Sep 2026",
+  });
+  expect(exportWindow("specify", "range", "2026-10-20", custom)).toMatchObject({
+    from: "2026-10-01",
+    to: "2026-10-20",
+    label: "1 Oct 2026 – 20 Oct 2026 · through 20 Oct 2026",
+  });
+  expect(
+    exportWindow("specify", "day", "2026-10-20", {
+      ...custom,
+      day: "2026-11-02",
+    }).from,
+  ).toBeNull();
+  expect(
+    exportWindow("specify", "range", "2026-10-20", {
+      ...custom,
+      from: "2026-11-01",
+      to: "2026-11-02",
+    }).label,
+  ).toContain("have not arrived");
+  expect(
+    exportWindow("specify", "range", "2026-10-20", {
+      ...custom,
+      from: "2026-10-18",
+      to: "2026-10-01",
+    }).label,
+  ).toBe("Choose an end date on or after the start.");
+});
+
+it("opens the export on the dates already on screen", () => {
+  expect(exportChoiceFor(null, "2026-10-20").preset).toBe("today");
+  expect(
+    exportChoiceFor({ from: "2026-10-19", to: "2026-10-20" }, "2026-10-20")
+      .preset,
+  ).toBe("week");
+  expect(
+    exportChoiceFor({ from: "2026-10-13", to: "2026-10-13" }, "2026-10-20"),
+  ).toMatchObject({ preset: "specify", span: "day", day: "2026-10-13" });
+  expect(
+    exportChoiceFor({ from: "2026-09-01", to: "2026-09-30" }, "2026-10-20"),
+  ).toMatchObject({
+    preset: "specify",
+    span: "range",
+    from: "2026-09-01",
+    to: "2026-09-30",
+  });
 });

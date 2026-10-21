@@ -1,0 +1,22 @@
+---
+description: CashNarra logo — violet mark, dark name
+alwaysApply: true
+---
+
+# Logo
+
+The quotation mark is violet `#5B49C7`. The CashNarra name stays ink `#29263D`. Do not paint the name violet, and do not paint the mark ink, on a light surface.
+
+- Light screens use `public/brand/cashnarra-logo.svg`: introduction, sign-in, privacy, and the app header.
+- Dark surfaces use `public/brand/cashnarra-lockup-reversed.svg` (white). Do not put the ink name on a dark background.
+- An icon with no name uses `public/brand/cashnarra-symbol.svg`.
+- Do not switch those screens to `cashnarra-lockup-violet.svg` or `cashnarra-lockup.svg`.
+- Do not redraw the mark as rectangles or squares. Keep the speech-mark path.
+
+```tsx
+// Light header
+<img src="/brand/cashnarra-logo.svg" alt="CashNarra" />
+
+// Dark header
+<img src="/brand/cashnarra-lockup-reversed.svg" alt="CashNarra" />
+```

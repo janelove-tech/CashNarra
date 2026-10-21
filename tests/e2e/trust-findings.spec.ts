@@ -1,9 +1,10 @@
 import { test, expect, type Page } from "@playwright/test";
 import { storyWindow } from "../../src/domain/periods";
+import { openSampleWorkspace } from "./demo-entry";
 
 async function demo(page: Page) {
   await page.goto("/");
-  await page.getByRole("button", { name: "Explore with sample data" }).click();
+  await openSampleWorkspace(page);
   await expect(
     page.getByRole("heading", { name: "Let’s make sense of your money." }),
   ).toBeVisible();

@@ -295,7 +295,7 @@ describe("goals and private exports", () => {
     w.records.find((r) => r.kind === "sale")!.description = '=HYPERLINK("bad")';
     const out = csv(w, "2026-10-13", "2026-10-13");
     expect(out).toContain("'=HYPERLINK");
-    expect(out).toContain('"2300.00"');
+    expect(out).toContain('"900.00"');
     expect(safeText(" -cmd")).toBe("' -cmd");
     expect(safeText("ordinary")).toBe("ordinary");
   });

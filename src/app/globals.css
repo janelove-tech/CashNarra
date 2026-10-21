@@ -81,7 +81,8 @@ textarea {
   min-height: 180px;
   resize: vertical;
 }
-input[type="checkbox"] {
+input[type="checkbox"],
+input[type="radio"] {
   width: 20px;
   min-height: 20px;
 }

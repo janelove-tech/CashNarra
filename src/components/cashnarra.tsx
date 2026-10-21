@@ -7,6 +7,8 @@ import {
   BookOpen,
   Target,
   Landmark,
+  Wallet,
+  Smartphone,
   Settings,
   Eye,
   EyeOff,
@@ -31,9 +33,18 @@ import { draftBackup } from "@/lib/draft-backup";
 import { debtDate } from "@/domain/planning";
 import { calendarDate } from "@/domain/dates";
 import {
+  accountDraft,
+  openingForSettlement,
+  withSuggestions,
+} from "@/domain/review-create";
+import {
+  exportChoiceFor,
+  exportWindow,
   rangeLabel,
   readingDate,
   storyWindow,
+  type ExportPreset,
+  type ExportSpan,
   type StoryPeriod,
 } from "@/domain/periods";
 import { event, sample, unclearSample } from "@/domain/fixture";
@@ -54,6 +65,7 @@ import type {
 } from "@/domain/types";
 import type { Extraction } from "@/server/ai";
 import { clearDrafts, draftStorage, type Draft } from "@/lib/drafts";
+import { exportFileTargets, type ExportScope } from "@/lib/export-targets";
 import { supabase } from "@/lib/supabase";
 import s from "./app.module.css";
 const nav = [
@@ -217,7 +229,7 @@ export default function CashNarra() {
           setRetryOperation(
             restored && restored.action !== "batch" ? restored : null,
           );
-          setQuestions(d.questions ?? []);
+          setQuestions(withSuggestions(d.questions ?? []));
           setCalculations(d.calculations ?? []);
           setNeedsFreshReview(
             d.questionsPreserved === false && d.events.length > 0,
@@ -736,7 +748,7 @@ export default function CashNarra() {
               src={
                 theme === "dark"
                   ? "/brand/cashnarra-lockup-reversed.svg"
-                  : "/brand/cashnarra-lockup.svg"
+                  : "/brand/cashnarra-logo.svg"
               }
               alt="CashNarra"
             />
@@ -780,7 +792,7 @@ export default function CashNarra() {
                 src={
                   theme === "dark"
                     ? "/brand/cashnarra-lockup-reversed.svg"
-                    : "/brand/cashnarra-lockup.svg"
+                    : "/brand/cashnarra-logo.svg"
                 }
                 alt="CashNarra"
               />
@@ -864,23 +876,63 @@ export default function CashNarra() {
               </div>
             )}
             {!w ? (
-              <>
-                <h1>Create your first workspace.</h1>
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const f = new FormData(e.currentTarget);
+                  try {
+                    await perform({
+                      action: "create",
+                      workspaceId: crypto.randomUUID(),
+                      expectedVersion: -1,
+                      key: crypto.randomUUID(),
+                      name: f.get("name"),
+                      type: f.get("type"),
+                    });
+                  } catch {}
+                }}
+              >
+                <h1>Which money are you recording?</h1>
                 <p>
-                  A workspace is a separate set of records. A personal
-                  workspace can hold salary, household spending and money you
-                  lend. A business workspace can hold sales, stock and what
-                  customers still owe.
+                  Business and personal records stay separate. You can tell
+                  the first story as soon as this space exists.
                 </p>
+                <fieldset className={s.choiceSet}>
+                  <legend>Which money is this?</legend>
+                  <label className={s.checkLabel}>
+                    <input
+                      type="radio"
+                      name="type"
+                      value="Business"
+                      defaultChecked
+                      required
+                    />
+                    Business money
+                  </label>
+                  <label className={s.checkLabel}>
+                    <input type="radio" name="type" value="Personal" />
+                    Personal money
+                  </label>
+                </fieldset>
+                <label htmlFor="first-space-name">
+                  What should we call this space?
+                </label>
+                <input
+                  id="first-space-name"
+                  name="name"
+                  maxLength={100}
+                  required
+                  autoComplete="organization"
+                />
                 <p>
-                  Start with one account and today’s story. An unknown opening
-                  balance does not stop you recording activity. It does mean
-                  the account balance cannot be complete until you add one.
+                  For example, My shop or Personal. Add the account when you
+                  record something. If you do not know the opening amount, it
+                  stays unknown.
                 </p>
-                <Button primary onClick={() => setModal("workspace")}>
-                  Create workspace
+                <Button primary type="submit" disabled={busy}>
+                  Continue to my first record
                 </Button>
-              </>
+              </form>
             ) : (
               <>
                 {page === "today" && (
@@ -896,6 +948,58 @@ export default function CashNarra() {
                             : "Start with the day you remember."}
                         </p>
                       </div>
+                    </div>
+                    <div className={s.composer}>
+                      <img
+                        className={s.watermark}
+                        src="/brand/cashnarra-symbol.svg"
+                        alt=""
+                      />
+                      <span className={s.eyebrow}>
+                        <img src="/brand/cashnarra-symbol.svg" alt="" />
+                        Your next story
+                      </span>
+                      <h2>What happened with your money today?</h2>
+                      <p>
+                        A sale, a payment, a little of both.
+                        <br />
+                        Tell it in your own words.
+                      </p>
+                      <label htmlFor="today-story">Your money story</label>
+                      <textarea
+                        id="today-story"
+                        className={s.capture}
+                        value={text}
+                        maxLength={12000}
+                        disabled={!!pending || busy}
+                        placeholder="I sold 900 cash, paid for delivery, and Abena paid part of her balance…"
+                        onChange={(e) => changeDraft(e.target.value)}
+                      />
+                      <div className={s.actions}>
+                        <Button
+                          primary
+                          onClick={() =>
+                            navigate(events.length ? "review" : "capture")
+                          }
+                        >
+                          <Plus size={18} />
+                          {events.length
+                            ? "Finish your draft"
+                            : "Tell your story"}
+                        </Button>
+                        <Button onClick={() => setModal("voice")}>
+                          <Mic size={18} />
+                          <span>Voice</span>
+                        </Button>
+                      </div>
+                      <small>
+                        {voice
+                          ? "Transcription is available. You review the words before anything is saved."
+                          : "Transcription is not available yet. Type here, or record and type the words yourself."}
+                      </small>
+                      <small>
+                        You review the records before they’re saved.
+                      </small>
                     </div>
                     <div className={s.balanceBand}>
                       <button
@@ -935,58 +1039,6 @@ export default function CashNarra() {
                     </div>
                     <div className={s.homeGrid}>
                       <section>
-                        <div className={s.composer}>
-                          <img
-                            className={s.watermark}
-                            src="/brand/cashnarra-symbol.svg"
-                            alt=""
-                          />
-                          <span className={s.eyebrow}>
-                            <img src="/brand/cashnarra-symbol.svg" alt="" />
-                            Your next story
-                          </span>
-                          <h2>What happened with your money today?</h2>
-                          <p>
-                            A sale, a payment, a little of both.
-                            <br />
-                            Tell it in your own words.
-                          </p>
-                          <label htmlFor="today-story">Your money story</label>
-                          <textarea
-                            id="today-story"
-                            className={s.capture}
-                            value={text}
-                            maxLength={12000}
-                            disabled={!!pending || busy}
-                            placeholder="I sold 900 cash, paid for delivery, and Abena paid part of her balance…"
-                            onChange={(e) => changeDraft(e.target.value)}
-                          />
-                          <div className={s.actions}>
-                            <Button
-                              primary
-                              onClick={() =>
-                                navigate(events.length ? "review" : "capture")
-                              }
-                            >
-                              <Plus size={18} />
-                              {events.length
-                                ? "Finish your draft"
-                                : "Tell your story"}
-                            </Button>
-                            <Button onClick={() => setModal("voice")}>
-                              <Mic size={18} />
-                              <span>Voice</span>
-                            </Button>
-                          </div>
-                          <small>
-                            {voice
-                              ? "Transcription is available. You review the words before anything is saved."
-                              : "Transcription is not available yet. Type here, or record and type the words yourself."}
-                          </small>
-                          <small>
-                            You review the records before they’re saved.
-                          </small>
-                        </div>
                         <div className={s.sectionHead}>
                           <h2>Recent records</h2>
                           <button
@@ -1153,7 +1205,7 @@ export default function CashNarra() {
                         setRetryOperation(
                           op && op.action !== "batch" ? op : null,
                         );
-                        setQuestions(d.questions ?? []);
+                        setQuestions(withSuggestions(d.questions ?? []));
                         setCalculations(d.calculations ?? []);
                         setNeedsFreshReview(
                           d.questionsPreserved === false && d.events.length > 0,
@@ -1302,6 +1354,74 @@ export default function CashNarra() {
                     manual={manual}
                     needsFreshReview={needsFreshReview}
                     acceptFreshReview={() => setNeedsFreshReview(false)}
+                    onCreateAccount={(recordId, field, input) => {
+                      if (pending) return;
+                      let account;
+                      try {
+                        account = accountDraft({
+                          ...input,
+                          existingNames: w.accounts.map((item) => item.name),
+                        });
+                      } catch (e) {
+                        setError((e as Error).message);
+                        return;
+                      }
+                      const id = crypto.randomUUID();
+                      void perform({
+                        action: "account",
+                        workspaceId: w.id,
+                        expectedVersion: w.version,
+                        key: crypto.randomUUID(),
+                        account: { id, ...account },
+                      })
+                        .then(() => {
+                          changeDraft();
+                          setEvents((prev) =>
+                            prev.map((item) =>
+                              item.id === recordId
+                                ? { ...item, [field]: id }
+                                : item,
+                            ),
+                          );
+                          setQuestions((prev) =>
+                            prev.filter(
+                              (q) => q.recordId !== recordId || q.field !== field,
+                            ),
+                          );
+                        })
+                        .catch(() => {});
+                    }}
+                    onCreateBalance={(recordId, input) => {
+                      if (pending) return;
+                      const payment = events.find((item) => item.id === recordId);
+                      if (!payment) return;
+                      let opening;
+                      try {
+                        opening = openingForSettlement(payment, input);
+                      } catch (e) {
+                        setError((e as Error).message);
+                        return;
+                      }
+                      changeDraft();
+                      setEvents((prev) => [
+                        ...prev.map((item) =>
+                          item.id === recordId
+                            ? {
+                                ...item,
+                                obligationId: opening.id,
+                                party: opening.party,
+                              }
+                            : item,
+                        ),
+                        opening,
+                      ]);
+                      setQuestions((prev) =>
+                        prev.filter(
+                          (q) =>
+                            q.recordId !== recordId || q.field !== "obligationId",
+                        ),
+                      );
+                    }}
                     onAnswer={(recordId, field, patch, note) => {
                       if (pending) return;
                       let next = patch;
@@ -1354,9 +1474,9 @@ export default function CashNarra() {
                     <div className={s.pageHead}>
                       <div>
                         <h1 ref={heading} tabIndex={-1}>
-                          Every story has a paper trail.
+                          Your records
                         </h1>
-                        <p>Search, inspect and correct your saved records.</p>
+                        <p>Find, review or correct a saved record.</p>
                       </div>
                       <Button onClick={() => setModal("export")}>Export</Button>
                     </div>
@@ -1428,14 +1548,19 @@ export default function CashNarra() {
                       .sort(([left], [right]) => right.localeCompare(left))
                       .map(([day, records]) => (
                         <section key={day}>
-                          <h2>{day === today ? "Today" : readingDate(day)}</h2>
+                          <h2>
+                            {day === today
+                              ? `Today · ${readingDate(day)}`
+                              : readingDate(day)}
+                          </h2>
                           {rows(records)}
                         </section>
                       ))}
                     {!filtered.length && (
                       <p className={s.empty}>
-                        No matching records. Missing activity is not treated as
-                        zero.
+                        {search || filter !== "all" || accountFilter || evidence
+                          ? "No records match these filters. Try another date or clear the filters."
+                          : "No records in this workspace yet. Missing activity is not treated as zero."}
                       </p>
                     )}
                     <details>
@@ -1457,9 +1582,10 @@ export default function CashNarra() {
                       ))}
                     </details>
                     <section className={s.chapter}>
-                      <h2>Money still owed</h2>
+                      <h2>People & balances</h2>
+                      <p>People owe you, and amounts you owe.</p>
                       <Button onClick={() => setModal("workspace-tools")}>
-                        Manage people and payment dates
+                        Add a person or a due date
                       </Button>
                       {!obligations(w).some((o) => D(o.remaining).gt(0)) && (
                         <p>Nothing is still owed.</p>
@@ -1593,27 +1719,43 @@ export default function CashNarra() {
                       </small>
                       {storyReport ? (
                         <>
-                          <h2>
-                            <Amount
-                              value={storyReport.received}
-                              hidden={hidden}
-                            />{" "}
-                            came in.
-                            <br />
-                            <em>Here’s the story.</em>
-                          </h2>
+                          <h2>Here’s what moved this period.</h2>
+                          <div className={s.movement}>
+                            <div data-metric="received">
+                              <span>Money received</span>
+                              <Amount
+                                value={storyReport.received}
+                                hidden={hidden}
+                              />
+                            </div>
+                            <div data-metric="paid">
+                              <span>Money paid out</span>
+                              <Amount value={storyReport.paid} hidden={hidden} />
+                            </div>
+                            <div
+                              data-metric="net"
+                              data-sign={
+                                D(storyReport.net).isNegative()
+                                  ? "out"
+                                  : D(storyReport.net).isZero()
+                                    ? "even"
+                                    : "in"
+                              }
+                            >
+                              <span>Net movement</span>
+                              <Amount value={storyReport.net} hidden={hidden} />
+                            </div>
+                          </div>
                           <p>
+                            Based on{" "}
                             {
                               storyReport.records.filter(
                                 (x) => !x.kind.startsWith("opening_"),
                               ).length
                             }{" "}
-                            saved records in these dates.{" "}
-                            <Amount
-                              value={storyReport.paid}
-                              hidden={hidden}
-                            />{" "}
-                            paid from your accounts.
+                            saved records. Unrecorded activity may be missing.
+                            Net movement is money received minus money paid out.
+                            It is not profit.
                           </p>
                         </>
                       ) : (
@@ -1691,12 +1833,7 @@ export default function CashNarra() {
                     )}
                     {storyReport && (
                       <section className={s.chapter}>
-                        <h2>01 · What moved</h2>
-                        <p>
-                          Money in minus money out was{" "}
-                          <Amount value={storyReport.net} hidden={hidden} />. It
-                          is money received minus money paid out.
-                        </p>
+                        <h2>Supporting records</h2>
                         <Button
                           onClick={() => {
                             setFilter("in");
@@ -1734,7 +1871,7 @@ export default function CashNarra() {
                     )}
                     {storyReport && (
                       <section className={s.chapter}>
-                        <h2>02 · Received does not always mean sold</h2>
+                        <h2>Sales and money received</h2>
                         <p>
                           Sales value:{" "}
                           <Amount
@@ -1809,7 +1946,7 @@ export default function CashNarra() {
                     )}
                     {storyReport && (
                       <section className={s.chapter}>
-                        <h2>03 · A useful picture. Clear boundaries.</h2>
+                        <h2>What these numbers are not</h2>
                         {ai && (
                           <PeriodExplanation
                             key={w.id + view.from + view.to + w.version}
@@ -1859,11 +1996,11 @@ export default function CashNarra() {
                     <div className={s.pageHead}>
                       <div>
                         <h1 ref={heading} tabIndex={-1}>
-                          Your accounts
+                          Your recorded accounts
                         </h1>
                         <p>
-                          One recorded picture. Your money stays in your own
-                          accounts.
+                          Balances based on what you’ve entered—not linked to
+                          your bank or MoMo.
                         </p>
                         {!w.accounts.length && (
                           <ol>
@@ -1890,8 +2027,17 @@ export default function CashNarra() {
                     <div className={s.accountGrid}>
                       {w.accounts.map((a) => (
                         <article key={a.id} className={s.panel}>
-                          <Landmark size={22} />
-                          <h2 style={{ marginTop: 16 }}>
+                          <span className={s.accountMark}>
+                            {a.type === "Cash" ? (
+                              <Wallet size={20} aria-hidden />
+                            ) : a.type === "MoMo" ? (
+                              <Smartphone size={20} aria-hidden />
+                            ) : (
+                              <Landmark size={20} aria-hidden />
+                            )}
+                            <span>{a.type}</span>
+                          </span>
+                          <h2 style={{ marginTop: 12 }}>
                             {hidden ? "Account" : a.name}
                           </h2>
                           <Amount
@@ -1899,7 +2045,13 @@ export default function CashNarra() {
                             hidden={hidden}
                             large
                           />
-                          <p>Manually tracked · {a.type} · GHS</p>
+                          <p>
+                            {a.opening === null
+                              ? "Opening amount unknown"
+                              : "Opening recorded"}
+                            {" · "}
+                            Manually tracked · GHS
+                          </p>
                           <details>
                             <summary>
                               Starting balance and later records
@@ -1908,6 +2060,16 @@ export default function CashNarra() {
                               Starting balance on {a.openingDate}:{" "}
                               <Amount value={a.opening} hidden={hidden} />
                             </p>
+                            {a.opening !== null && (
+                              <Button
+                                onClick={() => {
+                                  setAccountId(a.id);
+                                  setModal("opening");
+                                }}
+                              >
+                                Check starting balance
+                              </Button>
+                            )}
                             {rows(
                               active.filter(
                                 (r) =>
@@ -1918,12 +2080,24 @@ export default function CashNarra() {
                           </details>
                           <Button
                             onClick={() => {
-                              setAccountId(a.id);
-                              setModal("opening");
+                              setAccountFilter(a.id);
+                              setFilter("all");
+                              setEvidence(null);
+                              navigate("records");
                             }}
                           >
-                            Check starting balance
+                            View activity
                           </Button>
+                          {a.opening === null && (
+                            <Button
+                              onClick={() => {
+                                setAccountId(a.id);
+                                setModal("opening");
+                              }}
+                            >
+                              Check starting balance
+                            </Button>
+                          )}
                         </article>
                       ))}
                     </div>
@@ -1938,9 +2112,12 @@ export default function CashNarra() {
                     <div className={s.pageHead}>
                       <div>
                         <h1 ref={heading} tabIndex={-1}>
-                          Give your story a direction.
+                          Your goals
                         </h1>
-                        <p>A goal you choose. A pace you can understand.</p>
+                        <p>
+                          Mark money you have set aside. A mark does not move
+                          or reserve money.
+                        </p>
                       </div>
                       <div className={s.actions}>
                         <Button onClick={() => setModal("goal")}>
@@ -1959,12 +2136,18 @@ export default function CashNarra() {
                     )}
                     {w.goals.map((g) => {
                       const f = forecast(g, date);
+                      const remaining = D(g.target).minus(f.assigned);
+                      const percent = D(g.target).eq(0)
+                        ? "0.0"
+                        : D(f.assigned).div(g.target).mul(100).toFixed(1);
                       return (
                         <div className={s.goalGrid} key={g.id}>
                           <section className={s.panel}>
-                            <span className={s.badge}>Tracked here, not moved</span>
+                            <span className={s.badge}>
+                              Tracked here, not moved
+                            </span>
                             <h2 style={{ marginTop: 18 }}>{g.name}</h2>
-                            <small>Money added for this goal</small>
+                            <small>Money you've set aside in CashNarra</small>
                             <div>
                               <Amount
                                 value={f.assigned}
@@ -1975,6 +2158,23 @@ export default function CashNarra() {
                             <p>
                               of <Amount value={g.target} hidden={hidden} />{" "}
                               target
+                              {hidden ? "" : ` · ${percent}%`}
+                            </p>
+                            <p>
+                              {remaining.lte(0)
+                                ? "The marked amount has reached the target."
+                                : <>
+                                    Remaining{" "}
+                                    <Amount
+                                      value={remaining.toFixed(2)}
+                                      hidden={hidden}
+                                    />
+                                    .
+                                  </>}
+                            </p>
+                            <p>
+                              This does not move or reserve money in your bank
+                              or MoMo.
                             </p>
                             <progress
                               aria-label={`${g.name} progress`}
@@ -1982,21 +2182,26 @@ export default function CashNarra() {
                               value={
                                 hidden
                                   ? 0
-                                  : D(f.assigned)
-                                      .div(g.target)
-                                      .mul(100)
-                                      .clamp(0, 100)
-                                      .toNumber()
+                                  : D(percent).clamp(0, 100).toNumber()
                               }
                             />
                             <div className={s.actions}>
                               <Button
+                                primary
                                 onClick={() => {
                                   setGoalId(g.id);
                                   setModal("allocation");
                                 }}
                               >
-                                Put towards this goal
+                                Assign money
+                              </Button>
+                              <Button
+                                onClick={() => {
+                                  setGoalId(g.id);
+                                  setModal("scenario");
+                                }}
+                              >
+                                Try a monthly amount
                               </Button>
                               <Button
                                 onClick={() => {
@@ -2011,7 +2216,9 @@ export default function CashNarra() {
                             <small>If you keep adding money at this pace</small>
                             <h3 style={{ marginTop: 10 }}>
                               {f.count === null
-                                ? "Not enough history to estimate yet"
+                                ? f.reason.startsWith("Check the last three")
+                                  ? "A pace estimate needs three reviewed full months."
+                                  : "No pace estimate from these marks"
                                 : f.count === 0
                                   ? "You’ve reached this goal"
                                   : `About ${f.count} months at this pace`}
@@ -2024,47 +2231,11 @@ export default function CashNarra() {
                               </p>
                             )}
                             <p>{f.reason}</p>
-                            {f.count === null ? (
-                              <div className={s.actions}>
-                                <Button
-                                  onClick={() => {
-                                    setGoalId(g.id);
-                                    setModal("goal-review");
-                                  }}
-                                >
-                                  Review past months
-                                </Button>
-                                <Button
-                                  onClick={() => {
-                                    setGoalId(g.id);
-                                    setModal("scenario");
-                                  }}
-                                >
-                                  Try a monthly amount
-                                </Button>
-                              </div>
-                            ) : (
-                              <Button
-                                onClick={() => {
-                                  setGoalId(g.id);
-                                  setModal("scenario");
-                                }}
-                              >
-                                Explore a what-if
-                              </Button>
-                            )}
-                          </section>
-                          <aside>
-                            <h3>Your plan, at your pace</h3>
-                            <p>
-                              Your money stays in your account. CashNarra helps
-                              you keep track of how much you want to put towards
-                              this goal.
-                            </p>
                             <details>
                               <summary>How we worked this out</summary>
                               <p>
-                                This estimate starts on{" "}
+                                Your money stays in your account. This estimate
+                                starts on{" "}
                                 {new Date(
                                   date + "T12:00:00Z",
                                 ).toLocaleDateString("en-GB", {
@@ -2078,8 +2249,7 @@ export default function CashNarra() {
                               </p>
                               <p>
                                 It leaves out withdrawals, interest, fees,
-                                returns and price changes. Check what you can
-                                spare after debts and bills. Money marked for a
+                                returns and price changes. Money marked for a
                                 goal is not locked away by your bank or MoMo
                                 provider.
                               </p>
@@ -2102,7 +2272,7 @@ export default function CashNarra() {
                                 </p>
                               ))}
                             </details>
-                          </aside>
+                          </section>
                         </div>
                       );
                     })}
@@ -2111,99 +2281,115 @@ export default function CashNarra() {
                 {page === "settings" && (
                   <>
                     <h1 ref={heading} tabIndex={-1}>
-                      Make it work for you.
+                      Settings
                     </h1>
-                    <div className={s.settingsRow}>
-                      <div>
-                        <strong>Appearance</strong>
-                        <p>Use light or dark appearance.</p>
+                    <p>Appearance, drafts, and your data.</p>
+                    <section className={s.settingsGroup}>
+                      <h2>Appearance</h2>
+                      <div className={s.settingsRow}>
+                        <div>
+                          <strong>Appearance</strong>
+                          <p>Use light or dark appearance.</p>
+                        </div>
+                        <select
+                          aria-label="Appearance"
+                          value={theme}
+                          onChange={(e) => setTheme(e.target.value)}
+                        >
+                          <option value="light">Light</option>
+                          <option value="dark">Dark</option>
+                        </select>
                       </div>
-                      <select
-                        aria-label="Appearance"
-                        value={theme}
-                        onChange={(e) => setTheme(e.target.value)}
-                      >
-                        <option value="light">Light</option>
-                        <option value="dark">Dark</option>
-                      </select>
-                    </div>
-                    <div className={s.settingsRow}>
-                      <div>
-                        <strong>Hide amounts</strong>
-                        <p>Keep amounts out of sight while you use the app.</p>
+                      <div className={s.settingsRow}>
+                        <div>
+                          <strong>Hide amounts</strong>
+                          <p>
+                            Hides amounts on this screen only. It does not
+                            encrypt or delete them.
+                          </p>
+                        </div>
+                        <Button onClick={() => setHidden(!hidden)}>
+                          {hidden ? "Show amounts" : "Hide amounts"}
+                        </Button>
                       </div>
-                      <Button onClick={() => setHidden(!hidden)}>
-                        {hidden ? "Show amounts" : "Hide amounts"}
-                      </Button>
-                    </div>
-                    <div className={s.settingsRow}>
-                      <div>
-                        <strong>Shared device</strong>
-                        <p>
-                          {persistent
-                            ? "Keep unfinished stories on this device."
-                            : "Unfinished stories are not kept on this device."}{" "}
-                          Turning shared-device mode on clears stored drafts.
-                        </p>
+                    </section>
+                    <section className={s.settingsGroup}>
+                      <h2>Recording and drafts</h2>
+                      <div className={s.settingsRow}>
+                        <div>
+                          <strong>Shared device</strong>
+                          <p>
+                            {persistent
+                              ? "Keep unfinished stories on this device."
+                              : "Unfinished stories are not kept on this device."}{" "}
+                            Turning this on clears stored drafts. Saved records
+                            stay.
+                          </p>
+                        </div>
+                        <Button onClick={() => setModal("shared-device")}>
+                          Use shared-device mode
+                        </Button>
                       </div>
-                      <Button
-                        onClick={async () => {
-                          setPersistent(false);
-                          await clearDrafts()
-                            .then(() =>
-                              setStatus(
-                                "Shared-device mode. Stored drafts cleared.",
-                              ),
-                            )
-                            .catch((e) => setError(e.message));
-                        }}
-                      >
-                        Use shared-device mode
-                      </Button>
-                    </div>
-                    <div className={s.settingsRow}>
-                      <div>
-                        <strong>How long to keep your original words</strong>
-                        <p>
-                          Your saved amounts and correction history are kept
-                          separately.
-                        </p>
+                      <div className={s.settingsRow}>
+                        <div>
+                          <strong>How long to keep your original words</strong>
+                          <p>
+                            Your saved amounts and correction history are kept
+                            separately. Removing the words now is a separate
+                            action.
+                          </p>
+                        </div>
+                        <select
+                          aria-label="Narration retention"
+                          value={w.retentionDays}
+                          onChange={(e) =>
+                            simple("retention", { days: Number(e.target.value) })
+                          }
+                        >
+                          {w.retentionDays === 0 && (
+                            <option value={0}>
+                              Original words already removed
+                            </option>
+                          )}
+                          <option value={30}>30 days</option>
+                          <option value={7}>7 days</option>
+                        </select>
+                        <Button onClick={() => setModal("retention-now")}>
+                          Remove original words now
+                        </Button>
                       </div>
-                      <select
-                        aria-label="Narration retention"
-                        value={w.retentionDays}
-                        onChange={(e) =>
-                          simple("retention", { days: Number(e.target.value) })
-                        }
-                      >
-                        {w.retentionDays === 0 && (
-                          <option value={0}>
-                            Original words already removed
-                          </option>
-                        )}
-                        <option value={30}>30 days</option>
-                        <option value={7}>7 days</option>
-                      </select>
-                      <Button onClick={() => setModal("retention-now")}>
-                        Remove original words now
-                      </Button>
-                    </div>
-                    <div className={s.settingsRow}>
-                      <div>
-                        <strong>Check-in and catch-up</strong>
-                        <p>
-                          No penalties, points or claims of complete finances.
-                        </p>
+                    </section>
+                    <section className={s.settingsGroup}>
+                      <h2>Review rhythm</h2>
+                      <div className={s.settingsRow}>
+                        <div>
+                          <strong>Check-in and catch-up</strong>
+                          <p>
+                            No penalties, points or claims of complete finances.
+                          </p>
+                        </div>
+                        <Button onClick={() => setModal("checkin")}>
+                          Choose a day
+                        </Button>
                       </div>
-                      <Button onClick={() => setModal("checkin")}>
-                        Choose a day
-                      </Button>
-                    </div>
-                    <section className={s.chapter}>
-                      <h2>Privacy and your data</h2>
-                      <Button onClick={() => setModal("workspace-tools")}>
-                        People, payment dates and goal settings
-                      </Button>
+                    </section>
+                    <section className={s.settingsGroup}>
+                      <h2>People, due dates and goals</h2>
+                      <div className={s.settingsRow}>
+                        <div>
+                          <strong>People, due dates and goals</strong>
+                          <p>
+                            Names you reuse, when a balance is due, and the
+                            months you have checked for a goal.
+                          </p>
+                        </div>
+                        <Button onClick={() => setModal("workspace-tools")}>
+                          Edit people and dates
+                        </Button>
+                      </div>
+                    </section>
+                    <section className={s.settingsGroup}>
+                      <h2>Your data</h2>
                       <p>
                         <Link href="/privacy">Read the processing notice</Link>
                       </p>
@@ -2637,29 +2823,7 @@ export default function CashNarra() {
         </Dialog>
       )}
       {modal === "goal-review" && goal && (
-        <Dialog title="Review a completed month" onClose={() => setModal("")}>
-          <p>
-            Review means you have checked the whole month, including quiet days.
-            Leave a month unchecked if you are still missing information.
-          </p>
-          <ol>
-            <li>
-              Check Records for missing activity, mistakes and repeated entries.
-            </li>
-            <li>
-              Check the money you marked for this goal. Marking nothing is
-              different from not knowing.
-            </li>
-            <li>
-              Check unpaid balances and other payments you need to make before
-              setting more money aside.
-            </li>
-          </ol>
-          <p>
-            CashNarra uses the middle amount from the last three full months you
-            checked. It cannot confirm that your records are complete or that
-            you can afford the next amounts.
-          </p>
+        <Dialog title="Review a month for this goal" onClose={() => setModal("")}>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -2683,10 +2847,37 @@ export default function CashNarra() {
               />
               I have checked my debts and other planned payments
             </label>
-            <p>
-              Missing months are not zero. This confirms review, not
-              affordability.
-            </p>
+            <details>
+              <summary>How this affects the estimate</summary>
+              <p>
+                Review means you have checked the whole month, including quiet
+                days. Leave a month unchecked if you are still missing
+                information.
+              </p>
+              <ol>
+                <li>
+                  Check Records for missing activity, mistakes and repeated
+                  entries.
+                </li>
+                <li>
+                  Check the money you marked for this goal. Marking nothing is
+                  different from not knowing.
+                </li>
+                <li>
+                  Check unpaid balances and other payments you need to make
+                  before setting more money aside.
+                </li>
+              </ol>
+              <p>
+                CashNarra uses the middle amount from the last three full
+                months you checked. It cannot confirm that your records are
+                complete or that you can afford the next amounts.
+              </p>
+              <p>
+                Missing months are not zero. This confirms review, not
+                affordability.
+              </p>
+            </details>
             <Button primary type="submit" disabled={busy}>
               Record review
             </Button>
@@ -2774,7 +2965,7 @@ export default function CashNarra() {
       )}
       {modal === "workspace-tools" && w && (
         <Dialog
-          title="People, plans and check-ins"
+          title="People, due dates and goals"
           onClose={() => setModal("")}
         >
           <WorkspaceTools
@@ -2838,6 +3029,34 @@ export default function CashNarra() {
           >
             Record deletion request
           </Button>
+        </Dialog>
+      )}
+      {modal === "shared-device" && (
+        <Dialog
+          title="Clear drafts on this device?"
+          onClose={() => setModal("")}
+        >
+          <p>
+            Shared-device mode stops keeping unfinished stories on this device
+            and clears the ones already stored here. Saved records stay.
+          </p>
+          <div className={s.actions}>
+            <Button onClick={() => setModal("")}>Stay</Button>
+            <Button
+              primary
+              onClick={async () => {
+                setPersistent(false);
+                await clearDrafts()
+                  .then(() =>
+                    setStatus("Shared-device mode. Stored drafts cleared."),
+                  )
+                  .catch((e) => setError(e.message));
+                setModal("");
+              }}
+            >
+              Clear drafts and use shared-device mode
+            </Button>
+          </div>
         </Dialog>
       )}
       {modal === "logout" && (
@@ -2985,58 +3204,277 @@ export default function CashNarra() {
         </Dialog>
       )}
       {modal === "profit" && w && view.from && view.to && (
-        <Dialog title="Profit or loss" onClose={() => setModal("")}>
+        <Dialog title="Profit or loss" wide onClose={() => setModal("")}>
           <ProfitReview
             workspace={w}
             from={view.from}
             to={view.to}
             today={today}
             hidden={hidden}
+            onClose={() => setModal("")}
           />
         </Dialog>
       )}
       {modal === "export" && w && (
-        <Dialog title="Export a private report" onClose={() => setModal("")}>
-          {exportRange ? (
-            <>
-              <p>
-                {rangeLabel(exportRange.from, exportRange.to)} · {w.name} · GHS.
-                Includes amounts and references to the records behind them.
-                Anyone you share the downloaded file with can pass it on.
-              </p>
-              <div className={s.actions}>
-                {["csv", "pdf", "xlsx"].map((type) => (
-                  <Button
-                    key={type}
-                    onClick={async () => {
-                      try {
-                        const { downloadReport } = await import("@/lib/exports");
-                        await downloadReport(
-                          w,
-                          exportRange.from,
-                          exportRange.to,
-                          type as "csv" | "pdf" | "xlsx",
-                        );
-                        setStatus("Private report downloaded.");
-                      } catch (e) {
-                        setError((e as Error).message);
-                      }
-                      setModal("");
-                    }}
-                  >
-                    {type.toUpperCase()}
-                  </Button>
-                ))}
-              </div>
-            </>
-          ) : (
-            <p>
-              These dates have not arrived, so there is no completed period to
-              download.
-            </p>
-          )}
-        </Dialog>
+        <ExportDialog
+          workspace={w}
+          summaries={spaceSummaries}
+          range={exportRange}
+          today={today}
+          hidden={hidden}
+          onClose={() => setModal("")}
+          onDone={(message) => {
+            setError("");
+            setStatus(message);
+            setModal("");
+          }}
+          onError={setError}
+        />
       )}
     </>
   );
+}
+
+function ExportDialog({
+  workspace,
+  summaries,
+  range,
+  today,
+  hidden,
+  onClose,
+  onDone,
+  onError,
+}: {
+  workspace: Workspace;
+  summaries: WorkspaceSummary[];
+  range: { from: string; to: string } | null;
+  today: string;
+  hidden: boolean;
+  onClose: () => void;
+  onDone: (message: string) => void;
+  onError: (message: string) => void;
+}) {
+  const known = summaries.some((item) => item.id === workspace.id)
+    ? summaries
+    : [{ id: workspace.id, name: workspace.name }, ...summaries];
+  const others = known.filter((item) => item.id !== workspace.id);
+  const opening = exportChoiceFor(range, today);
+  const [scope, setScope] = useState<ExportScope>("this");
+  const [otherId, setOtherId] = useState(others[0]?.id ?? "");
+  const [preset, setPreset] = useState<ExportPreset>(opening.preset);
+  const [span, setSpan] = useState<ExportSpan>(opening.span);
+  const [day, setDay] = useState(opening.day);
+  const [from, setFrom] = useState(opening.from);
+  const [to, setTo] = useState(opening.to);
+  const [busy, setBusy] = useState(false);
+  const [problem, setProblem] = useState("");
+  const dates = exportWindow(preset, span, today, { day, from, to });
+  const ready =
+    scope === "this" ||
+    (scope === "another" && others.some((item) => item.id === otherId)) ||
+    (scope === "all" && others.length > 0);
+  async function download(type: "csv" | "pdf" | "xlsx") {
+    if (!dates.from || !dates.to || !ready) return;
+    setBusy(true);
+    setProblem("");
+    try {
+      const targets = exportFileTargets(
+        workspace.id,
+        known,
+        scope,
+        otherId,
+        hidden,
+      );
+      const { downloadReport } = await import("@/lib/exports");
+      for (const target of targets) {
+        const full =
+          target.id === workspace.id
+            ? workspace
+            : await savedWorkspace(target.id);
+        await downloadReport(full, dates.from, dates.to, type, target.mark);
+      }
+      onDone(
+        targets.length > 1
+          ? "Downloads started. One file for each workspace. Check your Downloads folder. If a file is missing, allow multiple downloads for this site."
+          : "Download started. Check your Downloads folder.",
+      );
+    } catch (e) {
+      const message =
+        e instanceof Error ? e.message : "The export did not start.";
+      setProblem(message);
+      onError(message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  const formats = (
+    <div className={s.actions}>
+      {(["csv", "pdf", "xlsx"] as const).map((type) => (
+        <Button
+          key={type}
+          disabled={busy || !ready || !dates.from || !dates.to}
+          onClick={() => download(type)}
+        >
+          {type.toUpperCase()}
+        </Button>
+      ))}
+    </div>
+  );
+  return (
+    <Dialog
+      title="Export your records"
+      onClose={onClose}
+      actions={formats}
+    >
+      <>
+          <p>
+            Amounts are in GHS. The file contains private financial
+            information. Anyone you share it with can pass it on.
+          </p>
+          {hidden && (
+            <p className={s.exportNote}>
+              Amounts are hidden on screen. The file will still contain them.
+            </p>
+          )}
+          <fieldset className={s.exportChoices}>
+            <legend>Which records?</legend>
+            <label>
+              <input
+                type="radio"
+                name="export-scope"
+                checked={scope === "this"}
+                onChange={() => setScope("this")}
+              />
+              This workspace
+              {hidden ? "" : ` — ${workspace.name}`}
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="export-scope"
+                checked={scope === "another"}
+                disabled={!others.length}
+                onChange={() => setScope("another")}
+              />
+              <span>
+                Another workspace
+                {scope === "another" && others.length > 0 && (
+                  <select
+                    aria-label="Other workspace"
+                    value={otherId}
+                    onChange={(event) => setOtherId(event.target.value)}
+                  >
+                    {others.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {hidden ? "Workspace" : item.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </span>
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="export-scope"
+                checked={scope === "all"}
+                disabled={!others.length}
+                onChange={() => setScope("all")}
+              />
+              All your workspaces
+            </label>
+          </fieldset>
+          <fieldset className={s.exportChoices}>
+            <legend>Which dates?</legend>
+            {(
+              [
+                ["today", "Today"],
+                ["week", "This week"],
+                ["month", "This month"],
+                ["year", "This year"],
+                ["specify", "Specify"],
+              ] as const
+            ).map(([value, label]) => (
+              <label key={value}>
+                <input
+                  type="radio"
+                  name="export-dates"
+                  checked={preset === value}
+                  onChange={() => setPreset(value)}
+                />
+                {label}
+              </label>
+            ))}
+            {preset === "specify" && (
+              <div className={s.exportDates}>
+                <label>
+                  <input
+                    type="radio"
+                    name="export-span"
+                    checked={span === "day"}
+                    onChange={() => setSpan("day")}
+                  />
+                  One day
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="export-span"
+                    checked={span === "range"}
+                    onChange={() => setSpan("range")}
+                  />
+                  A range of dates
+                </label>
+                {span === "day" ? (
+                  <input
+                    aria-label="Date"
+                    type="date"
+                    value={day}
+                    onChange={(event) => setDay(event.target.value)}
+                  />
+                ) : (
+                  <>
+                    <input
+                      aria-label="From"
+                      type="date"
+                      value={from}
+                      onChange={(event) => setFrom(event.target.value)}
+                    />
+                    <input
+                      aria-label="To"
+                      type="date"
+                      value={to}
+                      onChange={(event) => setTo(event.target.value)}
+                    />
+                  </>
+                )}
+              </div>
+            )}
+          </fieldset>
+          <p className={s.exportNote}>{dates.label}</p>
+          <p className={s.exportNote}>
+            {others.length
+              ? "All downloads a separate file for each of your workspaces. The records are not mixed into one ledger. The same dates are used for every file."
+              : "You only have this workspace."}{" "}
+            PDF is for reading or printing, Excel for working with the numbers,
+            and CSV for importing records into another tool.
+          </p>
+          {problem && <p role="alert">{problem}</p>}
+      </>
+    </Dialog>
+  );
+}
+
+async function savedWorkspace(id: string) {
+  const response = await fetch(
+    `/api/workspaces?workspace=${encodeURIComponent(id)}`,
+    { cache: "no-store" },
+  );
+  const body = (await response.json().catch(() => ({}))) as {
+    error?: string;
+    workspace?: Workspace;
+  };
+  if (!response.ok || !body.workspace)
+    throw new Error(body.error || "That workspace could not be opened.");
+  return body.workspace;
 }

@@ -7,7 +7,8 @@ import {
   type ProfitLossReport,
   type ProfitReview,
 } from "@/domain/profit-loss";
-import { money, parseEntryAmount } from "@/domain/money";
+import { D, money, parseEntryAmount } from "@/domain/money";
+import { rangeLabel } from "@/domain/periods";
 import { Amount, Button } from "./ui";
 import s from "./app.module.css";
 
@@ -72,39 +73,86 @@ function CostField({
   );
 }
 
-function Recorded({
+function Line({
+  label,
+  value,
+  hidden,
+}: {
+  label: string;
+  value: string | null;
+  hidden: boolean;
+}) {
+  if (value === null || D(value).isZero()) return null;
+  return (
+    <div>
+      <dt>{label}</dt>
+      <dd>
+        <Amount value={value} hidden={hidden} />
+      </dd>
+    </div>
+  );
+}
+
+function Statement({
   report,
+  from,
+  to,
   hidden,
 }: {
   report: ProfitLossReport;
+  from: string;
+  to: string;
   hidden: boolean;
 }) {
+  const aside =
+    D(report.stockPurchased).isZero() && D(report.equipmentPurchased).isZero();
   return (
-    <>
-      <p>Already in the records, and already included:</p>
-      <p>
-        Sales, including unpaid sales:{" "}
-        <Amount value={report.sales} hidden={hidden} />
-      </p>
-      <p>
-        Other income: <Amount value={report.otherIncome} hidden={hidden} />
-      </p>
-      <p>
-        Business expenses, including unpaid bills:{" "}
-        <Amount value={report.expenses} hidden={hidden} />
-      </p>
-      <p>
-        Interest: <Amount value={report.interest} hidden={hidden} />
-      </p>
-      <p>Also recorded, but not treated as used up:</p>
-      <p>
-        Stock purchased: <Amount value={report.stockPurchased} hidden={hidden} />
-      </p>
-      <p>
-        Equipment purchased:{" "}
-        <Amount value={report.equipmentPurchased} hidden={hidden} />
-      </p>
-    </>
+    <section className={s.statement}>
+      <p className={s.statementPeriod}>{rangeLabel(from, to)}</p>
+      <h3>Counted from the records</h3>
+      <dl className={s.statementLines}>
+        <Line
+          label="Sales, including unpaid sales"
+          value={report.sales}
+          hidden={hidden}
+        />
+        <Line label="Other income" value={report.otherIncome} hidden={hidden} />
+        <Line
+          label="Business expenses, including unpaid bills"
+          value={report.expenses}
+          hidden={hidden}
+        />
+        <Line label="Interest" value={report.interest} hidden={hidden} />
+        <Line
+          label="Cost of goods sold"
+          value={report.costOfSales}
+          hidden={hidden}
+        />
+        <Line
+          label="Equipment used up"
+          value={report.depreciation}
+          hidden={hidden}
+        />
+        <Line label="Other costs" value={report.otherCosts} hidden={hidden} />
+      </dl>
+      <h3>Kept out of this profit</h3>
+      {aside ? (
+        <p>No stock or equipment purchases are recorded in this period.</p>
+      ) : (
+        <dl className={s.statementLines}>
+          <Line
+            label="Stock purchased"
+            value={report.stockPurchased}
+            hidden={hidden}
+          />
+          <Line
+            label="Equipment purchased"
+            value={report.equipmentPurchased}
+            hidden={hidden}
+          />
+        </dl>
+      )}
+    </section>
   );
 }
 
@@ -114,12 +162,14 @@ export default function ProfitReview({
   to,
   today,
   hidden,
+  onClose,
 }: {
   workspace: Workspace;
   from: string;
   to: string;
   today: string;
   hidden: boolean;
+  onClose: () => void;
 }) {
   const recorded = profitLoss(workspace, from, to, emptyProfitReview, today);
   const [askFigures, setAskFigures] = useState(false);
@@ -172,8 +222,8 @@ export default function ProfitReview({
         });
       }}
     >
-      <Recorded report={recorded} hidden={hidden} />
-      <p>
+      <Statement report={report ?? recorded} from={from} to={to} hidden={hidden} />
+      <p className={s.statementNote}>
         Business expenses and interest already count. A stock purchase is not
         the cost of goods sold, and an equipment purchase is not the amount
         used up. Transfers, loans, money taken home and payments of older
@@ -182,7 +232,7 @@ export default function ProfitReview({
       <p>Do these records already include every cost for this period?</p>
       <div className={s.actions}>
         <Button
-          primary
+          primary={!report?.profit}
           disabled={busy}
           onClick={() => {
             setAskFigures(false);
@@ -261,11 +311,18 @@ export default function ProfitReview({
         </div>
       )}
       {report?.profit !== null && report && (
-        <div role="status">
+        <div className={s.statementResult} role="status">
           <h3>Profit or loss before income tax</h3>
           <Amount value={report.profit} hidden={hidden} large />
-          <p>{report.basis}</p>
-          <p>{report.exclusions}</p>
+          <p className={s.statementNote}>{report.basis}</p>
+          <p className={s.statementNote}>{report.exclusions}</p>
+        </div>
+      )}
+      {report?.profit !== null && report && (
+        <div className={s.actions}>
+          <Button primary onClick={onClose}>
+            Done
+          </Button>
         </div>
       )}
     </form>

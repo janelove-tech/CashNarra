@@ -1,10 +1,11 @@
 import { expect, test } from "@playwright/test";
+import { openSampleWorkspace } from "./demo-entry";
 
 test("recorded costs are enough when the user says nothing else is missing", async ({
   page,
 }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Explore with sample data" }).click();
+  await openSampleWorkspace(page);
   await page
     .getByRole("button", { name: "Money Stories", exact: true })
     .filter({ visible: true })

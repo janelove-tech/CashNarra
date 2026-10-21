@@ -32,6 +32,14 @@ CashNarra turns ordinary money stories into trustworthy records, understanding, 
 
 V1 includes personal/business workspaces, typed narration, and voice narration through the same pipeline. CashNarra organises money. It does not move money. Do not add banking, wallets, MoMo or card payments, lending, investment advice, tax filing, POS, inventory, payroll, HR, CRM, ERP, or automatic bank/MoMo aggregation. Receipt OCR, statement import, rich collaboration, and sophisticated forecasting stay later unless the user explicitly changes scope.
 
+## Locked presentation
+
+User decision, 19 October 2026. Do not undo these while changing nearby layout, copy, or exports.
+
+The logo mark is violet `#5B49C7`. The CashNarra name stays ink `#29263D`. Light screens use `public/brand/cashnarra-logo.svg`. Do not use the all-violet lockup or the all-ink lockup there. Dark surfaces use the white reversed lockup. Icon-only marks use `cashnarra-symbol.svg`. Do not redraw the mark as squares.
+
+The activity PDF stays the two-page designed report: violet mark, ink name, dark summary card, colored activity table, accounts and cash-movement page, and the private-record footer. Figures come from the ledger report. Do not replace it with a plain text list, paint the PDF name violet, or hard-code the specimen amounts.
+
 ## Financial invariants
 
 Money received is not automatically income. Money paid is not automatically an expense. A sale is not a cash receipt. A transfer is not spending. A loan received is not revenue. Loan principal repayment is not an operating expense. Owner contribution is not sales. Owner withdrawal is not a business expense. A credit sale is not a cash receipt. Receivable settlement is not another sale. Payable settlement is not another expense. Stock purchase is not automatically a profit expense. Goal allocation is not money movement. Missing or unknown information is not zero. Do not fabricate profit.

@@ -1,7 +1,8 @@
 import { test, expect, type Page } from "@playwright/test";
+import { openSampleWorkspace } from "./demo-entry";
 async function demo(page: Page) {
   await page.goto("/");
-  await page.getByRole("button", { name: "Explore with sample data" }).click();
+  await openSampleWorkspace(page);
   await expect(
     page.getByRole("heading", { name: "Let’s make sense of your money." }),
   ).toBeVisible();

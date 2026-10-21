@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openSampleWorkspace } from "./demo-entry";
 import { event, fixture } from "../../src/domain/fixture";
 import { storyCalculation } from "../../src/domain/story-calculation";
 test.use({ serviceWorkers: "block" });
@@ -7,7 +8,7 @@ test("shows included records and requires confirmation before accepting a percen
   page,
 }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Explore with sample data" }).click();
+  await openSampleWorkspace(page);
   const response = await page.request.get("/api/workspaces");
   const data = await response.json();
   const w = data.workspaces?.[0] ?? data[0] ?? fixture();

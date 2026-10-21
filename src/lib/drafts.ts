@@ -11,6 +11,7 @@ export type DraftQuestion = {
     | "obligationId"
     | "date";
   question: string;
+  suggestion?: string | null;
 };
 export type Draft = {
   ownerId: string;

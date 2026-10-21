@@ -6,7 +6,7 @@ export default function Privacy() {
       <Link href="/">
         <img
           className={s.logo}
-          src="/brand/cashnarra-lockup.svg"
+          src="/brand/cashnarra-logo.svg"
           alt="CashNarra"
         />
       </Link>

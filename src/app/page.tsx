@@ -1,105 +1,172 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
-import { ArrowRight, Check } from "lucide-react";
-import { Button, Amount } from "@/components/ui";
-import s from "@/components/app.module.css";
+import { SampleStory } from "@/components/landing/sample-story";
+import shell from "@/components/app.module.css";
+import s from "@/components/landing/landing.module.css";
+
+const questions = [
+  [
+    "Do I need to know accounting?",
+    "No. Describe what happened as you normally would. CashNarra suggests the records and you review them before saving.",
+  ],
+  [
+    "Does CashNarra connect to my bank or MoMo?",
+    "Not in this version. You add and update Cash, Bank and MoMo records yourself. Shown balances come from your entries, not from a bank.",
+  ],
+  [
+    "Will it move or hold my money?",
+    "No. CashNarra records and explains money activity. It does not transfer funds or operate a wallet.",
+  ],
+  [
+    "What if it misunderstands a payment?",
+    "Correct the proposed event before saving. Saved records can also be corrected, and the change keeps a history.",
+  ],
+  [
+    "Can I use it for business and personal money?",
+    "Yes. Keep separate workspaces so shop records and personal records stay apart.",
+  ],
+  [
+    "Is speaking available?",
+    "Text is the way to record a story today. Short audio transcription is still being checked, and it is not generally available.",
+  ],
+] as const;
+
 export default function Landing() {
-  const [error, setError] = useState(""),
-    [busy, setBusy] = useState(false);
-  async function demo() {
-    setBusy(true);
-    try {
-      const res = await fetch("/api/demo", { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      location.href = "/app";
-    } catch (e) {
-      setError((e as Error).message);
-      setBusy(false);
-    }
+  function focusSample() {
+    document.getElementById("sample")?.scrollIntoView({ block: "nearest" });
+    document.getElementById("read-sample")?.focus();
   }
   return (
-    <main className={s.landing}>
+    <main className={shell.landing}>
+      <div className={shell.landingMarks} aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </div>
       <header>
         <img
-          className={s.logo}
-          src="/brand/cashnarra-lockup.svg"
+          className={shell.logo}
+          src="/brand/cashnarra-logo.svg"
           alt="CashNarra"
         />
-        <Link href="/auth" className={s.button}>
-          Sign in
-        </Link>
+        <div className={shell.landingTools}>
+          <nav aria-label="On this page">
+            <a href="#how">How it works</a>
+            <a href="#questions">Questions</a>
+          </nav>
+          <Link href="/auth" className={s.secondary}>
+            Sign in
+          </Link>
+        </div>
       </header>
-      <section className={s.landingHero}>
+      <section className={s.hero}>
         <div>
-          <span className={s.badge}>Record → Understand → Plan</span>
-          <h1 style={{ marginTop: 24 }}>
-            Your money.
-            <br />
-            <span>In your words.</span>
-          </h1>
-          <p>
-            Tell CashNarra what happened with your money. Review the records.
-            See what the numbers mean.
+          <h1>Tell us what happened with your money. We’ll help you make sense of it.</h1>
+          <p className={s.support}>
+            Describe a sale, expense or payment in your own words. Check the
+            records CashNarra finds, save them, and see the numbers clearly.
           </p>
           <div className={s.actions}>
-            <Button primary onClick={demo} disabled={busy}>
-              Explore with sample data <ArrowRight size={18} />
-            </Button>
-            <Link className={s.button} href="/auth">
-              Start my records
+            <button type="button" className={s.primary} onClick={focusSample}>
+              Try a sample story
+            </button>
+            <Link className={s.secondary} href="/auth?mode=signup">
+              Create my account
             </Link>
           </div>
-          <p className={s.error} role="alert">
-            {error}
+          <p className={s.caption}>
+            Fictional example. No account needed. Nothing is saved.
           </p>
-          <small>
-            Demo uses fictional Ama Works data. No real AI calls or money
-            movement.
-          </small>
         </div>
-        <div>
-          <div className={s.speech}>
-            “I sold 900 cash, paid for delivery, and Abena paid part of her
-            balance.”
+        <SampleStory />
+      </section>
+      <section className={s.section} id="how">
+        <h2>One story. Clear records. Your decision.</h2>
+        <ol className={s.steps}>
+          <li>
+            <span>1</span>
+            <h3>Tell it your way</h3>
+            <p>Several events can go in one message.</p>
+          </li>
+          <li>
+            <span>2</span>
+            <h3>Check what CashNarra understood</h3>
+            <p>Fix a detail if it needs one.</p>
+          </li>
+          <li>
+            <span>3</span>
+            <h3>Save and see the meaning</h3>
+            <p>Your accounts, records and Money Stories update from what you confirm.</p>
+          </li>
+        </ol>
+      </section>
+      <section className={s.section}>
+        <h2>Know what came in—and what it meant.</h2>
+        <p>
+          Old customer payments are not counted as new sales. Transfers are
+          not expenses.
+        </p>
+        <div className={s.metrics}>
+          <div>
+            <span>Sales in the example</span>
+            <strong>GH₵900.00</strong>
           </div>
-          <div className={s.landingProof}>
-            <span className={s.eyebrow}>
-              <img src="/brand/cashnarra-symbol.svg" alt="" />
-              Your story, organised.
-            </span>
-            {[
-              ["Cash sales", "900.00"],
-              ["Delivery", "80.00"],
-              ["Abena’s old balance payment", "200.00"],
-            ].map(([name, value]) => (
-              <div key={name} className={s.settingsRow}>
-                <span>{name}</span>
-                <Amount value={value} />
-              </div>
-            ))}
-            <p style={{ marginTop: 20, marginBottom: 0 }}>
-              <Check size={16} /> You review before anything is saved.
-            </p>
+          <div>
+            <span>Money received</span>
+            <strong>GH₵1,100.00</strong>
           </div>
+          <div>
+            <span>Net movement</span>
+            <strong>GH₵1,020.00</strong>
+          </div>
+        </div>
+        <p>
+          The extra GH₵200.00 is Abena paying an old debt. It is cash in, and
+          it is not another sale.
+        </p>
+      </section>
+      <section className={s.section}>
+        <h2>For the shop, the side hustle and your own everyday money.</h2>
+        <div className={s.uses}>
+          <article>
+            <h3>The shop</h3>
+            <p>A cash sale, a delivery payment, and a customer paying an old balance.</p>
+          </article>
+          <article>
+            <h3>The side hustle</h3>
+            <p>Money you earned, money you spent, and what you still owe someone.</p>
+          </article>
+          <article>
+            <h3>Everyday money</h3>
+            <p>Cash, bank and MoMo, kept as the records you choose to save.</p>
+          </article>
+        </div>
+        <p className={s.trust}>
+          Your money stays in your accounts. CashNarra records what you tell
+          it. It doesn’t access your bank or MoMo automatically.
+        </p>
+      </section>
+      <section className={s.section} id="questions">
+        <h2>A few things worth knowing</h2>
+        <div className={s.faq}>
+          {questions.map(([question, answer]) => (
+            <details key={question}>
+              <summary>{question}</summary>
+              <p>{answer}</p>
+            </details>
+          ))}
         </div>
       </section>
-      <hr />
-      <section className={s.formGrid}>
-        <div>
-          <h2>Serious money. Light interaction.</h2>
-          <p>
-            Manual Cash, Bank and MoMo records. Clear debt balances. Corrections
-            with a history you can follow.
-          </p>
-        </div>
-        <div>
-          <h2>See what it could take.</h2>
-          <p>
-            Choose a goal, note how much you have set aside for it, and try
-            different monthly amounts. Your money stays where it is.
-          </p>
+      <section className={s.close}>
+        <h2>Your next money story starts with one ordinary day.</h2>
+        <p>Start with something you remember. Check the details before saving.</p>
+        <div className={s.actions}>
+          <Link className={s.primary} href="/auth?mode=signup">
+            Create my account
+          </Link>
+          <button type="button" className={s.secondary} onClick={focusSample}>
+            Try the fictional example again
+          </button>
         </div>
       </section>
       <footer>

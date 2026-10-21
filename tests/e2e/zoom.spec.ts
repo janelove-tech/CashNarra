@@ -1,6 +1,7 @@
 import { chromium, test, expect } from "@playwright/test";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { openSampleWorkspace } from "./demo-entry";
 
 for (const theme of ["light", "dark"]) {
   test(`200% browser zoom retains narration, review and keyboard access in ${theme}`, async () => {
@@ -35,9 +36,7 @@ for (const theme of ["light", "dark"]) {
         body: JSON.stringify(metrics),
         contentType: "application/json",
       });
-      await page
-        .getByRole("button", { name: "Explore with sample data" })
-        .click();
+      await openSampleWorkspace(page);
       await expect(
         page.getByRole("button", { name: /Recorded account balances/ }),
       ).toContainText("5,970.00");

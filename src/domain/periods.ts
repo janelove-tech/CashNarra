@@ -78,6 +78,112 @@ export type StoryWindow = {
   balanceLabel: string | null;
 };
 
+export type ExportPreset = "today" | "week" | "month" | "year" | "specify";
+export type ExportSpan = "day" | "range";
+
+export type ExportWindow = {
+  from: string | null;
+  to: string | null;
+  label: string;
+};
+
+function ready(from: string, to: string, label: string): ExportWindow {
+  return { from, to, label };
+}
+
+function unavailable(label: string): ExportWindow {
+  return { from: null, to: null, label };
+}
+
+/** The dates an export will use. Open periods run through today. */
+export function exportWindow(
+  preset: ExportPreset,
+  span: ExportSpan,
+  today: string,
+  custom: { day: string; from: string; to: string },
+): ExportWindow {
+  if (!calendarDate(today)) throw new Error("Choose a valid date.");
+  if (preset === "today")
+    return ready(today, today, `Today · ${readingDate(today)}`);
+  if (preset === "week" || preset === "month") {
+    const view = storyWindow(today, preset, today);
+    return { from: view.from, to: view.to, label: view.heading };
+  }
+  if (preset === "year") {
+    const from = `${today.slice(0, 4)}-01-01`;
+    return ready(
+      from,
+      today,
+      today.endsWith("-12-31")
+        ? rangeLabel(from, today)
+        : `This year so far · through ${readingDate(today)}`,
+    );
+  }
+  if (span === "day") {
+    if (!calendarDate(custom.day)) return unavailable("Choose a date.");
+    if (custom.day > today)
+      return unavailable(
+        `${readingDate(custom.day)} · this date has not arrived`,
+      );
+    return ready(
+      custom.day,
+      custom.day,
+      custom.day === today ? `Today · ${readingDate(today)}` : readingDate(custom.day),
+    );
+  }
+  if (!calendarDate(custom.from) || !calendarDate(custom.to))
+    return unavailable("Choose a start and an end.");
+  if (custom.from > custom.to)
+    return unavailable("Choose an end date on or after the start.");
+  if (custom.from > today)
+    return unavailable(
+      `${rangeLabel(custom.from, custom.to)} · these dates have not arrived`,
+    );
+  const to = custom.to > today ? today : custom.to;
+  return ready(
+    custom.from,
+    to,
+    custom.to > today
+      ? `${rangeLabel(custom.from, to)} · through ${readingDate(today)}`
+      : rangeLabel(custom.from, to),
+  );
+}
+
+/** Opens the export on the dates already on screen. */
+export function exportChoiceFor(
+  range: { from: string; to: string } | null,
+  today: string,
+) {
+  const day = range?.from === range?.to && range ? range.from : today;
+  const from = range?.from ?? today;
+  const to = range?.to ?? today;
+  const blank = { preset: "today" as const, span: "day" as const, day, from, to };
+  if (!range || !calendarDate(range.from) || !calendarDate(range.to)) return blank;
+  const matches = (preset: ExportPreset) => {
+    const window = exportWindow(preset, "day", today, { day, from, to });
+    return window.from === range.from && window.to === range.to;
+  };
+  if (matches("today")) return { ...blank, preset: "today" as const };
+  if (matches("week")) return { ...blank, preset: "week" as const };
+  if (matches("month")) return { ...blank, preset: "month" as const };
+  if (matches("year")) return { ...blank, preset: "year" as const };
+  if (range.from === range.to)
+    return {
+      preset: "specify" as const,
+      span: "day" as const,
+      day: range.from,
+      from: range.from,
+      to: range.from,
+    };
+  return {
+    preset: "specify" as const,
+    span: "range" as const,
+    day,
+    from: range.from,
+    to: range.to,
+  };
+}
+
 export function storyWindow(
   anchor: string,
   period: StoryPeriod,

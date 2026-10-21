@@ -9,7 +9,7 @@ import { join } from "node:path";
 import { z } from "zod";
 
 export const MODEL = "gpt-4.1-mini-2025-04-14";
-export const CEILING = 5_000_000; // USD millionths; one cumulative approval.
+export const CEILING = 10_000_000; // USD millionths. Raised from US$5 to US$10 on 2026-10-20.
 export const MAX_INPUT = 1_047_576;
 export const MAX_OUTPUT = 4000;
 export function usageCost(input: number, output: number) {
@@ -30,7 +30,7 @@ const header = {
   type: "budget",
   version: 1,
   ceilingMicros: CEILING,
-  approval: "2026-10-16",
+  approval: "2026-10-20",
 } as const;
 const entry = z.discriminatedUnion("type", [
   z

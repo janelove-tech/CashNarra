@@ -1,11 +1,12 @@
 import { test, expect } from "@playwright/test";
+import { openSampleWorkspace } from "./demo-entry";
 test("record errors are associated and focusable; dialog stays keyboard-contained under reduced motion", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize({ width: 320, height: 900 });
   await page.goto("/");
-  await page.getByRole("button", { name: "Explore with sample data" }).click();
+  await openSampleWorkspace(page);
   await page
     .getByRole("button", { name: "Tell your story", exact: true })
     .click();

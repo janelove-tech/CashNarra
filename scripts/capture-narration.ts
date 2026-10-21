@@ -65,7 +65,7 @@ async function main() {
     const budget = await EvaluationBudget.acquire(directory, true);
     await budget.close();
     console.log(
-      "Created cumulative US$5 evaluation budget. No provider calls.",
+      "Created cumulative US$10 evaluation budget. No provider calls.",
     );
     return;
   }

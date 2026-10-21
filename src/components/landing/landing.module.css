@@ -1,0 +1,199 @@
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 32px;
+  align-items: start;
+  padding-top: 36px;
+}
+.hero h1,
+.section h2,
+.close h2 {
+  letter-spacing: -0.04em;
+  line-height: 1.12;
+}
+.hero h1 {
+  max-width: 14em;
+  margin: 0 0 16px;
+  font-size: clamp(32px, 4.6vw, 48px);
+}
+.support,
+.section p,
+.close p {
+  max-width: 38em;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--cn-text-secondary);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0 12px;
+}
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.primary {
+  border: 0;
+  background: var(--cn-action);
+  color: var(--cn-on-action);
+  cursor: pointer;
+}
+.secondary {
+  border: 1px solid var(--cn-border-control);
+  background: var(--cn-surface);
+  color: var(--cn-text);
+}
+.caption {
+  margin: 0;
+  color: var(--cn-text-secondary);
+  font-size: 13px;
+  line-height: 20px;
+}
+.section,
+.close {
+  margin-top: 56px;
+}
+.section h2,
+.close h2 {
+  max-width: 16em;
+  margin: 0 0 16px;
+  font-size: clamp(28px, 4vw, 36px);
+}
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.steps li {
+  padding-top: 12px;
+  border-top: 2px solid var(--cn-action);
+}
+.steps span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--cn-action);
+  font-weight: 700;
+}
+.steps h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+}
+.steps p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 22px;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+.metrics div {
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--cn-surface);
+  border: 1px solid var(--cn-border);
+}
+.metrics span,
+.uses small {
+  display: block;
+  color: var(--cn-text-secondary);
+  font-size: 13px;
+  line-height: 20px;
+}
+.metrics strong {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-inter), Inter, sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+.uses {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0 20px;
+}
+.uses article {
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--cn-surface);
+}
+.uses h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+.uses p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 22px;
+}
+.trust {
+  margin: 0;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--cn-brand-soft);
+  color: var(--cn-text);
+  font-size: 16px;
+  line-height: 24px;
+}
+.faq {
+  display: grid;
+  gap: 8px;
+}
+.faq details {
+  border-bottom: 1px solid var(--cn-border);
+}
+.faq summary {
+  min-height: 48px;
+  padding: 12px 0;
+  font-weight: 700;
+  cursor: pointer;
+}
+.faq p {
+  margin: 0 0 14px;
+  max-width: 42em;
+  color: var(--cn-text-secondary);
+  font-size: 15px;
+  line-height: 22px;
+}
+.close {
+  padding: 28px;
+  border-radius: 20px;
+  background: var(--cn-story-surface);
+  color: var(--cn-story-text);
+}
+.close p {
+  color: var(--cn-story-text);
+}
+@media (max-width: 959px) {
+  .hero,
+  .steps,
+  .metrics,
+  .uses {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 360px) {
+  .hero {
+    padding-top: 20px;
+  }
+  .close {
+    padding: 20px;
+  }
+}

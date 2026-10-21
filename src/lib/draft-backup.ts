@@ -14,6 +14,7 @@ const questionSchema = z.object({
     "date",
   ]),
   question: z.string().max(500),
+  suggestion: z.string().max(80).nullable().optional(),
 });
 const draftBody = z.object({
   ownerId: z.string(),

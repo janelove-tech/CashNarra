@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openSampleWorkspace } from "./demo-entry";
 test("recovery callback is private and invalid links give a usable recovery path", async ({
   page,
 }) => {
@@ -20,7 +21,7 @@ test("privacy requests are visible and repeat submissions do not queue duplicate
   page,
 }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Explore with sample data" }).click();
+  await openSampleWorkspace(page);
   await page
     .getByRole("button", { name: "Settings and privacy", exact: true })
     .click();
@@ -41,7 +42,7 @@ test("masked report evidence remains named and keyboard-operable", async ({
   page,
 }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Explore with sample data" }).click();
+  await openSampleWorkspace(page);
   await page
     .getByRole("button", { name: "Money Stories", exact: true })
     .filter({ visible: true })

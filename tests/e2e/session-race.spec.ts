@@ -1,10 +1,11 @@
 import { test, expect } from "@playwright/test";
+import { openSampleWorkspace } from "./demo-entry";
 test("late processing cannot restore private review after cross-tab sign-out", async ({
   page,
   context,
 }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Explore with sample data" }).click();
+  await openSampleWorkspace(page);
   await page
     .getByRole("button", { name: "Tell your story", exact: true })
     .click();

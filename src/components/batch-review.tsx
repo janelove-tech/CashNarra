@@ -2,8 +2,13 @@
 import type { ReactNode, RefObject } from "react";
 import type { EventInput, Workspace } from "@/domain/types";
 import type { Extraction } from "@/server/ai";
-import { duplicates, obligations } from "@/domain/ledger";
-import { D } from "@/domain/money";
+import { duplicates } from "@/domain/ledger";
+import {
+  accountCreatePrompt,
+  accountTypeForName,
+  balanceCreatePrompt,
+  reviewObligations,
+} from "@/domain/review-create";
 import { Button, Amount } from "./ui";
 import s from "./app.module.css";
 import CalculationReview from "./calculation-review";
@@ -28,6 +33,21 @@ type Props = {
     field: Extraction["questions"][number]["field"],
     patch: Partial<EventInput>,
     note?: string,
+  ) => void;
+  onCreateAccount: (
+    recordId: string,
+    field: "accountId" | "toAccountId",
+    account: {
+      name: string;
+      type: string;
+      opening: string | null;
+      openingDate: string;
+      recordDate: string;
+    },
+  ) => void;
+  onCreateBalance: (
+    recordId: string,
+    balance: { name: string; amount: string; date: string },
   ) => void;
   needsFreshReview?: boolean;
   acceptFreshReview?: () => void;
@@ -56,6 +76,8 @@ export default function BatchReview({
   recordRows,
   manual,
   onAnswer,
+  onCreateAccount,
+  onCreateBalance,
   needsFreshReview = false,
   acceptFreshReview,
   setReason,
@@ -137,27 +159,42 @@ export default function BatchReview({
               <h2>{q.question}</h2>
               <p>{record?.description ?? "This proposed record"}</p>
               {(q.field === "accountId" || q.field === "toAccountId") && (
-                <div className={s.actions}>
-                  {w.accounts.map((account) => (
-                    <Button
-                      key={account.id}
-                      disabled={pending || busy}
-                      onClick={() =>
-                        onAnswer(q.recordId, q.field, {
-                          [q.field]: account.id,
-                        })
-                      }
-                    >
-                      {account.name}
-                    </Button>
-                  ))}
-                </div>
+                <>
+                  <div className={s.actions}>
+                    {w.accounts.map((account) => (
+                      <Button
+                        key={account.id}
+                        disabled={pending || busy}
+                        onClick={() =>
+                          onAnswer(q.recordId, q.field, {
+                            [q.field]: account.id,
+                          })
+                        }
+                      >
+                        {account.name}
+                      </Button>
+                    ))}
+                  </div>
+                  <AccountCreate
+                    formId={`${q.recordId}-${q.field}`}
+                    suggestion={q.suggestion}
+                    recordDate={record?.date ?? ""}
+                    accounts={w.accounts}
+                    disabled={pending || busy}
+                    onCreate={(account) =>
+                      onCreateAccount(
+                        q.recordId,
+                        q.field === "toAccountId" ? "toAccountId" : "accountId",
+                        account,
+                      )
+                    }
+                  />
+                </>
               )}
-              {q.field === "obligationId" && (
-                <div className={s.actions}>
-                  {obligations(w)
-                    .filter((item) => D(item.remaining).gt(0))
-                    .map((item) => (
+              {q.field === "obligationId" && record && (
+                <>
+                  <div className={s.actions}>
+                    {reviewObligations(w, events).map((item) => (
                       <Button
                         key={item.id}
                         disabled={pending || busy}
@@ -171,7 +208,15 @@ export default function BatchReview({
                         {item.party}
                       </Button>
                     ))}
-                </div>
+                  </div>
+                  <BalanceCreate
+                    suggestion={q.suggestion}
+                    record={record}
+                    balances={reviewObligations(w, events)}
+                    disabled={pending || busy}
+                    onCreate={(balance) => onCreateBalance(q.recordId, balance)}
+                  />
+                </>
               )}
               {q.field === "kind" && (
                 <div className={s.actions}>
@@ -392,5 +437,169 @@ export default function BatchReview({
         <Button onClick={() => onDiscard()}>Discard draft</Button>
       </div>
     </section>
+  );
+}
+
+function sameName(left: string, right: string) {
+  return left.trim().toLowerCase() === right.trim().toLowerCase();
+}
+
+function AccountCreate({
+  formId,
+  suggestion,
+  recordDate,
+  accounts,
+  disabled,
+  onCreate,
+}: {
+  formId: string;
+  suggestion: string | null;
+  recordDate: string;
+  accounts: Workspace["accounts"];
+  disabled: boolean;
+  onCreate: (account: {
+    name: string;
+    type: string;
+    opening: string | null;
+    openingDate: string;
+    recordDate: string;
+  }) => void;
+}) {
+  const suggested = suggestion?.trim() || null;
+  const exists =
+    !!suggested && accounts.some((account) => sameName(account.name, suggested));
+  const field = `create-account-${formId}`;
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        const form = new FormData(event.currentTarget);
+        onCreate({
+          name: String(form.get("name") ?? ""),
+          type: String(form.get("type") ?? ""),
+          opening: form.get("unknown") ? null : String(form.get("amount") ?? ""),
+          openingDate: String(form.get("date") ?? ""),
+          recordDate,
+        });
+      }}
+    >
+      <p>{accountCreatePrompt(suggested, exists)}</p>
+      <label htmlFor={`${field}-name`}>Account nickname</label>
+      <input
+        id={`${field}-name`}
+        name="name"
+        required
+        maxLength={80}
+        defaultValue={exists ? "" : (suggested ?? "")}
+        disabled={disabled}
+      />
+      <label htmlFor={`${field}-type`}>Type</label>
+      <select
+        id={`${field}-type`}
+        name="type"
+        defaultValue={accountTypeForName(suggested ?? "")}
+        disabled={disabled}
+      >
+        <option>Cash</option>
+        <option>Bank</option>
+        <option>MoMo</option>
+      </select>
+      <label htmlFor={`${field}-opening`}>Starting amount · GHS</label>
+      <input
+        id={`${field}-opening`}
+        name="amount"
+        inputMode="decimal"
+        placeholder="Only if you know the starting balance"
+        disabled={disabled}
+      />
+      <label className={s.checkLabel}>
+        <input type="checkbox" name="unknown" defaultChecked disabled={disabled} />
+        I don’t know the starting balance yet
+      </label>
+      <label htmlFor={`${field}-date`}>Starting date</label>
+      <input
+        id={`${field}-date`}
+        name="date"
+        type="date"
+        required
+        defaultValue={recordDate}
+        disabled={disabled}
+      />
+      <p>
+        The account is saved now. This record stays a draft until you save the
+        story.
+      </p>
+      <Button type="submit" primary disabled={disabled}>
+        Create account and use it
+      </Button>
+    </form>
+  );
+}
+
+function BalanceCreate({
+  suggestion,
+  record,
+  balances,
+  disabled,
+  onCreate,
+}: {
+  suggestion: string | null;
+  record: EventInput;
+  balances: { party: string }[];
+  disabled: boolean;
+  onCreate: (balance: { name: string; amount: string; date: string }) => void;
+}) {
+  const suggested = suggestion?.trim() || null;
+  const exists =
+    !!suggested && balances.some((item) => sameName(item.party, suggested));
+  const field = `create-balance-${record.id}`;
+  const amountLabel =
+    record.kind === "loan_principal"
+      ? "Loan principal before this repayment · GHS"
+      : "Amount owed before this payment · GHS";
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        const form = new FormData(event.currentTarget);
+        onCreate({
+          name: String(form.get("name") ?? ""),
+          amount: String(form.get("amount") ?? ""),
+          date: String(form.get("date") ?? ""),
+        });
+      }}
+    >
+      <p>{balanceCreatePrompt(record.kind, suggested, exists)}</p>
+      <label htmlFor={`${field}-name`}>Name</label>
+      <input
+        id={`${field}-name`}
+        name="name"
+        required
+        maxLength={80}
+        defaultValue={exists ? "" : (suggested ?? "")}
+        disabled={disabled}
+      />
+      <label htmlFor={`${field}-amount`}>{amountLabel}</label>
+      <input
+        id={`${field}-amount`}
+        name="amount"
+        inputMode="decimal"
+        required
+        disabled={disabled}
+      />
+      <label htmlFor={`${field}-date`}>Balance date</label>
+      <input
+        id={`${field}-date`}
+        name="date"
+        type="date"
+        required
+        defaultValue={record.date}
+        disabled={disabled}
+      />
+      <p>Both stay drafts until you save the story.</p>
+      <Button type="submit" primary disabled={disabled}>
+        Create balance and use it
+      </Button>
+    </form>
   );
 }

@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openSampleWorkspace } from "./demo-entry";
 test("loads summary metadata and one authorised state without bulk refresh", async ({
   page,
   browser,
@@ -9,7 +10,7 @@ test("loads summary metadata and one authorised state without bulk refresh", asy
       reads.push(new URL(r.url()).search);
   });
   await page.goto("/");
-  await page.getByRole("button", { name: "Explore with sample data" }).click();
+  await openSampleWorkspace(page);
   await expect(
     page.getByRole("heading", { name: "Let’s make sense of your money." }),
   ).toBeVisible();
@@ -32,9 +33,7 @@ test("loads summary metadata and one authorised state without bulk refresh", asy
   const other = await browser.newContext();
   const otherPage = await other.newPage();
   await otherPage.goto("/");
-  await otherPage
-    .getByRole("button", { name: "Explore with sample data" })
-    .click();
+  await openSampleWorkspace(otherPage);
   expect(
     (await other.request.get(`/api/workspaces?workspace=${id}`)).status(),
   ).toBe(401);

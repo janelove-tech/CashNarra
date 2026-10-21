@@ -1,0 +1,17 @@
+---
+description: Activity PDF stays the designed two-page report
+alwaysApply: true
+---
+
+# Activity PDF
+
+`src/lib/activity-pdf.ts` is the designed report. Do not replace it with a plain jsPDF text list.
+
+Keep this structure, using live `report()` figures. Do not hard-code the DeeJay specimen amounts.
+
+- A4, points. Masthead: violet speech-mark via `drawSymbol`, then the name in ink. The name is not violet.
+- Page 1: “Your money, clearly recorded.” Dark card with money received, money paid out, and net cash movement marked as not profit. Then sales value, recorded expenses, and money taken home.
+- Activity table: cash in `#445BA1`, cash out `#95603E`, credit sale or no cash effect reads “No cash”.
+- Page 2: account position, outstanding balances, two cash-movement cards with proportional bars, why the totals differ, and the limits box.
+- Footer: `CASHNARRA · PRIVATE FINANCIAL RECORD` and the page numbers. Never print `DESIGN SPECIMEN`.
+- Keep the product’s own record labels. Keep the Inter font load, and still fail the download if that font file is missing or invalid.

@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { openSampleWorkspace } from "./demo-entry";
 
 async function measure(page: Page, view: string) {
   // Measure settled states, not a partial theme/hover background transition.
@@ -105,9 +106,7 @@ for (const width of [320, 390, 768, 1440])
     test(`non-text controls ${width}px ${theme}`, async ({ page }) => {
       await page.setViewportSize({ width, height: 1000 });
       await page.goto("/");
-      await page
-        .getByRole("button", { name: "Explore with sample data" })
-        .click();
+      await openSampleWorkspace(page);
       await expect(
         page.getByRole("button", { name: /Recorded account balances/ }),
       ).toContainText("5,970.00");

@@ -12,8 +12,9 @@ const manrope = localFont({
   display: "swap",
 });
 export const metadata = {
-  title: "CashNarra — Your money. In your words.",
-  description: "Record, understand and plan with your own money stories.",
+  title: "CashNarra — Tell your money story",
+  description:
+    "Describe what happened with your money, review the records, then save them. CashNarra does not move money or connect to a bank.",
 };
 export default function RootLayout({
   children,

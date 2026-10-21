@@ -76,10 +76,14 @@ export function Dialog({
   title,
   children,
   onClose,
+  wide = false,
+  actions,
 }: {
   title: string;
   children: ReactNode;
   onClose: () => void;
+  wide?: boolean;
+  actions?: ReactNode;
 }) {
   const ref = useRef<HTMLDialogElement>(null),
     titleId = useId();
@@ -96,7 +100,7 @@ export function Dialog({
     <dialog
       ref={ref}
       aria-labelledby={titleId}
-      className={s.dialog}
+      className={`${s.dialog} ${wide ? s.dialogWide : ""}`}
       onCancel={(e) => {
         e.preventDefault();
         onClose();
@@ -141,7 +145,11 @@ export function Dialog({
           <X size={20} />
         </button>
       </div>
-      {children}
+      <div className={s.dialogBody}>{children}</div>
+      <div className={s.dialogExit}>
+        {actions}
+        <Button onClick={onClose}>Close</Button>
+      </div>
     </dialog>
   );
 }
@@ -199,6 +207,7 @@ export function RecordRow({
         </strong>
         <small>
           {kindLabel(record.kind, workspaceType)}
+          {record.kind === "credit_sale" ? " · No cash received" : ""}
           {account ? " · " + account : ""}
         </small>
       </span>

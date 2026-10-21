@@ -113,7 +113,9 @@ test("real local Supabase login, workspace, unknown account, opening obligation 
     .getByRole("button", { name: "Erase local drafts and sign out" })
     .click();
   await expect(
-    page.getByRole("heading", { name: "Your money. In your words." }),
+    page.getByRole("heading", {
+      name: "Tell us what happened with your money. We’ll help you make sense of it.",
+    }),
   ).toBeVisible();
   const privateData = await page.request.get("/api/workspaces");
   expect(privateData.status()).toBe(401);

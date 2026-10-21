@@ -302,3 +302,103 @@ The original concept included profit or loss. The reporting decision kept it una
 ## Profit uses recorded costs first — 2026-10-19 — Codex
 
 The first review asked for cost of goods sold, equipment used up and other costs before using the expenses already saved. It now shows those recorded amounts and asks whether they are complete. Yes works out the profit from the records. No asks only for a cost that is not already there. On the sample story, yes gives GH₵2,320.00 from sales of GH₵2,400.00 and the GH₵80.00 delivery expense; the GH₵700.00 stock purchase stays out. Adding a GH₵400.00 cost of goods sold then gives GH₵1,920.00. PASS: 5 unit tests, typecheck, and the Edge review. NOT V1 COMPLETE.
+
+## Public fictional sample — 2026-10-19 — Cursor
+
+Replaced the long public landing with the approved Living Ledger hero. The sample is client-only: cash sale GH₵900.00, delivery GH₵80.00, and Abena’s GH₵200.00 old-debt payment. Sales stay GH₵900.00; money received is GH₵1,100.00; net movement is GH₵1,020.00. A second example withholds the delivery account until Cash or MoMo is chosen. Nothing is saved, and the page does not call `/api/demo`. `/api/demo` stays unavailable on Vercel. Local tests open the sample workspace with `openSampleWorkspace`. Create-account links go to `/auth?mode=signup`.
+
+PASS: typecheck, lint, 2 sample-fixture unit tests, and 1 Edge test of the public sample at 390px including the account question and signup route. Browser check: no horizontal overflow at 320, 390, 1280 or the wide window; amounts stay inside the sample card. Full `npm run test:e2e` was NOT RUN. No provider call, push, deploy or database reset. Uncommitted, because the tree still holds earlier auth, settings and profit-review edits. NOT V1 COMPLETE.
+
+## First-use account screen — 2026-10-19 — Cursor
+
+Sign-up is titled “Start your money records.” Sign-in stays “Sign in.” with the password reset beside the password. Create account is the only solid action on that form. The side note is narrower than the form. A signed-in person with no workspace chooses Business money or Personal money, names the space, and continues to the first record. The later workspace dialog still uses Name, Use and Create workspace. Unknown openings are unchanged.
+
+PASS: typecheck, and 2 Edge tests for the public sample plus the sign-in and recovery-email controls. Browser check at 1280: form 480px, side note 420px, no horizontal overflow. At 390 the form is first and fits. The invalid recovery-link request to `/auth/confirm` hung with no response within 15 seconds, before the form loaded. NOT RUN as a pass for that route. No provider call. NOT V1 COMPLETE.
+
+## Records, accounts and Money Stories — 2026-10-19 — Cursor
+
+Money Stories opens with three figures from the existing report: money received, money paid out, and net movement. The cover says net movement is not profit. Records is titled “Your records”. Dates that are today include the calendar date. People & balances stays under the list. A credit sale row says no cash was received. Accounts name Cash, Bank, and MoMo beside the balance. An unknown opening is labelled unknown, and the starting-balance check stays on the card only while the opening is unknown. View activity opens that account’s records. The report calculation is unchanged.
+
+Local tests enter the sample workspace with a browser fetch, because a bare request was missing the required origin. PASS: typecheck, the new hierarchy Edge test at 390px with no horizontal overflow, and the existing profit-review Edge test. No provider call. NOT V1 COMPLETE.
+
+## Goals and grouped settings — 2026-10-19 — Cursor
+
+The goals page is titled “Your goals”. The sample equipment goal shows GH₵1,200.00 set aside of GH₵6,000.00, 20.0%, and GH₵4,800.00 remaining. The forecast function is unchanged. A mark is described as staying in the account. Try a monthly amount stays a separate what-if. The month review opens with the month field, and the longer explanation is behind “How this affects the estimate”. Settings are grouped: Appearance, Recording and drafts, Review rhythm, People, due dates and goals, and Your data. Hide amounts is described as screen masking. Shared-device mode asks before clearing stored drafts. Request statuses are unchanged.
+
+PASS: typecheck, and one Edge test at 390px covering the goal figures, the what-if dialog, the settings groups, cancelling the draft-clearing prompt, and no horizontal overflow. No provider call. NOT V1 COMPLETE.
+
+## Workbook and activity PDF — 2026-10-19 — Cursor
+
+The Excel download now has four sheets matching the specimen: Overview, Transactions, Accounts and Obligations. Money cells are numbers. An unknown opening stays Unknown. The cash-movement check equals the report’s net movement. A credit sale keeps its recorded amount and a cash effect of zero. The PDF uses the same received, paid, net, sales, expenses and balances, says net movement is not profit, and says a credit sale received no cash. Record and source identifiers are listed after the activity.
+
+PASS: 25 export, domain and font-failure tests, typecheck, and an in-memory workbook that begins with a valid spreadsheet file. No provider call. NOT V1 COMPLETE.
+
+## Rectangular transactions export — 2026-10-19 — Cursor
+
+The downloaded transactions file now has one header and eleven fields on every row: record, date, description, event type, recorded amount, signed cash effect, cash-effect type, account, related account, counterparty, and source. A credit sale stays a positive recorded amount with cash effect 0.00 and type none. A transfer is an internal transfer with cash effect 0.00. Opening balances stay out of this file. Summary, account, and obligation tables remain available for the workbook and are no longer mixed into the CSV. Signed amounts are not prefixed as formulas. Text that could be read as a formula still is.
+
+PASS: 21 export and domain tests. No provider call. NOT V1 COMPLETE.
+
+## Story colors and Today field — 2026-10-19 — Cursor
+
+The Money Stories cover had painted every figure in the cover’s white ink, so the existing received and paid colors never appeared. Received is blue, money paid out is apricot, and net movement uses the same color as its sign. The words stay with the figures. On Today, the story field is above the recorded balances. Saving and drafts are unchanged.
+
+PASS: the hierarchy Edge test, including the field order and the two cover colors. Contrast of those colors on the dark cover is about 9:1 and 8.5:1. No provider call. NOT V1 COMPLETE.
+
+## Sign-in and account creation respond — 2026-10-19 — Cursor
+
+The sign-in button stayed on “Please wait…” because the local account service accepted connections and never answered. “Show password” and “Forgot password?” sat against each other. The two controls now sit in a wrapping row with a 20px gap. Sign-in, account creation, recovery, password update and the confirmation resend stop after 12 seconds and say the account service did not respond. Clearing the sample-data cookie no longer holds the button if that request is slow.
+
+The local Docker engine was restarted without formatting or resetting the data disk. CashNarra database, auth and API containers came back healthy. Auth health returned 200. A wrong password returned “Invalid login credentials” and the button returned to “Sign in”. A throwaway local account reached the first-workspace screen; that account was then removed. No provider call, push, deploy or database reset. NOT V1 COMPLETE.
+
+## Export asks which dates — 2026-10-20 — Cursor
+
+The export dialog now asks which dates, in the same radio list as the workspace choice. It opens on the dates already on screen. The choices are today, this week, this month, this year, or specify. Specify is one day or a from-and-to range, using the ordinary date fields. This week and this month use the Money Stories periods. This year runs from 1 January through today. A period that includes today runs through today. A period that has not started stays unavailable, and the download buttons stay off. The same dates are used for every file.
+
+PASS: period tests, including the shortcuts, a specified day, a clipped range, and a future range. Typecheck. In the local demo, Records → Export opened on 13 Oct 2026. This week read “This week so far · through 20 Oct 2026”. This month read “October so far · through 20 Oct 2026”. A range ending in November ran through 20 Oct 2026. A November-only range said those dates have not arrived and disabled CSV, PDF and XLSX. A month CSV closed the dialog with “Download started. Check your Downloads folder.” The records stayed on 13 Oct 2026. NOT V1 COMPLETE.
+
+## Export asks which workspace — 2026-10-20 — Cursor
+
+Export used to download only the workspace already open. It now asks: this workspace, another of the user’s workspaces, or all of them. All downloads one file per workspace and does not mix the ledgers or switch the open workspace. A person with only one workspace sees that, and the other choices stay unavailable. Extra files get a short safe name so they do not overwrite each other. While amounts are hidden, those names stay out of the filename, and the dialog says the file still contains the amounts.
+
+PASS: 28 export and domain tests, typecheck. In the local demo, Records → Export showed “This workspace — Ama Works”, with the other choices unavailable, and CSV closed the dialog with “Download started. Check your Downloads folder.” The records stayed on Ama Works. NOT V1 COMPLETE.
+
+## Excel workbook reads like the specimen — 2026-10-20 — Cursor
+
+The workbook was a plain grid led by record and source IDs. It now uses the dark title band, lavender figures, violet table headers, and GH₵ amounts. Transactions list the date, what happened, the meaning, the event value, and the cash effect. Outstanding balances name the person, not an ID. The transactions CSV still keeps record and source IDs because that file is for importing. PASS: 23 export and domain tests, typecheck. NOT V1 COMPLETE.
+
+## Logo and activity PDF are locked — 2026-10-19 — Cursor
+
+The violet mark with the dark CashNarra name, and the two-page activity PDF, are now standing rules in `AGENTS.md` and `.cursor/rules/`. Later edits must not paint the name violet, replace the mark with squares, or turn the PDF back into a plain list. NOT V1 COMPLETE.
+
+## Logo mark is violet and the name stays dark — 2026-10-19 — Cursor
+
+The all-violet lockup turned the CashNarra name purple. Light screens now use a lockup whose quotation mark is violet and whose wordmark stays ink. Dark mode still uses the white lockup. NOT V1 COMPLETE.
+
+## Activity PDF uses the CashNarra mark — 2026-10-19 — Cursor
+
+The report masthead had two plain squares. It now draws the quotation-mark symbol from the brand file, in violet, beside the CashNarra name. PASS: export tests still pass, and a rendered page shows the mark. NOT V1 COMPLETE.
+
+## Activity PDF matches the revised report — 2026-10-19 — Cursor
+
+The downloaded activity PDF was a plain list. It now follows the revised two-page report: masthead, dark money-received and money-paid card, net movement marked as not profit, sales, expenses and money taken home, then a zebra activity table. Cash in is blue, cash out is brown, and a credit sale says “No cash”. Page two has account position, outstanding balances, two cash-movement cards with proportional bars, why the totals differ, and the limits box. The footer says private financial record. Figures come from the existing report. Wording stays the product’s record labels.
+
+PASS: 26 export, domain and font-failure tests, typecheck, and a rendered fixture PDF checked in the browser on both pages. The limits box sits above the footer. No provider call. NOT V1 COMPLETE.
+
+## Landing page sells the real product — 2026-10-19 — Cursor
+
+Kept the hero. Replaced the matching pale cards with separate bands: ink for the mix-ups, a review excerpt beside the steps, a violet Record band, a Money Stories sales card, an apricot Plan band, and a violet close. Sample figures are the fictional Ama Works day. On a narrow screen the header links sit under the logo so Sign in stays one line. Uncommitted, with the earlier spacing and dialog work. Superseded later the same day by “Public fictional sample”. Do not restore this long Ama landing. NOT V1 COMPLETE.
+
+## Leftover copies and caches removed — 2026-10-20 — Cursor
+
+Cleared the unused project npm cache, test-report output, the empty `doc` viewer, the 13 October brag snapshot, and video render scratch. Merged the split 19 October audits into `CashNarra_Elite_UX_Audit_COMPLETE_with_Exports_2026-10-19.md` and removed the duplicate Downloads design kit and handoff zips. Local demo data, the evaluation budget, and the Supabase database were left in place. Not committed. NOT V1 COMPLETE.
+
+## Review can create a missing account or balance — 2026-10-20 — Cursor
+
+A review question for an account or a balance now asks whether to create the missing one and attach the draft record to it. A new account is saved immediately, with an unknown starting balance unless the person enters one. A new balance stays in the same unsaved review, and the payment links to it. The local testing ceiling is US$10. The evaluation journal header was updated in place; its reserve and usage lines were kept. Committed and reserved at the change: US$1.803120. Remaining: US$8.196880.
+
+PASS: review-create, evaluation-budget, narration-contract and planning unit tests. PASS: browser review of a fictional story created Shop cash and Mabel’s opening balance, attached both draft records, and left Save enabled. The story was not saved. NOT V1 COMPLETE.
+
+## Story reader could not be reached — 2026-10-21 — Cursor
+
+Story processing failed before a reading. Node rejected the provider certificate (`UNABLE_TO_VERIFY_LEAF_SIGNATURE`). `npm run dev` now starts through `scripts/dev.mjs` with the system certificate store, and the dev server on port 3100 was restarted that way. A one-line synthetic story then reached the provider and returned HTTP 429 `credit_balance_exhausted`. Failed calls still keep their local testing reservations. The page now says when the reader cannot be reached, and when the reader has no remaining credit. No further provider call. NOT V1 COMPLETE.

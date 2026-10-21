@@ -1,9 +1,10 @@
 import { test, expect } from "@playwright/test";
+import { openSampleWorkspace } from "./demo-entry";
 test("planning dialog stays usable at narrow widths in both appearances", async ({
   page,
 }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Explore with sample data" }).click();
+  await openSampleWorkspace(page);
   for (const dark of [false, true]) {
     if (dark)
       await page
@@ -13,10 +14,10 @@ test("planning dialog stays usable at narrow widths in both appearances", async 
       .getByRole("button", { name: "Settings and privacy", exact: true })
       .click();
     await page
-      .getByRole("button", { name: "People, payment dates and goal settings" })
+      .getByRole("button", { name: "Edit people and dates" })
       .click();
     const dialog = page.getByRole("dialog", {
-      name: "People, plans and check-ins",
+      name: "People, due dates and goals",
     });
     for (const width of [320, 390, 768, 1440]) {
       await page.setViewportSize({ width, height: 900 });
@@ -36,7 +37,7 @@ test("private draft download restores words without posting records", async ({
   page,
 }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Explore with sample data" }).click();
+  await openSampleWorkspace(page);
   await page
     .getByRole("button", { name: "Tell your story", exact: true })
     .click();
@@ -93,15 +94,15 @@ test("people, goal changes, payment dates, preferences and check-in history are 
   page,
 }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Explore with sample data" }).click();
+  await openSampleWorkspace(page);
   await page
     .getByRole("button", { name: "Settings and privacy", exact: true })
     .click();
   await page
-    .getByRole("button", { name: "People, payment dates and goal settings" })
+    .getByRole("button", { name: "Edit people and dates" })
     .click();
   const dialog = page.getByRole("dialog", {
-    name: "People, plans and check-ins",
+    name: "People, due dates and goals",
   });
   await dialog.getByLabel("Name or nickname").fill("Kofi");
   await dialog
