@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Concept B — The Story Log</title>
+<style>
+@font-face { font-family: "Inter"; src: url("../../public/brand/fonts/InterVariable.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "Manrope"; src: url("../../public/brand/fonts/ManropeVariable.ttf"); font-weight: 200 800; }
+:root { --bg:#F7F7FA; --surface:#fff; --ink:#29263D; --sec:#625F73; --border:#E1DEEB; --violet:#5B49C7; --tint:#F0ECFC; --apricot:#FFC4A0; --in:#445BA1; --out:#95603E; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font-family:Inter, system-ui, sans-serif; font-size:16px; line-height:1.5; }
+h1,h2,h3 { font-family:Manrope, Inter, sans-serif; letter-spacing:-.035em; margin:0; }
+.wrap { max-width:1180px; margin:0 auto; padding:24px 36px; }
+.label { font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--sec); }
+.num { font-variant-numeric: tabular-nums; white-space:nowrap; }
+header.pub { display:flex; justify-content:space-between; align-items:center; }
+header.pub img { width:150px; }
+.cta { display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 20px; border-radius:12px; background:var(--violet); color:#fff; font-weight:700; text-decoration:none; }
+.cta.alt { background:#fff; color:var(--ink); border:1px solid #858194; }
+.quiet { color:var(--violet); font-weight:600; text-decoration:none; margin-left:18px; }
+.hero { display:grid; grid-template-columns: 1.05fr .95fr; gap:56px; align-items:center; padding:56px 0 40px; }
+.hero h1 { font-size:60px; line-height:1.02; font-weight:800; }
+.hero h1 em { font-style:normal; color:var(--violet); }
+.hero p { color:var(--sec); font-size:18px; max-width:26em; }
+/* the log */
+.log { background:var(--surface); border:1px solid var(--border); border-radius:24px; padding:24px; box-shadow:0 24px 80px rgba(41,38,61,.12); }
+.said { position:relative; background:var(--apricot); border-radius:16px; padding:18px 20px 18px 26px; font-size:17px; font-weight:500; }
+.said::before { content:""; position:absolute; left:-10px; top:14px; width:22px; height:22px; background:var(--violet); -webkit-mask:url("../../public/brand/cashnarra-symbol.svg") center/contain no-repeat; mask:url("../../public/brand/cashnarra-symbol.svg") center/contain no-repeat; }
+.said small { display:block; margin-top:6px; color:#7a4a2b; font-size:12px; font-weight:600; }
+.ask { margin:16px 0 4px; padding:14px 16px; border:1px solid var(--violet); border-radius:14px; background:var(--tint); }
+.ask b { display:block; font-family:Manrope; font-size:17px; }
+.ask .chips { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+.ask .chips span { background:#fff; border:1px solid #858194; border-radius:10px; padding:9px 14px; font-weight:600; }
+.ask .chips span.on { border-color:var(--violet); background:var(--violet); color:#fff; }
+.rows { margin-top:14px; }
+.row { display:grid; grid-template-columns: 34px 1fr auto; gap:12px; align-items:center; padding:12px 0; border-top:1px solid var(--border); }
+.row .dot { width:34px; height:34px; border-radius:10px; background:var(--tint); color:var(--in); display:grid; place-items:center; font-weight:800; font-size:13px; }
+.row .dot.out { background:#FFF3DF; color:var(--out); }
+.row .dot.pp { background:#F3EDF9; color:#68449B; }
+.row small { display:block; color:var(--sec); font-size:13px; }
+.row .num { font-weight:600; text-align:right; }
+.row .num small { color:var(--violet); font-weight:600; }
+.daysum { display:flex; gap:22px; margin-top:14px; padding-top:14px; border-top:2px solid var(--ink); font-size:13px; color:var(--sec); }
+.daysum b { display:block; color:var(--ink); font-size:18px; font-weight:600; }
+.save { margin-top:16px; display:flex; gap:12px; align-items:center; }
+.notyet { font-size:13px; color:var(--sec); }
+/* app */
+.section { margin-top:72px; }
+.section h2 { font-size:36px; }
+.section p { color:var(--sec); max-width:40em; }
+.frame { margin-top:16px; background:var(--bg); border:1px solid var(--border); border-radius:20px; overflow:hidden; }
+.appbar { display:flex; justify-content:space-between; align-items:center; padding:12px 24px; background:var(--surface); border-bottom:1px solid var(--border); }
+.appbar img { width:128px; }
+.appbar nav a { margin-left:22px; color:var(--sec); font-weight:600; text-decoration:none; }
+.appbar nav a.on { color:var(--violet); }
+.home { display:grid; grid-template-columns: minmax(0,1fr) 300px; gap:32px; max-width:1040px; margin:0 auto; padding:32px 24px 48px; }
+.compose { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:20px; }
+.compose h2 { font-size:28px; }
+.compose .field { margin-top:12px; border:1px solid #858194; border-radius:14px; padding:14px; min-height:84px; color:var(--sec); }
+.compose .acts { display:flex; gap:10px; margin-top:12px; align-items:center; }
+.dayhead { display:flex; justify-content:space-between; align-items:baseline; margin:28px 0 8px; }
+.dayhead h3 { font-size:18px; }
+.dayhead span { color:var(--sec); font-size:13px; }
+.side h3 { font-size:14px; color:var(--sec); font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+.side .stat { padding:12px 0; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; }
+.side .stat b { font-weight:600; }
+.side .goal { margin-top:22px; background:var(--ink); color:#fff; border-radius:16px; padding:18px; }
+.side .goal small { color:#D9D4E9; }
+.side .goal .bar { height:6px; background:#423B53; border-radius:6px; margin:10px 0; } .side .goal .bar i { display:block; height:100%; width:20%; background:var(--apricot); border-radius:6px; }
+.phones { display:flex; gap:28px; margin:24px 0; align-items:flex-start; }
+.phone { width:390px; height:780px; border:12px solid #1a1726; border-radius:44px; background:var(--bg); overflow:hidden; flex:none; position:relative; }
+.phone .in { padding:18px 16px 110px; height:100%; overflow:hidden; }
+.phone .dock { position:absolute; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--border); padding:12px 16px 18px; }
+.phone .dock .cta { width:100%; }
+.chips2 { display:flex; gap:8px; }
+.ink { background:var(--ink); color:#fff; border-radius:24px; padding:40px; margin-top:72px; display:grid; grid-template-columns:1fr 1fr; gap:32px; align-items:center; }
+.ink h2 { font-size:36px; } .ink p { color:#D9D4E9; }
+.ink .m { background:#322745; border-radius:16px; padding:20px; }
+.ink .m b { font-size:28px; font-weight:600; display:block; } .ink .m small { color:#D9D4E9; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="pub">
+    <img src="../../public/brand/cashnarra-logo.svg" alt="CashNarra" />
+    <nav><a class="quiet" href="#">How it works</a><a class="quiet" href="#">Pricing</a><a class="quiet" href="#">Sign in</a> <a class="cta" href="#" style="margin-left:18px">Start free</a></nav>
+  </header>
+
+  <section class="hero">
+    <div>
+      <span class="label">Cash, MoMo, credit and the people you deal with</span>
+      <h1 style="margin-top:12px">Say what happened. <em>Know where you stand.</em></h1>
+      <p>Type or speak your day the way you would tell a friend. CashNarra turns it into records you check before anything is saved, then shows what came in, what went out and who still owes.</p>
+      <p><a class="cta" href="#">Start free</a> &nbsp; <a class="cta alt" href="#">Watch one day become records</a></p>
+      <p style="font-size:13px">Fictional example below. No account needed to try it.</p>
+    </div>
+    <div class="log">
+      <span class="label">Tuesday 13 October · Ama's shop · fictional</span>
+      <div class="said" style="margin-top:10px">I sold 900 cedis in cash. I paid 80 cedis for delivery. Abena paid 200 cedis towards her old debt.<small>Ama said</small></div>
+      <div class="ask"><b>Which account paid for delivery?</b><span class="notyet">This changes which balance goes down.</span><div class="chips"><span>Cash</span><span class="on">MoMo</span><span>Bank</span></div></div>
+      <div class="rows">
+        <div class="row"><span class="dot">↙</span><span>Cash sale<small>Sale received · Cash</small></span><span class="num">GH₵900.00</span></div>
+        <div class="row"><span class="dot out">↗</span><span>Delivery<small>Business expense · MoMo</small></span><span class="num">−GH₵80.00</span></div>
+        <div class="row"><span class="dot pp">A</span><span>Payment from Abena<small>Pays an old balance · not a new sale</small></span><span class="num">GH₵200.00</span></div>
+      </div>
+      <div class="daysum"><div>Money in<b class="num">GH₵1,100.00</b></div><div>Money out<b class="num">GH₵80.00</b></div><div>Net movement<b class="num">GH₵1,020.00</b></div><div>Sales<b class="num">GH₵900.00</b></div></div>
+      <div class="save"><span class="cta">Save 3 records</span><span class="notyet">Nothing is saved until you say so.</span></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <span class="label">App home · desktop · returning user with a draft</span>
+    <div class="frame">
+      <div class="appbar"><img src="../../public/brand/cashnarra-logo.svg" alt="CashNarra" /><nav><a class="on">Home</a><a>Records</a><a>Stories</a><a>Plan</a><a>Ama Works ▾</a></nav></div>
+      <div class="home">
+        <div>
+          <div class="compose">
+            <span class="label">Tuesday 13 October 2026</span>
+            <h2>What happened with your money?</h2>
+            <div class="field">I sold 900 cash and paid Adjei Packaging 200 of what we owe…</div>
+            <div class="acts"><span class="cta">Understand my story</span><span class="cta alt">🎙 Speak</span><span class="notyet">Draft kept on this device</span></div>
+          </div>
+          <div class="dayhead"><h3>Monday 12 October</h3><span>No story yet · that does not mean nothing happened</span></div>
+          <div class="dayhead"><h3>Sunday 11 October</h3><span>Rest day</span></div>
+          <div class="dayhead"><h3>Saturday 10 October</h3><span>In GH₵1,450.00 · out GH₵220.00</span></div>
+          <div class="said" style="font-size:15px">Sold 1,250 MoMo and 200 cash. Paid 220 for the generator fuel. Kojo took goods worth 300 on credit.<small>You said · 7:40 pm</small></div>
+          <div class="rows" style="margin-top:8px">
+            <div class="row"><span class="dot">↙</span><span>MoMo sales<small>Sale received · MoMo</small></span><span class="num">GH₵1,250.00</span></div>
+            <div class="row"><span class="dot">↙</span><span>Cash sales<small>Sale received · Cash</small></span><span class="num">GH₵200.00</span></div>
+            <div class="row"><span class="dot out">↗</span><span>Generator fuel<small>Business expense · Cash</small></span><span class="num">−GH₵220.00</span></div>
+            <div class="row"><span class="dot pp">K</span><span>Kojo's credit sale<small>Credit sale · no cash yet</small></span><span class="num">GH₵300.00</span></div>
+          </div>
+        </div>
+        <aside class="side">
+          <h3>Today so far</h3>
+          <div class="stat"><span>Money in</span><b class="num">GH₵2,300.00</b></div>
+          <div class="stat"><span>Money out</span><b class="num">GH₵930.00</b></div>
+          <div class="stat"><span>Recorded balances</span><b class="num">GH₵5,970.00</b></div>
+          <h3 style="margin-top:22px">People</h3>
+          <div class="stat"><span>Owe you</span><b class="num">GH₵700.00</b></div>
+          <div class="stat"><span>You owe</span><b class="num">GH₵1,500.00</b></div>
+          <div class="goal"><small>New equipment</small><div class="bar"><i></i></div><b class="num">GH₵1,200.00</b> <small>of GH₵6,000.00 set aside</small><br><small>About 12 months at GH₵400 a month</small></div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <span class="label">Story to review · phone</span>
+    <div class="phones">
+      <div class="phone"><div class="in">
+        <span class="label">Tuesday 13 October</span>
+        <h2 style="font-size:24px;margin-top:4px">Check these 3 records</h2>
+        <div class="said" style="font-size:15px;margin-top:10px">I sold 900 cedis in cash. I paid 80 for delivery. Abena paid 200 towards her old debt.<small>You said · Change the words</small></div>
+        <div class="ask"><b>Which account paid for delivery?</b><div class="chips"><span>Cash</span><span>MoMo</span><span>Bank</span></div></div>
+        <div class="rows">
+          <div class="row"><span class="dot">↙</span><span>Cash sale<small>Sale received · Cash</small></span><span class="num">GH₵900.00<br><small>Change</small></span></div>
+          <div class="row"><span class="dot out">↗</span><span>Delivery<small>Business expense</small></span><span class="num">−GH₵80.00<br><small>Change</small></span></div>
+          <div class="row"><span class="dot pp">A</span><span>Payment from Abena<small>Old balance · not a sale</small></span><span class="num">GH₵200.00<br><small>Change</small></span></div>
+        </div>
+      </div>
+      <div class="dock"><span class="notyet">Answer the question to save · nothing saved yet</span><br><span class="cta" style="margin-top:8px;opacity:.6">Save 3 records</span></div>
+      </div>
+      <div class="phone"><div class="in">
+        <span class="label">Home · empty day</span>
+        <h2 style="font-size:24px;margin-top:4px">What happened with your money today?</h2>
+        <div class="compose" style="margin-top:12px;padding:14px"><div class="field" style="margin:0">Today I…</div></div>
+        <div class="dayhead"><h3>Saturday 10 October</h3><span>In GH₵1,450.00</span></div>
+        <div class="said" style="font-size:15px">Sold 1,250 MoMo and 200 cash. Paid 220 for the generator fuel. Kojo took goods worth 300 on credit.<small>You said</small></div>
+        <div class="rows"><div class="row"><span class="dot">↙</span><span>MoMo sales<small>Sale received · MoMo</small></span><span class="num">GH₵1,250.00</span></div><div class="row"><span class="dot out">↗</span><span>Generator fuel<small>Business expense</small></span><span class="num">−GH₵220.00</span></div></div>
+      </div>
+      <div class="dock"><div class="chips2"><span class="cta" style="flex:1">Understand my story</span><span class="cta alt">🎙</span></div></div>
+      </div>
+      <div>
+        <h3 style="font-size:24px">Concept B — The Story Log</h3>
+        <p style="color:var(--sec);max-width:30em">Your money, told day by day. The person's words stay beside the records they produced, so provenance is the default view and the home screen becomes a history worth returning to. The composer is always one tap away. CashNarra never replies in prose; it asks one material question and shows rows.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="ink">
+    <div><img src="../../public/brand/cashnarra-lockup-reversed.svg" alt="CashNarra" style="width:150px" /><h2 style="margin-top:18px">A month of days becomes an answer.</h2><p>Money Stories add the days up and show the records behind every figure. Net movement is not profit; CashNarra says so, and asks about costs before it works profit out.</p></div>
+    <div class="m"><small>October so far · Ama's shop</small><b class="num">GH₵2,300.00 in</b><b class="num" style="color:#F1BA94">GH₵930.00 out</b><small>Net movement GH₵1,370.00 · 8 records · Abena still owes GH₵400.00</small></div>
+  </section>
+</div>
+</body>
+</html>

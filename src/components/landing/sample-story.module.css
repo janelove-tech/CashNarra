@@ -1,31 +1,55 @@
+/* The worked example on the public page, drawn as one day of the story log. */
 .sample {
   background: var(--cn-surface);
   border: 1px solid var(--cn-border);
-  border-radius: 20px;
+  border-radius: 24px;
   box-shadow: var(--cn-elevation-overlay);
-  padding: 20px;
+  padding: 22px 24px 20px;
 }
 .kicker {
-  margin: 0 0 8px;
-  color: var(--cn-action);
-  font-size: 13px;
+  display: block;
+  margin: 0 0 10px;
+  font-size: 12px;
+  line-height: 18px;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cn-text-secondary);
 }
 .quote {
-  margin: 0 0 16px;
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: var(--cn-brand-soft);
-  color: var(--cn-text);
-  font-size: 16px;
-  line-height: 24px;
+  position: relative;
+  margin: 0 0 6px;
+  padding: 16px 18px 14px 28px;
+  border-radius: 16px;
+  background: var(--cn-accent);
+  color: var(--cn-on-accent);
+  font-size: 17px;
+  line-height: 26px;
+  font-weight: 500;
+}
+.quote::before {
+  content: "";
+  position: absolute;
+  left: -9px;
+  top: 14px;
+  width: 22px;
+  height: 22px;
+  background: var(--cn-action);
+  -webkit-mask: url("/brand/cashnarra-symbol.svg") center / contain no-repeat;
+  mask: url("/brand/cashnarra-symbol.svg") center / contain no-repeat;
+}
+.who {
+  margin: 0 0 14px;
+  padding-left: 28px;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--cn-text-secondary);
 }
 .sampleActions {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-top: 14px;
 }
 .quiet,
 .choice,
@@ -34,10 +58,11 @@
   align-items: center;
   justify-content: center;
   min-height: 44px;
-  padding: 10px 14px;
+  padding: 10px 16px;
   border-radius: 12px;
   font-weight: 600;
   text-decoration: none;
+  cursor: pointer;
 }
 .quiet,
 .choice {
@@ -46,50 +71,66 @@
   color: var(--cn-text);
 }
 .primary {
+  border: 0;
   background: var(--cn-action);
   color: var(--cn-on-action);
 }
 .question {
-  margin: 0 0 16px;
-  padding: 12px;
-  border: 1px solid var(--cn-border);
-  border-radius: 12px;
-  background: var(--cn-surface-subtle);
+  margin: 0 0 8px;
+  padding: 14px 16px;
+  border: 1px solid var(--cn-action);
+  border-radius: 14px;
+  background: var(--cn-brand-soft);
 }
 .question legend {
-  padding: 0 4px;
+  padding: 0;
+  font-family: var(--font-manrope), Manrope, sans-serif;
   font-weight: 700;
+  font-size: 17px;
+}
+.question p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--cn-text-secondary);
 }
 .choices {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 .events {
   list-style: none;
-  margin: 0 0 12px;
+  margin: 6px 0 0;
   padding: 0;
-}
-.events li + li .row {
-  margin-top: 8px;
 }
 .row {
   display: grid;
-  grid-template-columns: 28px minmax(0, 1fr) auto;
-  gap: 10px;
-  align-items: start;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-top: 1px solid var(--cn-border);
 }
 .node {
-  width: 28px;
-  height: 28px;
-  border-radius: 999px;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
   background: var(--cn-brand-soft);
-  color: var(--cn-action);
+  color: var(--cn-money-in);
+  display: grid;
+  place-items: center;
   font-size: 13px;
-  font-weight: 700;
-  line-height: 28px;
-  text-align: center;
+  font-weight: 800;
+}
+.node[data-kind="out"] {
+  background: var(--cn-warning-bg);
+  color: var(--cn-money-out);
+}
+.node[data-kind="person"] {
+  background: var(--cn-unresolved-bg);
+  color: var(--cn-unresolved);
 }
 .row strong,
 .row small {
@@ -98,6 +139,7 @@
 .row strong {
   font-size: 15px;
   line-height: 22px;
+  font-weight: 500;
 }
 .row small {
   color: var(--cn-text-secondary);
@@ -113,25 +155,23 @@
   text-align: right;
   white-space: nowrap;
 }
-.result h2,
-.sample h3 {
-  margin: 0 0 12px;
+.result h2 {
+  margin: 0 0 6px;
   font-size: 22px;
   line-height: 28px;
 }
 .result h2:focus,
-.question:focus,
-.primary:focus,
-.quiet:focus,
-.choice:focus {
+.question:focus {
   outline: 3px solid var(--cn-focus);
   outline-offset: 4px;
 }
 .totals {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  margin: 0 0 12px;
+  gap: 8px 12px;
+  margin: 0;
+  padding-top: 12px;
+  border-top: 2px solid var(--cn-text);
 }
 .totals dt {
   color: var(--cn-text-secondary);
@@ -143,20 +183,14 @@
   font-family: var(--font-inter), Inter, sans-serif;
   font-variant-numeric: tabular-nums;
   font-weight: 600;
+  font-size: 17px;
   white-space: nowrap;
-}
-.choice input {
-  width: 1.25rem;
-  height: 1.25rem;
-  min-height: 0;
-  margin: 0;
-  accent-color: var(--cn-action);
 }
 .meaning,
 .review,
 .notice {
-  margin: 0 0 12px;
-  font-size: 15px;
+  margin: 12px 0 0;
+  font-size: 14px;
   line-height: 22px;
 }
 .review,
@@ -167,20 +201,13 @@
   display: none;
 }
 @media (max-width: 420px) {
-  .row,
-  .totals {
-    grid-template-columns: 28px minmax(0, 1fr);
-  }
   .totals {
     grid-template-columns: 1fr;
   }
-  .amount {
-    grid-column: 2;
-    text-align: left;
+  .row {
+    grid-template-columns: minmax(0, 1fr) auto;
   }
-}
-@media (prefers-reduced-motion: reduce) {
-  .sample {
-    scroll-behavior: auto;
+  .node {
+    display: none;
   }
 }

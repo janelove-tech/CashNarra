@@ -16,6 +16,11 @@ import {
 } from "./sample-fixture";
 import s from "./sample-story.module.css";
 
+/**
+ * One fictional day in the story log, worked in the browser with fixed
+ * figures. No sign-in, no provider, no storage. The figures come from the
+ * fixture and are never recalculated by anything that could drift.
+ */
 export function SampleStory() {
   const [demo, setDemo] = useState<StoryDemo>(initialStoryDemo);
   const [notice, setNotice] = useState("");
@@ -56,11 +61,17 @@ export function SampleStory() {
   }
 
   return (
-    <article className={s.sample} id="sample" tabIndex={-1} aria-labelledby={titleId}>
-      <p className={s.kicker} id={titleId}>
-        Fictional example
-      </p>
+    <article
+      className={s.sample}
+      id="sample"
+      tabIndex={-1}
+      aria-labelledby={titleId}
+    >
+      <span className={s.kicker} id={titleId}>
+        Fictional example · Tuesday 13 October
+      </span>
       <blockquote className={s.quote}>“{quote}”</blockquote>
+      <p className={s.who}>Ama said</p>
       {!demo.revealed ? (
         <div className={s.sampleActions}>
           <button
@@ -78,8 +89,13 @@ export function SampleStory() {
             One story. Three records to check.
           </h2>
           {demo.mode === "trickier" && !demo.account && (
-            <fieldset className={s.question} id="delivery-question" tabIndex={-1}>
+            <fieldset
+              className={s.question}
+              id="delivery-question"
+              tabIndex={-1}
+            >
               <legend>Which account paid for delivery?</legend>
+              <p>This changes which balance goes down. Nothing else does.</p>
               <div className={s.choices} role="group">
                 {(["Cash", "MoMo"] as const).map((choice) => (
                   <button
@@ -95,9 +111,9 @@ export function SampleStory() {
             </fieldset>
           )}
           <ol className={s.events}>
-            {events.map((event, index) => (
+            {events.map((event) => (
               <li key={event.id}>
-                <SampleRow event={event} index={index + 1} />
+                <SampleRow event={event} />
               </li>
             ))}
           </ol>
@@ -119,12 +135,14 @@ export function SampleStory() {
               </dl>
               <p className={s.meaning}>
                 The {formatMoney(totals.debtSettlement)} from Abena pays an old
-                debt. It is not a new sale. Sales stay {formatMoney(totals.sales)}.
+                debt. It is not a new sale. Sales stay{" "}
+                {formatMoney(totals.sales)}.
               </p>
             </>
           ) : (
             <p className={s.meaning}>
-              Choose the delivery account before this example shows a money total.
+              Choose the delivery account before this example shows a money
+              total.
             </p>
           )}
           <p className={s.review}>Example only. Nothing is saved.</p>
@@ -159,11 +177,13 @@ export function SampleStory() {
   );
 }
 
-function SampleRow({ event, index }: { event: SampleEvent; index: number }) {
+function SampleRow({ event }: { event: SampleEvent }) {
+  const kind =
+    event.id === "debt" ? "person" : event.amount.startsWith("-") ? "out" : "in";
   return (
     <div className={s.row}>
-      <span className={s.node} aria-hidden="true">
-        {index}
+      <span className={s.node} data-kind={kind} aria-hidden="true">
+        {kind === "person" ? "A" : kind === "out" ? "↗" : "↙"}
       </span>
       <span>
         <strong>{event.title}</strong>

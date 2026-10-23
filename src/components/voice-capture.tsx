@@ -68,6 +68,31 @@ export default function VoiceCapture({
     },
     [url],
   );
+  const stopRef = useRef<(cancel?: boolean) => void>(() => {});
+  useEffect(() => {
+    if (!recording) return;
+    // A phone call, an app switch or the screen lock can silence the
+    // microphone. Stop honestly and keep what was captured so far.
+    const interrupt = () => {
+      if (recorder.current?.state !== "recording") return;
+      stopRef.current();
+      setError(
+        "Recording stopped because the app went to the background. Check the clip before using it, or record again.",
+      );
+    };
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") interrupt();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("pagehide", interrupt);
+    const tracks = stream.current?.getAudioTracks() ?? [];
+    tracks.forEach((track) => track.addEventListener("ended", interrupt));
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pagehide", interrupt);
+      tracks.forEach((track) => track.removeEventListener("ended", interrupt));
+    };
+  }, [recording]);
   function stop(cancel = false) {
     cancelled.current = cancel;
     if (recorder.current?.state === "recording") recorder.current.stop();
@@ -142,6 +167,7 @@ export default function VoiceCapture({
         stop(true);
         setError("Recording failed. You can type your story.");
       };
+      stopRef.current = stop;
       rec.start(250);
       started.current = Date.now();
       setRecording(true);

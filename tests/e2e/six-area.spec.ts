@@ -22,6 +22,7 @@ test("privacy requests are visible and repeat submissions do not queue duplicate
 }) => {
   await page.goto("/");
   await openSampleWorkspace(page);
+  await page.getByRole("button", { name: "Workspace, accounts and settings" }).click();
   await page
     .getByRole("button", { name: "Settings and privacy", exact: true })
     .click();

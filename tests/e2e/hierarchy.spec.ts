@@ -71,9 +71,13 @@ test("records, accounts and money stories keep the same figures in a clearer hie
   await expect(
     page.getByRole("heading", { name: "Your records" }),
   ).toBeVisible();
+  await page.getByRole("button", { name: "People", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "People & balances" }),
   ).toBeVisible();
+  await expect(page.getByText("People owe you", { exact: true })).toBeVisible();
+  await expect(page.getByText("You owe", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Records", exact: true }).filter({ visible: true }).last().click();
   await page.getByLabel("Filter records").selectOption("credit_sale");
   await expect(page.getByText("No cash received").first()).toBeVisible();
   await page.setViewportSize({ width: 1100, height: 900 });

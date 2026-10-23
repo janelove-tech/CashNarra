@@ -12,7 +12,7 @@ test("loads summary metadata and one authorised state without bulk refresh", asy
   await page.goto("/");
   await openSampleWorkspace(page);
   await expect(
-    page.getByRole("heading", { name: "Let’s make sense of your money." }),
+    page.getByRole("heading", { name: "What happened with your money?" }),
   ).toBeVisible();
   expect(reads).toContain("?view=summaries");
   expect(reads.some((query) => query.startsWith("?workspace="))).toBe(true);

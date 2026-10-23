@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { Fragment, useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import {
   House,
@@ -9,16 +9,13 @@ import {
   Landmark,
   Wallet,
   Smartphone,
-  Settings,
   Eye,
   EyeOff,
   Moon,
   Sun,
   Plus,
-  ArrowRight,
   ChevronDown,
   Mic,
-  CreditCard,
 } from "lucide-react";
 import { Button, Amount, Dialog, RecordRow } from "./ui";
 import ProfitReview from "./profit-review";
@@ -32,6 +29,7 @@ import { planUsageModel } from "@/domain/customer-plans";
 import ReportTrace from "./report-trace";
 import WorkspaceTools from "./workspace-tools";
 import DraftBackup from "./draft-backup";
+import StoryLog from "./story-log";
 import { draftBackup } from "@/lib/draft-backup";
 import { debtDate } from "@/domain/planning";
 import { calendarDate } from "@/domain/dates";
@@ -72,25 +70,33 @@ import { exportFileTargets, type ExportScope } from "@/lib/export-targets";
 import { supabase } from "@/lib/supabase";
 import s from "./app.module.css";
 const nav = [
-  { id: "today", label: "Today", Icon: House },
+  { id: "today", label: "Home", Icon: House },
   { id: "records", label: "Records", Icon: NotebookText },
   { id: "stories", label: "Money Stories", Icon: BookOpen },
   { id: "plan", label: "Plan", Icon: Target },
 ];
-/** Where the person is, for the header. Every screen names itself. */
-const placeNames: Record<string, string> = {
-  today: "Today",
-  records: "Records",
-  stories: "Money Stories",
-  plan: "Plan",
-  accounts: "Accounts",
-  usage: "Subscription",
-  settings: "Settings",
-  capture: "Tell your story",
-  review: "Check your records",
-};
 /** Draft and reading progress belong with the story, not on every screen. */
 const storyPages = ["today", "capture", "review"];
+const recordsPages = ["records", "people", "accounts"];
+/** Views that may live in the address bar and survive a refresh or a link. */
+const linkablePages = [
+  "records",
+  "people",
+  "accounts",
+  "stories",
+  "plan",
+  "settings",
+  "usage",
+];
+function pageFromUrl(search: string) {
+  const view = new URLSearchParams(search).get("view") ?? "";
+  return linkablePages.includes(view) ? view : "today";
+}
+function urlFor(page: string) {
+  return linkablePages.includes(page) ? `/app?view=${page}` : "/app";
+}
+type HistoryEntry = { page?: string; modal?: string };
+type InstallPromptEvent = Event & { prompt: () => Promise<unknown> };
 const storyStatus = /^(Draft|Recovered draft|Waiting|Needs clarification|Understood|Saving|Save )/;
 type Operation = {
   action: string;
@@ -110,7 +116,11 @@ export default function CashNarra() {
     [transcriptionProvider, setTranscriptionProvider] = useState<
       "groq" | null
     >(null),
-    [page, setPage] = useState("today"),
+    [page, setPage] = useState(() =>
+      typeof window === "undefined"
+        ? "today"
+        : pageFromUrl(window.location.search),
+    ),
     [loaded, setLoaded] = useState(false),
     [error, setError] = useState(""),
     [status, setStatus] = useState(""),
@@ -121,6 +131,11 @@ export default function CashNarra() {
     [hidden, setHidden] = useState(false),
     [theme, setTheme] = useState("light"),
     [modal, setModal] = useState(""),
+    [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(
+      null,
+    ),
+    [standalone, setStandalone] = useState(false),
+    [updateWaiting, setUpdateWaiting] = useState<ServiceWorker | null>(null),
     [date, setDate] = useState(new Date().toISOString().slice(0, 10)),
     [storyDate, setStoryDate] = useState(new Date().toISOString().slice(0, 10)),
     [period, setPeriod] = useState<StoryPeriod>("day"),
@@ -148,7 +163,10 @@ export default function CashNarra() {
     [evidence, setEvidence] = useState<{ from: string; to: string } | null>(
       null,
     ),
-    [retryOperation, setRetryOperation] = useState<Operation | null>(null);
+    [retryOperation, setRetryOperation] = useState<Operation | null>(null),
+    [lastSaved, setLastSaved] = useState<{ ids: string[]; date: string } | null>(
+      null,
+    );
   const revisionRef = useRef(0),
     draftReady = useRef(false),
     heading = useRef<HTMLHeadingElement>(null);
@@ -192,6 +210,7 @@ export default function CashNarra() {
     setWid(selectedId);
     return data;
   }, []);
+  const composeWanted = useRef(false);
   useEffect(() => {
     Promise.resolve()
       .then(() => refresh(""))
@@ -204,8 +223,101 @@ export default function CashNarra() {
       .catch((e) => setError(e.message))
       .finally(() => setLoaded(true));
     if ("serviceWorker" in navigator)
-      navigator.serviceWorker.register("/sw.js").catch(() => {});
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then((registration) => {
+          // A new worker waits until the app says so, never mid-task.
+          const watch = (worker: ServiceWorker | null) =>
+            worker?.addEventListener("statechange", () => {
+              if (
+                worker.state === "installed" &&
+                navigator.serviceWorker.controller
+              )
+                setUpdateWaiting(worker);
+            });
+          if (registration.waiting && navigator.serviceWorker.controller)
+            setUpdateWaiting(registration.waiting);
+          registration.addEventListener("updatefound", () =>
+            watch(registration.installing),
+          );
+        })
+        .catch(() => {});
   }, [refresh]);
+  useEffect(() => {
+    // Installed launches and the browser's own install offer.
+    const media = window.matchMedia("(display-mode: standalone)");
+    const sync = () => setStandalone(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    const offer = (e: Event) => {
+      e.preventDefault();
+      setInstallPrompt(e as InstallPromptEvent);
+    };
+    const installed = () => setInstallPrompt(null);
+    window.addEventListener("beforeinstallprompt", offer);
+    window.addEventListener("appinstalled", installed);
+    return () => {
+      media.removeEventListener("change", sync);
+      window.removeEventListener("beforeinstallprompt", offer);
+      window.removeEventListener("appinstalled", installed);
+    };
+  }, []);
+  const eventsRef = useRef<EventInput[]>([]);
+  useEffect(() => {
+    eventsRef.current = events;
+  }, [events]);
+  const voiceGuard = useRef({ page: "today", active: false });
+  useEffect(() => {
+    voiceGuard.current = { page, active: modal === "voice" && voiceWork };
+  }, [page, modal, voiceWork]);
+  useEffect(() => {
+    // The address names the view; the Back gesture walks the same history.
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("compose")) composeWanted.current = true;
+    const onPop = (e: PopStateEvent) => {
+      if (voiceGuard.current.active) {
+        // Back during a recording asks first, exactly like Close does.
+        const { page: current } = voiceGuard.current;
+        window.history.pushState(
+          { page: current, modal: "voice" },
+          "",
+          urlFor(current),
+        );
+        setVoiceLeave(true);
+        return;
+      }
+      const entry: HistoryEntry = e.state ?? {};
+      const target = entry.page ?? pageFromUrl(window.location.search);
+      setModal("");
+      setPage((current) => {
+        if (target === "review" || target === "capture")
+          return eventsRef.current.length ? target : "today";
+        return linkablePages.includes(target) || target === "today"
+          ? target
+          : current;
+      });
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+  useEffect(() => {
+    if (!owner) return;
+    const current: HistoryEntry = window.history.state ?? {};
+    const same =
+      current.page === page && (current.modal ?? "") === (modal || "");
+    if (same) return;
+    const entry: HistoryEntry = { page, modal: modal || "" };
+    if (current.page === undefined) {
+      window.history.replaceState(entry, "", urlFor(page));
+    } else if (current.modal) {
+      // Leaving a dialog: step back to the screen beneath it, or replace the
+      // dialog entry when the screen itself changes.
+      if (!modal && current.page === page) window.history.back();
+      else window.history.replaceState(entry, "", urlFor(page));
+    } else {
+      window.history.pushState(entry, "", urlFor(page));
+    }
+  }, [owner, page, modal]);
   useEffect(() => {
     const channel = new BroadcastChannel("cashnarra-session");
     channel.onmessage = () => {
@@ -234,6 +346,15 @@ export default function CashNarra() {
   useEffect(() => {
     heading.current?.focus();
   }, [page]);
+  useEffect(() => {
+    // "Tell", "Type your story" and the home-screen shortcut land in the box.
+    if (page !== "today" || modal || !composeWanted.current) return;
+    const box = document.getElementById("today-story");
+    if (!(box instanceof HTMLTextAreaElement) || box.disabled) return;
+    composeWanted.current = false;
+    box.focus();
+    box.scrollIntoView({ block: "center" });
+  }, [page, modal, loaded, owner, wid]);
 
   useEffect(() => {
     if (!owner || !wid) return;
@@ -337,6 +458,7 @@ export default function CashNarra() {
       setEvents([]);
       setQuestions([]);
       setCalculations([]);
+      if (nextText.trim()) setLastSaved(null);
     }
     setReceipt(null);
     setStatus(
@@ -353,8 +475,14 @@ export default function CashNarra() {
     setPage(id);
     setModal("");
     setError("");
-    setReceipt((current) => (current && current.page !== id ? null : current));
+    // The banner is only how the last save was shown. Saved rows, the
+    // request key and an unconfirmed retry stay put.
+    setReceipt(null);
     setStatus((current) => (current.startsWith("Saved") ? "" : current));
+  }
+  function openComposer() {
+    composeWanted.current = true;
+    navigate("today");
   }
   async function perform(operation: Operation) {
     if (retryOperation && retryOperation.key !== operation.key)
@@ -484,7 +612,7 @@ export default function CashNarra() {
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
-  async function saved() {
+  async function saved(receipt?: { recordIds?: string[] }) {
     setRetryOperation(null);
     setText("");
     setEvents([]);
@@ -493,8 +621,9 @@ export default function CashNarra() {
     setPending(null);
     setAllowDuplicates(false);
     await draftStorage("delete", owner, wid).catch((e) => setError(e.message));
-    showReceipt("Saved · records confirmed", "stories");
-    setPage("stories");
+    setLastSaved({ ids: receipt?.recordIds ?? [], date });
+    showReceipt("Saved · records confirmed", "today");
+    setPage("today");
   }
   async function saveBatch() {
     if (!w || busy) return;
@@ -547,8 +676,8 @@ export default function CashNarra() {
     }
     setStatus("Saving");
     try {
-      await perform(op);
-      await saved();
+      const receipt = await perform(op);
+      await saved(receipt);
     } catch (e) {
       if ((e as Error & { rejected?: boolean }).rejected) {
         setPending(null);
@@ -574,13 +703,13 @@ export default function CashNarra() {
       if (!res.ok) throw new Error(data.error);
       if (data.receipt) {
         await refresh(wid);
-        await saved();
+        await saved(data.receipt);
       } else {
         setStatus(
           "No receipt found. Retry will use the same reviewed request.",
         );
-        await perform(pending);
-        await saved();
+        const receipt = await perform(pending);
+        await saved(receipt);
       }
     } catch (e) {
       setError((e as Error).message);
@@ -641,6 +770,36 @@ export default function CashNarra() {
     w?.records.filter((r) => !r.removed && !r.kind.startsWith("opening_")) ??
     [];
   const dayHasRecords = active.some((record) => record.date === date);
+  const openBalances = w ? obligations(w).filter((o) => D(o.remaining).gt(0)) : [];
+  const peopleOwe = sum(
+    openBalances.filter((o) => o.direction === "receivable").map((o) => o.remaining),
+  );
+  const youOwe = sum(
+    openBalances.filter((o) => o.direction === "payable").map((o) => o.remaining),
+  );
+  const savedRecords =
+    w && lastSaved
+      ? w.records.filter((r) => lastSaved.ids.includes(r.id) && !r.removed)
+      : [];
+  const savedConsequences = w
+    ? savedRecords.flatMap((r) => {
+        if (!r.obligationId) return [];
+        const balance = obligations(w).find((o) => o.id === r.obligationId);
+        if (!balance) return [];
+        const name = hidden ? "This person" : balance.party.replace(/\s*(?:\.{3}|…)+$/u, "");
+        if (balance.direction === "receivable")
+          return [
+            D(balance.remaining).gt(0)
+              ? `${name} now owes you ${hidden ? "an amount" : formatMoney(balance.remaining)}.`
+              : `${name} has now paid everything that was owed.`,
+          ];
+        return [
+          D(balance.remaining).gt(0)
+            ? `You now owe ${name} ${hidden ? "an amount" : formatMoney(balance.remaining)}.`
+            : `You have now paid ${name} in full.`,
+        ];
+      })
+    : [];
   const filtered = active
     .filter(
       (r) => !evidence || (r.date >= evidence.from && r.date <= evidence.to),
@@ -715,28 +874,45 @@ export default function CashNarra() {
   const navigation = (mobile = false) => (
     <nav
       aria-label={mobile ? "Mobile navigation" : "Main navigation"}
-      className={mobile ? s.bottomNav : undefined}
+      className={mobile ? s.bottomNav : s.topnav}
     >
-      {nav.map(({ id, label, Icon }) => (
-        <button
-          key={id}
-          className={s.navLink}
-          aria-current={page === id ? "page" : undefined}
-          onClick={() => navigate(id)}
-        >
-          <Icon size={20} aria-hidden />
-          {mobile && id === "stories" ? "Stories" : label}
-        </button>
-      ))}
-      {!mobile && (
-        <>
-          <hr />
-          <button className={s.navLink} onClick={() => navigate("accounts")}>
-            <Landmark size={20} aria-hidden />
-            Accounts
+      {nav.map(({ id, label, Icon }, index) => (
+        <Fragment key={id}>
+          {mobile && index === 2 && (
+            <button
+              type="button"
+              className={`${s.navLink} ${s.navTell}`}
+              aria-label="Tell what happened"
+              onClick={() => {
+                composeWanted.current = true;
+                if (page === "today") {
+                  const box = document.getElementById("today-story");
+                  if (box instanceof HTMLTextAreaElement) {
+                    composeWanted.current = false;
+                    box.focus();
+                    box.scrollIntoView({ block: "center" });
+                  }
+                } else navigate("today");
+              }}
+            >
+              <span className={s.tellMark} aria-hidden />
+              Tell
+            </button>
+          )}
+          <button
+            className={s.navLink}
+            aria-current={
+              page === id || (id === "records" && recordsPages.includes(page))
+                ? "page"
+                : undefined
+            }
+            onClick={() => navigate(id)}
+          >
+            <Icon size={20} aria-hidden />
+            {mobile && id === "stories" ? "Stories" : label}
           </button>
-        </>
-      )}
+        </Fragment>
+      ))}
     </nav>
   );
   if (!loaded)
@@ -769,103 +945,53 @@ export default function CashNarra() {
           Synthetic demo · fictional Ama Works data · no real AI calls
         </div>
       )}
-      <div className={s.shell}>
-        <aside className={s.sidebar}>
-          <Link href="/">
-            <img
-              className={s.logo}
-              src={
-                theme === "dark"
-                  ? "/brand/cashnarra-lockup-reversed.svg"
-                  : "/brand/cashnarra-logo.svg"
-              }
-              alt="CashNarra"
-            />
-          </Link>
+      <header className={s.appbar}>
+        <Link href="/" className={s.brand}>
+          <img
+            className={s.logo}
+            src={
+              theme === "dark"
+                ? "/brand/cashnarra-lockup-reversed.svg"
+                : "/brand/cashnarra-logo.svg"
+            }
+            alt="CashNarra"
+          />
+        </Link>
+        {navigation()}
+        <div className={s.topActions}>
+          <button
+            className={s.iconButton}
+            aria-label={hidden ? "Show amounts" : "Hide amounts"}
+            onClick={() => setHidden(!hidden)}
+          >
+            {hidden ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+          <button
+            className={s.iconButton}
+            aria-label={`Switch to ${theme === "light" ? "dark" : "light"} appearance`}
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+          >
+            {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
+          </button>
           <button
             className={s.accountButton}
+            aria-label="Workspace, accounts and settings"
             onClick={() => setModal("workspace")}
           >
-            <strong>
-              {hidden ? "Workspace" : (w?.name ?? "Create a workspace")}
-            </strong>
-            <small>
-              {w?.type ?? "Personal or Business"} · GHS{" "}
-              <ChevronDown size={13} />
-            </small>
+            <span className={s.avatar} aria-hidden>
+              {(w?.name ?? "Workspace")
+                .split(/\s+/)
+                .map((part) => part[0] ?? "")
+                .join("")
+                .slice(0, 2)
+                .toUpperCase()}
+            </span>
+            <strong>{hidden ? "Workspace" : (w?.name ?? "Workspace")}</strong>
+            {w?.type && <small>{w.type}</small>}
+            <ChevronDown size={16} aria-hidden />
           </button>
-          {navigation()}
-          <div className={s.sidebarBottom}>
-            <button
-              className={s.navLink}
-              aria-current={page === "usage" ? "page" : undefined}
-              onClick={() => navigate("usage")}
-            >
-              <CreditCard size={20} aria-hidden />
-              Subscription
-            </button>
-            <button
-              className={s.navLink}
-              aria-current={page === "settings" ? "page" : undefined}
-              onClick={() => navigate("settings")}
-            >
-              <Settings size={20} aria-hidden />
-              Settings and privacy
-            </button>
-            <small>
-              Serious money.
-              <br />
-              Light interaction.
-            </small>
-          </div>
-        </aside>
-        <div>
-          <header className={s.topbar}>
-            <div className={s.breadcrumb}>
-              {hidden ? "Workspace" : w?.name} › {placeNames[page] ?? "Today"}
-            </div>
-            <Link className={s.mobileLogo} href="/">
-              <img
-                className={s.logo}
-                src={
-                  theme === "dark"
-                    ? "/brand/cashnarra-lockup-reversed.svg"
-                    : "/brand/cashnarra-logo.svg"
-                }
-                alt="CashNarra"
-              />
-            </Link>
-            <div className={s.topActions}>
-              <button
-                className={s.iconButton}
-                aria-label={hidden ? "Show amounts" : "Hide amounts"}
-                onClick={() => setHidden(!hidden)}
-              >
-                {hidden ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-              <button
-                className={s.iconButton}
-                aria-label={`Switch to ${theme === "light" ? "dark" : "light"} appearance`}
-                onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-              >
-                {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
-              </button>
-              <button
-                className={s.iconButton}
-                aria-label="Workspace, accounts and settings"
-                onClick={() => setModal("workspace")}
-              >
-                <span className={s.badge}>
-                  {(w?.name ?? "Workspace")
-                    .split(/\s+/)
-                    .map((part) => part[0] ?? "")
-                    .join("")
-                    .slice(0, 2)
-                    .toUpperCase()}
-                </span>
-              </button>
-            </div>
-          </header>
+        </div>
+      </header>
           <main id="main" className={s.content}>
             <div role="status" aria-live="polite">
               {receipt?.page === page && (
@@ -878,6 +1004,32 @@ export default function CashNarra() {
                   </p>
                 )}
             </div>
+            {updateWaiting && (
+              <div className={`${s.notice} ${s.updateNotice}`}>
+                <p>
+                  A newer version of CashNarra is ready. It opens the next time
+                  you start the app, or refresh now. Your records are not
+                  affected.
+                </p>
+                <Button
+                  disabled={busy || !!pending || voiceWork}
+                  onClick={() => {
+                    navigator.serviceWorker.addEventListener(
+                      "controllerchange",
+                      () => window.location.reload(),
+                      { once: true },
+                    );
+                    updateWaiting.postMessage("SKIP_WAITING");
+                    setUpdateWaiting(null);
+                  }}
+                >
+                  Refresh now
+                </Button>
+                <Button quiet onClick={() => setUpdateWaiting(null)}>
+                  Later
+                </Button>
+              </div>
+            )}
             {error && (
               <p role="alert" className={`${s.notice} ${s.error}`}>
                 {error}
@@ -975,423 +1127,399 @@ export default function CashNarra() {
             ) : (
               <>
                 {page === "today" && (
-                  <>
-                    <div className={s.pageIntro}>
-                      <h1 ref={heading} tabIndex={-1}>
-                        Let’s make sense of your money.
-                      </h1>
-                      <p>
-                        {(hidden ? "Workspace" : w.name) +
-                          " · " +
-                          (date === today
-                            ? `Today · ${readingDate(date)}`
-                            : readingDate(date))}
-                      </p>
-                    </div>
-                    <div className={s.composer}>
-                      <h2>What happened with your money?</h2>
-                      <p>
-                        A sale, a payment, a little of both. Tell it in your
-                        own words.
-                      </p>
-                      <div className={s.storyDate}>
-                        <label htmlFor="today-story">Your money story</label>
-                        <label htmlFor="today-date" className={s.dateField}>
-                          <span>Date of activity</span>
-                          <input
-                            id="today-date"
-                            type="date"
-                            value={date}
-                            onChange={(e) => {
-                              if (calendarDate(e.target.value))
-                                setDate(e.target.value);
-                              changeDraft();
+                  <div className={s.page}>
+                    <div className={s.pageMain}>
+                      {lastSaved && savedRecords.length > 0 && (
+                        <section className={s.savedPanel} aria-label="Saved">
+                          <h2>
+                            Saved{" "}
+                            {savedRecords.length === 1
+                              ? "1 record"
+                              : `${savedRecords.length} records`}{" "}
+                            for {readingDate(lastSaved.date)}
+                          </h2>
+                          <p className={s.muted}>
+                            They now count in your records and Money Stories.
+                          </p>
+                          {rows(savedRecords, false, false)}
+                          {savedConsequences.map((line) => (
+                            <p key={line} className={s.hint}>
+                              {line}
+                            </p>
+                          ))}
+                          <div className={s.actions}>
+                            <Button
+                              onClick={() => {
+                                setStoryDate(lastSaved.date);
+                                setPeriod("day");
+                                navigate("stories");
+                              }}
+                            >
+                              Read the day’s story
+                            </Button>
+                            <Button quiet onClick={() => setLastSaved(null)}>
+                              Done
+                            </Button>
+                          </div>
+                        </section>
+                      )}
+                      <section
+                        className={s.composer}
+                        aria-labelledby="composer-title"
+                      >
+                        <div className={s.composerHead}>
+                          <span className={s.eyebrow}>
+                            {(hidden ? "Workspace" : w.name) +
+                              " · " +
+                              (date === today ? "Today" : readingDate(date))}
+                          </span>
+                          <label htmlFor="today-date" className={s.dateField}>
+                            <span>Date of activity</span>
+                            <input
+                              id="today-date"
+                              type="date"
+                              value={date}
+                              onChange={(e) => {
+                                if (calendarDate(e.target.value))
+                                  setDate(e.target.value);
+                                changeDraft();
+                              }}
+                              disabled={!!pending || busy}
+                            />
+                          </label>
+                        </div>
+                        <h1 id="composer-title" ref={heading} tabIndex={-1}>
+                          What happened with your money?
+                        </h1>
+                        <textarea
+                          id="today-story"
+                          aria-label="Your money story"
+                          className={s.capture}
+                          value={text}
+                          maxLength={12000}
+                          disabled={!!pending || busy}
+                          placeholder="I sold 900 cash, paid 80 for delivery, and Abena paid 200 of what she owed…"
+                          onChange={(e) => changeDraft(e.target.value)}
+                        />
+                        <div className={s.actions}>
+                          <Button
+                            primary
+                            disabled={
+                              busy || !!pending || (!text.trim() && !events.length)
+                            }
+                            onClick={() => {
+                              if (events.length) navigate("review");
+                              else void understand();
                             }}
-                            disabled={!!pending || busy}
-                          />
-                        </label>
-                      </div>
-                      <textarea
-                        id="today-story"
-                        className={s.capture}
-                        value={text}
-                        maxLength={12000}
-                        disabled={!!pending || busy}
-                        placeholder="I sold 900 cash, paid for delivery, and Abena paid part of her balance…"
-                        onChange={(e) => changeDraft(e.target.value)}
+                          >
+                            {busy
+                              ? "Reading your story…"
+                              : events.length
+                                ? "Finish your draft"
+                                : "Understand my story"}
+                          </Button>
+                          <Button onClick={() => setModal("voice")}>
+                            <Mic size={18} aria-hidden />
+                            <span>Speak</span>
+                          </Button>
+                        </div>
+                        <p className={s.hint}>
+                          {voice
+                            ? "Speak or type. You check the words and the records before anything is saved."
+                            : "Transcription is not available yet. Type here, or record and type the words yourself."}
+                          {events.length
+                            ? " Your draft is waiting. Finish it to check the records."
+                            : " Nothing is saved until you check the records."}
+                        </p>
+                        {demo && !ai && (
+                          <p className={s.hint}>
+                            This demo can read the two sample stories. Manual
+                            records work for anything else.
+                          </p>
+                        )}
+                        <div className={s.moreTools}>
+                          <div className={s.actions}>
+                            <Button
+                              quiet
+                              onClick={() => manual()}
+                              disabled={!!pending}
+                            >
+                              Add a manual record
+                            </Button>
+                            {demo && (
+                              <>
+                                <Button quiet onClick={() => changeDraft(sample)}>
+                                  Use the example
+                                </Button>
+                                <Button
+                                  quiet
+                                  onClick={() => changeDraft(unclearSample)}
+                                >
+                                  Try an unclear version
+                                </Button>
+                              </>
+                            )}
+                            <Button
+                              quiet
+                              onClick={() =>
+                                navigator.clipboard
+                                  .writeText(text)
+                                  .then(() => setStatus("Draft copied."))
+                                  .catch(() =>
+                                    setError(
+                                      "Copy failed. Select and copy your text manually.",
+                                    ),
+                                  )
+                              }
+                            >
+                              Copy draft
+                            </Button>
+                          </div>
+                          <details>
+                            <summary>Draft backup</summary>
+                            <label className={s.checkLabel}>
+                              <input
+                                type="checkbox"
+                                checked={persistent}
+                                onChange={async (e) => {
+                                  setPersistent(e.target.checked);
+                                  if (!e.target.checked)
+                                    await clearDrafts().catch((x) =>
+                                      setError(x.message),
+                                    );
+                                }}
+                              />
+                              Keep drafts on this private device
+                            </label>
+                            <p className={s.hint}>
+                              Off on shared devices. Browser storage is not a
+                              backup.
+                            </p>
+                            <DraftBackup
+                              draft={{
+                                ownerId: owner,
+                                workspaceId: wid,
+                                text,
+                                date,
+                                revision,
+                                events,
+                                replaceIds,
+                                reason,
+                                questions,
+                                calculations,
+                                questionsPreserved: true,
+                                pendingRequest:
+                                  pending ?? retryOperation ?? undefined,
+                              }}
+                              locked={!!pending || !!retryOperation || busy}
+                              onRestore={(d) => {
+                                const next =
+                                  Math.max(revisionRef.current, d.revision) + 1;
+                                revisionRef.current = next;
+                                setRevision(next);
+                                setText(d.text);
+                                setDate(d.date);
+                                setEvents(d.events);
+                                setReplaceIds(d.replaceIds);
+                                setReason(d.reason);
+                                const op = d.pendingRequest as Operation | undefined;
+                                setPending(op?.action === "batch" ? op : null);
+                                setRetryOperation(
+                                  op && op.action !== "batch" ? op : null,
+                                );
+                                setQuestions(withSuggestions(d.questions ?? []));
+                                setCalculations(d.calculations ?? []);
+                                setNeedsFreshReview(
+                                  d.questionsPreserved === false &&
+                                    d.events.length > 0,
+                                );
+                                setStatus(
+                                  d.questionsPreserved === false && d.events.length
+                                    ? "Draft restored. This older backup did not keep unanswered questions, so check every record before saving."
+                                    : "Draft restored. Check the words and records before saving.",
+                                );
+                                if (d.events.length || op) setPage("review");
+                              }}
+                            />
+                            <p className={s.hint}>
+                              Review names and sensitive details before processing.{" "}
+                              <Link href="/privacy">Who processes your story?</Link>
+                            </p>
+                          </details>
+                        </div>
+                      </section>
+                    </div>
+                    <div className={s.pageLog}>
+                      {!dayHasRecords && (
+                        <div className={s.log}>
+                          <div className={s.dayHead}>
+                            <h2>{dayLabel}</h2>
+                            <span>Nothing recorded yet</span>
+                          </div>
+                        </div>
+                      )}
+                      <StoryLog
+                        workspace={w}
+                        records={active as RecordEvent[]}
+                        today={today}
+                        hidden={hidden}
+                        rows={(items, showDate) => rows(items, false, showDate)}
+                        onSeeAll={() => navigate("records")}
                       />
-                      <div className={s.actions}>
-                        <Button
-                          primary
-                          disabled={
-                            busy || !!pending || (!text.trim() && !events.length)
-                          }
+                      {!active.length && (
+                        <p className={s.empty}>
+                          No records yet. Tell one story about today, or a day
+                          you remember, and check the records it gives you.
+                        </p>
+                      )}
+                    </div>
+                    <aside className={s.pageAside} aria-label="In brief">
+                      <section className={s.statBlock}>
+                        <h2>
+                          {date === today ? "Today so far" : `${dayLabel} in brief`}
+                        </h2>
+                        <button
+                          className={s.statTotal}
+                          onClick={() => navigate("accounts")}
+                        >
+                          <small>Recorded account balances</small>
+                          <Amount value={total} hidden={hidden} />
+                          <small>Cash, Bank & MoMo · manually tracked</small>
+                        </button>
+                        <button
+                          className={s.stat}
                           onClick={() => {
-                            if (events.length) navigate("review");
-                            else void understand();
+                            setFilter("in");
+                            setEvidence({ from: date, to: date });
+                            navigate("records");
                           }}
                         >
-                          {busy
-                            ? "Waiting for processing…"
-                            : events.length
-                              ? "Finish your draft"
-                              : "Understand my story"}
-                        </Button>
-                        <Button onClick={() => setModal("voice")}>
-                          <Mic size={18} aria-hidden />
-                          <span>Voice</span>
-                        </Button>
-                        {!events.length && (
-                          <Button quiet onClick={() => navigate("capture")}>
-                            Tell your story
-                          </Button>
-                        )}
-                      </div>
-                      <p className={s.hint}>
-                        {voice
-                          ? "Transcription is available. You review the words before anything is saved."
-                          : "Transcription is not available yet. Type here, or record and type the words yourself."}{" "}
-                        {events.length
-                          ? "Your draft is waiting. Finish it to check the records."
-                          : "You review the records before they’re saved."}
-                      </p>
-                    </div>
-                    <div className={s.balanceBand}>
-                      <button
-                        className={s.balanceMain}
-                        onClick={() => navigate("accounts")}
-                      >
-                        <span className={s.muted}>
-                          Recorded account balances
-                        </span>
-                        <Amount value={total} hidden={hidden} large />
-                        <small>Cash, Bank & MoMo · manually tracked</small>
-                      </button>
-                      <button
-                        className={s.balanceStat}
-                        onClick={() => {
-                          setFilter("in");
-                          setEvidence({ from: date, to: date });
-                          navigate("records");
-                        }}
-                      >
-                        <small>Money in · {dayLabel}</small>
-                        {dayHasRecords ? (
-                          <Amount value={dayReport!.received} hidden={hidden} />
-                        ) : (
-                          <small>No records for this day</small>
-                        )}
-                        <small>Including old-balance payments</small>
-                      </button>
-                      <button
-                        className={s.balanceStat}
-                        onClick={() => {
-                          setFilter("out");
-                          setEvidence({ from: date, to: date });
-                          navigate("records");
-                        }}
-                      >
-                        <small>Money out · {dayLabel}</small>
-                        {dayHasRecords ? (
-                          <Amount value={dayReport!.paid} hidden={hidden} />
-                        ) : (
-                          <small>No records for this day</small>
-                        )}
-                        <small>Transfers between accounts excluded</small>
-                      </button>
-                    </div>
-                    <div className={s.homeGrid}>
-                      <section>
-                        <div className={s.sectionHead}>
-                          <h2>Recent records</h2>
-                          <button
-                            className={s.sectionLink}
-                            onClick={() => navigate("records")}
-                          >
-                            View all →
-                          </button>
-                        </div>
-                        {active.length ? (
-                          rows(active.slice(-5))
-                        ) : (
-                          <p className={s.empty}>
-                            No records yet. Start with one useful story.
-                          </p>
-                        )}
-                      </section>
-                      <aside>
-                        <div className={s.storyTile}>
-                          <small>
-                            <BookOpen size={15} /> Your Money Story
-                          </small>
-                          <h2>
-                            Your day,
-                            <br />
-                            <em>made clearer.</em>
-                          </h2>
-                          {[
-                            ["Money in", dayReport!.received],
-                            ["Money out", dayReport!.paid],
-                          ].map(([label, value], i) => (
-                            <div key={label}>
-                              <div className={s.barLabel}>
-                                <span>{label}</span>
-                                {dayHasRecords ? (
-                                  <Amount value={value} hidden={hidden} />
-                                ) : (
-                                  <span>Not recorded</span>
-                                )}
-                              </div>
-                              <div
-                                className={s.bar}
-                                data-empty={
-                                  hidden || D(value).isZero()
-                                    ? "true"
-                                    : "false"
-                                }
-                              >
-                                {hidden || D(value).isZero() ? null : (
-                                  <span
-                                    className={i ? s.barOut : undefined}
-                                    style={{
-                                      width: `${D(value)
-                                        .div(
-                                          (D(dayReport!.received).gte(
-                                            dayReport!.paid,
-                                          )
-                                            ? D(dayReport!.received)
-                                            : D(dayReport!.paid)
-                                          ).plus("0.01"),
-                                        )
-                                        .mul(100)
-                                        .toNumber()}%`,
-                                    }}
-                                  />
-                                )}
-                              </div>
-                            </div>
-                          ))}
-                          <p>
-                            {dayHasRecords ? (
-                              <>
-                                {dayLabel}. Net movement{" "}
-                                <Amount value={dayReport!.net} hidden={hidden} />.
-                                This is not profit.
-                              </>
-                            ) : (
-                              "No records for this day. That does not mean nothing happened."
-                            )}
-                          </p>
-                          <Button onClick={() => navigate("stories")}>
-                            Read your story <ArrowRight size={15} />
-                          </Button>
-                        </div>
-                        {w.preferences?.showRhythm !== false && (
-                          <section className={s.rhythm}>
-                            <h3>Your rhythm</h3>
-                            <p>
-                              {(() => {
-                                const days = w.checkins.filter(
-                                  (c) => c.kind !== "rest",
-                                ).length;
-                                return `${days} ${days === 1 ? "day" : "days"} you checked in`;
-                              })()}
-                            </p>
-                            <small>
-                              Anything else to add? A check-in only marks the
-                              day you looked. You can catch up on another day
-                              whenever you remember it.
-                            </small>
-                            <div className={s.actions}>
-                              <Button onClick={() => setModal("checkin")}>
-                                Check in
-                              </Button>
-                            </div>
-                          </section>
-                        )}
-                        {w.preferences?.reminder &&
-                          !w.checkins.some(
-                            (c) =>
-                              c.date === new Date().toISOString().slice(0, 10),
-                          ) && (
-                            <p className={s.notice}>
-                              A moment for your money? Check today, or catch up
-                              on a day you remember. No rush.
-                            </p>
+                          <span>Money in · {dayLabel}</span>
+                          {dayHasRecords ? (
+                            <Amount value={dayReport!.received} hidden={hidden} />
+                          ) : (
+                            <small>No records for this day</small>
                           )}
-                        {w.goals[0] && (
-                          <section className={s.goalPeek}>
-                            <h3>Something to work towards</h3>
-                            <p>{w.goals[0].name}</p>
-                            <Amount
-                              value={sum(
-                                w.goals[0].allocations.map((a) => a.amount),
-                              )}
-                              hidden={hidden}
-                            />
-                            <small> marked for this goal, not moved</small>
-                            <div>
-                              <button
-                                className={s.sectionLink}
-                                onClick={() => navigate("plan")}
-                              >
-                                Open your plan →
-                              </button>
-                            </div>
-                          </section>
-                        )}
-                      </aside>
-                    </div>
-                  </>
-                )}
-                {page === "capture" && (
-                  <section className={s.flow}>
-                    <h1 ref={heading} tabIndex={-1}>
-                      Tell it as it happened.
-                    </h1>
-                    <p>
-                      You don’t need accounting words. Describe several things
-                      at once.
-                    </p>
-                    <label htmlFor="story-date">Date of activity</label>
-                    <input
-                      id="story-date"
-                      type="date"
-                      value={date}
-                      onChange={(e) => {
-                        if (calendarDate(e.target.value))
-                          setDate(e.target.value);
-                        changeDraft();
-                      }}
-                      disabled={!!pending}
-                    />
-                    <label htmlFor="narration">Your money story</label>
-                    <textarea
-                      className={s.storyInput}
-                      id="narration"
-                      value={text}
-                      maxLength={12000}
-                      onChange={(e) => changeDraft(e.target.value)}
-                      disabled={!!pending}
-                      placeholder="Today I…"
-                    />
-                    {!ai && (
-                      <p className={s.notice}>
-                        This demo can read the two sample stories. Manual
-                        recording works for other input.
-                      </p>
-                    )}
-                    <div className={s.actions}>
-                      <Button
-                        primary
-                        onClick={understand}
-                        disabled={busy || !text.trim() || !!pending}
-                      >
-                        {busy
-                          ? "Waiting for processing…"
-                          : "Understand my story"}
-                      </Button>
-                    </div>
-                    <div className={s.actions}>
-                      {demo && (
-                        <>
-                          <Button onClick={() => changeDraft(sample)}>
-                            Use the example
-                          </Button>
-                          <Button onClick={() => changeDraft(unclearSample)}>
-                            Try an unclear version
-                          </Button>
-                        </>
-                      )}
-                      <Button onClick={() => manual()}>
-                        Add a manual record
-                      </Button>
-                      <Button
-                        onClick={() =>
-                          navigator.clipboard
-                            .writeText(text)
-                            .then(() => setStatus("Draft copied."))
-                            .catch(() =>
-                              setError(
-                                "Copy failed. Select and copy your text manually.",
-                              ),
-                            )
-                        }
-                      >
-                        Copy draft
-                      </Button>
-                    </div>
-                    <details>
-                      <summary>Draft backup</summary>
-                      <label className={s.checkLabel}>
-                        <input
-                          type="checkbox"
-                          checked={persistent}
-                          onChange={async (e) => {
-                            setPersistent(e.target.checked);
-                            if (!e.target.checked)
-                              await clearDrafts().catch((x) =>
-                                setError(x.message),
-                              );
+                        </button>
+                        <button
+                          className={s.stat}
+                          onClick={() => {
+                            setFilter("out");
+                            setEvidence({ from: date, to: date });
+                            navigate("records");
                           }}
-                        />
-                        Keep drafts on this private device
-                      </label>
-                      <small>
-                        Off on shared devices. Browser storage is not a backup.
-                      </small>
-                      <DraftBackup
-                        draft={{
-                          ownerId: owner,
-                          workspaceId: wid,
-                          text,
-                          date,
-                          revision,
-                          events,
-                          replaceIds,
-                          reason,
-                          questions,
-                          calculations,
-                          questionsPreserved: true,
-                          pendingRequest:
-                            pending ?? retryOperation ?? undefined,
-                        }}
-                        locked={!!pending || !!retryOperation || busy}
-                        onRestore={(d) => {
-                          const next =
-                            Math.max(revisionRef.current, d.revision) + 1;
-                          revisionRef.current = next;
-                          setRevision(next);
-                          setText(d.text);
-                          setDate(d.date);
-                          setEvents(d.events);
-                          setReplaceIds(d.replaceIds);
-                          setReason(d.reason);
-                          const op = d.pendingRequest as Operation | undefined;
-                          setPending(op?.action === "batch" ? op : null);
-                          setRetryOperation(
-                            op && op.action !== "batch" ? op : null,
+                        >
+                          <span>Money out · {dayLabel}</span>
+                          {dayHasRecords ? (
+                            <Amount value={dayReport!.paid} hidden={hidden} />
+                          ) : (
+                            <small>No records for this day</small>
+                          )}
+                        </button>
+                        <div className={s.stat}>
+                          <span>Net movement</span>
+                          {dayHasRecords ? (
+                            <Amount value={dayReport!.net} hidden={hidden} />
+                          ) : (
+                            <small>Not recorded</small>
+                          )}
+                        </div>
+                        <p className={s.hint}>
+                          {dayHasRecords
+                            ? "Money in minus money out. It is not profit, and transfers between your own accounts are left out."
+                            : "No records for this day. That does not mean nothing happened."}
+                        </p>
+                        <button
+                          className={s.sectionLink}
+                          onClick={() => {
+                            setStoryDate(date);
+                            setPeriod("day");
+                            navigate("stories");
+                          }}
+                        >
+                          Read the day’s story →
+                        </button>
+                      </section>
+                      <section className={s.statBlock}>
+                        <h2>People</h2>
+                        <button className={s.stat} onClick={() => navigate("people")}>
+                          <span>Owe you</span>
+                          <Amount value={peopleOwe} hidden={hidden} />
+                        </button>
+                        <button className={s.stat} onClick={() => navigate("people")}>
+                          <span>You owe</span>
+                          <Amount value={youOwe} hidden={hidden} />
+                        </button>
+                      </section>
+                      {w.goals[0] &&
+                        (() => {
+                          const g = w.goals[0];
+                          const f = forecast(g, date);
+                          const percent = D(g.target).eq(0)
+                            ? 0
+                            : D(f.assigned).div(g.target).mul(100).clamp(0, 100).toNumber();
+                          return (
+                            <section className={s.goalPeek} aria-label="Goal">
+                              <small>{g.name}</small>
+                              <div className={s.goalBar} aria-hidden>
+                                <span style={{ width: `${hidden ? 0 : percent}%` }} />
+                              </div>
+                              <strong className={s.goalAmount}>
+                                <Amount value={f.assigned} hidden={hidden} />
+                              </strong>
+                              <small>
+                                of <Amount value={g.target} hidden={hidden} /> set
+                                aside · a mark, not money moved
+                              </small>
+                              <br />
+                              <small>
+                                {f.count === null
+                                  ? "No pace estimate yet"
+                                  : f.count === 0
+                                    ? "Target reached"
+                                    : `About ${f.count} ${f.count === 1 ? "month" : "months"} at this pace`}
+                              </small>
+                              <br />
+                              <Button onClick={() => navigate("plan")}>
+                                Open your plan →
+                              </Button>
+                            </section>
                           );
-                          setQuestions(withSuggestions(d.questions ?? []));
-                          setCalculations(d.calculations ?? []);
-                          setNeedsFreshReview(
-                            d.questionsPreserved === false &&
-                              d.events.length > 0,
-                          );
-                          setStatus(
-                            d.questionsPreserved === false && d.events.length
-                              ? "Draft restored. This older backup did not keep unanswered questions, so check every record before saving."
-                              : "Draft restored. Check the words and records before saving.",
-                          );
-                          if (d.events.length || op) setPage("review");
-                        }}
-                      />
-                    </details>
-                    <p className={s.notice}>
-                      Review names and sensitive details before processing.{" "}
-                      <Link href="/privacy">Who processes your story?</Link>
-                    </p>
-                  </section>
+                        })()}
+                      {w.preferences?.showRhythm !== false && (
+                        <section className={`${s.statBlock} ${s.rhythm}`}>
+                          <h2>Your rhythm</h2>
+                          <p>
+                            {(() => {
+                              const days = w.checkins.filter(
+                                (c) => c.kind !== "rest",
+                              ).length;
+                              return `${days} ${days === 1 ? "day" : "days"} you checked in`;
+                            })()}
+                          </p>
+                          <p className={s.hint}>
+                            A check-in only marks the day you looked. Catch up on
+                            another day whenever you remember it.
+                          </p>
+                          <div className={s.actions}>
+                            <Button onClick={() => setModal("checkin")}>
+                              Check in
+                            </Button>
+                          </div>
+                        </section>
+                      )}
+                      {w.preferences?.reminder &&
+                        !w.checkins.some(
+                          (c) =>
+                            c.date === new Date().toISOString().slice(0, 10),
+                        ) && (
+                          <p className={s.notice}>
+                            A moment for your money? Check today, or catch up on
+                            a day you remember. No rush.
+                          </p>
+                        )}
+                    </aside>
+                  </div>
                 )}
                 {page === "review" && (
                   <BatchReview
@@ -1551,21 +1679,63 @@ export default function CashNarra() {
                     setAllowDuplicates={setAllowDuplicates}
                     recover={recover}
                     saveBatch={saveBatch}
-                    onBack={() => navigate("capture")}
+                    onBack={openComposer}
                     onDiscard={() => setModal("discard")}
                   />
                 )}
-                {page === "records" && (
+                {recordsPages.includes(page) && (
                   <>
-                    <div className={s.pageHead}>
+                    <div className={s.pageIntro}>
                       <div>
                         <h1 ref={heading} tabIndex={-1}>
-                          Your records
+                          {page === "records"
+                            ? "Your records"
+                            : page === "people"
+                              ? "People & balances"
+                              : "Your recorded accounts"}
                         </h1>
-                        <p>Find, review or correct a saved record.</p>
+                        <p>
+                          {page === "records"
+                            ? "Find, check or correct a saved record."
+                            : page === "people"
+                              ? "Who owes you, who you owe, and the records behind each balance."
+                              : "Balances based on what you’ve entered. Not linked to your bank or MoMo."}
+                        </p>
                       </div>
-                      <Button onClick={() => setModal("export")}>Export</Button>
+                      {page === "records" && (
+                        <Button onClick={() => setModal("export")}>Export</Button>
+                      )}
+                      {page === "people" && (
+                        <Button onClick={() => setModal("workspace-tools")}>
+                          Add a person or a due date
+                        </Button>
+                      )}
+                      {page === "accounts" && (
+                        <Button primary onClick={() => setModal("account")}>
+                          Add account
+                        </Button>
+                      )}
                     </div>
+                    <nav className={s.segmented} aria-label="Records views">
+                      {(
+                        [
+                          ["records", "Records"],
+                          ["people", "People"],
+                          ["accounts", "Accounts"],
+                        ] as const
+                      ).map(([id, label]) => (
+                        <button
+                          key={id}
+                          type="button"
+                          aria-current={page === id ? "page" : undefined}
+                          onClick={() => navigate(id)}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </nav>
+                    {page === "records" && (
+                      <>
                     <div className={s.toolbar}>
                       <input
                         aria-label="Search records"
@@ -1667,14 +1837,10 @@ export default function CashNarra() {
                         </div>
                       ))}
                     </details>
-                    <section className={`${s.chapter} ${s.debtGroup}`}>
-                      <div className={s.sectionHead}>
-                        <h2>People & balances</h2>
-                        <Button onClick={() => setModal("workspace-tools")}>
-                          Add a person or a due date
-                        </Button>
-                      </div>
-                      <p>People owe you, and amounts you owe.</p>
+                      </>
+                    )}
+                    {page === "people" && (
+                      <section className={s.debtGroup}>
                       {!obligations(w).some((o) => D(o.remaining).gt(0)) && (
                         <p>Nothing is still owed.</p>
                       )}
@@ -1784,17 +1950,122 @@ export default function CashNarra() {
                           Add a balance from before CashNarra
                         </Button>
                       </div>
-                    </section>
+                      </section>
+                    )}
+                    {page === "accounts" && (
+                      <>
+                        {!w.accounts.length && (
+                          <ol>
+                            <li>Add Cash, Bank or MoMo with a nickname.</li>
+                            <li>
+                              Enter the amount you knew before your first
+                              recorded activity, or leave it unknown.
+                            </li>
+                            <li>
+                              Use Add record for money already owed to you or by
+                              you; choose an opening balance, not a new sale.
+                            </li>
+                          </ol>
+                        )}
+                    <small>Recorded total</small>
+                    <div>
+                      <Amount value={total} hidden={hidden} large />
+                    </div>
+                    <div className={s.accountGrid}>
+                      {w.accounts.map((a) => (
+                        <article key={a.id} className={s.panel}>
+                          <span className={s.accountMark}>
+                            {a.type === "Cash" ? (
+                              <Wallet size={20} aria-hidden />
+                            ) : a.type === "MoMo" ? (
+                              <Smartphone size={20} aria-hidden />
+                            ) : (
+                              <Landmark size={20} aria-hidden />
+                            )}
+                            <span>
+                              {a.type === "Bank" ? "Bank account" : a.type}
+                            </span>
+                          </span>
+                          <h2 style={{ marginTop: 12 }}>
+                            {hidden ? "Account" : a.name}
+                          </h2>
+                          <Amount
+                            value={accountBalance(w, a.id)}
+                            hidden={hidden}
+                            large
+                          />
+                          <p>
+                            {a.opening === null
+                              ? "Opening amount unknown"
+                              : "Opening recorded"}
+                            {" · "}
+                            Manually tracked · GHS
+                          </p>
+                          <details>
+                            <summary>
+                              Starting balance and later records
+                            </summary>
+                            <p>
+                              Starting balance on {a.openingDate}:{" "}
+                              <Amount value={a.opening} hidden={hidden} />
+                            </p>
+                            {a.opening !== null && (
+                              <Button
+                                onClick={() => {
+                                  setAccountId(a.id);
+                                  setModal("opening");
+                                }}
+                              >
+                                Check starting balance
+                              </Button>
+                            )}
+                            {rows(
+                              active.filter(
+                                (r) =>
+                                  r.accountId === a.id ||
+                                  r.toAccountId === a.id,
+                              ),
+                            )}
+                          </details>
+                          <Button
+                            onClick={() => {
+                              setAccountFilter(a.id);
+                              setFilter("all");
+                              setEvidence(null);
+                              navigate("records");
+                            }}
+                          >
+                            View activity
+                          </Button>
+                          {a.opening === null && (
+                            <Button
+                              onClick={() => {
+                                setAccountId(a.id);
+                                setModal("opening");
+                              }}
+                            >
+                              Check starting balance
+                            </Button>
+                          )}
+                        </article>
+                      ))}
+                    </div>
+                    <p className={s.notice}>
+                      An unknown opening remains unknown. Account balances do
+                      not imply bank verification.
+                    </p>
+                      </>
+                    )}
                   </>
                 )}
                 {page === "stories" && (
                   <>
-                    <div className={s.pageHead}>
+                    <div className={s.pageIntro}>
                       <div>
                         <h1 ref={heading} tabIndex={-1}>
                           Money Stories
                         </h1>
-                        <p>The numbers, with their meaning.</p>
+                        <p>What moved in a day, a week or a month, with the records behind every figure.</p>
                       </div>
                       <Button onClick={() => setModal("export")}>Export</Button>
                     </div>
@@ -2103,134 +2374,16 @@ export default function CashNarra() {
                     )}
                   </>
                 )}
-                {page === "accounts" && (
-                  <>
-                    <div className={s.pageHead}>
-                      <div>
-                        <h1 ref={heading} tabIndex={-1}>
-                          Your recorded accounts
-                        </h1>
-                        <p>
-                          Balances based on what you’ve entered—not linked to
-                          your bank or MoMo.
-                        </p>
-                        {!w.accounts.length && (
-                          <ol>
-                            <li>Add Cash, Bank or MoMo with a nickname.</li>
-                            <li>
-                              Enter the amount you knew before your first
-                              recorded activity, or leave it unknown.
-                            </li>
-                            <li>
-                              Use Add record for money already owed to you or by
-                              you; choose an opening balance, not a new sale.
-                            </li>
-                          </ol>
-                        )}
-                      </div>
-                      <Button primary onClick={() => setModal("account")}>
-                        Add account
-                      </Button>
-                    </div>
-                    <small>Recorded total</small>
-                    <div>
-                      <Amount value={total} hidden={hidden} large />
-                    </div>
-                    <div className={s.accountGrid}>
-                      {w.accounts.map((a) => (
-                        <article key={a.id} className={s.panel}>
-                          <span className={s.accountMark}>
-                            {a.type === "Cash" ? (
-                              <Wallet size={20} aria-hidden />
-                            ) : a.type === "MoMo" ? (
-                              <Smartphone size={20} aria-hidden />
-                            ) : (
-                              <Landmark size={20} aria-hidden />
-                            )}
-                            <span>
-                              {a.type === "Bank" ? "Bank account" : a.type}
-                            </span>
-                          </span>
-                          <h2 style={{ marginTop: 12 }}>
-                            {hidden ? "Account" : a.name}
-                          </h2>
-                          <Amount
-                            value={accountBalance(w, a.id)}
-                            hidden={hidden}
-                            large
-                          />
-                          <p>
-                            {a.opening === null
-                              ? "Opening amount unknown"
-                              : "Opening recorded"}
-                            {" · "}
-                            Manually tracked · GHS
-                          </p>
-                          <details>
-                            <summary>
-                              Starting balance and later records
-                            </summary>
-                            <p>
-                              Starting balance on {a.openingDate}:{" "}
-                              <Amount value={a.opening} hidden={hidden} />
-                            </p>
-                            {a.opening !== null && (
-                              <Button
-                                onClick={() => {
-                                  setAccountId(a.id);
-                                  setModal("opening");
-                                }}
-                              >
-                                Check starting balance
-                              </Button>
-                            )}
-                            {rows(
-                              active.filter(
-                                (r) =>
-                                  r.accountId === a.id ||
-                                  r.toAccountId === a.id,
-                              ),
-                            )}
-                          </details>
-                          <Button
-                            onClick={() => {
-                              setAccountFilter(a.id);
-                              setFilter("all");
-                              setEvidence(null);
-                              navigate("records");
-                            }}
-                          >
-                            View activity
-                          </Button>
-                          {a.opening === null && (
-                            <Button
-                              onClick={() => {
-                                setAccountId(a.id);
-                                setModal("opening");
-                              }}
-                            >
-                              Check starting balance
-                            </Button>
-                          )}
-                        </article>
-                      ))}
-                    </div>
-                    <p className={s.notice}>
-                      An unknown opening remains unknown. Account balances do
-                      not imply bank verification.
-                    </p>
-                  </>
-                )}
                 {page === "plan" && (
                   <>
-                    <div className={s.pageHead}>
+                    <div className={s.pageIntro}>
                       <div>
                         <h1 ref={heading} tabIndex={-1}>
                           Your goals
                         </h1>
                         <p>
-                          Mark money you have set aside. A mark does not move
-                          or reserve money.
+                          Mark money you have set aside and see what a monthly
+                          amount could do. A mark does not move or reserve money.
                         </p>
                       </div>
                       <div className={s.actions}>
@@ -2348,8 +2501,21 @@ export default function CashNarra() {
                             </h3>
                             {f.period && (
                               <p>
-                                Around {f.period} at{" "}
-                                <Amount value={f.pace} hidden={hidden} /> per
+                                Around{" "}
+                                {new Intl.DateTimeFormat("en-GB", {
+                                  month: "long",
+                                  year: "numeric",
+                                  timeZone: "UTC",
+                                }).format(
+                                  new Date(
+                                    Date.UTC(
+                                      Number(f.period.slice(0, 4)),
+                                      Number(f.period.slice(5, 7)) - 1,
+                                      1,
+                                    ),
+                                  ),
+                                )}{" "}
+                                at <Amount value={f.pace} hidden={hidden} /> a
                                 month.
                               </p>
                             )}
@@ -2413,10 +2579,14 @@ export default function CashNarra() {
                 )}
                 {page === "settings" && (
                   <>
-                    <h1 ref={heading} tabIndex={-1}>
-                      Settings
-                    </h1>
-                    <p>Appearance, drafts, and your data.</p>
+                    <div className={s.pageIntro}>
+                      <div>
+                        <h1 ref={heading} tabIndex={-1}>
+                          Settings and privacy
+                        </h1>
+                        <p>How CashNarra looks, what it keeps, and your data.</p>
+                      </div>
+                    </div>
                     <section className={s.settingsGroup}>
                       <h2>Subscription</h2>
                       <div className={s.settingsRow}>
@@ -2594,9 +2764,7 @@ export default function CashNarra() {
                 )}
               </>
             )}
-          </main>
-        </div>
-      </div>
+      </main>
       {navigation(true)}
       {modal === "record" && editing && w && (
         <Dialog title="Check this record" onClose={() => setModal("")}>
@@ -2619,72 +2787,96 @@ export default function CashNarra() {
         </Dialog>
       )}
       {modal === "workspace" && (
-        <Dialog title="Your workspaces" onClose={() => setModal("")}>
-          {spaceSummaries.map((x) => (
-            <Button
-              key={x.id}
-              onClick={() => {
-                if (text || events.length || pending || retryOperation) {
-                  setError(
-                    "Save or discard the current draft before switching workspace.",
-                  );
-                  setModal("");
-                  return;
-                }
-                void refresh(x.id)
-                  .then(() => navigate("today"))
-                  .catch((e) => setError(e.message));
-              }}
-            >
-              {hidden ? "Workspace" : x.name} · {x.type}
-            </Button>
-          ))}
-          <p>
-            One subscription covers every workspace on this account.
-          </p>
-          <div className={s.actions}>
-            <Button onClick={() => navigate("accounts")}>
-              Manage accounts
-            </Button>
+        <Dialog title="Your account" onClose={() => setModal("")}>
+          <span className={s.eyebrow}>Workspaces</span>
+          <div className={s.menuList}>
+            {spaceSummaries.map((x) => (
+              <button
+                key={x.id}
+                type="button"
+                className={s.button}
+                aria-current={x.id === wid ? "true" : undefined}
+                onClick={() => {
+                  if (text || events.length || pending || retryOperation) {
+                    setError(
+                      "Save or discard the current draft before switching workspace.",
+                    );
+                    setModal("");
+                    return;
+                  }
+                  void refresh(x.id)
+                    .then(() => navigate("today"))
+                    .catch((e) => setError(e.message));
+                }}
+              >
+                {hidden ? "Workspace" : x.name} · {x.type}
+              </button>
+            ))}
+          </div>
+          <p className={s.hint}>One plan covers every workspace on this account.</p>
+          <span className={s.eyebrow}>This account</span>
+          <div className={s.menuList}>
+            <Button onClick={() => navigate("accounts")}>Manage accounts</Button>
+            <Button onClick={() => navigate("usage")}>Plan and usage</Button>
             <Button onClick={() => navigate("settings")}>
               Settings and privacy
             </Button>
-            <Button onClick={() => navigate("usage")}>
-              Subscription for this account
-            </Button>
+            <Button onClick={() => setModal("logout")}>Sign out</Button>
           </div>
+          {installPrompt && !standalone && (
+            <>
+              <span className={s.eyebrow}>On this phone</span>
+              <div className={s.menuList}>
+                <Button
+                  onClick={() => {
+                    const offer = installPrompt;
+                    setInstallPrompt(null);
+                    void offer.prompt().catch(() => {});
+                  }}
+                >
+                  Add to your home screen
+                </Button>
+              </div>
+              <p className={s.hint}>
+                Opens CashNarra like an app. Your records stay on the account,
+                not on the phone.
+              </p>
+            </>
+          )}
           <hr />
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault();
-              const f = new FormData(e.currentTarget);
-              try {
-                await perform({
-                  action: "create",
-                  workspaceId: crypto.randomUUID(),
-                  expectedVersion: -1,
-                  key: crypto.randomUUID(),
-                  name: f.get("name"),
-                  type: f.get("type"),
-                });
-                setModal("");
-              } catch {}
-            }}
-          >
-            <h3>Create a workspace</h3>
-            <label htmlFor="workspace-name">Name</label>
-            <input id="workspace-name" name="name" maxLength={100} required />
-            <label htmlFor="workspace-type">Use</label>
-            <select id="workspace-type" name="type">
-              <option>Business</option>
-              <option>Personal</option>
-            </select>
-            <div className={s.actions}>
-              <Button primary type="submit" disabled={busy}>
-                Create workspace
-              </Button>
-            </div>
-          </form>
+          <details className={s.workspaceCreate}>
+            <summary>Create a workspace</summary>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const f = new FormData(e.currentTarget);
+                try {
+                  await perform({
+                    action: "create",
+                    workspaceId: crypto.randomUUID(),
+                    expectedVersion: -1,
+                    key: crypto.randomUUID(),
+                    name: f.get("name"),
+                    type: f.get("type"),
+                  });
+                  setModal("");
+                } catch {}
+              }}
+            >
+              <label htmlFor="workspace-name">Name</label>
+              <input id="workspace-name" name="name" maxLength={100} required />
+              <label htmlFor="workspace-type">Use</label>
+              <select id="workspace-type" name="type">
+                <option>Business</option>
+                <option>Personal</option>
+              </select>
+              <div className={s.actions}>
+                <Button primary type="submit" disabled={busy}>
+                  Create workspace
+                </Button>
+              </div>
+            </form>
+          </details>
         </Dialog>
       )}
       {modal === "account" && (
@@ -3380,7 +3572,7 @@ export default function CashNarra() {
               changeDraft(text ? text + " " + value : value);
               setVoiceWork(false);
               setVoiceLeave(false);
-              navigate("capture");
+              openComposer();
             }}
           />
           {voiceLeave && (
@@ -3408,7 +3600,7 @@ export default function CashNarra() {
           <Button
             onClick={() => {
               if (voiceWork) setVoiceLeave(true);
-              else navigate("capture");
+              else openComposer();
             }}
           >
             Type your story

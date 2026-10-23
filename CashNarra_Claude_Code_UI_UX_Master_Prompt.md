@@ -1,284 +1,225 @@
-# CashNarra — Claude Code UI and UX master prompt
+# CashNarra — complete product experience redesign
 
-Prepared 21 October 2026. Save this file in the root of the **actual current local CashNarra project**, open that folder in Claude Code, and ask Claude to read and carry out this file. This is an implementation assignment, not a request for a design essay.
+**Rewritten 21 October 2026 after the owner's clarification. This REPLACES the earlier Claude UI master prompt.**
 
-The prompt begins below. Its current owner instruction authorises a fresh, independent UI/UX review and implementation. Earlier “remaining checks only” status notes remain evidence of unfinished verification; they must not prevent the UI work explicitly requested here. Financial, privacy, commercial and production safeguards remain in force.
+Save this replacement file in the actual current CashNarra project folder. Give Claude Code this instruction: **Read this file completely and execute the complete product redesign it authorises. The entire application and public experience are in scope.**
+
+This is the owner's new creative direction. Earlier instructions to preserve existing layouts, section order, navigation, copy or component arrangements are superseded for design. **The existing logo, colour system and font families remain fixed. The logo must not be redesigned or altered.** Product truth, financial correctness, privacy and agreed commercial terms remain requirements.
 
 ---
 
-## Your assignment
+## 1. The mandate: rethink the entire experience
 
-Act as CashNarra’s principal product designer, UX researcher, financial UX specialist, accessibility engineer, frontend architect, editor and implementation engineer.
+Act as CashNarra's creative director, product strategist, conversion copywriter, senior interaction designer, UX researcher and frontend implementation lead.
 
-Read and understand the entire maintained first-party codebase. Inspect the actual running application. Identify what still makes it feel confusing, visually weak, cumbersome or inconsistent, then **implement a coherent, exceptionally well-crafted UI and UX** across the product.
+The last pass repaired and polished the existing product. It produced useful engineering and usability improvements, but the owner wants a much deeper result: a product people immediately understand, find attractive, see value in, enjoy using and want to return to.
 
-My ambition is for CashNarra to be compelling beside its competitors: immediately understandable, memorable, easy to start, trustworthy with financial meaning, and pleasant to use repeatedly. Translate that ambition into specific design decisions and working task flows. Do not claim market superiority, conversion gains or usability improvements without evidence.
+**You have explicit permission to redesign the entire application inside and out, and to reinvent its presentation and interactions wherever necessary.** Start from the user's needs and the product's value. Treat the existing interface as one possible solution, not the brief to preserve.
 
-Do not stop at an audit, recommendations, a plan, screenshots, a new design document or a superficial colour-and-spacing pass. Improve the application itself, verify the result, and leave a clear checkpoint. Where the current design already works, preserve it. Where passing tests conceal poor hierarchy or friction, improve the design without weakening the tested behaviour.
+This includes the public site, positioning, landing page, pricing presentation, authentication, onboarding, navigation, app home, story entry, voice stages, clarification, review, records, accounts/debts, reports, goals, exports, settings, subscription screens, and all their important states.
 
-## 1. Establish the real baseline and protect ongoing work
+You may replace page compositions, information architecture, navigation groupings, layouts, components, screen boundaries, visual hierarchy, copy, imagery, illustrations and motion. You may rebuild the presentation layer where the current structure limits the result. Reducing clicks or improving a single component is useful, but it does not satisfy this assignment by itself.
 
-1. Confirm the project root, current branch, HEAD, dirty state, recent relevant commits and whether Cursor or another process is actively editing this checkout. The expected working branch has been `work/cashnarra-v1`; verify rather than assuming.
-2. Read `AGENTS.md`, any existing `CLAUDE.md`, applicable nested instructions, `GOALS.md`, `PLANS.md`, `harness/CURRENT.md`, recent `harness/build-log.md` entries, and the current phase file. Read `harness/context/08-remaining-checks.md` if present. Inspect actual paths before assuming a filename exists.
-3. Read the current product concept and technology decisions in full, including their final summaries. Read the relevant Narra v2 brand guide, tokens, design decisions, current UI handoff and competitor research. Inventory their contents and apply their latest settled decisions; an older snapshot is not current operational truth.
-4. This request explicitly authorises a fresh independent UI/UX review and implementation, even if an older checkpoint says not to reopen a completed UI pass or to perform only external checks. Record this new UI scope in the existing workflow while preserving the earlier evidence and unresolved checks. Stay within the current phase; do not automatically start Phase 09 or call the whole product complete.
-5. Preserve all current uncommitted work and newer local improvements. Do not reset, clean, discard, stash away or overwrite another agent’s changes. Do not replace the working tree from an older main/remote branch.
-6. If Cursor is editing the same checkout, isolate your work in a suitable branch/worktree or use an agreed editing handoff. A worktree created from HEAD does not include uncommitted changes: safely carry the relevant latest source changes into the isolated baseline without committing/copying secrets or losing provenance. If a specific conflict cannot be resolved safely, continue independent review and ask about that conflict only. Do not let two agents silently rewrite the same files.
-7. Keep all work inside this project. Do not inspect unrelated neighbouring projects or harvest personal data. Identify configuration variable names from examples/schema and check configuration presence without printing secret values. Do not dump `.env` files, keys, private recordings, consent records or real financial stories into reports, logs, commits or external tools.
+Within visual design, **the existing logo, colour system and font families are fixed**. Keep CashNarra's name and real product purpose. Other design tokens, prescribed page templates, hero wording, CTA hierarchy, card layouts and old exact section orders can be reconsidered.
 
-Inspect the installed framework/library versions and the relevant local documentation required by `AGENTS.md`, including shipped Next.js guidance before changing its APIs. Reuse the selected Next.js/React/TypeScript/CSS Modules stack. Do not introduce a major framework upgrade, a replacement styling system or a large UI dependency merely to make the screens look fashionable.
+**Logo protection is mandatory in every concept and implementation:** reuse the existing approved logo assets without editing, redrawing, simplifying, recolouring, distorting or replacing them. Preserve the symbol geometry, wordmark, proportions, spacing and orientation. Do not generate an alternative logo or rebuild the wordmark as live text. On light surfaces, retain the violet mark `#5B49C7` and ink CashNarra name `#29263D`; use the existing approved reversed asset on dark surfaces. Normal placement, clear space, uniform resizing and use of an existing approved symbol-only asset are allowed. Treat the logo source files as immutable. Redesign the experience around this identity.
 
-This assignment authorises ordinary local implementation and reversible verification. Proceed without asking me to approve every component, layout or wording choice. Ask only when a concrete unresolved product decision or genuinely missing authority is necessary; complete independent work meanwhile.
+Use your judgment. Meaningful reinvention is welcome; unnecessary novelty is not an achievement. A successful result should make the overall experience substantially more compelling and understandable. Do not force arbitrary file counts or change percentages to demonstrate effort.
 
-## 2. Read the whole first-party system, with honest coverage
+## 2. Establish the product reality, then design from its value
 
-Create an inventory before sampling files. Review all maintained first-party production code and relevant tests/configuration across:
+Read `AGENTS.md`, any `CLAUDE.md`, current goals/plans, harness checkpoint/build log, current phase, product concept, technology decisions, design sources and competitor research. Inventory and review the maintained first-party codebase: routes, components/styles, domain calculations, schemas, provider/attempt protection, APIs, persistence/access controls, billing state, exports, tests and fixtures. Trace the main tasks into the domain code so the redesign retains their real meaning.
 
-- App routes, layouts, navigation, authentication, onboarding and workspace/account context.
-- Components, styling, design tokens, fonts, icons, assets and responsive behaviour.
-- Story entry, voice/transcription, interpretation, clarification, proposal editing, save receipts, offline drafts and correction/source history.
-- Records, accounts, debts, transfers, Money Stories, existing profit/cost reviews, goals and what-if calculations.
-- Exports, date/workspace selection, pricing, subscriptions, entitlement presentation, settings and existing owner/support boundaries.
-- API/server actions, schemas, domain calculations, persistence, migrations, access controls, provider adapters, budget/attempt protection and recovery mechanisms that these screens depend on.
-- Existing unit, integration and browser tests, fixtures, package scripts, build configuration and current evidence.
+Read first-party implementation, not merely filenames. Exclude dependencies, generated output, caches, duplicate archives and irrelevant media renders. Maintain a concise coverage record if the review spans sessions. Do not inspect unrelated projects or print secret/private configuration values or real financial stories.
 
-Read the implementation, not only filenames or a few search matches. Trace the important user actions into the domain/server code and back to the visible result. Understand how the UI receives authoritative state before changing it.
+The old design kit supplies the retained logo, colours/fonts and useful product context. It does not dictate the new page composition, UI component shapes, spacing, navigation or interaction model. Its logo construction and approved-asset rules remain binding. The previous design record documents what was done; it is not evidence that other experience choices are the best possible design.
 
-Do not read every dependency or generated file to simulate thoroughness. Exclude `node_modules`, build output, caches, generated bundles, vendored code, duplicated archives and irrelevant media renders. Inspect relevant binary assets visually rather than treating them as source text. Review needed event shapes through schemas/tests; do not bulk-load private journal contents or customer data.
+Before prescribing screens, answer in a short strategy note:
 
-Maintain a compact coverage record: area/files, what was read, related flows, and anything still unreviewed or excluded. If context runs short, checkpoint exact coverage and resume. Do not say “read the entire codebase” while major maintained first-party areas remain unread.
+- Who is the clearest initial audience, and in what everyday situation would they reach for CashNarra? Consider Ghanaian owner-operated businesses, freelancers and personal-record users without assuming they all need identical messaging.
+- What are they doing today instead: remembering, writing in a notebook, using messages, a spreadsheet or another app?
+- What frustrates them? What makes them hesitate to trust or start using a financial app?
+- What useful result can CashNarra actually deliver in the first session, and what becomes more valuable with continued use?
+- What is the strongest truthful reason to choose it? How can the interface demonstrate that rather than announce generic AI claims?
 
-## 3. Inspect the real product before deciding what to change
+Choose a primary narrative and keep secondary audiences recognisable. You may sharpen the message without removing supported personal/business use. Avoid trying to sell every feature equally in the hero.
 
-Start the application through its documented local workflow. Inspect package scripts first: routine startup/tests must not accidentally invoke paid providers, send recordings, charge customers, send email or mutate production.
+CashNarra's underlying value is connecting ordinary money stories to trustworthy records, understandable figures and realistic planning. Record → Understand → Plan describes that value; it need not become a compulsory three-card section or the literal navigation structure.
 
-Use the available browser tooling and fictional/disposable local fixtures. Inspect the page at actual viewport sizes and operate controls; source review alone is insufficient. If browser access is unavailable, finish independent code work and state the exact visual checks still required. Do not invent screenshots or browser results.
+## 3. Explore genuine alternative directions before committing to one
 
-Walk through complete journeys:
+Develop **three meaningfully different whole-product concepts**. Change their central argument, composition, interaction emphasis and experience, not just their headline or border radius.
 
-1. Understand the landing page, try its fictional examples, find pricing and reach the correct signup/sign-in route.
-2. Start with a new workspace, enter a story, clarify a meaningful detail, change a proposal, save through the existing safe test setup, understand the result and return later.
-3. Resume a draft, switch between supported typed/voice stages, and experience failed, pending, offline and unresolved states.
-4. Find a past record, a named debt and a recorded account balance; trace a summary back to the records.
-5. Read a Money Story for a selected period, inspect an existing business profit/cost review where supported, and download the relevant report.
-6. Set or inspect a goal and find Explore what-if; change an assumption and explain its effect.
-7. Find settings and Plan and usage; exercise supported upgrade/renewal/cancellation states using mocks, not a real charge.
+For each, produce a concise concept statement and lightweight, rendered high-fidelity explorations of:
 
-For each journey, assess first use, routine use, interruption, correction and return. Record concrete friction: ambiguous actions, unnecessary steps, lost context, oversized editors/dialogs, weak hierarchy, hidden features, hard-to-read amounts, repetitive copy or unsupported promises. “Looks modern” is not evidence of task quality.
+1. The public first impression/hero and its main proof of value.
+2. The signed-in home or first-session experience.
+3. The story-to-review experience, with at least one phone view.
 
-## 4. Design direction: words becoming clarity
+Use the same existing logo, fixed colours and font families in all three. The alternatives must explore the application as well as marketing. Text-only descriptions, colour swatches and three similar hero mockups are insufficient. Build local prototypes or use available design/browser tools; keep them private and fictional, with no paid provider calls. Do not build three complete production apps.
 
-CashNarra’s structure is **Record → Understand → Plan**. Its principle is **Serious money. Light interaction.** The interface should make a person’s ordinary words visibly become orderly, reviewable records and an understandable result.
+Compare them on immediate comprehension, felt usefulness, distinctive visual character, task ease, trust, repeat-use appeal, mobile suitability and implementation fit. Explain the tradeoffs rather than inventing objective conversion scores. Recommend and select the strongest direction, then proceed to implementation without waiting for approval of ordinary design choices. Share visible progress so the owner can steer while you work.
 
-Choose one coherent direction within the existing Narra system. Use confident hierarchy, deliberate proportions, readable typography, restrained colour, useful density and purposeful motion. Aim for warmth and character without clutter. The central transformation and clear financial meaning should make the product distinctive.
+Retain useful parts from other concepts only where they strengthen a coherent result. Ship one product direction, not a public theme picker. Do not spend the assignment exploring options and stop before implementation.
 
-Keep these identity decisions:
+## 4. Make the public experience sell the real value
 
-- The existing paired speech mark; violet mark `#5B49C7`, ink CashNarra name `#29263D` on light surfaces. Use the actual reversed asset on dark surfaces. Do not redraw or redesign the logo.
-- Existing Manrope headings and Inter for body, dates, controls and all money. The supplied Manrope asset lacks the cedi glyph.
-- Narra tokens, the established spacing scale and restrained surface/depth system. Use apricot and other existing semantic colours purposefully; preserve contrast and non-colour cues.
-- The designed two-page activity PDF and the existing export styling. Keep figures derived from the actual reporting system.
+Rebuild the public narrative around why someone should care, believe it and start. You may replace the existing landing structure, hero, CTA order, sample presentation, visuals, content rhythm and transitions. The previous A–H page structure and exact wording are no longer design requirements.
 
-Avoid a generic template: repeated equal-sized dashboard cards, gradients on everything, oversized numbers on every screen, tiny grey text, decorative charts, excessive badges, sparkle icons, long AI acknowledgements, giant empty editors, scroll tricks and animation before content appears.
+The page should communicate:
 
-Do not use “premium” to justify fewer labels, hidden controls or poorer accessibility. Give everyday recording a lighter layout than reporting or administration. Use rows and dividers when they communicate relationships better than another card.
+- A recognisable situation or desired outcome, expressed in everyday language.
+- What CashNarra helps the visitor accomplish and why it feels easier or more useful than their present method.
+- Convincing product evidence: a story becoming records they can inspect, a financial question answered with its sources, or a goal becoming clearer through an assumption they control.
+- Human control, practical boundaries, relevant pricing and a clear next step.
 
-Write a short implementation-ready design decision record after inspection: the intended hierarchy, key shared components, typography/spacing choices, responsive behaviour and the most important before/after changes. Then implement it; do not pause for approval of routine design decisions.
+Choose the best demonstration and sequence. You may replace the current fictional story or goal illustration if a better example explains the value. Keep financial meanings correct, label fictional data clearly, and use local deterministic fixtures. Do not imply an old-debt payment is new sales, a transfer is spending, net movement is profit, or a goal estimate is guaranteed.
 
-## 5. Screen and interaction requirements
+Choose the action hierarchy strategically; Try an example is no longer mandated as the primary CTA. Preserve truthful, functioning entry routes. Distinguish a visit, an example interaction, signup and a first successful saved story. A click alone is not activation.
 
-### Shell, navigation, authentication and first use
+Art direction may use expressive typography, unusual but clear composition, purposeful contrast, useful product motion, crafted illustrations, appropriate imagery or interactive storytelling. Select visuals because they help the message. Use properly permitted assets; fictional imagery must not masquerade as a customer endorsement. Avoid both a generic finance dashboard template and a sterile page made only of headings and repeated cards.
 
-Keep workspace, current location and relevant date/period clear. Preserve useful destination names and existing working routes. Goals, Explore what-if, Pricing and Plan and usage must remain easy to find. Use consistent headers, active states, focus treatment and back/return behaviour.
+Build visual interest and rhythm across the whole page, not one impressive hero followed by generic filler. Keep the value readable on a phone. Do not delay essential content behind an intro, use scroll interception, autoplay sound, manufacture urgency, or require video to understand the product.
 
-Make signup/sign-in mode, errors and waiting states understandable. Preserve entered values where appropriate. An unresponsive service must not leave a permanent spinner. Avoid onboarding questionnaires when someone can first reach a useful result with minimal context.
+Address real objections naturally: difficulty, what happens after speaking/typing, checking mistakes, personal/business separation, cost, control and where the money actually stays. Use product proof and honest explanations. Do not fabricate customer stories, ratings, usage statistics, security certifications, savings claims or competitive superiority.
 
-### Today and story entry
+The finished offer must not carry preview/development/availability notes. Resolve operational truth at the actual interaction: a review must accurately describe whether payment or access occurred. Never create a fake completed checkout to support a marketing claim.
 
-One clear invitation: **What happened with your money?** Keep the relevant date with the words and **Understand my story** as the main action, with a clear empty-input state. Typed input, the existing recording control and a quieter manual-record route should work together.
+## 5. Redesign the application around a valuable first session and return
 
-Preserve the fuller **Tell your story** page, draft retention and **Draft backup**. Moving to the fuller editor must retain words without automatically paying to read them again. Distinguish a draft, an empty day and a completed day. Missing records do not establish zero movement.
+Do not simply carry the new landing style over the old app. Reconsider what each person needs to see, understand and do at each moment. Screen boundaries, labels and arrangements are open. Preserve supported capabilities and financial authorisation, not old DOM structures.
 
-Before/during recording, show the applicable length limit and elapsed time. Preserve the existing progression from capture to editable words to interpretation. Keep the next control reachable when a transcript grows or a keyboard opens. Present existing voice functionality accurately; no live recording or provider call is needed for this UI assignment.
+### Getting started and feeling oriented
 
-### Clarification, review, save and correction
+Make the transition from public promise to account creation, workspace setup and first useful result feel continuous. Ask only for information needed at that point. Show useful context and a clear next action without demanding an accounting lesson or a long questionnaire.
 
-Clarify the important; do not confirm the obvious. Ask one financially material question at a time and retain previous answers.
+Rethink the app shell, navigation, workspace/account context and home priorities. A first visit, a resumed draft and a returning visit should have appropriate states. Keep navigation predictable and useful tools discoverable. Redirect or preserve existing entry links where routes change, and update the complete journey rather than hiding a supported feature.
 
-Use compact, readable proposed-record rows with event, amount, account, date and relevant person. Keep original words/source phrases within reach. Put **Change** beside a proposal. Preserve correct current headings such as **Check this record** and **Check these N records**; use the real count in the save action.
+### Capturing and reviewing a story
 
-Editing a proposal should use existing local review rules, not automatically reread the whole narration. Keep the save action reachable without obscuring content. Show saved success only after authoritative persistence returns its receipt. Preserve exactly-once saving, interrupted-save recovery states and source/correction history. A transcript or interpretation is not a saved financial record.
+Invent the clearest interaction for entering one or several events, switching between typing and voice, seeing progress, correcting words and checking the resulting proposals. The current textarea, fuller editor, dialog boundaries and exact button labels are not mandatory patterns.
 
-### Records, accounts and debts
+Keep the signature transformation understandable: words → material clarification → inspectable proposals → the person's confirmation → authoritative save/result. Clarify the important, retain previous answers, and avoid repetitive acknowledgement or needless approval of obvious details. Preserve drafts, dates and source context across transitions and interruption.
 
-Make history scan well: quiet date grouping, clear descriptions/context, consistent amount alignment and useful existing filters. Preserve workspace/period when opening details and returning. Keep long names and full money values available.
+Find the best way to show proposals, local edits, source phrases, duplicates and validation without overwhelming the task. Save labels must reflect the real action/count. Editing one proposal must not automatically trigger a paid rereading. A transcript or interpretation must never look like a saved record. After confirmation, success needs the actual save receipt.
 
-Recorded balances, unknown balances and changes are different. Show the existing starting-balance action when needed. Within existing supported views, make **People owe you** and **You owe** understandable through names, amounts, direction and supporting records. A settlement remains linked to the prior debt. Reuse existing selectors/models; do not invent a new debt system.
+### Making the result useful
 
-### Money Stories, calculations and exports
+The experience after saving should make the work feel worthwhile. Show what was recorded, what useful consequence can be established, and a natural next destination. A known debt settlement may lead to its remaining balance; missing data must not produce an invented answer.
 
-Lead with the selected period and **Money in**, **Money out**, **Net movement**. Explain net movement once; it is not profit. Keep each figure traceable to the same included records, period and workspace. Do not compare an incomplete month with a full month without explanation.
+Make records, accounts and debts easy to search, scan, explain, trace and correct. Keep the person, direction of money, relevant account, date and source intelligible. A list, timeline, grouped view or other arrangement is a design choice; preserve the domain meaning and available history.
 
-Preserve the separate, reviewed business profit/cost functionality where it exists. A rule against calling net cash movement profit is not permission to delete a legitimate reviewed profit feature. Keep that feature’s existing completeness questions, cost rules and deterministic calculations intact.
+Make Money Stories answer useful questions with readable, traceable figures and consistent period/workspace context. Present money in/out/net movement accurately. Preserve a separate legitimate reviewed business profit/cost feature where supported. You may redesign reports and export presentation too, while retaining correct values, scope choices, required formats and import compatibility.
 
-Preserve full currency/amount pairs, stacking behaviour, singular/plural wording, unknown states and thin zero bars. Do not fill a zero bar decoratively or abbreviate actual money to keep columns aligned.
+### Planning and engagement
 
-Keep existing export formats, scope and date choices. Preserve workspace separation; do not combine ledgers because a single download looks simpler. Improve the export interaction if needed without replacing designed reports, hard-coding specimen figures or exposing internal identifiers in inappropriate presentation exports.
+Make goals and existing what-if functionality compelling and easy to find. Explain the target, amount set aside, remaining amount, assumption and conditional result in the clearest arrangement. A changed scenario must not silently change records, allocations or balances.
 
-### Goals
+Design reasons to return based on real value: finishing a draft, understanding an unresolved question, seeing a recorded goal develop, a useful recap, finding a person’s balance or a controllable reminder. Reuse real existing state and deterministic calculations where possible. Do not add background paid AI processing merely to create engagement.
 
-Show the goal’s target, amount set aside, remaining amount and the basis of any estimate together. Keep **Explore what-if** visible. Compare recorded pace/current assumptions with **Try a different amount** using the existing pure calculation.
+Useful understanding, confidence and visible progress are the reward. You may invent satisfying completion moments and optional rhythm features where they help. Avoid shame, compulsory streaks, rewards for spending/borrowing, wealth comparisons, or pressure to enter unnecessary activity. Do not infer a complete financial day from silence.
 
-A scenario changes an estimate, not saved money, an account balance or a goal allocation. A supported explicit “use” action must explain its actual effect. Distinguish a person’s assumed monthly amount from a reliable history-based pace. Do not hide a supported manual scenario merely because history is insufficient or invent a guaranteed completion date.
+### Settings, plans and all other states
 
-### Settings, pricing, Plan and usage
+Redesign account, subscription, settings, privacy, export and help interactions as part of the same product. Make consequential actions understandable and keep upgrade, supported cancellation/renewal, data choices and privacy controls findable.
 
-Group existing settings by purpose with short, readable explanations. Keep **Reminders** and **Data and privacy** understandable. **Delete original stories** remains a separate confirmed action that preserves saved financial records.
+Empty, loading, offline, failed, invalid, unresolved, saved, correction and subscription states are design work, not leftovers. Retain words and context; provide a working next action. Unknown data is neither zero nor a perpetual loading skeleton. Design the relevant dialogs, menus and keyboard transitions as carefully as the main page.
 
-Use the real public plan catalogue. Make **Unlimited financial records** clear on Free and Plus, explain unclear benefits beside them, and keep quantity/unit presentation consistent. Do not confuse unlimited records with unlimited AI or voice processing.
+Audit the complete capability inventory before removing or merging screens. Every currently supported user task must still have a clear home in the redesigned application. Do not stop when the landing page and Today look different.
 
-Preserve the current commercial decisions:
+## 6. Build one distinctive visual and language system
 
-| Item | Free | Plus |
+Keep the existing approved logo, colour palette and font families. Manrope and Inter remain available; all cedi amounts must use a font with the ₵ glyph, currently Inter. For interface text and components, size, weight, line height, layout, density, surfaces, component shape, colour proportions, illustration style and motion can be redefined. These freedoms do not apply to the logo artwork or wordmark. The fixed identity does not require preserving the old screen designs.
+
+Create a concise visual grammar and implement it in shared components. Balance expressive marketing with fast, readable financial work. Use deliberate hierarchy and whitespace, strong composition, clear affordances and purposeful density. Do not equate elegance with faint text, tiny controls or fewer labels.
+
+Write the public site and app in ordinary, warm, confident English. Explain value through situations and outcomes. Use Ghanaian terms naturally where they help. Replace engineering/accounting jargon with understandable descriptions without changing financial meaning. Keep terms consistent and explain an unfamiliar perk beside it in readable secondary text.
+
+Rewrite weak copy wherever needed. Previous exact headings and action labels are examples, not sacred strings. A better label must accurately describe the action; a better message must explain the actual state and next step. Keep provider budgets, token costs, internal files, phase names and debugging details out of customer flows.
+
+Use motion, feedback, imagery and microcopy to make the interface feel alive and attentive. Keep core meaning and controls usable with reduced motion, keyboard and assistive technology. Catchiness should support comprehension and value rather than compete with the person's money task.
+
+## 7. Keep business truth and the working financial foundation
+
+Creative freedom is broad. It does not authorise changing what the product actually does, deleting customer data or weakening financial control.
+
+- Preserve exact-decimal calculations, balanced journals, atomic/idempotent saving, receipts, source/correction history, tenant isolation and server-only keys. AI can propose/explain; it cannot independently authorise ledger writes, calculate authoritative totals in prose or declare persistence successful.
+- Preserve the meaning of sales, receipts, debts/settlements, transfers, loans, owner money, costs and goal allocations. Unknown is not zero. Show only conclusions supported by existing recorded data and assumptions.
+- Keep the real financial/persistence/provider systems as the functional foundation. You can rebuild/refactor the frontend and its presentation architecture. Use the existing chosen stack and relevant installed-version documentation unless a concrete necessity justifies a scoped change; a new framework is not required for a new experience.
+- Retain existing actual plan/agreement behaviour and price protection. Public Free is $0; Plus is $0.99/month against a $2.00 standard price. Existing subscribers retain their agreed USD price unless voluntarily upgrading. No invented campaign deadline or new renewal condition.
+- Keep USD-first presentation, dated approximate cedi conversion on page opening through a suitable valid cache, rounding to GH₵0.10 and two decimal places. Do not freeze an old conversion as current.
+- Keep the future $10/$5.99 Unlimited plan private and deactivated. The public offer has Free/Plus only and unlimited financial records, distinct from limited processing/exports.
+
+| Agreed allowance | Free | Plus |
 | --- | --- | --- |
-| Monthly USD price | $0 | $0.99 offer; $2.00 standard visibly struck through |
-| Financial records | Unlimited | Unlimited |
 | Workspaces | 3 | 10 |
-| Monthly AI stories | 100 | 500 |
-| Daily voice notes across workspaces | 3 | 3 |
-| Maximum per note | 1 minute | 2 minutes |
-| Monthly report packs | 10 | 100 |
+| AI stories/month | 100 | 500 |
+| Voice notes/day, account-wide | 3 | 3 |
+| Maximum note length | 1 minute | 2 minutes |
+| Report packs/month | 10 | 100 |
 
-Show USD first and an approximate cedi equivalent in brackets, using the actual dated rate and existing valid cache/refresh behaviour when the page opens. Round to GH₵0.10 and display two decimal places. An earlier GH₵11.50 example is not a permanent conversion. Keep a truthful dated fallback on failure and reserve layout space during loading.
+Use the shared catalogue and actual subscriber state. Unknown counters stay honest. Preserve supported recurring/non-renewing cancellation, paid-through access and readable excess workspaces. A Plus review is not a payment or paid activation. Do not silently adjust quotas or budgets to make an offer look deliverable; record any real mismatch separately.
 
-If an advertised allowance and an operational guard disagree, record the concrete mismatch as a product dependency. Do not silently lower the promised allowance, raise a company budget or fabricate capacity to make the UI appear consistent.
+Use fictional/disposable data and mock provider/billing responses for routine design. Preserve configured voice/free-only safeguards, provider state, journals, historical holds and the cumulative $20 test ceiling. No paid calls, real audio upload, payment, production migration or deployment is needed for this assignment. Existing valid authority persists; do not request already supplied keys or invent recording consent. Never reset real data or accounting to simplify a demonstration.
 
-An existing subscriber keeps their agreed USD price unless they voluntarily upgrade. A public offer ending or catalogue changing must not rewrite that agreement. Do not add an uninterrupted-renewal condition, invent campaign dates or add fake countdowns. The future $10/$5.99 Unlimited plan remains private/deactivated and absent from public markup/data/APIs.
+## 8. Work from the latest committed baseline
 
-Keep the finished public offer free of preview, coming-soon, not-for-sale and development/availability notes. Inside the actual Plus review, accurately say whether payment or access has occurred. **Choose Plus currently opens review; it must not claim a charge or paid activation.**
+The latest owner report says the combined work was committed as `5b4f4a9`, followed by `020a6ae` for the generated Next.js types pointer, on `work/cashnarra-v1`. Verify the actual current HEAD; it may be newer. Do not start from the older `b8012f0` snapshot or discard either agent's work.
 
-In Plan and usage, show actual plan/agreement/usage/reset state. Unknown counters are not zero, a fabricated allowance or a permanent loading state. Use the existing truthful unknown state. Expose Upgrade for Free and supported manage/cancel/renew/switch actions for the correct paid state. Preserve recurring versus non-renewing rules, paid-through access and readable excess workspaces on downgrade. Mock states are acceptable for verification; fictitious live payments or counters are not.
+Reported checks at that baseline: typecheck and lint passed; 208 unit tests passed; 57 headless Edge browser tests passed with two Supabase-backed specs excluded; production build passed. Auth/recovery database-backed tests, human screen-reader use, real phone keyboard, microphone capture, field speed and large-workspace timing were not all established. Treat this as reported evidence to verify as relevant, not your own fresh result.
 
-### Landing page and trust
+A consented computer-generated clip was already transcribed once and its audio files deleted. It preserved the example amounts, name, negation and transfer direction; it did not prove microphone capture or human accent accuracy. Do not record or send that clip again. Phase 08 remains incomplete and Phase 09 external.
 
-Preserve the working Record → Understand → Plan demonstration, the main Try an example action and a direct Start free route. The fictional story should be readable before **See the records** reveals proposals and totals. Missing required details delay the summary; reset genuinely resets the local illustration.
+Establish current Git/dirty state and a recoverable redesign branch before edits. Coordinate with Cursor so both agents do not overwrite the same files. Preserve uncommitted work; use an isolated worktree if needed and safely account for changes that exist only in the original checkout. Never use destructive Git reset/clean or a database reset as a “design reset.”
 
-Preserve the current fixed calculation: sales GH₵900; old-debt receipt GH₵200; delivery GH₵80; money in GH₵1,100; out GH₵80; net movement GH₵1,020. Do not invent opening balances, remaining debt or profit. The separate fictional goal has GH₵1,500 remaining: GH₵300/month gives about five months; GH₵500/month about three.
+This new owner instruction supersedes earlier UI preservation and verification-only scope for this redesign. Update the current `CLAUDE.md`/harness/design instructions accordingly, preserving the old work as history and retaining functional safeguards. Do not let an old “do not reopen” note prevent the redesign now explicitly requested.
 
-The public examples stay fixed/local, with no provider, auth, financial/storage request, persistent browser write or microphone permission from their interactions. Normal assets, existing public catalogue/FX requests and explicit signup navigation are separate. Do not invite arbitrary private input into an imitation live demo.
+## 9. Research and execute with design judgment
 
-You may improve presentation or an evidenced comprehension problem, while preserving the approved promise, example meaning and working routes. Do not replace the page with a generic AI-service template. Use real product evidence rather than invented testimonials, ratings, user counts, bank endorsements, security certifications or savings promises.
+Use the existing competitor research, then inspect current primary product/help pages and relevant UX guidance where that informs a material decision and tools permit it. Look at visual quality as well as interaction and persuasion. Compare accounting, conversational-entry, planning and exceptional adjacent products; do not restrict inspiration to finance competitors.
 
-## 6. Language: understandable without accounting or engineering knowledge
+For each useful reference, record the observed pattern, why it helps and the CashNarra adaptation. Distinguish source evidence from your inference. Do not copy an entire page, brand, feature list or unsupported commercial claim. Research should sharpen the direction, not consume the task or become a substitute for making it.
 
-Use ordinary international English, with Ghanaian terms where helpful. Keep the tone calm, respectful, warm and concrete. Use familiar verbs, short sentences and contextual explanation. Avoid forced slang, guilt, roasts, manufactured intimacy and vague AI claims.
+Keep a compact strategy/decision record, rendered concept comparisons, an implementation map and progress in the existing project workflow. Read the maintained first-party system with honest coverage, but avoid an endless reread of generated files or obsolete status notes. Continue across context boundaries using exact checkpoints.
 
-Use the same term for the same thing: story, transcript, proposed record, saved record, account, workspace and plan are different. Name a specific action when its effect is known. A smaller explanatory line should still be readable.
+Implement the chosen direction across public entry, first use, capture/review, understanding/planning and account/administration. Share substantial visual milestones, then continue without asking me to approve every ordinary edit. If a specific missing service or product decision blocks one piece, finish independent design/implementation and identify the concrete dependency.
 
-| Situation | Suitable wording |
-| --- | --- |
-| Start interpreting words | Understand my story |
-| Approve a batch | Save 3 records / Save this record, using the actual count |
-| Fix a proposal | Change |
-| Clarify account | Which account did this money come from? |
-| Reading failed with words retained | We couldn’t finish reading this story. Your words are still here. |
-| Empty period | No records for this month yet. |
-| Unknown balance | Add a starting balance to see how much is in this account. |
-| AI-story perk | Turn what you type or say into records you can check. |
-| Voice perk | Speak your story, then check the words. |
-| Report-pack perk | Download your records and summaries in a tidy file. |
+## 10. Acceptance: design quality and functioning product
 
-Match messages to the actual state and working next action. One issue gets one coherent message; field errors stay near their controls. Do not imply a timeout is safe/free to retry or that an unavailable result was recovered.
+There are two required outcomes: a markedly stronger experience and working, trustworthy behaviour. Neither a beautiful screenshot nor a green test suite alone satisfies the brief.
 
-Keep provider names, tokens, budget holds, certificate traces, internal files, phase numbers and debugging terms out of ordinary customer flows. Use technical detail in private engineering evidence where useful. Updates to me should explain the visible outcome, why it helps, what you checked and any real limitation in plain English.
+Before finishing, compare the old and new experience visibly and explain:
 
-## 7. Financial, privacy and cost protections
+1. **Appeal:** What makes someone notice, understand and want to explore CashNarra?
+2. **Value:** How is a useful result demonstrated, rather than buried in a feature list?
+3. **Ease:** How does a person start, complete a task, correct it and return with less confusion?
+4. **Engagement:** What makes continued use useful and satisfying, without pressure or unnecessary financial activity?
+5. **Coherence:** Does the public promise continue through onboarding, daily work, reports, goals, settings and subscriptions?
+6. **Craft:** Are composition, typography, spacing, imagery, density, motion and responsive states deliberate throughout?
+7. **Trust:** Can a person distinguish draft/proposal/saved, zero/unknown and actual money/assumptions, with meaningful source/context?
 
-These protections are part of the quality bar, not excuses to avoid ordinary frontend work:
+Use real browser inspection and fictional data. Render and use representative screens on desktop and mobile, in light/dark where supported. Confirm the approved logo source files are unchanged and the correct existing assets render without distortion or recolouring. Check 320/360/390/768/1024/1440 widths, short phone screens, intermediate sidebar content, long text and amounts, 200% zoom, keyboard/focus, reduced motion and relevant state transitions. Aim for WCAG 2.2 AA for the changed experience without claiming certification from automated checks.
 
-- Exact-decimal authoritative money, balanced journals, atomic batch saving, idempotent receipts, source history and reviewed corrections stay intact.
-- AI proposes structure and explains; it does not authorise access, write the ledger independently, calculate authoritative balances/report totals/goal forecasts in prose or decide saving succeeded.
-- Received money is not automatically sales/revenue; transfers are not spending; debt settlement is not another sale/expense; loan principal and owner money retain existing classifications; goal allocation is not money movement. Unknown is not zero.
-- Preserve tenant isolation, explicit ownership checks, server-only secrets and no public caching of private financial responses.
-- CashNarra records money. Do not add banking, wallets, money transfers, lending, tax filing, inventory, payroll, ERP, automatic bank/MoMo aggregation or new financial services to satisfy a design comparison.
-- Preserve current provider configuration, free-only Groq safeguards, pauses, unresolved attempts, historical holds and the cumulative US$20 evaluation ceiling. Do not reset journals, release uncertain holds, restore obsolete pauses or reread a story automatically. Internal holds are not customer charges or provider invoices.
-- Routine design work uses fictional/disposable data and mock provider/billing states. No paid inference, transcription, customer charge, production migration or deployment is necessary for this assignment. Do not send a real clip without its already valid specific consent/authority; do not invent a consent record or request already configured keys again.
-- Do not change real saved records, quotas, subscriber agreements or the financial persistence model to make a screen look simpler. If a UI needs a missing backend capability, finish its truthful supported states and record that dependency separately.
+Check actions, network/console behaviour and the complete task sequence. Public fictional demonstrations remain local and unpaid; genuine app/auth actions retain their existing safe boundaries. Keep essential content immediate, readable money intact and motion optional. Measure appropriate local performance where useful; field speed and conversion gains require their own evidence.
 
-## 8. Current reported state: verify, preserve and improve intelligently
+Update UI tests to the intentionally redesigned interactions, labels and navigation while retaining meaningful financial, persistence and access assertions. Existing markup and text snapshots are not design constraints. Do not weaken tests to hide a regression or alter financial expected values to fit a bug. Run relevant lint, typecheck, unit/integration/browser checks and a safe local build on the final changes; do not trigger live provider/payment side effects through a script.
 
-The latest owner reports say the landing and main app UI pass have already been implemented. Local fictional-workspace checks in Edge reported UI-01–UI-11 and UI-14–UI-18 passing the scenarios actually exercised. Widths 320/360/390/768/1024/1440, light/dark, focus return, CSS 200% zoom, reduced motion, proposal change, lost-save and offline-draft behaviour were checked. UI-12 pricing and UI-13 subscription results remained historical; landing LP results stayed as recorded. None of this proves that every current screen is visually excellent or that every clause passed.
+Record PASS, FAIL, HISTORICAL PASS, NOT RUN and EXTERNAL accurately. Preserve unrun human/device/database/field checks. Optional large-workspace measurement remains optional unless a demonstrated issue makes it relevant. Missing external evidence must not stop independent local design work or be silently promoted to PASS.
 
-The newer follow-up also reports:
+If the result is still essentially the same screen arrangements with a few label, margin and icon fixes, revisit the concept and implementation before calling the redesign complete. A visual reset should be evident in the product's argument, composition and experience, while its financial foundation remains dependable.
 
-- `harness/context/08-remaining-checks.md` prepares the unpaid checks.
-- Voice intake returned NOT READY because private recording consent was absent. An offline text check preserved negation/transfer direction; it did not hear speech. The Groq key is already saved.
-- The empty-day screen was then checked on fictional 12 October 2026: no records sentence, with no misleading GH₵0.00 movement; 13 October still displayed its amount. The records were not deleted.
-- Live recording through stop/transcription, a person using a screen reader, a real phone keyboard, field speed and 100/1,000/5,000-record timings remained unrun. Large-workspace timing is optional; no pass/fail timing target was invented.
-- Full typecheck still failed in `scripts/lib/evaluation-budget.ts` around an event union containing an approval without `id`, and in `scripts/lib/story-attempt.ts` where possibly absent values were used as required strings. Inspect current diagnostics; line numbers may have moved.
-- No live clip, financial save, provider call, payment, journal change or migration occurred in that preparation. Phase 08 remained incomplete and Phase 09 external.
+## 11. Deliver the redesigned product
 
-Use the actual current checkout and evidence to reconcile these facts. Do not restore older voice-off, $10-budget, missing-what-if or already-fixed UI status from a stale snapshot. Do not describe historical reports as checks you performed.
+Deliver one coherent implemented direction across the entire application inside and out, supported by:
 
-You may fix a narrow, demonstrated type/validation issue needed for reliable verification if its behaviour is clear and covered by appropriate tests. For the budget union, narrow to the correct event variant before accessing call identifiers; do not invent IDs or rewrite the journal. For attempt identifiers, preserve the real required/optional semantics through sound validation; do not hide errors using empty-string defaults, unchecked casts or non-null assertions. Do not let this become a budget/recovery-engine rewrite or consume the entire UI assignment. Keep unresolved defects explicit.
+- The short product/value strategy and three rendered alternatives, with the choice and tradeoffs explained.
+- The redesigned public experience, app information architecture, key flows, shared components and language system.
+- Before/after visual evidence using fictional data, plus the important working journeys and state checks.
+- A concise record of verification, remaining real dependencies and exact next action.
+- Updated project memory/harness instructions that retain the new direction and prevent a later agent from restoring the old design by mistake.
 
-The previous verification-only exact-next-action note is superseded **for the UI inspection and implementation newly requested here**. Its missing consent, human testing and other evidence gaps remain open. Complete independent local UI work without pretending those external checks passed.
+Use coherent commits under the existing workflow. Do not push, deploy or start live payments/providers merely to finish a design assignment. Keep Phase 08/09 evidence honest. Do not claim improved conversion, customer preference or competitive victory without measurement.
 
-## 9. Learn selectively from competitors and current guidance
+Your final explanation should lead with what changed for a person using CashNarra and show the new experience. Explain how the public site sells its value, how the app makes that value easy to reach, and why someone would choose to return. Then give actual test results and limitations. A list of CSS fixes, test counts and files is insufficient as the main demonstration of success.
 
-Use the supplied competitor research as a starting point. If web access is available, check current primary product/help pages and relevant official guidance where it changes a decision. Cite the exact page, observation date and what you actually observed in the short design record. Do not infer current market share, quality or conversion from marketing. Do not spend the whole task researching.
-
-Useful references and questions:
-
-- **Oze, LedgerGH and Khatabook:** how quickly can someone enter a local event, find a named debt and understand its direction?
-- **MonAi and TalkieMoney:** how obvious are typing/recording, input switching and the result?
-- **Copilot:** how readable and editable is review? Its imported-record review does not replace CashNarra’s authorisation to create records.
-- **Dime and Monarch:** what makes rows, summaries and navigation scan well without overwhelming the home screen?
-- **YNAB:** how does changing an assumption make a goal outcome clear?
-- **Wave and Lunch Money:** how are reporting, record management, price protection and subscription actions explained?
-- **Cleo:** what does consistency of voice achieve? Retain CashNarra’s calm style; do not copy roasts or financial-services scope.
-
-Study the principle, choose a CashNarra adaptation and explain the user benefit. Do not copy competitor brand assets, pages, claimed capabilities or entire feature lists. A new dependency, feature or dashboard customisation system needs a real product reason. Our differentiator should be understandable financial meaning and a well-crafted end-to-end experience, rather than a larger menu.
-
-## 10. Verify the actual quality
-
-Treat WCAG 2.2 AA as the accessibility target for the changes, not a certification claim. Check relevant semantics, reading order, names, labels, contrast, focus, dialogs, status feedback, keyboard use, zoom/reflow and reduced motion. Comfortable 44–48px controls are the existing design preference, not a blanket statement of the standard’s exact minimum. Preserve full amount values and readable text.
-
-Required viewport/content checks: 320, 360, 390, 768, 1024 and 1440 CSS widths; short 360×640 and 390×640 screens; 390×844; intermediate desktop content with the sidebar; light/dark; 200% text/zoom; long names, large/negative amounts, multi-record stories and long transcripts.
-
-Check the applicable empty, populated, loading, validation, failed, unresolved, offline, success and billing states. Do not infer them from the happy-path screenshot. Use mock or disposable local data for persistence and subscription checks.
-
-Inspect before and after in a real browser. Test complete transitions, focus and actual responses, not only snapshots. If a task is still unclear or ugly at a required width, iterate. Reuse existing relevant UI/LP cases and tests; add a focused behavioural regression test when it protects meaningful new behaviour. Avoid tests that merely mirror static copy.
-
-Inspect relevant browser console/network failures and whether each click invokes the correct existing action. Distinguish public-demo side-effect restrictions from normal app/auth reads. Keep essential content immediate, reserve image/FX space and avoid animation or provider responses on the critical rendering path. Use existing performance budgets; if absent, record measurements without fabricating a pass threshold. Local lab evidence is not field performance.
-
-Run appropriate existing lint, typecheck, build and relevant unit/integration/browser checks after inspecting their safety and commands. First establish known baseline failures; repair change-introduced failures and safe scoped defects. Do not disable checks, delete tests, loosen financial validation or claim the full project passed because edited-screen lint passed. Rerun only when changes, failures or missing evidence justify it.
-
-Record results as **PASS, FAIL, HISTORICAL PASS, NOT RUN or EXTERNAL**, with build/environment and precise scope. A focus test is not a human screen-reader pass, text validation is not speech recognition, and one consented clip would not establish accent accuracy. Keep unavailable human/device/field checks explicit while completing independent work.
-
-## 11. Delivery and continuity
-
-Work in coherent units and update the existing checkpoint/build log after each: baseline and coverage; shared visual grammar; capture/review journey; understanding/planning; account/settings/pricing/export polish; verification. Avoid unrelated rewrites. Keep tests, data and screenshots fictional or disposable; keep private evidence out of public deliverables.
-
-Create or update a short project-root `CLAUDE.md` where appropriate, preserving any existing instructions. Point to `AGENTS.md`, the current harness and canonical design sources; put the essential financial/privacy/language rules in its body. Do not create a competing product spec or paste every report into the file. Keep Claude and Cursor using the same decisions and progress record.
-
-Deliver:
-
-1. Implemented UI/UX improvements across the relevant existing screens and working supported transitions.
-2. A concise coverage/design record showing concrete issues, chosen changes and relevant source observations; avoid a huge essay.
-3. Reusable components/styles and plain-language copy integrated with the existing architecture.
-4. Actual verification evidence and any specific unresolved baseline, human, device or service dependency.
-5. An updated current checkpoint/build log with the exact next action, preserving phase and consent boundaries.
-
-Keep commits small and limited to your own work if the project workflow authorises commits. Do not automatically push, open external communications, deploy or mix another agent’s uncommitted work into your commit.
-
-The work is complete only when the implemented changes satisfy the applicable requirements and change-related checks pass, with genuine external/baseline limitations clearly recorded. If something remains blocked, do not claim a fully verified product; leave the exact unfinished unit and finish independent work that is still possible.
-
-Finish in understandable English:
-
-- What now looks or works better, screen by screen.
-- Why the most important changes help a person use CashNarra.
-- What you actually tested and what remains unverified or failing.
-- What I can now do in the app and the exact next action.
-
-Start now. Read the real project, inspect the running product, make sound design decisions and implement the improvements. Do not wait for me to choose every minor detail or stop after presenting a plan.
+**Begin with the product strategy and genuinely different rendered concepts, select the strongest, and carry it through implementation and verification. Keep the existing logo, colour system and font families unchanged. Rethink the rest of the experience where necessary.**

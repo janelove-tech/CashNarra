@@ -1,7 +1,8 @@
 # CashNarra current development handoff
 
-Updated: 2026-10-21 — Claude Code, fresh UI and UX pass (after Cursor, publish the working branch)
-Branch: work/cashnarra-v1
+Updated: 2026-10-23 — Phase 1 phone-pass fixes, uncommitted
+Prior update: 2026-10-21 — Claude Code, fresh UI and UX pass (after Cursor, publish the working branch)
+Branch: redesign/words-to-records, checked out at 020a6ae (same commit as local work/cashnarra-v1)
 Baseline: 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
 Reconciled starting HEAD: 70d99415a84c779e453c2b475067654ef4cbf9f6
 Current HEAD: the commit containing this handoff; resolve with git rev-parse HEAD.
@@ -28,6 +29,15 @@ The public page follows the chosen landing pass in `docs/ux/CASHNARRA_FINAL_HAND
 Today keeps the workspace and date, and the story box is headed “What happened with your money?” The date sits with that story. Understand my story is the main action and stays off until there are words or a draft to finish. Tell your story still opens the fuller page, including Draft backup, without sending the words to be read again. Voice stays in the same entry. A day with no records says so, and does not present GH₵0.00 as money movement. Review says “Check these N records”, keeps the original words open, and puts Change beside a proposed row. Save uses the real count. Money Stories says Money in, Money out, then Net movement, and says that is not profit. Each goal shows Target, Set aside, and Remaining. Explore what-if shows the recorded pace beside Try a different amount and does not change the records. Delete original stories is in its own Data and privacy section. Pricing, Plan and usage, and the landing page were left as they were. No provider call, payment, journal change, or database migration.
 
 ## Exact next action
+
+**Physical Android checks are prepared and NOT RUN (23 October 2026).** This checkpoint on `redesign/words-to-records` is the Android testing baseline once local `work/cashnarra-v1` fast-forwards onto it. Follow `docs/ux/ANDROID_DEVICE_CHECKLIST_2026-10-23.md`. Do not push, deploy, package a Trusted Web Activity, or publish. Do not downgrade ESLint to clear the separate braces advisory. When a commit is requested, keep the Story Log and this phone pass as coherent commits and do not discard the other uncommitted work. Auth and recovery browser specs stay NOT RUN until the local Supabase stack is already running; do not start or reset that database just to run them. Real-device APP rows stay NOT RUN. Do not set `VOICE_QUALITY_APPROVED`, call a provider, or start checkout. The reported Next.js security upgrade was not run.
+
+## Phase 1 phone pass — 2026-10-23
+
+The seven approved fixes are in the working tree. Type your story returns to Today and focuses the existing composer, and an in-progress recording still asks before it is discarded. Choosing a destination clears the on-screen save banner only; saved rows, the request key, and an unconfirmed retry stay. `devIndicators: false` and `experimental.agentUpgrade: false` follow this install's Next.js 16.4 docs and hide the dev badge that covered the phone bar; they do not upgrade Next.js. The dark contrast hang was a test wait on animations that Playwright tracing never finishes; the test now finishes finite animations and still requires a contrast ratio of at least 3. Product motion was not changed. The offline page carries its own styles, and the public cache is `cashnarra-public-v4`. Create a workspace is closed behind a disclosure; the create action is unchanged.
+
+PASS, emulated headless Edge on port 3100: phone, recording, trust, contrast, non-text contrast, and the rest of `tests/e2e` except auth and recovery. The export journey now opens Records after a save, because a confirmed save returns to Today, and then checks the same CSV, PDF, and XLSX downloads. PASS: `npm test` (34 files, 208 tests), `npm run typecheck`, `npm run lint`, `npm run build` (exit 0). NOT RUN: `tests/e2e/auth.spec.ts`, `tests/e2e/recovery.spec.ts`, `npm run test:db`, `npm run test:supabase`. NOT RUN (R): every real-phone row. No provider call, payment, journal change, database reset, migration, push, or deployment. Phase 08 stays incomplete. Phase 09 stays external. NOT V1 COMPLETE.
+
 
 The landing page and the app screens stay as reported, now with the 21 October Claude UI pass on top; do not restart either pass. Do not start recovery, live usage counters, payments, the owner console, or Phase 09. The Groq key and the Free-plan confirmation are already saved. Do not ask for them again.
 

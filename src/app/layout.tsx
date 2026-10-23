@@ -1,3 +1,4 @@
+import type { Viewport } from "next";
 import localFont from "next/font/local";
 import "./tokens.css";
 import "./globals.css";
@@ -11,6 +12,12 @@ const manrope = localFont({
   variable: "--font-manrope",
   display: "swap",
 });
+export const viewport: Viewport = {
+  themeColor: "#5B49C7",
+  viewportFit: "cover",
+  // Let the software keyboard shrink the layout so actions stay reachable.
+  interactiveWidget: "resizes-content",
+};
 export const metadata = {
   title: "CashNarra — Tell your money story",
   description:

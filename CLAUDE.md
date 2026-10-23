@@ -5,7 +5,7 @@ Read `AGENTS.md` first. It is the shared rule set for every agent in this reposi
 ## Where the design truth lives
 
 - Screen contract: `docs/ux/CASHNARRA_FINAL_HANDOFF.md` (section 15 for app screens, section 8 for the landing page).
-- Design decisions from the 21 October 2026 UI pass: `docs/ux/UI_DESIGN_RECORD_2026-10-21.md`.
+- The shipped direction since 21 October 2026 is the Story Log redesign: strategy, concepts and choice in `docs/ux/REDESIGN_STRATEGY_2026-10-21.md`; the earlier polish pass in `docs/ux/UI_DESIGN_RECORD_2026-10-21.md`. Do not restore the pre-redesign layouts; `.cursor/rules/product-ui-ux.mdc` describes the current screens.
 - Tokens: `src/app/tokens.css` and `src/design/tokens.json`. Brand guide and assets: `CashNarra_Design_Kit_v2/`.
 - Acceptance checks: `docs/UI_ACCEPTANCE.md`. Observed problems: `docs/UI_REVIEW.md`.
 - Always-on product rules: `.cursor/rules/*.mdc` (logo, activity PDF, customer language, UI/UX, delivery).

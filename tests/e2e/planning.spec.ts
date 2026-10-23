@@ -10,6 +10,7 @@ test("planning dialog stays usable at narrow widths in both appearances", async 
       await page
         .getByRole("button", { name: "Switch to dark appearance" })
         .click();
+    await page.getByRole("button", { name: "Workspace, accounts and settings" }).click();
     await page
       .getByRole("button", { name: "Settings and privacy", exact: true })
       .click();
@@ -38,9 +39,6 @@ test("private draft download restores words without posting records", async ({
 }) => {
   await page.goto("/");
   await openSampleWorkspace(page);
-  await page
-    .getByRole("button", { name: "Tell your story", exact: true })
-    .click();
   await page
     .getByLabel("Your money story", { exact: true })
     .fill("Unfinished private story");
@@ -97,6 +95,7 @@ test("people, goal changes, payment dates, preferences and check-in history are 
 }) => {
   await page.goto("/");
   await openSampleWorkspace(page);
+  await page.getByRole("button", { name: "Workspace, accounts and settings" }).click();
   await page
     .getByRole("button", { name: "Settings and privacy", exact: true })
     .click();

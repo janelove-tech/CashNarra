@@ -21,7 +21,7 @@ test("real local Supabase login, workspace, unknown account, opening obligation 
     .first()
     .click();
   await expect(
-    page.getByRole("heading", { name: "Let’s make sense of your money." }),
+    page.getByRole("heading", { name: "What happened with your money?" }),
   ).toBeVisible();
   await expect(
     page.getByText(
@@ -31,6 +31,7 @@ test("real local Supabase login, workspace, unknown account, opening obligation 
   await page
     .getByRole("button", { name: "Workspace, accounts and settings" })
     .click();
+  await page.getByRole("button", { name: "Create a workspace", exact: true }).click();
   await page.getByLabel("Name", { exact: true }).fill(workspaceName);
   await page.getByLabel("Use", { exact: true }).selectOption("Personal");
   await page
@@ -105,6 +106,7 @@ test("real local Supabase login, workspace, unknown account, opening obligation 
       (r: { kind: string }) => r.kind === "receivable_payment",
     ),
   ).toHaveLength(1);
+  await page.getByRole("button", { name: "Workspace, accounts and settings" }).click();
   await page
     .getByRole("button", { name: "Settings and privacy", exact: true })
     .click();

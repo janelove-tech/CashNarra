@@ -58,11 +58,8 @@ for (const width of [390, 1440]) {
         await contrast(page, name);
       }
       await page
-        .getByRole("button", { name: "Today", exact: true })
+        .getByRole("button", { name: "Home", exact: true })
         .filter({ visible: true })
-        .click();
-      await page
-        .getByRole("button", { name: "Tell your story", exact: true })
         .click();
       await contrast(page, "narration");
       await page.getByRole("button", { name: "Add a manual record" }).click();

@@ -37,9 +37,6 @@ test("shows included records and requires confirmation before accepting a percen
     }),
   );
   await page
-    .getByRole("button", { name: "Tell your story", exact: true })
-    .click();
-  await page
     .getByLabel("Your money story", { exact: true })
     .fill("Synthetic percentage example");
   await page.getByRole("button", { name: "Understand my story" }).click();

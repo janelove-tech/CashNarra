@@ -6,9 +6,6 @@ test("late processing cannot restore private review after cross-tab sign-out", a
 }) => {
   await page.goto("/");
   await openSampleWorkspace(page);
-  await page
-    .getByRole("button", { name: "Tell your story", exact: true })
-    .click();
   let release!: () => void;
   const held = new Promise<void>((resolve) => {
     release = resolve;

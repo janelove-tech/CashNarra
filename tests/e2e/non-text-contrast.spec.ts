@@ -2,14 +2,20 @@ import { test, expect, type Page } from "@playwright/test";
 import { openSampleWorkspace } from "./demo-entry";
 
 async function measure(page: Page, view: string) {
-  // Measure settled states, not a partial theme/hover background transition.
+  // Measure settled colours. Playwright's trace can pause a CSS transition so
+  // its finished promise never resolves. finish() moves a finite transition to
+  // its end colour. An endless animation still fails this check.
   await page.evaluate(async () => {
     await document.fonts.ready;
-    await Promise.all(
-      document
-        .getAnimations()
-        .map((animation) => animation.finished.catch(() => {})),
+    const animations = document.getAnimations();
+    const endless = animations.filter(
+      (animation) => animation.effect?.getTiming().iterations === Infinity,
     );
+    if (endless.length)
+      throw new Error(`An animation does not settle (${endless.length}).`);
+    for (const animation of animations) {
+      if (animation.playState !== "finished") animation.finish();
+    }
   });
   const measurements = await page.evaluate(() => {
     type RGB = number[];
@@ -127,13 +133,10 @@ for (const width of [320, 390, 768, 1440])
         await measure(page, `${name} fields and icons`);
       }
       await page
-        .getByRole("button", { name: "Today", exact: true })
+        .getByRole("button", { name: "Home", exact: true })
         .filter({ visible: true })
         .focus();
       await page.keyboard.press("Enter");
-      await page
-        .getByRole("button", { name: "Tell your story", exact: true })
-        .click();
       await measure(page, "narration fields and icons");
       await page.getByRole("button", { name: "Add a manual record" }).click();
       await page.keyboard.press("Tab");

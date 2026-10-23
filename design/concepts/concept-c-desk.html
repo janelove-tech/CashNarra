@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Concept C — The Desk</title>
+<style>
+@font-face { font-family: "Inter"; src: url("../../public/brand/fonts/InterVariable.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "Manrope"; src: url("../../public/brand/fonts/ManropeVariable.ttf"); font-weight: 200 800; }
+:root { --bg:#F7F7FA; --surface:#fff; --ink:#29263D; --sec:#625F73; --border:#E1DEEB; --violet:#5B49C7; --tint:#F0ECFC; --apricot:#FFC4A0; --in:#445BA1; --out:#95603E; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font-family:Inter, system-ui, sans-serif; font-size:16px; line-height:1.5; }
+h1,h2,h3 { font-family:Manrope, Inter, sans-serif; letter-spacing:-.035em; margin:0; }
+.wrap { max-width:1180px; margin:0 auto; padding:24px 36px; }
+.label { font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--sec); }
+.num { font-variant-numeric: tabular-nums; white-space:nowrap; }
+header.pub { display:flex; justify-content:space-between; align-items:center; }
+header.pub img { width:150px; }
+.cta { display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 20px; border-radius:12px; background:var(--violet); color:#fff; font-weight:700; text-decoration:none; }
+.cta.alt { background:#fff; color:var(--ink); border:1px solid #858194; }
+.quiet { color:var(--violet); font-weight:600; text-decoration:none; margin-left:18px; }
+.hero { padding:56px 0 32px; text-align:center; }
+.hero h1 { font-size:64px; line-height:1.02; font-weight:800; max-width:12em; margin:12px auto 0; }
+.hero p { color:var(--sec); font-size:18px; max-width:34em; margin:16px auto; }
+.story { margin:32px auto 0; max-width:900px; background:var(--ink); color:#fff; border-radius:28px; padding:32px 36px; text-align:left; display:grid; grid-template-columns: 1.1fr .9fr; gap:28px; }
+.story small { color:#D9D4E9; }
+.story .fig { display:grid; gap:14px; }
+.story .fig div b { display:block; font-size:34px; font-weight:600; }
+.story .fig .in b { color:#BACAFB; } .story .fig .out b { color:#F1BA94; }
+.story .why { background:#322745; border-radius:16px; padding:18px; }
+.story .why h3 { font-size:18px; color:#fff; }
+.story .why .r { display:flex; justify-content:space-between; padding:8px 0; border-top:1px solid #4a4260; font-size:14px; }
+.section { margin-top:72px; }
+.section h2 { font-size:36px; }
+.section p { color:var(--sec); max-width:40em; }
+.frame { margin-top:16px; background:var(--bg); border:1px solid var(--border); border-radius:20px; overflow:hidden; display:grid; grid-template-columns: 220px 1fr; }
+.rail { background:var(--surface); border-right:1px solid var(--border); padding:20px 16px; }
+.rail img { width:130px; }
+.rail a { display:block; padding:10px 12px; border-radius:10px; color:var(--sec); font-weight:600; margin-top:4px; }
+.rail a.on { background:var(--tint); color:var(--violet); }
+.desk { padding:28px 32px; }
+.bar { display:flex; gap:12px; align-items:center; background:var(--surface); border:1px solid #858194; border-radius:14px; padding:12px 14px; }
+.bar span { flex:1; color:var(--sec); }
+.grid { display:grid; grid-template-columns: repeat(3,1fr); gap:16px; margin-top:20px; }
+.card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:18px; }
+.card h3 { font-size:14px; color:var(--sec); font-weight:700; }
+.card b { display:block; font-size:28px; font-weight:600; margin-top:6px; }
+.card .r { display:flex; justify-content:space-between; padding:8px 0; border-top:1px solid var(--border); font-size:14px; }
+.card.wide { grid-column: span 2; }
+.phones { display:flex; gap:28px; margin:24px 0; align-items:flex-start; }
+.phone { width:390px; height:780px; border:12px solid #1a1726; border-radius:44px; background:var(--bg); overflow:hidden; flex:none; position:relative; }
+.phone .in { padding:18px 16px 100px; }
+.phone .dock { position:absolute; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--border); padding:12px 16px 18px; }
+.split { display:grid; grid-template-columns: 1fr 1fr; gap:24px; margin-top:16px; }
+.quote { background:var(--tint); border-radius:14px; padding:16px; font-size:16px; }
+.rows .row { display:grid; grid-template-columns:1fr auto; gap:12px; padding:12px 0; border-top:1px solid var(--border); }
+.rows small { display:block; color:var(--sec); font-size:13px; }
+.ask { background:#fff; border:1px solid var(--violet); border-radius:12px; padding:12px; margin-top:8px; }
+.ask .chips { display:flex; gap:8px; margin-top:8px; } .ask .chips span { border:1px solid #858194; border-radius:8px; padding:8px 12px; font-weight:600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="pub">
+    <img src="../../public/brand/cashnarra-logo.svg" alt="CashNarra" />
+    <nav><a class="quiet" href="#">Pricing</a><a class="quiet" href="#">Sign in</a> <a class="cta" href="#" style="margin-left:18px">Start free</a></nav>
+  </header>
+
+  <section class="hero">
+    <span class="label">For people who want a straight answer about their money</span>
+    <h1>Know where you stand, every day.</h1>
+    <p>Tell CashNarra what happened. It keeps the records and answers the questions that matter: what came in, what went out, who owes you, and what your goal needs.</p>
+    <p><a class="cta" href="#">Start free</a> &nbsp; <a class="cta alt" href="#">See the example month</a></p>
+    <div class="story">
+      <div>
+        <small>Fictional · Ama's shop · October so far</small>
+        <h2 style="font-size:30px;margin:8px 0 18px">Here's what moved.</h2>
+        <div class="fig"><div class="in"><small>Money in</small><b class="num">GH₵2,300.00</b></div><div class="out"><small>Money out</small><b class="num">GH₵930.00</b></div><div><small>Net movement · not profit</small><b class="num">GH₵1,370.00</b></div></div>
+      </div>
+      <div class="why">
+        <h3>Where did the money in come from?</h3>
+        <div class="r"><span>Cash sales</span><span class="num">GH₵900.00</span></div>
+        <div class="r"><span>MoMo sales</span><span class="num">GH₵1,200.00</span></div>
+        <div class="r"><span>Abena paid an old balance</span><span class="num">GH₵200.00</span></div>
+        <div class="r" style="color:#D9D4E9"><span>Kojo's credit sale · no cash yet</span><span class="num">GH₵300.00</span></div>
+        <small style="display:block;margin-top:10px">Every figure opens its records. Transfers between your own accounts are not counted as money in or out.</small>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <span class="label">App home · desktop</span>
+    <div class="frame">
+      <div class="rail"><img src="../../public/brand/cashnarra-logo.svg" alt="CashNarra" /><a class="on" style="margin-top:20px">Desk</a><a>Records</a><a>People</a><a>Accounts</a><a>Stories</a><a>Goals</a><a style="margin-top:40px">Ama Works ▾</a></div>
+      <div class="desk">
+        <span class="label">Ama Works · Tuesday 13 October 2026</span>
+        <div class="bar" style="margin-top:10px"><span>Tell CashNarra what happened today…</span><span class="cta alt" style="flex:none">🎙</span><span class="cta" style="flex:none">Understand</span></div>
+        <div class="grid">
+          <div class="card"><h3>Money in today</h3><b class="num">GH₵2,300.00</b><small>3 records</small></div>
+          <div class="card"><h3>Money out today</h3><b class="num">GH₵930.00</b><small>3 records · transfers excluded</small></div>
+          <div class="card"><h3>Recorded balances</h3><b class="num">GH₵5,970.00</b><small>Cash · MoMo · Bank</small></div>
+          <div class="card wide"><h3>People</h3><div class="r"><span>Abena owes you</span><span class="num">GH₵400.00</span></div><div class="r"><span>Kojo owes you</span><span class="num">GH₵300.00</span></div><div class="r"><span>You owe Adjei Packaging · due 31 Oct</span><span class="num">GH₵500.00</span></div><div class="r"><span>You owe the lender</span><span class="num">GH₵1,000.00</span></div></div>
+          <div class="card"><h3>New equipment</h3><b class="num">GH₵1,200.00</b><small>of GH₵6,000.00 set aside · about 12 months at this pace</small><p style="margin:12px 0 0"><span class="quiet" style="margin:0">Explore what-if →</span></p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <span class="label">Review · desktop split and phone</span>
+    <div class="split">
+      <div><div class="quote">“I sold 900 cedis in cash. I paid 80 cedis for delivery. Abena paid 200 cedis towards her old debt.”<br><small style="color:var(--sec)">Your words · edit</small></div></div>
+      <div class="rows">
+        <div class="ask"><b>Which account paid for delivery?</b><div class="chips"><span>Cash</span><span>MoMo</span><span>Bank</span></div></div>
+        <div class="row"><span>Cash sale<small>Sale received · Cash</small></span><span class="num">GH₵900.00</span></div>
+        <div class="row"><span>Delivery<small>Business expense</small></span><span class="num">−GH₵80.00</span></div>
+        <div class="row"><span>Payment from Abena<small>Old balance · not a sale</small></span><span class="num">GH₵200.00</span></div>
+        <p><span class="cta">Save 3 records</span></p>
+      </div>
+    </div>
+    <div class="phones">
+      <div class="phone"><div class="in">
+        <span class="label">Review</span>
+        <h2 style="font-size:24px;margin-top:4px">Check these 3 records</h2>
+        <div class="quote" style="margin-top:10px;font-size:15px">“I sold 900 cedis in cash. I paid 80 for delivery. Abena paid 200 towards her old debt.”</div>
+        <div class="rows"><div class="ask"><b>Which account paid for delivery?</b><div class="chips"><span>Cash</span><span>MoMo</span><span>Bank</span></div></div>
+          <div class="row"><span>Cash sale<small>Sale received · Cash</small></span><span class="num">GH₵900.00</span></div>
+          <div class="row"><span>Delivery<small>Business expense</small></span><span class="num">−GH₵80.00</span></div>
+          <div class="row"><span>Payment from Abena<small>Old balance</small></span><span class="num">GH₵200.00</span></div></div>
+      </div><div class="dock"><span class="cta" style="width:100%;opacity:.6">Save 3 records</span></div></div>
+      <div>
+        <h3 style="font-size:24px">Concept C — The Desk</h3>
+        <p style="color:var(--sec);max-width:30em">Answers first. The home screen is a desk of today's figures, people and goals, with one bar to tell what happened. Strong for a returning business owner; weakest on a first visit when the desk is empty and the real action is one bar among cards.</p>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>

@@ -11,6 +11,7 @@ import {
   reviewObligations,
 } from "@/domain/review-create";
 import { Button, Amount } from "./ui";
+import { Said } from "./said";
 import s from "./app.module.css";
 import CalculationReview from "./calculation-review";
 type Props = {
@@ -168,9 +169,17 @@ export default function BatchReview({
           const record = events.find((e) => e.id === q.recordId);
           const inclusion = /included in that total/i.test(q.question);
           return (
-            <div key={q.recordId + q.field} className={s.panel}>
+            <div key={q.recordId + q.field} className={s.ask}>
               <h2>{q.question}</h2>
-              <p>{record?.description ?? "This proposed record"}</p>
+              <p>
+                {record?.description ?? "This proposed record"}
+                {record?.amount ? (
+                  <>
+                    {" · "}
+                    <Amount value={record.amount} hidden={hidden} />
+                  </>
+                ) : null}
+              </p>
               {(q.field === "accountId" || q.field === "toAccountId") && (
                 <>
                   <div className={s.actions}>
@@ -375,14 +384,21 @@ export default function BatchReview({
         </div>
       )}
       {text.trim() && (
-        <details open>
-          <summary>From your story</summary>
-          <blockquote>
-            {hidden ? "Your story is hidden while amounts are hidden." : text}
-          </blockquote>
-        </details>
+        <Said
+          hidden={hidden}
+          meta={
+            <>
+              <span>From your story</span>
+              <button type="button" onClick={() => onBack()}>
+                Change the words
+              </button>
+            </>
+          }
+        >
+          {text}
+        </Said>
       )}
-      {recordRows}
+      <div className={s.proposals}>{recordRows}</div>
       {events.length === 0 && (
         <p className={s.empty}>
           {replaceIds.length

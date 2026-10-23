@@ -49,9 +49,6 @@ for (const theme of ["light", "dark"]) {
           () => document.documentElement.scrollWidth <= innerWidth + 1,
         ),
       ).toBe(true);
-      await page
-        .getByRole("button", { name: "Tell your story", exact: true })
-        .click();
       await page.getByRole("button", { name: "Add a manual record" }).click();
       const dialog = page.getByRole("dialog");
       await dialog
@@ -84,7 +81,7 @@ for (const theme of ["light", "dark"]) {
         page.getByRole("button", { name: "Save this record" }),
       ).toBeEnabled();
       await page
-        .getByRole("button", { name: "Today", exact: true })
+        .getByRole("button", { name: "Home", exact: true })
         .filter({ visible: true })
         .click();
     } finally {

@@ -10,7 +10,7 @@ test("offers real local recording without claiming transcription or opening the 
   });
   await page.goto("/");
   await openSampleWorkspace(page);
-  await page.getByRole("button", { name: "Voice", exact: true }).click();
+  await page.getByRole("button", { name: "Speak", exact: true }).click();
   const dialog = page.getByRole("dialog", {
     name: "A short story, in your voice",
   });

@@ -7,9 +7,6 @@ test("record errors are associated and focusable; dialog stays keyboard-containe
   await page.setViewportSize({ width: 320, height: 900 });
   await page.goto("/");
   await openSampleWorkspace(page);
-  await page
-    .getByRole("button", { name: "Tell your story", exact: true })
-    .click();
   await page.getByRole("button", { name: "Add a manual record" }).click();
   const dialog = page.getByRole("dialog");
   await dialog

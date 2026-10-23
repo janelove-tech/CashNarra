@@ -15,7 +15,7 @@ test("public sample stays in the browser and does not open a demo session", asyn
   await page.goto("/");
   await expect(
     page.getByRole("heading", {
-      name: "Tell your money story. See the numbers.",
+      name: "Say what happened. Know where you stand.",
     }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Try an example" }).focus();

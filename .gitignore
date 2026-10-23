@@ -8,3 +8,6 @@ playwright-report/
 *.tsbuildinfo
 supabase/.temp/
 supabase/.branches/
+
+.claude/launch.json
+scripts/.scratch/

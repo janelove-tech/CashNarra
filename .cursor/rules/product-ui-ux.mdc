@@ -25,22 +25,31 @@ alwaysApply: true
 
 Use `docs/UI_REVIEW.md` for the exact observed problems and `docs/UI_ACCEPTANCE.md` for checks. A clean screenshot at one large viewport is insufficient evidence for a changed dialog or responsive form.
 
-## Current screens
+## Current direction — the Story Log (21 October 2026)
 
-Read `harness/CURRENT.md` and `docs/ux/CASHNARRA_FINAL_HANDOFF.md` before relevant UI work. Preserve newer local work. The landing page is already implemented; keep it and its unfinished checks. The active screen work is the app pass in section 15. Do not start backend recovery, live counters, payments, or owner-console infrastructure from that pass.
+The owner authorised a complete redesign on 21 October 2026. The shipped direction is **the Story Log**: the person's words stay beside the records they produced, day by day. Read `docs/ux/REDESIGN_STRATEGY_2026-10-21.md` (strategy, the three concepts, the choice) and `docs/ux/UI_DESIGN_RECORD_2026-10-21.md` before touching a screen. Do not restore the earlier sidebar-and-Today layout, the separate "Tell your story" editor page, or the old landing structure; they are superseded, not lost (see Git history before `redesign/words-to-records`).
 
-- Use the specified copy and one clear action for the current state. A transcript is not a saved record, a review is not a payment, and unknown usage or balance is not zero.
-- Public story and goal examples stay fictional and local. The real catalogue, signup, and Plus review stay as they are. Keep Unlimited off public pages.
-- Preserve cash versus sales, debt settlement versus a new sale, transfers versus spending, and net movement versus profit. Do not invite an automatic paid retry.
-- Check long names, large amounts, narrow widths, focus, and reduced motion on the screens you change.
+- Fixed and unchanged: the logo assets, the colour tokens in `src/app/tokens.css`, Manrope and Inter. Everything else is the new grammar in `src/components/app.module.css`.
+- Shell: a top app bar with Home, Records, Money Stories and Plan; the account button opens workspaces, Manage accounts, Plan and usage, Settings and privacy and Sign out; a bottom bar on phones.
+- Home: the composer ("What happened with your money?", date, Understand my story, Speak, quiet Add a manual record, Draft backup), then the story log (each day: the words on the apricot quote surface, then its rows, then in/out), with an "in brief" column (balances, money in/out, net, people, goal, rhythm).
+- Records has three views in one place: Records, People (People owe you / You owe), Accounts.
+- Review: the question card first, the words on the quote surface with "Change the words", rows with Change, duplicates listed once, only Save N records pinned.
+- After a save, Home shows a saved panel with the rows, a consequence such as a remaining balance, and Read the day's story.
+- The person's words are quoted, never bubbled; CashNarra never replies in prose; it asks one material question and shows rows. Nothing reads as saved before the receipt.
+- Public page: hero "Say what happened. Know where you stand.", the fictional day as a log card (See the records, one question, three rows, totals), three steps, the ink "answer" band, the fictional goal with Explore what-if, control list, Free and Plus cards, questions, close band.
+
+## Phone app rules (21 October 2026)
+
+CashNarra is designed for everyday phone use first, as an installable web app now and a Google Play package later, while keeping the browser, tablet and desktop experience. `docs/ux/MOBILE_APP_DECISIONS_2026-10-21.md` holds the decision table.
+
+- Placement: phones get a bottom bar with Home, Records, Tell, Stories and Plan; wider screens put the same destinations in the top bar and the composer is the action. Tell only moves focus to the story box and never saves. Account, workspace switching, Plan and usage, Settings and privacy and Sign out live behind the account button, never in the bar. Composer and review actions (Understand my story, Speak, Save N records) never appear in a bar.
+- Language: labels are ordinary English and name the customer's task. Provider names, budgets, phase numbers and diagnostics stay in owner or developer views.
+- State: the view is in the address (`/app?view=records`) so Back, refresh and links restore it for the signed-in person only. Every dialog has its own history entry; Back, Escape and Close all close it and restore focus. Back during a recording asks first. Back never discards a draft.
+- Persistence claims: Draft backup only says it kept words after the device store confirmed. Saved appears only after the authoritative receipt. Offline shows the offline page and says nothing was saved or lost. The service worker caches public brand files and the offline page only; never a signed-in or financial response.
+- Lifecycle: a recording stops with a message when the app is hidden, the page unloads or the microphone track ends; a partial clip is never silently accepted. An app update waits for the app's message and is offered quietly, disabled while anything is busy, pending or recording; it also applies on the next open.
+- Install: "Add to your home screen" appears only when the browser offers the prompt and the app is not already installed. Never claim the app was installed. Never nag.
+- Verification: say whether a check was emulated (headless Edge, in-app browser) or on a real phone. Emulated checks never prove microphone, accent, TalkBack or field speed. Use APP-01 to APP-24 from the owner's handoff and mark NOT RUN honestly.
 
 ## Public landing
 
-Landing work stays on the public page. The full reference is `docs/ux/CASHNARRA_FINAL_HANDOFF.md`.
-
-- The landing example is the main action. Start free is the direct route for someone ready to join.
-- The worked story and goal use fixed fictional data and local calculations. They do not sign anyone in, save records, write browser storage, transcribe, or send text to a provider.
-- Show the story records only after See the records. A missing delivery account waits for Cash or MoMo before the summary. Reset returns that example to its unrevealed story.
-- The goal illustration is separate from the story. GH₵1,500.00 remains; GH₵300 a month is about 5 months and GH₵500 a month is about 3 months.
-- Pricing on the landing reuses the public catalogue. Keep the dollar price first, the dated cedi estimate, and no Unlimited plan.
-- One problem gets one plain message. Do not claim a record was saved, a payment was received, or a story was transcribed before that actually happens.
+The landing example and goal use fixed fictional data and local calculations; they do not sign anyone in, save records, write browser storage, transcribe, or send text to a provider. Show the story records only after See the records. A missing delivery account waits for Cash or MoMo before the summary. Reset returns the example to its unrevealed story. GH₵1,500.00 remains on the fictional goal; GH₵300 a month is about 5 months and GH₵500 a month is about 3 months. Pricing on the landing reuses the public catalogue with the dollar price first, the dated cedi estimate, and no Unlimited plan. One problem gets one plain message. Do not claim a record was saved, a payment was received, or a story was transcribed before that actually happens.

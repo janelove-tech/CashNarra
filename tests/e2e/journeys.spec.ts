@@ -4,7 +4,7 @@ async function demo(page: Page) {
   await page.goto("/");
   await openSampleWorkspace(page);
   await expect(
-    page.getByRole("heading", { name: "Let’s make sense of your money." }),
+    page.getByRole("heading", { name: "What happened with your money?" }),
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: /Recorded account balances/ }),
@@ -34,9 +34,6 @@ test("manual review, authoritative save, correction, source history and private 
   page,
 }) => {
   await demo(page);
-  await page
-    .getByRole("button", { name: "Tell your story", exact: true })
-    .click();
   await page.getByRole("button", { name: "Add a manual record" }).click();
   await page
     .getByLabel("Description", { exact: true })
@@ -45,7 +42,7 @@ test("manual review, authoritative save, correction, source history and private 
   await page.getByRole("button", { name: "Review this record" }).click();
   await page.getByRole("button", { name: "Save this record" }).click();
   await expect(page.getByRole("status")).toContainText("records confirmed");
-  await expect(page.getByText("GH₵942.34", { exact: true })).toBeVisible();
+  await expect(page.getByText("GH₵942.34", { exact: true }).first()).toBeVisible();
   await page
     .getByRole("button", { name: "Records", exact: true })
     .filter({ visible: true })
@@ -63,7 +60,13 @@ test("manual review, authoritative save, correction, source history and private 
   await page.getByRole("button", { name: "Review this record" }).click();
   await page.getByRole("button", { name: "Save this record" }).click();
   await expect(page.getByRole("status")).toContainText("records confirmed");
-  await expect(page.getByText("GH₵940.00", { exact: true })).toBeVisible();
+  await expect(page.getByText("GH₵940.00", { exact: true }).first()).toBeVisible();
+  // A confirmed save returns to Today. Export stays on Records.
+  await page
+    .getByRole("button", { name: "Records", exact: true })
+    .filter({ visible: true })
+    .click();
+  await expect(page.getByRole("heading", { name: "Your records" })).toBeVisible();
   for (const format of ["CSV", "PDF", "XLSX"]) {
     await page.getByRole("button", { name: "Export", exact: true }).click();
     const download = page.waitForEvent("download");
@@ -77,9 +80,6 @@ test("mock clarification and unsupported input remain drafts", async ({
   page,
 }) => {
   await demo(page);
-  await page
-    .getByRole("button", { name: "Tell your story", exact: true })
-    .click();
   await page
     .getByLabel("Your money story", { exact: true })
     .fill("Unlisted synthetic example");
@@ -159,9 +159,6 @@ test("lost save response recovers the records confirmed without posting twice", 
   page,
 }) => {
   await demo(page);
-  await page
-    .getByRole("button", { name: "Tell your story", exact: true })
-    .click();
   await page.getByRole("button", { name: "Add a manual record" }).click();
   await page
     .getByLabel("Description", { exact: true })
@@ -195,9 +192,6 @@ test("offline draft recovery and later explicit reviewed save", async ({
   context,
 }) => {
   await demo(page);
-  await page
-    .getByRole("button", { name: "Tell your story", exact: true })
-    .click();
   await page.getByText("Draft backup", { exact: true }).click();
   await page.getByLabel("Keep drafts on this private device").check();
   await page
@@ -212,9 +206,6 @@ test("offline draft recovery and later explicit reviewed save", async ({
   await context.setOffline(false);
   page.on("dialog", (d) => d.accept());
   await page.reload();
-  await page
-    .getByRole("button", { name: "Tell your story", exact: true })
-    .click();
   await expect(
     page.getByLabel("Your money story", { exact: true }),
   ).toHaveValue("A revised offline synthetic note");
