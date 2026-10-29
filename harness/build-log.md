@@ -550,3 +550,470 @@ PASS on the phone-pass checkout: `npm run typecheck`, `npm run lint`, `npm test`
 ## Checkpoint for Android testing — 2026-10-23
 
 The owner asked for one commit of the Story Log, phone pass, and Next.js 16.4.1 patch, then a fast-forward of local `work/cashnarra-v1`. That branch was still `020a6ae`, the parent of this checkpoint, with no independent commits. `origin/work/cashnarra-v1` stayed at `b8012f0` and was not pushed. The duplicate prompt download and the recovery zip were left untracked. The physical-device checklist is `docs/ux/ANDROID_DEVICE_CHECKLIST_2026-10-23.md`. Real-phone rows stay NOT RUN. No TWA, deployment, provider call, or payment.
+
+## Leftover copies removed — 2026-10-23 — Cursor
+
+The duplicate master prompt and the older quality-rules zip were removed after confirming the rules are already in `.cursor/rules/` and `docs/`. Identical copies of those files in Downloads were removed too. The two local branches already point at the same commit. The running dev server, local books, evaluation budget, and database were left in place. Not committed. NOT V1 COMPLETE.
+
+## Leftover Next checkout removed — 2026-10-24 — Cursor
+
+The detached checkout `CashNarra-next-16.4.1` had the same package files as `redesign/words-to-records`, so it was removed. Nothing was listening on port 3100, so the idle `.next` cache was removed too. Local books, the evaluation budget, and the database stayed. Not committed. NOT V1 COMPLETE.
+
+## First physical Android recording — 2026-10-23
+
+Reviewed the 66-second Chrome recording against `0c80f64`. The phone opened `http://127.0.0.1:3100`, showed the public page, then Sign in. The form kept the typed address and showed "Failed to fetch". No phone model, Android version, or Chrome version was readable. This is not an APP-row pass.
+
+The local account service was up: `supabase_auth_cashnarra-development` healthy, `GET http://127.0.0.1:58321/auth/v1/health` returned 200, and an OPTIONS preflight from origin `http://127.0.0.1:3100` returned 200 with `Access-Control-Allow-Origin: *`. The served auth client hard-codes `http://127.0.0.1:58321`, and sign-in posts to `/auth/v1/token?grant_type=password`. Kong's last password grant was a desktop Chrome success at 10:29 UTC (HTTP 200). There is no password grant at the recording time, so the phone's request never arrived. Next.js listens on `127.0.0.1:3100` only. The checklist forwarded that port and not `58321`. On the phone, `127.0.0.1:58321` is the phone. The host is already `127.0.0.1`, so this is not a localhost spelling problem. The sign-in fields in the served page are `autocomplete` `email` and `current-password`. Chrome also offered to generate a password; that did not cause the fetch failure.
+
+No application code, credential, database, provider, or port-forward change was made. The checklist now tells the next attempt to forward `58321` to `127.0.0.1:58321` and not to forward `58322`. APP rows stay NOT RUN. NOT V1 COMPLETE.
+
+## Marketing video stage 2 stills — 2026-10-28 — Claude Code
+
+Owner decisions applied: a video-only fixture in an isolated worktree, a GH₵600 starting balance, the typed sentence "Abena paid me 200 cedis today.", Manrope headings with Inter amounts, the People row as the answer, and the logo with "One less thing to keep in your head." (no URL or pricing). Worktree `../CashNarra-video-capture`, detached at `0c80f64`. Its patch is in `marketing/video/repayment-pilot/capture/video-fixture.patch`: the fixture leaves out Abena's seeded GH₵200, and the mock reader accepts the one sentence. It ran `next dev --webpack` on port 3200 with no env file (Turbopack refuses the junctioned node_modules). Edge headless, 390×844 at 3×, fresh demo workspace.
+
+- PASS: People before shows Abena GH₵600.00.
+- PASS: `/api/understand` returned one receivable_payment, 200.00, against opening-abena. Review showed "1 proposed record · not saved yet", the record and "Save this record".
+- PASS: `/api/workspaces` returned a receipt (revision 3, the proposed record id). Only after that: "Saved · records confirmed" and "Abena now owes you GH₵400.00."
+- PASS: People after shows GH₵400.00, and still GH₵400.00 after a reload.
+- PASS: HyperFrames `check`: 0 errors, contrast 23/23. Two craft warnings (`first_frame_empty`, `dead_stretch`) are expected in a stills-only composition.
+- PASS (inspected now): the three stills at 390px wide. Content moved down and the end line rebroken after the first look.
+- EXTERNAL: what the live reader would propose for the sentence (no provider call).
+- NOT RUN: motion, render, and app test suites (no app code changed in this checkout).
+
+Reference notes corrected: Dana is character-led, and the phone-rise timings are measured only in Late admin and Memory Fading. Not committed. NOT V1 COMPLETE.
+
+## Marketing video stage 3 transition proof — 2026-10-28 — Claude Code
+
+The owner accepted the three stills and asked for refinements plus a six-second transition proof.
+
+- Done: the inset outlines on `#c-mark` and `#a-mark` were removed, leaving a restrained `#F0ECFC` multiply highlight. The captured borders are unchanged. Stills 2 and 3 were re-exported from the composition.
+- Done: in `answer.html` the answer, the relief line (1.7s) and the logo (2.6s) now enter one after another. The beat sheet's Beats 4 and 5 are now answer 12.4–17.6s, then the relief line alone 17.7–19.0s, then the logo, settled 19.4–22.0s.
+- Done: Beat 3 holds the row and Save button settled together for 1.2s (10.2–11.4s). Tap at 11.4s, receipt at about 11.8s. The viewer copy times were aligned; no wording changed.
+- New: `marketing/video/repayment-proof/` is a standalone HyperFrames project with `renders/proof_v01.mp4`. Composer pieces are cut from the genuine captures by `tools/prep_assets.py`. The typed line uses the field's 17px Inter at the captured position.
+- PASS: proof `check`: lint, runtime and layout 0/0, contrast 40/40. Two `line_unread` craft warnings were reviewed (per-character spans miscounted as words; the excerpt ends before the save).
+- PASS: stills `check`: 0 errors, contrast PASS. The same two stills-only craft warnings remain as before.
+- PASS: MP4 probe: H.264, 1080×1920, 30/1, 180 frames, 6.000s, video stream only.
+- PASS (inspected now): about 27 preview frames, including 4.10–4.35s at about 2-frame spacing, and 8 frames from the MP4. Every visible amount is 200. Three issues were corrected after the first look (see `PROOF.md`).
+- NOT RUN: a human viewing at full speed on a phone, sound, and the 22-second pilot.
+
+No app code, provider call, payment, journal, database or deployment change. Not committed. NOT V1 COMPLETE.
+
+
+## Marketing video transition proof v02 — 2026-10-28 — Claude Code
+
+The owner reviewed v01 and asked for one focused revision with three staging fixes. Fonts, colours, logo, copy and captures are preserved.
+
+- Done: the advert card and the question leave together (1.05–1.34s) before the composer card appears (1.36s). The composer has its own close-cropped card (632px tall), so there is no empty white panel.
+- Done: GH₵200 is marked in place (`#F0ECFC`) on the card at 0.45s, behind the typed "200" at 2.66s, and on the proposed row at 4.25s. The v01 travelling clip-path highlight is removed.
+- Done: a clean handoff. The composer is out by 3.98s, and Review comes in 3.98–4.23s. The live sentence never overlaps the captured bubble.
+- Timing: typing at 22 characters a second, 1.90–3.22s. Settled 3.22–3.65s, tap at 3.65s. Row and Save settled 4.45–6.00s (1.55s). Ends before Save.
+- Source: v01 is preserved as `compositions/proof_v01.html`, and v02 is `compositions/proof_v02.html` (mounted by `index.html`). A separate v01 root file was removed because it trips `multiple_root_compositions`.
+- PASS: `hyperframes check`: lint, runtime, layout and motion 0/0, contrast 40/40. Two `line_unread` craft warnings are reviewed (same causes as v01).
+- PASS: FFprobe: H.264, 1080×1920, 30/1, 180 decoded frames, 6.000s, no audio stream.
+- PASS (frame inspection, not playback): the first v02 render showed the outgoing headline over the composer heading at 1.33s. It was fixed and re-rendered. After that, all frames 1.13–1.43s and 3.83–4.07s, a 24-frame timestamped contact sheet and a 390px sheet show no doubled text, no advert graphic in a product card and no highlight crossing empty space. Every amount is 200.
+- NOT RUN: real-time human playback on a phone, sound, re-render of v01 from the renamed source, and the 22-second pilot. The journey verification was not repeated because the captures are unchanged.
+
+No app code, provider call, payment, journal, database or deployment change. Not committed. NOT V1 COMPLETE.
+
+## Marketing video silent pilot v01 — 2026-10-28 — Claude Code
+
+The owner's full-pilot brief: 22 seconds, silent, on the accepted stills and the v02 proof staging.
+
+- Done: `marketing/video/repayment-film/` has one root `index.html` and five scene sub-compositions.
+  - An earlier unlogged draft of these scenes, from 00:52–00:58, was already in the folder. It was kept and finished, not replaced.
+  - Change: the answer → relief handoff is a cut at 17.60s, replacing a fade-through that left near-empty frames.
+  - Change: all images decode synchronously.
+- Timing: question 0–4.0; tell 4.0–7.3 (typing 4.55–5.87, tap 7.00); check 7.3–12.4 (row and Save settled 1.98s, Save tap 10.00, saved confirmation 10.20–12.22); answer 12.4–17.6 (still 3.9s); relief line alone, then the logo, settled 19.15–22.00 (2.85s).
+- FAIL, then fixed: the first render (GPU capture) had UI images missing in many frames. The re-render with `--no-browser-gpu` was re-extracted, and no frame has a missing image.
+- PASS: `hyperframes check` (pinned 0.8.209): lint, runtime, layout and motion 0/0; contrast 45/45. Two warnings reviewed: `film_silent` (intended) and `line_unread` (counts characters as words).
+- PASS: FFprobe: H.264, 1080×1920, 30/1, 660 decoded frames, 22.000s, no audio stream.
+- PASS (frame inspection, not playback): all 660 MP4 frames. Inspected the contact sheet, close frames at all five handoffs, and 390px sheets. The amounts, the payment row and Save are legible.
+- NOT RUN: real-time human playback on a phone, and sound. No new capture, so the journey verification was not repeated. The live reader stays EXTERNAL.
+- Delivered: `renders/pilot_v01.mp4`, the contact sheet, three keyframes, review sheets and `PILOT_REVIEW.md`. The beat sheet was updated with the implemented timings.
+
+No app code, provider call, payment, journal, database or deployment change. Not committed. NOT V1 COMPLETE.
+
+## Marketing video pilot v02 sound pass — 2026-10-28 — Claude Code
+
+The owner accepted pilot v01's silent pacing and visuals and asked for one restrained sound pass and a small framing correction.
+
+- Preserved: the v01 editable source is frozen in `marketing/video/repayment-film/source/pilot_v01/`. Its `SHA256SUMS.txt` verifies the copies and the unchanged `renders/pilot_v01.mp4`.
+- Done: the root `index.html` is the v02 editable source. It adds five `<audio>` tracks. The People card in `compositions/answer.html` is 95% of its v01 size, on the same centre and with the same 6% push-in. Nothing else changed.
+- Audio: original, synthesised locally with the Python standard library (`tools/sound/make_audio.py`, seed 20261028). No samples, paid services or network. Cues:
+  - pad and felt-piano bed, resolving at the answer (12.40) and fading out by 21.80;
+  - 30 key ticks during the typing;
+  - taps at 7.033 and 10.033;
+  - a soft confirmation at 10.233, one frame after the first saved frame (306).
+- FAIL, then fixed: two renders with `--no-browser-gpu` and the default 5 workers raised `media_readiness_timeout` for every image. The second dropped Review, saved and People card images in about 60% of frames from 7.30s. The delivery uses `--no-browser-gpu -w 1`: no warnings, no blank frames, and frames identical across two renders.
+- PASS: `hyperframes check` (0.8.209). Lint, runtime, layout, motion and audio 0/0; contrast 45/45; one known `line_unread` warning.
+- PASS: FFprobe. 1080×1920, 30/1, 660 decoded frames, 22.000s, AAC 48 kHz stereo present. The AAC priming of 1,024 samples is trimmed by the edit list, giving 22.000s decoded.
+- PASS (measured): −16.0 LUFS integrated, −3.9 dBTP, 0 clipped samples, no unexplained clicks. The only silence is the planned tail, 21.70–22.00.
+- PASS (automated analysis of decoded audio): 0 lag against the reference mix, all 30 ticks and both taps detected on time, and nothing before the saved frame.
+- PASS (frame inspection of MP4 frames): taps, confirmation, answer and ending inspected. The People card margins are at least 57px at the full push-in (31px in v01). Non-answer frames match v01.
+- NOT RUN: real-time listening by a person and phone playback. The mix was measured, not heard.
+- Delivered: `renders/pilot_v02_sound.mp4`, `assets/audio/`, `tools/sound/`, `AUDIO_NOTES.md`, `renders/review_v02/`, and an updated `PILOT_REVIEW.md`. `tools/contact_sheet.py` now accepts `FRAMES_DIR`.
+
+No app code, provider call, payment, journal, database or deployment change. Nothing uploaded. Not committed. NOT V1 COMPLETE.
+
+## Marketing video pilot v03 cinematic score — 2026-10-28 — Claude Code
+
+The owner found the v02 soundtrack bland and asked for a new musical approach that follows each moment, with the picture, copy, framing and timeline preserved.
+
+- Preserved: `marketing/video/repayment-film/source/pilot_v02/` freezes the v02 index, compositions, assets (including the v02 audio), tools and notes. `SHA256SUMS.txt` verifies 36 files plus `pilot_v01.mp4` and `pilot_v02_sound.mp4`. The v02 WAVs, `make_audio.py`, `AUDIO_NOTES.md` and both earlier MP4s are unchanged.
+- Asset search: no FluidSynth, SoX or MuseScore installed. Windows `gm.dls` was not used because its commercial-use rights are undocumented. The plugin's Pixabay SFX are licensed but are effects, not instruments. So the score is original local synthesis (`tools/sound/v03/score_v03.py`, numpy and scipy in a venv outside the repo, seed 20261031): a felt piano, a Karplus-Strong pizzicato, a bowed-string ensemble and light percussion. v02's ticks and taps are reused unchanged; the chime is replaced by an ensemble gesture at 10.2333.
+- Done: the root `index.html` now mounts `assets/audio/v03/` (score, confirm, typing, taps). The compositions are untouched.
+- FAIL, then fixed (pre-render): the first mix let the strings dominate by 10–20 dB and the check section nearly matched the answer. Buses were rebalanced. A limiter smoothing edge artefact was fixed. First render: the decoded audio started on a non-zero sample (pluck without an attack ramp). Fixed with a 1 ms ramp and re-rendered.
+- PASS: `hyperframes check` (0.8.209). All categories 0 errors; one known `line_unread` warning.
+- PASS: FFprobe. 1080×1920, 30/1, 660 decoded frames, 22.000s, AAC-LC 48 kHz stereo, 1,056,000 decoded samples.
+- PASS: all 660 decoded video frames are bit-identical to `pilot_v02_sound.mp4` (framemd5). Frame 306 is the first saved frame (frames 304–307 inspected).
+- PASS (measured on the MP4): −16.1 LUFS (numpy −16.05, loudnorm −16.5), −1.6 dBTP, 0 clipped samples, LRA 9.5 LU, mono −0.4 LU, L/R correlation 0.844.
+- PASS (automated analysis of decoded audio):
+  - 0 lag against the reference mix, and every cue within 0.35 ms;
+  - the 1.5 kHz-and-up band stays at −41 dBFS or lower until 10.2315 (pre-echo of the 10.2333 gesture, inside frame 306);
+  - click candidates only at intended onsets;
+  - silent from 21.866s.
+- PASS: render with `--no-browser-gpu -w 1`, 27s, no readiness warnings.
+- NOT RUN: listening by a person and phone playback. No claim is made that the score feels cinematic. The main risk is that the synthetic strings sound electronic.
+- Delivered: `renders/pilot_v03_cinematic.mp4`, `assets/audio/v03/` with stems, `tools/sound/v03/`, `AUDIO_NOTES_V03.md`, `renders/review_v03/`, and an updated `PILOT_REVIEW.md`.
+
+No app code, provider call, payment, journal, database or deployment change. Nothing uploaded. Not committed. NOT V1 COMPLETE.
+
+## Marketing video final cleanup and next-video plan — 2026-10-28 — Claude Code
+
+The owner accepted `marketing/video/repayment-film/renders/pilot_v02_sound.mp4` with its original v02 soundtrack and rejected v03.
+
+- Accepted MP4 SHA256 `0efb6c289739633070e5cccfb682a0617bd6f7e1116fac93c4c19f945ec1dae9`, recorded before cleanup and unchanged after it. It matches the v02 freeze record. Not re-encoded, renamed or moved.
+- Restored: root `index.html` and `PILOT_REVIEW.md` from `source/pilot_v02/`. PASS: all 36 v02 source, asset and tool files match the freeze record byte for byte. Afterwards `package.json` `render` gained `--no-browser-gpu -w 1 -o renders/pilot_v02_sound.mp4`, and `cues.json` sits in `tools/sound/out/`. New `SHA256SUMS.txt` and `FINAL.md`.
+- Removed (named paths only):
+  - the v03 render, score, stems, tools, notes and review images;
+  - `pilot_v01.mp4` and its contact sheet;
+  - `source/pilot_v01/` and `source/pilot_v02/`, after the check above;
+  - the keyframes, `renders/review/`, sound check outputs and `__pycache__`;
+  - the HyperFrames review, preview, check and snapshot artifacts in the film, still and proof projects;
+  - the proof renders and frames (`repayment-proof/renders/`) and `repayment-pilot/stills/`, after confirming no tool reads them.
+- Kept:
+  - `repayment-pilot/capture/` (journey evidence, capture script, fixture patch) and the pilot assets that `tools/prep_assets.py` reads;
+  - `repayment-proof/tools/prep_assets.py` and its source;
+  - `renders/review_v02/`;
+  - the style pack, references and reference frames;
+  - the capture worktree.
+- Retained because ownership is uncertain: `marketing/repayment-film.zip` (an 82-file pre-v01 snapshot, no renders), `.hyperframes/video-state.json`, and the Studio caches (`.thumbnails`, `.waveform-cache`), which a running preview regenerated during cleanup.
+- PASS: `hyperframes check` (0.8.209): 0 errors in every category; 1 craft warning, the known `line_unread` on the typed line.
+- PASS: every `src`/`url()` in the canonical composition resolves to an existing file.
+- PASS: FFprobe: 1080×1920, 30/1, 660 frames, 22.000s, H.264 + AAC.
+- NOT RUN: re-render (not needed; the source matches v02 by checksum). Listening by a person is still not recorded.
+- Next videos: `marketing/video/NEXT_VIDEOS.md` lists the five documented concepts. Recommended next: #4 "One story. Several records.", the only one the stock demo reader supports without a patch. Its captures are not yet verified.
+
+No app code, provider call, payment, journal, database or deployment change. Nothing rendered, uploaded or committed. NOT V1 COMPLETE.
+
+## Marketing film #4 "One story. Several records." first cut v01 — 2026-10-28 — Claude Code
+
+New project `marketing/video/several-records-film/`, built from the accepted repayment film's template, original v02 sound generator (re-timed) and ending. `repayment-film/` was not touched. The accepted MP4 SHA256 `0efb6c289739633070e5cccfb682a0617bd6f7e1116fac93c4c19f945ec1dae9` was recorded before the work and unchanged after it. Its render script was not run.
+
+- Journey (`capture/JOURNEY.md`, `capture/shots/journey-log.json`): in the capture worktree `../CashNarra-video-capture` at `0c80f64`, the repayment patch was reversed (empty status) for the run, then reapplied and verified byte-identical to `video-fixture.patch`. Demo mode, no provider, fresh fictional workspaces.
+  - PASS: the stock sample (252 characters) was submitted unchanged and gave "Save 8 records". The 8 proposed records were sale cash 900, sale MoMo 1,200, credit sale Kojo 300, stock cash 700, expense MoMo 80, transfer bank→MoMo 500, receivable payment Abena MoMo 200, and owner out cash 150.
+  - PASS: the store was unchanged before confirmation.
+  - PASS: the receipt read "Saved · records confirmed / Saved 8 records for 28 Oct 2026", +8 records, one receipt.
+  - PASS: the replayed save request added 0.
+  - PASS: the records persisted after reload.
+  - PASS: a repeated submission produced "Possible duplicate" and added 0.
+  - Finding: the demo pins Date of activity to 13 Oct, where the workspace already holds this sample (a genuine duplicate panel). The capture set the composer's date field to 28 Oct.
+  - EXTERNAL: live-reader interpretation (stock mock reader).
+- Film: 28.600 s, 858 frames, 1080×1920 at 30 fps. Scenes: question 0–3.2, tell 3.2–11.8, check 11.8–20.1, saved 20.1–24.4, ending 24.4–28.6.
+  - Four records are marked in place. The total of 8 is stated separately.
+  - Review and Save stay settled together for 2.18 s. The receipt is readable for 4.1 s. The relief line and logo stay settled together for 2.65 s.
+  - The film runs longer than 22 s so the complete genuine story stays readable.
+- PASS: `hyperframes check` 0.8.209 (0 errors, 0 warnings). PASS: FFprobe (1080×1920, 30/1, 858 decoded frames, 28.600 s, AAC stereo). PASS: −16.3 LUFS integrated, −3.8 dBTP. PASS (automated): no blank UI card in frames 96–731. PASS (frame inspection): contact sheet `renders/several_records_v01_contact_sheet.png` and close crops. NOT RUN: real-time playback and listening.
+- Render: `--no-browser-gpu -w 1`. The first render was replaced after an inset fix to the Review and receipt crops.
+
+No app code, provider call, payment, journal, database or deployment change. Nothing uploaded or committed. NOT V1 COMPLETE.
+
+## Marketing voiceover first cuts for both films — 2026-10-28 — Claude Code
+
+Voiceover added to the repayment film and to "One story. Several records." in one job. Outputs: `marketing/video/repayment-film/renders/repayment_voiceover_v01.mp4` and `marketing/video/several-records-film/renders/several_records_voiceover_v01.mp4`. Notes are in each folder's `VOICEOVER_REVIEW.md`.
+
+- **Originals preserved.** SHA256 of `pilot_v02_sound.mp4` (`0efb6c289739633070e5cccfb682a0617bd6f7e1116fac93c4c19f945ec1dae9`) and `several_records_v01.mp4` (`44bb7faf6d70068a5f2aae582c56c5665e84e0b37d7fe37fd8cb250b1511a4a3`) recorded before and after: identical. The accepted compositions and stems were not written; the repayment files still match `SHA256SUMS.txt`. No render command was run. The video streams were copied (`-c:v copy`) and only the audio was replaced.
+- **Speech tools inspected:**
+  - Windows SAPI/OneCore offers David, Zira and Mark (en-US, robotic), so they were rejected.
+  - The HyperFrames `tts` command uses Kokoro-82M, whose model files were already cached. It needed `kokoro-onnx` installed (PyPI, free) into a new venv outside the repo: `%LOCALAPPDATA%\CashNarraVideoTools\tts-venv`.
+  - Cloud TTS routes were not used: no new credentials or service connections.
+  - No Ghanaian voice is available. Used `af_heart` (American English, female, Apache-2.0), documented as such.
+- **Pronunciation:** phoneme overrides set cedis to `sˈiːdiz`, CashNarra to `kˈæʃnˌæɹə`, and Abena to `ɑbˈɛnɑ`. Nobody listened to them.
+- **Repayment:** the spoken Abena sentence was omitted (it needs about 3.6 s; the composer holds 3.3 s). "Then save." ends at 9.78, before the Save press at 10.00. The answer line runs 13.12–15.12. The brand ending finishes at 21.45.
+- **Several records:** every line is spoken. Composer lines finish at 8.95, leaving 2.4 s of quiet reading. "One story." starts on the Understand tap (11.36). "Then save." ends at 20.09. "All eight, saved." starts at 20.77, after saved frame 603. The ending finishes at 28.10.
+- **Mix:** built from the accepted stems at their cue times, not over the finished mix; the v03 score was not used.
+  - The bed dips by 12 dB under speech, with raised-cosine ramps, merged across gaps under 0.7 s. It dips 2–4 dB further under three lines where the bed swells.
+  - Typing and taps dip by 6 dB under speech.
+  - The confirmation onsets are untouched.
+  - Phrases are level-matched to −14 LUFS, with narration-only peak control (at most 2.0 / 4.0 dB).
+- **Tools:**
+  - each film has `tools/voiceover/{make_voice,mix_voiceover,verify_voiceover,asr_check}.py`, `voiceover_v01.json`, `index_voiceover_v01.html`, and `assets/audio/voiceover_v01/` (phrases, `narration_v01.wav`, dipped stems);
+  - cue sheets, reports and checksums are in `tools/voiceover/out/`.
+- PASS: ffprobe (1080×1920, 30/1, 22.000 s / 660 frames and 28.600 s / 858 frames, AAC stereo 48 kHz).
+- PASS: every decoded-frame MD5 matches its original, and the copied bitstream MD5s match.
+- PASS: ffmpeg ebur128 gives −16.0 LUFS for both, with true peak −3.6 and −2.9 dBTP.
+- PASS: audio aligned with the mix (0-sample lag), non-silent, silent final 150 ms.
+- PASS (automated): no self-overlap or cut-off; timing rules 8/8 and 10/10.
+- PASS (frame inspection): the sync-point contact sheets.
+- PASS: `hyperframes check` 0.8.209 on both versioned sources, run in temporary copies: 0 errors. The repayment film keeps its known `line_unread` warning.
+- PASS (automated speech recognition, faster-whisper small.en, offline, on the full mixes): all words match except "Cashnara/Cashnira" for CashNarra and "CDs" for cedis.
+- NOT RUN: listening by any person or agent. Natural delivery, accent and pronunciation as heard are unconfirmed.
+
+Mock-reader limitations are unchanged and are restated in both reviews. No app code, product capture, provider call, payment, journal, database or deployment change. Nothing uploaded or committed. NOT V1 COMPLETE.
+
+## Marketing conversational voice test v02 — 2026-10-28 — Claude Code
+
+The owner heard both v01 voiceovers as robotic. They approved the CashNarra and cedis pronunciation. Made one dry test before any film rebuild: `marketing/video/voice-tests/conversational_v02.wav`, with notes in `TEST_NOTES.md` and the tool `make_conversational_test.py`.
+
+- Same engine and voice: Kokoro-82M `af_heart`, local, speed 1.0. Same approved phonemes for CashNarra and cedis.
+- One connected take: the whole three-sentence script in a single inference, with no inserted pauses. It is phonemised in context, and only the two approved words are swapped.
+- No per-phrase levelling, compression, gating or limiting. Edge trim and fades only, plus one static gain to −3 dBFS peak. Duration 10.29 s (9.69 s of speech).
+- Found in v01 tools: per-sentence clips, per-word phonemising, picture-fitted gaps, per-phrase −14 LUFS matching and narration peak control. These are documented as likely contributors to the mechanical feel.
+- Engine limit recorded: Kokoro has no style or emotion control, only phonemes, voice vector and speed.
+- PASS: ffprobe (48 kHz, 24-bit, mono, 10.289 s).
+- NOT RUN: listening. No claim that it sounds better.
+- Films, sources, stems and renders untouched. No render, app change, provider call, payment or commit.
+
+## Marketing voiceover v02, both films — 2026-10-28 — Claude Code
+
+The owner listened to `marketing/video/voice-tests/conversational_v02.wav` and said it sounds okay. Its generation and processing method was applied to both films. The approval covers the test, not these new takes.
+
+- **Outputs:** `repayment-film/renders/repayment_voiceover_v02.mp4` (SHA256 `d2c8dff1…f75`) and `several-records-film/renders/several_records_voiceover_v02.mp4` (SHA256 `93a71196…dee`). Each folder also has `voiceover_v02.json`, `VOICEOVER_REVIEW_V02.md`, `assets/audio/voiceover_v02/` (takes, `narration_v02.wav`, dipped stems), `tools/voiceover/{make_voice_v02,mix_voiceover_v02}.py`, and `tools/voiceover/out/{takes,cues,mix,verify,asr}_v02.*` with `SHA256SUMS_voiceover_v02.txt`.
+- **Voice:**
+  - Kokoro `af_heart`, speed 1.0, one inference per section (5 takes per film).
+  - Phonemised in context with only the two approved swaps; `sentence_pause = clause_pause = 0`; edge trim and fades only.
+  - Repayment's question and answer takes are cut from the approved test at gaps under −73 dBFS, with its +3.29 dB removed.
+- **Scripts:** the brief's wording, unshortened. The several-records full checking paragraph fits at natural speed.
+- **Mix:**
+  - Accepted stems at their accepted cues.
+  - One static narration gain per film (+7.79 / +8.11 dB).
+  - Bed −12 dB per take, with 0.30 / 0.15 / 0.80 s ramps and a 1.2 s merge gap; extra dips only under their own take.
+  - No EQ, compression or gating.
+  - A narration-only transient trim, needed for −1 dBTP at −16 LUFS: repayment 0.76 dB for 6.5 ms; several records 0.58 / 0.57 / 3.92 dB, 22 ms in total (the largest on the "All" onset spike).
+- PASS: original MP4 SHA256s unchanged before and after (`0efb6c28…`, `44bb7faf…`, and both v01 voiceover MP4s). The approved test files are unchanged. `repayment-film/SHA256SUMS.txt` and both `SHA256SUMS_voiceover_v01.txt` verify.
+- PASS: ffprobe gives 1080×1920 at 30/1, 22.000 s / 660 frames and 28.600 s / 858 frames, AAC stereo 48 kHz. All decoded-frame MD5s and the copied bitstream MD5s match the originals.
+- PASS: ffmpeg ebur128 gives −16.0 LUFS and −1.1 dBTP for both (LRA 2.5 / 3.4 LU). The audio is non-silent and aligned with the mix (0-sample lag).
+- PASS (automated): timing rules 5/5 and 5/5. No overlap or truncation; the smallest gap between takes is 1.45 / 1.14 s. "Then save" ends before each Save press. "All eight, saved" starts at 20.77, after the first saved frame 603.
+- PASS (automated speech recognition, faster-whisper small.en, offline): every word matches except "Cashnara" for CashNarra and "CDs" for cedis.
+- NOT RUN: listening to either complete mix. NOT RUN: `hyperframes check`, because no v02 HTML source was made and the MP4 was muxed directly.
+- The before-checksum capture listed only 8 files (MP4s, the test and repayment index.html), because the pipe was truncated by `head`. The other protected files were checked against the existing checksum lists and their modification times.
+
+No picture render, app code, capture, mock-reader documentation, provider call, payment, publication or commit.
+
+## Marketing final cleanup and concepts #5, #1, #2 — 2026-10-28/29 — Claude Code
+
+Owner decision: both voiceover_v02 films are accepted. Each film is kept in a voiceover version and a voiceless version.
+
+### Protected exports
+
+- The four accepted MP4s have the same SHA256 before and after: `0efb6c28…1dae9`, `d2c8dff1…4bf75`, `44bb7faf…1a4a3` and `93a71196…e2dee`.
+- None was renamed, moved, re-encoded or re-rendered.
+
+### Cleanup (`repayment-film/` and `several-records-film/` only)
+
+Removed:
+
+- the voiceover v01 exports, with their takes, mixes, dipped stems, outputs, checksum lists, HTML and JSON specs, and v01 tools;
+- caches: pycache, thumbnails, waveform cache, preview and check artefacts.
+
+Kept, because the accepted tools reference them:
+
+- `voice-tests/conversational_v02.wav`: the repayment v02 takes read it. The v02 tools do not import the v01 tools.
+- `repayment-proof/tools/prep_assets.py`: still a dependency.
+
+Also:
+
+- `tools/safe_render.mjs` added; `npm run render` now uses it.
+- The mix tools' ACCEPTED list now includes both v02 names.
+- several-records gained a `FINAL.md`; the repayment `FINAL.md` was updated.
+
+### New first cuts
+
+| Film | Folder | Length | Frames | Journey |
+| --- | --- | --- | --- | --- |
+| #5 | `closing-habit-film/` | 26.0 s | 780 | Stock demo, 28 Oct |
+| #1 | `closing-time-film/` | 23.4 s | 702 | Mock-reader branch for one sentence, 28 Oct |
+| #2 | `head-ledger-film/` | 24.6 s | 738 | Stock unclear sample, 29 Oct |
+
+Each folder holds the voiceless and voiceover MP4s, a contact sheet, `capture/JOURNEY.md`, `REVIEW.md`, the editable source, the stems, the narration and the tools.
+
+### Journeys (capture worktree)
+
+PASS for all three:
+
+- the proposal and record kinds;
+- nothing saved before confirmation;
+- the receipt: the store gains N records and 1 receipt;
+- persistence after reload;
+- a replayed save adds nothing (#1 and #2; #5 relies on #4's check at the same commit).
+
+Per film:
+
+- **#5:** Home shows money in GH₵2,300, money out GH₵930, and owe-you GH₵800 (700 + 300 − 200).
+- **#1:** sale 600 into cash, sale 250 into MoMo, expense 120 from cash.
+- **#2:** the question "Which account paid for delivery?" The MoMo answer was saved as an expense of 80 from MoMo. The Money Story shows 2,300 in, 930 out, and "It is not profit".
+
+The worktree was restored to the repayment patch after each capture and checked byte for byte.
+
+### Checks
+
+PASS:
+
+- `hyperframes check`: 0 errors and 0 warnings for each film.
+- ffprobe and full decode.
+- Voiceless and voiceover versions: identical bitstream MD5 and decoded frames.
+- ebur128, voiceless: −16.3, −16.3 and −16.1 LUFS. Voiceover: −16.0 LUFS and −1.0 dBTP.
+- Speech recognition: no speech in the voiceless versions. Every voiceover take recognised, apart from the CashNarra spelling.
+- Timing rules: 6/6, 6/6 and 7/7.
+
+Two faults were found before delivery. Both were fixed and the films re-rendered:
+
+- The composer button looked disabled while words appeared (#5 and #1).
+- Three two-line headlines overlapped the "Fictional example" label (#2). The layout check did not flag this because overlap is allowed.
+
+Largest narration-only transient trim per film:
+
+- #5: 3.27 dB.
+- #1: 3.09 dB.
+- #2: 4.45 dB, on "asks".
+
+NOT RUN: listening, and full-speed phone playback.
+
+No app code changed in the main tree. No provider call, payment, publication or commit.
+
+## 29 October 2026 — Claude Code: male narration alternative for "Shop closed. Mind still open."
+
+One male alternative for the owner to compare with the female voiceover. Nothing was replaced.
+
+### What was made
+
+- **Output:** `marketing/video/closing-time-film/renders/closing_time_male_v01.mp4`, SHA256 `5dcf08e1…46b1`.
+- **Other files:**
+  - the standalone `assets/audio/voiceover_male_v01/narration_male_v01.wav`;
+  - the spec `voiceover_male_v01.json`;
+  - `tools/voiceover/out/{takes,cues,mix,verify,asr}_male_v01.*` and `SHA256SUMS_male_v01.txt`;
+  - `MALE_VOICE_REVIEW.md`.
+- **Voice:**
+  - Local Kokoro-82M, `am_michael`, American English. One voice: no blend, no pitch change, no paid service.
+  - The male English voices in the local model are `am_*` ×9 and `bm_*` ×4.
+  - `am_michael` was chosen from the installed HyperFrames TTS reference, not by listening.
+- **Method:** the accepted v02 method, with `make_voice_v02.py` and `mix_voiceover_v02.py` run unchanged.
+  - One connected take per scene, speed 1.0, no inserted pauses.
+  - The approved CashNarra phonemes.
+  - One static narration gain.
+  - The existing stems and dips.
+  - Video stream copied from `closing_time_voiceless_v01.mp4`.
+- **Script:** the wording and start times are unchanged.
+
+### Checks
+
+PASS:
+
+- 1080×1920, 30/1, 702 frames, 23.400 s.
+- Video bitstream MD5 and all 702 decoded frames identical to the voiceless v01.
+- ebur128: −16.0 LUFS, −1.0 dBTP.
+- Audio non-silent.
+- Timing rules 6/6. "Saved." starts at 13.33, after frame 390. The narration ends at 22.50. Smallest gap between takes 1.46 s.
+- Speech recognition matched every take, apart from the "Cashnara" spelling.
+- All 393 pre-existing files in the five film folders keep their checksums.
+
+Narration-only peak control was larger than in the female mix: 5.0 dB on the onset of "Check" and 4.0 dB on "Saved". It is flagged for listening.
+
+NOT RUN: listening, and full-speed phone playback.
+
+The repayment, several-records, closing-habit and head-ledger films were not touched. No app change, provider call, publication, cleanup or commit.
+
+## 29 October 2026 — Claude Code: character-led films A and B and the symbol ident (first cuts)
+
+Marketing work, outside Phase 08. The brief is `marketing/video/character-references/CashNarra_Character_Led_Films_Creative_Direction.md`. No earlier production job existed: there were no `mascot-ident/`, `day-in-life-film/` or `report-film/` folders.
+
+- **Ident** (`marketing/video/mascot-ident/`). The real logo SVG is inlined, with the symbol split at its second moveto into two acting halves. Sequence: notice → anticipate → nudge too far → pause → precise correction → settle into the exact lockup. Logo and line hold together for 2.8 s. Sound is original and synthesised.
+  - PASS: 270 frames, 9.000 s, identical picture in the sound and silent files.
+  - PASS: the settled logo matches the approved SVG (centroid agreement within 0.03 px).
+  - The level is −20.4 LUFS by design.
+- **Preflight.**
+  - New worktree `../CashNarra-video-day` (detached `0c80f64`). The video-only fixture patch is in `day-in-life-film/capture/video-day-fixture.patch`. Captured with Edge headless at 390×844 ×3.
+  - PASS: Review before Save for all 8 stories, 8 receipts, persistence after reload, summary figures, and the real PDF export (2 pages) reconciled line by line (`day-in-life-film/capture/JOURNEY.md`).
+  - EXTERNAL: live extraction (mocked).
+- **Assets** (`marketing/video/ama-assets/`). Cut-outs from both boards via local `hyperframes remove-background`, alpha repair, a head/body rig with pivots, an SVG shop/props/cast generator, and `AMA_RIG_SHEET_v01.jpg`. Limits are in its README.
+- **Day film** (77.5 s) and **report film** (56.5 s). Narration is 9 and 6 connected Kokoro `af_heart` takes at speed 1.0, using the v02 method plus name overrides (Ama, Abena). New arrangements use an unmodified copy of the accepted palette. Effects are sparse.
+  - PASS: one render per picture, with both audio versions muxed via `-c:v copy` (identical framemd5).
+  - PASS: −16.0 LUFS and ≤ −1.2 dBTP, with narration-only transient control as in the accepted v02 mix.
+  - PASS: HyperFrames check with 0 errors.
+  - PASS: frame inspection of the decoded contact sheets.
+  - NOT RUN: real-time playback and listening.
+- PASS: the accepted exports' SHA256s are unchanged before and after. No provider call, payment, database change, deployment, commit or upload.
+
+## 29 October 2026 — Claude Code: campaign v03 character films (first cuts)
+
+Marketing work, outside Phase 08. Brief: `marketing/video/campaign-production-v03/docs/CAMPAIGN_PRODUCTION_V03.md`. Run checkpoint: `marketing/video/campaign-runs/20261029-151456-v03-e12d9a/PRODUCTION_STATUS.json`. Index: `marketing/video/VIDEO_INDEX.md`.
+
+- **Voice preflight: BLOCKED.**
+  - The only transcription path is Groq, a metered external provider. `/api/transcribe` refuses demo workspaces.
+  - No already-authorised free-only path exists, so the Esi film "Say it while it's fresh." was not made. No flags were changed.
+- **Capture.**
+  - New worktree `../CashNarra-video-v03`, detached `0c80f64`, with the video-only `campaign-v03-kit/capture/v03-video-fixture.patch`.
+  - Openings come from `VIDEO_V03_SCENE`. The mock reader handles only the exact v03 stories. Dev server `--webpack` on :3230, stopped afterwards.
+  - PASS:
+    - Kofi: 3 records; in 900, out 240, net 660 "not profit".
+    - One-question: the real account question, MoMo, 1 record.
+    - Sena: 4 records; in 1,000, out 250, net 750, sales 1,200, owe 200.
+    - Ama: the real possible-duplicate warning, no second save, count stays 1.
+    - For each: nothing saved before Save, a genuine receipt, and persistence after reload.
+  - EXTERNAL: live extraction (mocked).
+  - App wording issue observed, not changed: Sena's story shows "Still owed through this date: GH₵0.00" beside "People owe you GH₵200.00".
+- **Films**, each as a voiceover/voiceless pair from one picture render:
+
+  | Film | Length | Voiceover | Voiceless |
+  | --- | --- | --- | --- |
+  | `two-evenings-film` v01 | 55.0 s | −16.1 LUFS / −1.4 dBTP | −16.0 / −1.4 |
+  | `clearer-picture-film` v02 (v01 superseded, kept) | 48.0 s | −16.2 / −1.4 | −16.0 / −1.5 |
+  | `one-question-film` v01 | 36.0 s | −16.1 / −1.0 | −16.0 / −1.4 |
+  | `already-recorded-film` v01 | 34.0 s | −16.0 / −1.4 | −16.0 / −1.3 |
+  | `different-days-film` v02 (v01 superseded, kept: Esi overlapped the mirror edge) | 32.0 s | −16.1 / −1.4 (v01 measurement, same mix) | −16.0 / −1.5 |
+
+- **Checks.** PASS:
+  - ffprobe geometry, 30 fps and decoded frames;
+  - identical framemd5 within each pair;
+  - `hyperframes check` ok;
+  - faster-whisper: voiced lines match the scripts, and voiceless files have no speech;
+  - frame inspection of snapshots and contact sheets.
+- **NOT RUN:** listening and real-time playback.
+- **Shared kit:** `marketing/video/campaign-v03-kit/`.
+  - Asset prep: plates fitted to 1080×1920, lamp-off lighting, close-up surfaces, cleaned masters, and Naa cut out locally.
+  - Picture builder, render guard (refuses protected and existing names), voice tool (accepted method plus a one-word MoMo swap), procedural foley/score/mix tool, delivery and verification.
+- **Integrity.** PASS:
+  - all 19 pre-existing protected exports are SHA256-identical after the run;
+  - the bundle checksums match.
+  - One unexplained metadata touch: `repayment-film/.hyperframes/video-state.json` (HyperFrames history bookkeeping, 15:51). No source or export there changed.
+- No provider call, payment, journal, database, deployment, commit, upload or main-app change.
+
+## 2026-10-29 — Marketing: "7:15. Two evenings." v04 performance repair, BLOCKED at the art gate (Claude Code)
+
+Outside Phase 08. Run directory: `marketing/video/campaign-runs/20261029-171750-performance-v04-97c628`. All work is in `marketing/video/two-evenings-film/revisions/v04/`.
+
+**FAIL: art-gate development check.**
+- Tool: `tools/rig_check.py`. Evidence: `dev-check/rig_check_v04.jpg`.
+- Method: a 2.5D forearm cut from `kofi_master_v01.png`, rotated about the elbow.
+- Defects: no grip (the hand is open), a gap at the elbow, a sideways in-plane swing instead of a forward lift, no expression change, and shirt behind the arm that was never painted.
+- No local image-generation or editing model is installed. Hosted generation is paid and not authorised. The turnaround board covers THINKING, CHECKING and FINISHED, but not the key action or the Naa cup exchange.
+- Following the brief, no v04 picture was rendered and no MP4 was exported.
+
+**Completed work:**
+- `PERFORMANCE_BLOCKER.md`: the exact pose, hand, expression and home-exchange assets needed; the recording cue sheet; the SFX plan (held until real contact frames exist); and a repair map for the other four films.
+- Candidate narration: `voiceover_v04.json` was run through the unchanged `campaign-v03-kit/tools/make_voice_v03.py` (Kokoro af_heart, speed 1.0, connected takes, approved swaps). Output is in `assets/audio/voiceover_v04/`. The opening is one connected take, the first and only one. The ending reuses the approved report-film take.
+
+**Checks:**
+- NOT RUN: listening. The narration is not auditioned.
+- NOT RUN: ASR on the v04 takes.
+- PASS: all 40 exports in the run's `exports-before.json` are SHA256-identical afterwards.
+- No kit, app, capture or v01 file was edited. No provider call, commit or deletion.
+
+## 2026-10-29 — Kofi "Two evenings" v05 performance repair (Claude Code, run 20261029-183237-performance-v05-fc1339)
+- Isolated source in marketing/video/two-evenings-film/revisions/v05/. Pose-based acting edit + CC0 foley + v04 candidate narration.
+- hyperframes check: PASS (warnings only). Mix loudness: PASS (-16.24/-16.07 LUFS, -1.4 dBTP). Delivered-file verification: see revisions/v05/tools/verify_v05.txt.
+- Listening: NOT RUN. Real-time playback: NOT RUN. Owner acceptance: NOT GIVEN. No commits, provider calls or app changes.
+
+## Published the working branch — 2026-10-29 — Cursor
+
+The user asked for GitHub to receive the current changes and for `marketing/video` to stay on this machine. The handoff, build log, and phone sign-in checklist are included. `main` stays at the earlier snapshot. NOT V1 COMPLETE.

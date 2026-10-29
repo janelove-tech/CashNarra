@@ -12,11 +12,17 @@ The server listens on this computer only, so the phone cannot open that address 
 2. On the phone, turn on Developer options and USB debugging.
 3. Connect the phone with a USB cable and accept the computer prompt.
 4. On the computer, open Chrome and go to `chrome://inspect/#devices`. Confirm the phone is listed.
-5. In Port forwarding, add port `3100` forwarded to `127.0.0.1:3100` and enable it.
+5. In Port forwarding, add both of these and enable forwarding:
+   - `3100` → `127.0.0.1:3100` (the CashNarra page)
+   - `58321` → `127.0.0.1:58321` (sign-in)
 6. On the phone, open Chrome and go to `http://127.0.0.1:3100`.
 7. On the public page, choose **Try an example**. That opens the fictional workspace. It does not create a customer account.
 
-If the phone shows a connection error, the forward is off or the computer server has stopped. Do not point the phone at a public host to get around that.
+The page and sign-in are different addresses. Next.js on port 3100 only serves the page. Sign in runs in the phone's browser and calls `http://127.0.0.1:58321/auth/v1/token?grant_type=password`. On the phone, `127.0.0.1` is the phone. A forward for 3100 does not carry that call. Without the 58321 forward, the form stays filled and Sign in shows "Failed to fetch". The same `127.0.0.1` host is already correct; changing it to `localhost` does not fix this.
+
+Leave database port `58322` unforwarded.
+
+If the phone cannot open the page, the 3100 forward is off or the computer server has stopped. If the page opens and sign-in says "Failed to fetch", the 58321 forward is off or the local account service has stopped. Do not point the phone at a public host to get around that.
 
 ## What to write down for every check
 
