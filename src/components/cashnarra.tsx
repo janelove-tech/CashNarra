@@ -122,6 +122,7 @@ export default function CashNarra() {
         : pageFromUrl(window.location.search),
     ),
     [loaded, setLoaded] = useState(false),
+    [openingFailed, setOpeningFailed] = useState(false),
     [error, setError] = useState(""),
     [status, setStatus] = useState(""),
     [receipt, setReceipt] = useState<{ page: string; message: string } | null>(
@@ -169,9 +170,12 @@ export default function CashNarra() {
     );
   const revisionRef = useRef(0),
     draftReady = useRef(false),
-    heading = useRef<HTMLHeadingElement>(null);
+    heading = useRef<HTMLHeadingElement>(null),
+    savedPanel = useRef<HTMLElement>(null);
   const [spaceSummaries, setSpaceSummaries] = useState<WorkspaceSummary[]>([]);
   const loadRevision = useRef(0);
+  // Reading positions stay in this tab and are scoped to the workspace.
+  const recordsPosition = useRef<Record<string, { top: number; recordId?: string }>>({});
   const w = spaces.find((w) => w.id === wid);
   const goal = w?.goals.find((g) => g.id === goalId);
   const refresh = useCallback(async (target: string) => {
@@ -180,7 +184,7 @@ export default function CashNarra() {
         cache: "no-store",
       }),
       data = await res.json();
-    if (!res.ok) throw new Error(data.error);
+    if (!res.ok) throw Object.assign(new Error(data.error), { session: res.status === 401 });
     const selectedId = data.workspaces.some(
       (x: WorkspaceSummary) => x.id === target,
     )
@@ -193,7 +197,7 @@ export default function CashNarra() {
         { cache: "no-store" },
       );
       const state = await response.json();
-      if (!response.ok) throw new Error(state.error);
+      if (!response.ok) throw Object.assign(new Error(state.error), { session: response.status === 401 });
       selected = state.workspace;
     }
     if (request !== loadRevision.current) return data;
@@ -220,7 +224,10 @@ export default function CashNarra() {
           setStoryDate("2026-10-13");
         }
       })
-      .catch((e) => setError(e.message))
+      .catch((e) => {
+        setOpeningFailed(!e.session);
+        if (e.session) setError("Sign in again to open your records.");
+      })
       .finally(() => setLoaded(true));
     if ("serviceWorker" in navigator)
       navigator.serviceWorker
@@ -344,8 +351,25 @@ export default function CashNarra() {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
   useEffect(() => {
-    heading.current?.focus();
-  }, [page]);
+    const frame = requestAnimationFrame(() => {
+      const position = recordsPosition.current[wid];
+      const row = page === "records" && position?.recordId
+        ? document.querySelector<HTMLElement>(`[data-record-id="${CSS.escape(position.recordId)}"]`)
+        : null;
+      const target = row ?? (page === "today" && lastSaved ? savedPanel.current : heading.current);
+      target?.focus({ preventScroll: true });
+      if (page === "records")
+        window.scrollTo({ top: position?.top ?? 0, behavior: "instant" });
+      else target?.scrollIntoView({ block: "start", behavior: "instant" });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [page, wid, lastSaved]);
+  useEffect(() => {
+    if (page !== "records" || modal || !wid) return;
+    const remember = () => { recordsPosition.current[wid] = { ...recordsPosition.current[wid], top: window.scrollY }; };
+    window.addEventListener("scroll", remember, { passive: true });
+    return () => window.removeEventListener("scroll", remember);
+  }, [page, wid, modal]);
   useEffect(() => {
     // "Tell", "Type your story" and the home-screen shortcut land in the box.
     if (page !== "today" || modal || !composeWanted.current) return;
@@ -480,9 +504,30 @@ export default function CashNarra() {
     setReceipt(null);
     setStatus((current) => (current.startsWith("Saved") ? "" : current));
   }
+  async function reopenRecords() {
+    setLoaded(false);
+    setOpeningFailed(false);
+    try {
+      const data = await refresh("");
+      if (data.demo) { setDate("2026-10-13"); setStoryDate("2026-10-13"); }
+    } catch (e) {
+      const session = (e as Error & { session?: boolean }).session;
+      setOpeningFailed(!session);
+      if (session) setError("Sign in again to open your records.");
+    }
+    finally { setLoaded(true); }
+  }
   function openComposer() {
     composeWanted.current = true;
     navigate("today");
+    requestAnimationFrame(() => {
+      const box = document.getElementById("today-story");
+      if (box instanceof HTMLTextAreaElement && !box.disabled) {
+        composeWanted.current = false;
+        box.focus({ preventScroll: true });
+        box.scrollIntoView({ block: "center" });
+      }
+    });
   }
   async function perform(operation: Operation) {
     if (retryOperation && retryOperation.key !== operation.key)
@@ -521,7 +566,12 @@ export default function CashNarra() {
       else if (!(e as Error & { rejected?: boolean }).rejected)
         setRetryOperation(operation);
       else setRetryOperation(null);
-      setError((e as Error).message);
+      const failure = e as Error & { rejected?: boolean; session?: boolean };
+      setError(failure.rejected || failure.session
+        ? failure.message
+        : operation.action === "batch"
+          ? "We couldn’t confirm the save. Your reviewed work is still here. Choose Check save result to check the original request safely."
+          : "We couldn’t confirm that change. The original request is still here. Choose Check change result to recover it safely.");
       throw e;
     } finally {
       setBusy(false);
@@ -694,6 +744,8 @@ export default function CashNarra() {
   async function recover() {
     if (!pending) return;
     setBusy(true);
+    setError("");
+    setStatus("Checking the original save…");
     try {
       const res = await fetch(
         `/api/workspaces?workspace=${encodeURIComponent(pending.workspaceId)}&request=${encodeURIComponent(pending.key)}`,
@@ -712,7 +764,10 @@ export default function CashNarra() {
         await saved(receipt);
       }
     } catch (e) {
-      setError((e as Error).message);
+      setStatus("Save not confirmed.");
+      setError((e as Error & { rejected?: boolean }).rejected
+        ? (e as Error).message
+        : "We still couldn’t confirm this save. Your reviewed work is kept here. Reconnect, then choose Check save result again. It uses the same request and won’t add the records twice.");
       if ((e as Error & { rejected?: boolean }).rejected) {
         setPending(null);
         await refresh(wid).catch(() => {});
@@ -863,6 +918,7 @@ export default function CashNarra() {
         onClick={() => {
           if (draft) manual(record);
           else {
+            if (page === "records") recordsPosition.current[wid] = { top: window.scrollY, recordId: record.id };
             setSelected(record as RecordEvent);
             setModal("detail");
           }
@@ -919,6 +975,14 @@ export default function CashNarra() {
     return (
       <main className={s.landing}>
         <h1>Opening your records…</h1>
+      </main>
+    );
+  if (openingFailed)
+    return (
+      <main className={s.landing}>
+        <h1>Your records couldn’t load.</h1>
+        <p role="alert">We couldn’t open your workspace. This does not mean your records are empty. Check your connection, then try again.</p>
+        <Button primary onClick={() => void reopenRecords()}>Try loading records again</Button>
       </main>
     );
   if (!owner)
@@ -1062,7 +1126,7 @@ export default function CashNarra() {
                     } catch {}
                   }}
                 >
-                  Recover original action
+                  {busy ? "Checking change…" : "Check change result"}
                 </Button>
               </div>
             )}
@@ -1130,7 +1194,7 @@ export default function CashNarra() {
                   <div className={s.page}>
                     <div className={s.pageMain}>
                       {lastSaved && savedRecords.length > 0 && (
-                        <section className={s.savedPanel} aria-label="Saved">
+                        <section className={s.savedPanel} aria-label="Saved" ref={savedPanel} tabIndex={-1}>
                           <h2>
                             Saved{" "}
                             {savedRecords.length === 1
@@ -1522,6 +1586,13 @@ export default function CashNarra() {
                   </div>
                 )}
                 {page === "review" && (
+                  <>
+                  {replaceIds.length > 0 && (
+                    <div className={s.actions}>
+                      <Button quiet onClick={() => navigate("records")}>Back to records</Button>
+                      <span className={s.hint}>Your correction draft stays here until you save or discard it.</span>
+                    </div>
+                  )}
                   <BatchReview
                     heading={heading}
                     questions={questions}
@@ -1682,6 +1753,7 @@ export default function CashNarra() {
                     onBack={openComposer}
                     onDiscard={() => setModal("discard")}
                   />
+                  </>
                 )}
                 {recordsPages.includes(page) && (
                   <>
@@ -1812,12 +1884,17 @@ export default function CashNarra() {
                           {rows(records, false, false)}
                         </section>
                       ))}
+                    <p className={s.hint}>
+                      {filtered.length} of {active.length} saved {active.length === 1 ? "record" : "records"} shown
+                      {accountFilter ? " · account filter applied" : " · all accounts"}.
+                    </p>
                     {!filtered.length && (
-                      <p className={s.empty}>
-                        {search || filter !== "all" || accountFilter || evidence
-                          ? "No records match these filters. Try another date or clear the filters."
-                          : "No records in this workspace yet. Missing activity is not treated as zero."}
-                      </p>
+                      <section className={s.empty} aria-label="Records result">
+                        <h2>{active.length ? "No matching records" : "No saved records yet"}</h2>
+                        <p>{active.length
+                          ? "Your saved records are still here. Change your search or use Reset filters to see them."
+                          : "Tell a money story or add a record when you’re ready. Missing activity does not mean zero."}</p>
+                      </section>
                     )}
                     <details>
                       <summary>Correction and removal history</summary>
@@ -1842,7 +1919,7 @@ export default function CashNarra() {
                     {page === "people" && (
                       <section className={s.debtGroup}>
                       {!obligations(w).some((o) => D(o.remaining).gt(0)) && (
-                        <p>Nothing is still owed.</p>
+                        <p>No unpaid balances in your saved records. Add any balances you haven’t recorded yet.</p>
                       )}
                       {(["receivable", "payable"] as const).map((direction) => {
                         const open = obligations(w).filter(
@@ -3904,3 +3981,4 @@ async function savedWorkspace(id: string) {
     throw new Error(body.error || "That workspace could not be opened.");
   return body.workspace;
 }
+

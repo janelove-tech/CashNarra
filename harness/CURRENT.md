@@ -1,6 +1,6 @@
 # CashNarra current development handoff
 
-Updated: 2026-10-29 — character-led day and report films plus symbol ident (first cuts); earlier: marketing film final cleanup, v02 accepted, three new first cuts (product handoff unchanged since 2026-10-23: first phone recording: sign-in never reaches the local account service)
+Updated: 2026-10-30 — bounded experience/recovery pass; prior update: 2026-10-29 — character-led day and report films plus symbol ident (first cuts); earlier: marketing film final cleanup, v02 accepted, three new first cuts (product handoff unchanged since 2026-10-23: first phone recording: sign-in never reaches the local account service)
 Prior update: 2026-10-21 — Claude Code, fresh UI and UX pass (after Cursor, publish the working branch)
 Branch: redesign/words-to-records, checked out at 020a6ae (same commit as local work/cashnarra-v1)
 Baseline: 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
@@ -9,6 +9,18 @@ Current HEAD: the commit containing this handoff; resolve with git rev-parse HEA
 Current phase: 08 — release verification; Phase 09 remains EXTERNAL
 Status: INCOMPLETE — review findings 1–23 and 25 are implemented in product code; 24 and 26 stay unmeasured
 Verdict: NOT V1 COMPLETE
+
+## Experience and recovery pass — 2026-10-30 (Codex)
+
+The owner approved the first experience batch after the discussion research. This is a bounded product change on `codex/experience-recovery-20261030`, based on `397256dd00ba7fbb35b86a79fd380b855fc1965f`. Both published working branches matched that baseline at the start. The earlier phase verdict and phone sign-in port handoff below remain in force.
+
+Implemented: distinct initial-load failure with a retry and separate sign-in handling; clearer unconfirmed-save recovery using the original request; saving/checking button feedback; focus on the confirmed saved result; same-page Tell/composer focus; retained Records reading position and original-row focus across a correction; an explicit Back to records action that retains the correction draft; saved result counts, no-match versus no-record copy, and scoped unpaid-balance wording.
+
+The separate public demo includes these shared components plus a guided prepared payment, a clearly named Voice preview, and protection against replacing/concatenating an unfinished story with another sample. The real app's recording path is unchanged. Purple brand assets, decimal ledger, journal rules, request identity, revisions and existing server behavior are unchanged.
+
+Evidence: the exact shared components build in the separate deterministic demo. Its 58 tests pass, including receipt recovery after a lost response and reload. Managed-browser desktop and 390×640 checks exercised prepared save/clarification, GH₵600 → GH₵400 after save, retained correction work, no-match/reset and return to the original visible Records row. No provider was called and no email was sent. Four focused main-app regression tests were added in `tests/e2e/experience-recovery.spec.ts` and syntax-checked. Full main-app typecheck/build/e2e are NOT RUN here because only the selected files were materialized, not a full runnable Next/Supabase checkout. Do not treat demo evidence as a full app release check.
+
+Next for this branch: run the repository's typecheck, build and focused e2e in the full checkout with the normal local demo services; inspect keyboard restoration, load failure, authorization failure and a lost save response. Keep the PR in draft until that evidence is recorded. This does not authorize a main-app production deployment or merge. Phase 08 remains INCOMPLETE; Phase 09 EXTERNAL; NOT V1 COMPLETE. The earlier phone port-forward check remains a separate outstanding item.
 
 ## Marketing: "7:15. Two evenings." v04 performance repair — 2026-10-29 (Claude Code)
 
@@ -393,3 +405,4 @@ External release work still requires one of these from the user:
 Do not invent consent, spend beyond the remaining allowance, enable production providers, push, deploy, or reset a database.
 
 INCOMPLETE — DO NOT TREAT AS PHASE COMPLETE.
+

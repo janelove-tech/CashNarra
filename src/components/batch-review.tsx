@@ -466,7 +466,7 @@ export default function BatchReview({
       <div className={`${s.actions} ${s.reviewActions}`}>
         {pending ? (
           <Button primary onClick={recover} disabled={busy}>
-            Check original save request
+            {busy ? "Checking save…" : "Check save result"}
           </Button>
         ) : (
           <Button
@@ -479,7 +479,7 @@ export default function BatchReview({
               (!events.length && !replaceIds.length)
             }
           >
-            {events.length === 1
+            {busy ? "Saving…" : events.length === 1
               ? "Save this record"
               : events.length
                 ? `Save ${events.length} records`
@@ -678,3 +678,4 @@ function BalanceCreate({
     </details>
   );
 }
+

@@ -209,7 +209,7 @@ export function RecordRow({
           ? ArrowUpRight
           : ArrowDownLeft;
   const row = (
-    <button className={s.row} onClick={onClick}>
+    <button className={s.row} data-record-id={record.id} onClick={onClick}>
       <span className={`${s.recordIcon} ${outgoing ? s.out : ""}`}>
         <Icon size={19} aria-hidden />
       </span>
@@ -256,3 +256,4 @@ export function RecordRow({
     </div>
   );
 }
+

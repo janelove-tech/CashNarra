@@ -296,6 +296,10 @@
   margin: 0 auto;
   padding: 28px 28px 72px;
 }
+.content h1,
+.savedPanel {
+  scroll-margin-top: 88px;
+}
 .page {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 300px;
@@ -1721,3 +1725,4 @@
   margin: 0;
   flex: 1 1 16em;
 }
+

@@ -1017,3 +1017,17 @@ Outside Phase 08. Run directory: `marketing/video/campaign-runs/20261029-171750-
 ## Published the working branch — 2026-10-29 — Cursor
 
 The user asked for GitHub to receive the current changes and for `marketing/video` to stay on this machine. The handoff, build log, and phone sign-in checklist are included. `main` stays at the earlier snapshot. NOT V1 COMPLETE.
+
+
+
+## Experience and recovery checkpoint — 2026-10-30
+
+Agent: Codex. Base: `397256dd00ba7fbb35b86a79fd380b855fc1965f`. Review branch: `codex/experience-recovery-20261030`.
+
+- Added retriable initial-load failure distinct from no saved records and no search matches. A 401 still leads to sign-in.
+- Clarified uncertain save/change recovery; retained the original request identity and existing receipt-first batch recovery. Added saving/checking feedback and focus on the confirmed result.
+- Retained Records scroll position and row focus by workspace in this tab. Added Back to records during correction without discarding the draft. Search/account/type/date filters retain their existing React state.
+- Added explicit saved-result counts and restricted the no-unpaid-balances statement to saved records.
+- Added four main-app regressions for failed initial load/retry, committed save with lost response, correction/filter/draft retention and no-match/reset. TypeScript syntax transform PASS. Main-app typecheck, Next build and e2e execution NOT RUN: this environment contains selected files, not the full runnable app. These remain required before merge.
+- Separate demo verification PASS: the exact modified shared components bundled successfully; 58 existing/new deterministic Node tests pass; Worker artifact validates after build. Managed browser: desktop and 390×640 prepared save/clarification, GH₵600 → GH₵400 only after save, voice-preview disclosure/draft preservation, correction return and no-match/reset. Original row focus restored visibly on the phone list. Broader physical-device, assistive-technology and main-app service testing remain unverified.
+- No live provider call, paid test, real email, production app write, database migration/reset, pricing change or shared-branch merge. Phase verdict unchanged: INCOMPLETE / NOT V1 COMPLETE.
