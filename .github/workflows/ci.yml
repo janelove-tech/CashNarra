@@ -58,7 +58,7 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run build
       - name: Test app layout, recovery and authorization boundaries
-        run: npx playwright test tests/e2e/public-sample.spec.ts tests/e2e/experience-recovery.spec.ts tests/e2e/security-boundaries.spec.ts tests/e2e/payment-export-context.spec.ts tests/e2e/layout-rhythm.spec.ts tests/e2e/dialog-states.spec.ts tests/e2e/trust-findings.spec.ts tests/e2e/contrast.spec.ts
+        run: npx playwright test tests/e2e/public-sample.spec.ts tests/e2e/experience-recovery.spec.ts tests/e2e/security-boundaries.spec.ts tests/e2e/payment-export-context.spec.ts tests/e2e/layout-rhythm.spec.ts tests/e2e/dialog-states.spec.ts tests/e2e/trust-findings.spec.ts tests/e2e/contrast.spec.ts tests/e2e/pricing-plans.spec.ts
       - name: Validate browser-generated recordings without a microphone or provider
         run: npx playwright test tests/e2e/recording.spec.ts --repeat-each=3
       - name: Report remaining release gates

@@ -1,0 +1,20 @@
+{
+  "version": "2026-10-31",
+  "regularPlusUsd": "4.00",
+  "plans": {
+    "free": {
+      "activeWorkspaces": 2,
+      "aiStoriesPerMonth": 30,
+      "voiceNotesPerDay": 3,
+      "voiceNoteSeconds": 60,
+      "reportPacksPerMonth": 2
+    },
+    "plus": {
+      "activeWorkspaces": 10,
+      "aiStoriesPerMonth": 300,
+      "voiceNotesPerDay": 3,
+      "voiceNoteSeconds": 120,
+      "reportPacksPerMonth": 30
+    }
+  }
+}

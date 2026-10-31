@@ -39,9 +39,9 @@ describe("public landing examples", () => {
     expect(offer.plans.map((plan) => plan.name)).toEqual(["Free", "Plus"]);
     expect(offer.plans[0].dollars).toBe("$0");
     expect(offer.plans[0].cedi).toBe("(GH₵0.00)");
-    expect(offer.plans[0].perks[0]).toBe("Unlimited financial records");
-    expect(offer.plans[1].dollars).toBe("$0.99");
-    expect(offer.plans[1].standard).toBe("$2.00");
+    expect(offer.plans[0].perks).toContain("Unlimited financial records");
+    expect(offer.plans[1].dollars).toBe("$4.00");
+    expect(offer.plans[1].standard).toBeNull();
     expect(offer.plans[1].cedi).toMatch(/≈ GH₵/);
     expect(offer.rateLabel).toMatch(/20 October 2026/);
     expect(offer.plans[1].href).toBe("/pricing/plus");

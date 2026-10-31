@@ -1,5 +1,7 @@
-export const FREE_VOICE_SECONDS = 60;
-export const PLUS_VOICE_SECONDS = 120;
+import launchPlans from "@/domain/launch-plans.json";
+
+export const FREE_VOICE_SECONDS = launchPlans.plans.free.voiceNoteSeconds;
+export const PLUS_VOICE_SECONDS = launchPlans.plans.plus.voiceNoteSeconds;
 export const RECORDING_SECONDS = FREE_VOICE_SECONDS;
 export const EVALUATION_RECORDING_SECONDS = 180;
 export const RECORDING_BYTES = 8 * 1024 * 1024;

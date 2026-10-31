@@ -124,13 +124,13 @@ it("uses one price decision for the page boundary and checkout", () => {
   const end = "2026-12-01T00:00:00.000Z";
   expect(offeredPrice(catalogue, "plus", start)).toMatchObject({
     available: true,
-    usd: "0.99",
+    usd: "2.99",
     campaignId: "plus-launch-2026-10-21",
   });
-  expect(offeredPrice(catalogue, "plus", beforeEnd).usd).toBe("0.99");
+  expect(offeredPrice(catalogue, "plus", beforeEnd).usd).toBe("2.99");
   expect(offeredPrice(catalogue, "plus", end)).toMatchObject({
     available: true,
-    usd: "2.00",
+    usd: "4.00",
     campaignId: null,
   });
   const drafted = shippedCatalogue();
@@ -152,9 +152,9 @@ it("locks an accepted quote when the rate or the campaign changes later", () => 
   const accepted = acceptQuote(open, at);
   const ended = endCampaign(catalogue, "plus-launch-2026-10-21");
   expect(planById(ended, "plus").purchasable).toBe(true);
-  expect(accepted.usdBenchmark).toBe("0.99");
-  expect(accepted.ghsAmount).toBe("11.50");
-  expect(lockedCediAmount(accepted, "99.9999")).toBe("11.50");
+  expect(accepted.usdBenchmark).toBe("2.99");
+  expect(accepted.ghsAmount).toBe("34.70");
+  expect(lockedCediAmount(accepted, "99.9999")).toBe("34.70");
   expect(() => acceptQuote(open, "2026-11-16T00:00:00.000Z")).toThrow(
     /expired/,
   );
@@ -219,13 +219,15 @@ it("shows the finished Free and Plus comparison and keeps Unlimited private", ()
   expect(preview.title).toBe("Choose your plan");
   expect(preview.plans.map((plan) => plan.name)).toEqual(["Free", "Plus"]);
   const plus = preview.plans[1];
-  expect(plus?.standardUsd).toBe("2.00");
-  expect(plus?.offerUsd).toBe("0.99");
+  expect(plus?.standardUsd).toBe("4.00");
+  expect(plus?.offerUsd).toBe("2.99");
   expect(preview.plans[0]?.priceLine).toBe("$0 a month");
-  expect(plus?.cediAmount).toBe("11.50");
-  expect(plus?.perks[0]?.headline).toBe("Unlimited financial records");
+  expect(plus?.cediAmount).toBe("34.70");
   expect(plus?.perks.map((perk) => perk.headline)).toContain(
-    "500 AI stories a month",
+    "Unlimited financial records",
+  );
+  expect(plus?.perks.map((perk) => perk.headline)).toContain(
+    "300 AI stories a month",
   );
   expect(plus?.perks.map((perk) => perk.headline)).toContain(
     "3 voice notes a day, up to 2 minutes each",
@@ -238,7 +240,7 @@ it("shows the finished Free and Plus comparison and keeps Unlimited private", ()
   );
   expect(withoutRate.plans[1]?.cediAmount).toBeNull();
   expect(withoutRate.rateLabel).toBe("Cedi estimate unavailable right now");
-  expect(withoutRate.plans[1]?.offerUsd).toBe("0.99");
+  expect(withoutRate.plans[1]?.offerUsd).toBe("2.99");
   const serialized = JSON.stringify(preview).toLowerCase();
   expect(serialized).not.toContain("5.99");
   expect(serialized).not.toContain("not for sale");
@@ -266,15 +268,11 @@ it("shows the finished Free and Plus comparison and keeps Unlimited private", ()
 });
 
 it("does not make a private plan purchasable by revealing it", () => {
-  const revealed = setPlanVisibility(
-    shippedCatalogue(),
-    "unlimited",
-    "public",
-  );
+  const revealed = setPlanVisibility(shippedCatalogue(), "unlimited", "public");
   expect(planById(revealed, "unlimited").purchasable).toBe(false);
-  expect(purchaseAllowed(revealed, "unlimited", "2026-11-01T00:00:00.000Z")).toBe(
-    false,
-  );
+  expect(
+    purchaseAllowed(revealed, "unlimited", "2026-11-01T00:00:00.000Z"),
+  ).toBe(false);
   const closed = closePlanToNewPurchases(sellablePlus(), "plus");
   expect(purchaseAllowed(closed, "plus", "2026-11-02T00:00:00.000Z")).toBe(
     false,
@@ -328,13 +326,14 @@ it("extends a 30-day pass once, and a failed payment keeps the price agreement",
   expect(renewed.currentPeriodId).toBe(first.currentPeriodId);
   expect(renewed.accessEndsAt).toBe("2027-01-01T00:00:00.000Z");
   expect(renewed.queuedPeriod?.startsAt).toBe(first.accessEndsAt);
-  expect(renewPass(renewed, { paymentId: "pay-2", quote: accepted, at }).accessEndsAt).toBe(
-    renewed.accessEndsAt,
-  );
+  expect(
+    renewPass(renewed, { paymentId: "pay-2", quote: accepted, at })
+      .accessEndsAt,
+  ).toBe(renewed.accessEndsAt);
   const paused = recordFailedPayment(renewed, "pay-3");
   expect(paused.status).toBe("paused");
   expect(paused.agreementId).toBe("agree-pass");
-  expect(agreements[0].usdBenchmark).toBe("0.99");
+  expect(agreements[0].usdBenchmark).toBe("2.99");
   expect(recordFailedPayment(paused, "pay-3").payments).toHaveLength(
     paused.payments.length,
   );
@@ -388,9 +387,9 @@ it("separates plan exhaustion from a provider incident and a disabled feature", 
   expect(messageFor("ai_exhausted", { reset: "1 November 2026" })).toContain(
     "this month's AI stories",
   );
-  expect(messageFor("voice_exhausted", { reset: "00:00 Accra time" })).toContain(
-    "today's 3 voice notes",
-  );
+  expect(
+    messageFor("voice_exhausted", { reset: "00:00 Accra time" }),
+  ).toContain("today's 3 voice notes");
   expect(messageFor("reports_exhausted")).toContain("CSV");
   expect(messageFor("voice_off")).toBe("Voice is not available yet.");
   expect(messageFor("voice_upstream")).toContain("busy right now");
@@ -502,7 +501,7 @@ it("describes each subscription state without granting Plus", () => {
     voiceEnabled: true,
   });
   expect(scheduled.title).toBe("Plus until 21 November 2026, then Free");
-  expect(scheduled.lines.join(" ")).toContain("496 of 500 AI stories left");
+  expect(scheduled.lines.join(" ")).toContain("296 of 300 AI stories left");
   const failed = subscriptionView({
     phase: "payment_failed",
     agreedUsd: "0.99",
@@ -518,15 +517,15 @@ it("describes each subscription state without granting Plus", () => {
   expect(failed.summary).not.toMatch(/paid|success/i);
 });
 
-it("keeps extra workspaces readable when Free allows three", () => {
+it("keeps extra workspaces readable when Free allows two", () => {
   expect(workspacesAfterFreeLimit(["a", "b"], [])).toEqual({
     active: ["a", "b"],
     readable: [],
   });
   expect(
-    workspacesAfterFreeLimit(["a", "b", "c", "d", "e"], ["a", "c", "e"]),
-  ).toEqual({ active: ["a", "c", "e"], readable: ["b", "d"] });
+    workspacesAfterFreeLimit(["a", "b", "c", "d", "e"], ["a", "c"]),
+  ).toEqual({ active: ["a", "c"], readable: ["b", "d", "e"] });
   expect(() => workspacesAfterFreeLimit(["a", "b", "c", "d"], ["a"])).toThrow(
-    /Choose 3 workspaces/,
+    /Choose 2 workspaces/,
   );
 });
