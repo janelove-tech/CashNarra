@@ -541,6 +541,34 @@
 }
 
 /* ---------- rows ---------- */
+.paymentContext {
+  overflow-wrap: anywhere;
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--cn-surface-subtle);
+}
+.paymentContext > p:first-child {
+  margin: 0;
+  font-weight: 600;
+}
+.paymentContext .hint {
+  margin-top: 6px;
+  font-size: 14px;
+}
+.exportSummary {
+  overflow-wrap: anywhere;
+  margin: 18px 0 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--cn-surface-subtle);
+  font-size: 14px;
+  line-height: 22px;
+}
+.exportSummary p {
+  margin: 6px 0 0;
+}
+
 .row {
   display: flex;
   flex-wrap: wrap;
