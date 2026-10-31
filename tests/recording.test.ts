@@ -7,7 +7,13 @@ function el(id: number[], payload: number[]) {
     length < 127 ? [128 | length] : [0x40 | (length >> 8), length & 255];
   return [...id, ...size, ...payload];
 }
-function clip(count: number, step = 20, flags = 0, type = 2) {
+function clip(
+  count: number,
+  step: number | number[] = 20,
+  flags = 0,
+  type = 2,
+  payloads?: number[][],
+) {
   const text = (v: string) => [...new TextEncoder().encode(v)];
   const ebml = el([0x1a, 0x45, 0xdf, 0xa3], el([0x42, 0x82], text("webm")));
   const tracks = el(
@@ -22,13 +28,13 @@ function clip(count: number, step = 20, flags = 0, type = 2) {
     ),
   );
   const blocks = Array.from({ length: count }, (_, i) => {
-    const t = i * step;
+    const t = typeof step === "number" ? i * step : step[i];
     // CELT 20 ms, one frame per packet. A separate cluster keeps int16 offsets bounded.
     return el(
       [0x1f, 0x43, 0xb6, 0x75],
       [
         ...el([0xe7], [(t >> 16) & 255, (t >> 8) & 255, t & 255]),
-        ...el([0xa3], [0x81, 0, 0, flags, 0x98, 0]),
+        ...el([0xa3], [0x81, 0, 0, flags, ...(payloads?.[i] ?? [0x98, 0])]),
       ],
     );
   }).flat();
@@ -46,9 +52,7 @@ function clip(count: number, step = 20, flags = 0, type = 2) {
 it("counts Opus packets even without duration metadata", () => {
   expect(validateRecording(clip(50), "audio/webm")).toBe(1);
   expect(validateRecording(clip(3000), "audio/webm")).toBe(60);
-  expect(
-    validateRecording(clip(9000), "audio/webm", 180),
-  ).toBe(180);
+  expect(validateRecording(clip(9000), "audio/webm", 180)).toBe(180);
   expect(validateRecording(clip(50, 17), "audio/webm")).toBe(1);
 });
 it("rejects excess packet duration and gaps beyond the limit", () => {
@@ -62,12 +66,53 @@ it("rejects excess packet duration and gaps beyond the limit", () => {
     "two minutes",
   );
 });
-it("fails closed on overlapping timing, lacing, video and unsupported containers", () => {
+it("fails closed on repeated timing, lacing, video and unsupported containers", () => {
   expect(() => validateRecording(clip(50, 0), "audio/webm")).toThrow();
   expect(() => validateRecording(clip(1, 20, 2), "audio/webm")).toThrow();
   expect(() => validateRecording(clip(1, 20, 0, 1), "audio/webm")).toThrow();
   expect(() => validateRecording(clip(1), "audio/mp4")).toThrow();
   expect(() => validateRecording(clip(1).slice(0, -1), "audio/webm")).toThrow();
+});
+it("accepts browser packet cadence without shortening the audio duration", () => {
+  // A captured Chromium cadence: three 20 ms Opus frames per packet, with
+  // capture timestamps that alternate around the nominal 60 ms interval.
+  const stamps = [0, 64, 128, 180, 244, 308, 360];
+  const packets = stamps.map(() => [0x9b, 3, 0, 0, 0]);
+  expect(
+    validateRecording(clip(stamps.length, stamps, 0, 2, packets), "audio/webm"),
+  ).toBe(0.42);
+});
+it("cannot hide excess audio by compressing the container timestamps", () => {
+  expect(validateRecording(clip(3000, 1), "audio/webm")).toBe(60);
+  expect(() => validateRecording(clip(3001, 1), "audio/webm")).toThrow(
+    "one minute",
+  );
+  expect(validateRecording(clip(6000, 1), "audio/webm", 120)).toBe(120);
+  expect(() => validateRecording(clip(6001, 1), "audio/webm", 120)).toThrow(
+    "two minutes",
+  );
+});
+it("rejects backward and repeated timestamps even for very short packets", () => {
+  expect(() => validateRecording(clip(3, [0, 25, 24]), "audio/webm")).toThrow();
+  const shortPackets = [
+    [0x80, 0],
+    [0x80, 0],
+  ]; // Two 2.5 ms Opus packets.
+  expect(() =>
+    validateRecording(clip(2, [0, 0], 0, 2, shortPackets), "audio/webm"),
+  ).toThrow();
+});
+it("retains the latest packet end when later packets have shorter durations", () => {
+  const packets = [
+    [0x9b, 6, 0, 0, 0, 0, 0, 0],
+    [0x80, 0],
+  ];
+  expect(
+    validateRecording(clip(2, [59000, 59001], 0, 2, packets), "audio/webm"),
+  ).toBe(59.12);
+  expect(() =>
+    validateRecording(clip(2, [59900, 59901], 0, 2, packets), "audio/webm"),
+  ).toThrow("one minute");
 });
 it("uses one minute unless the local server override asks for Plus length", () => {
   const local = {

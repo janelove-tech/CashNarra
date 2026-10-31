@@ -48,7 +48,8 @@ export function validateRecording(
     tracks = 0,
     packets = 0,
     totalMs = 0,
-    lastEndMs = 0;
+    timelineEndMs = 0;
+  let lastStartMs: number | null = null;
   let ebml = false,
     segment = false,
     docType = false;
@@ -152,15 +153,23 @@ export function validateRecording(
                 throw invalid();
               const startMs =
                 ((clusterTime + view.getInt16(header)) * scale) / 1000000;
-              // Chromium packet timestamps can jitter by a few milliseconds.
-              // Decoded packet duration is independently summed and capped below.
-              if (startMs < 0 || (packets && startMs < lastEndMs - 5))
+              // Capture timestamps can jitter relative to the Opus packet cadence.
+              // Require forward order; count every packet's full duration below
+              // so compressed timestamps cannot shorten the enforced limit.
+              if (
+                startMs < 0 ||
+                (lastStartMs !== null && startMs <= lastStartMs)
+              )
                 throw invalid();
               const duration = packetDuration(header + 3, q);
               totalMs += duration;
-              lastEndMs = startMs + duration;
+              lastStartMs = startMs;
+              timelineEndMs = Math.max(timelineEndMs, startMs + duration);
               packets++;
-              if (totalMs > maxSeconds * 1000 || lastEndMs > maxSeconds * 1000)
+              if (
+                totalMs > maxSeconds * 1000 ||
+                timelineEndMs > maxSeconds * 1000
+              )
                 throw new Error(
                   maxSeconds > FREE_VOICE_SECONDS
                     ? "That recording is over two minutes. Try a shorter clip."
@@ -173,5 +182,5 @@ export function validateRecording(
     } else if (id !== 0xec && id !== 0xbf) throw invalid();
   });
   if (!segment || !packets || totalMs <= 0) throw invalid();
-  return Math.max(totalMs, lastEndMs) / 1000;
+  return Math.max(totalMs, timelineEndMs) / 1000;
 }

@@ -59,11 +59,14 @@ jobs:
       - run: npm run build
       - name: Test app layout, recovery and authorization boundaries
         run: npx playwright test tests/e2e/public-sample.spec.ts tests/e2e/experience-recovery.spec.ts tests/e2e/security-boundaries.spec.ts tests/e2e/payment-export-context.spec.ts tests/e2e/layout-rhythm.spec.ts tests/e2e/dialog-states.spec.ts tests/e2e/trust-findings.spec.ts tests/e2e/contrast.spec.ts
+      - name: Validate browser-generated recordings without a microphone or provider
+        run: npx playwright test tests/e2e/recording.spec.ts --repeat-each=3
       - name: Report remaining release gates
         if: always()
         run: |
           echo '### CashNarra release verification scope' >> "$GITHUB_STEP_SUMMARY"
           echo '- Browser smoke: public example, synthetic recovery, origin checks, payment entry, export scope, Records context, app layout, dialog validation/recovery, hidden amounts and text contrast (see job result).' >> "$GITHUB_STEP_SUMMARY"
+          echo '- Generated recording format: real MediaRecorder/Opus, repeated three times; synthetic audio only, no microphone or transcription provider (see job result).' >> "$GITHUB_STEP_SUMMARY"
           echo '- Supabase Auth/RLS service integration: NOT RUN by this job (requires isolated local Supabase).' >> "$GITHUB_STEP_SUMMARY"
           echo '- Physical Android, human screen reader and representative voice: EXTERNAL.' >> "$GITHUB_STEP_SUMMARY"
           echo '- Phase 08 remains INCOMPLETE; Phase 09 remains EXTERNAL.' >> "$GITHUB_STEP_SUMMARY"
