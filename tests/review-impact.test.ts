@@ -1,7 +1,10 @@
 import { expect, it } from "vitest";
 import { event, fixture } from "../src/domain/fixture";
 import { applyBatch, report } from "../src/domain/ledger";
-import { reviewImpacts } from "../src/domain/review-impact";
+import {
+  reviewImpacts,
+  settlementRemainder,
+} from "../src/domain/review-impact";
 import type { Batch, Workspace } from "../src/domain/types";
 
 function batch(
@@ -139,4 +142,93 @@ it("keeps a specific balance distinct from another debt to the same person", () 
     before: "400.00",
     after: "200.00",
   });
+});
+
+it("offers the current full balance without filling or posting the proposed payment", () => {
+  const w = fixture(),
+    before = structuredClone(w);
+  const payment = event("receivable_payment", "", "Abena payment", null, {
+    party: "Abena",
+    obligationId: "opening-abena",
+  });
+  expect(settlementRemainder(w, batch(w, []), payment)).toBe("400.00");
+  expect(payment.amount).toBe("");
+  expect(payment.accountId).toBeNull();
+  expect(w).toEqual(before);
+});
+
+it("deducts other valid draft payments from a full settlement choice", () => {
+  const w = fixture();
+  const first = event("receivable_payment", "50.00", "First payment", "cash", {
+    party: "Abena",
+    obligationId: "opening-abena",
+    date: "2026-10-14",
+  });
+  const editing = event("receivable_payment", "", "Second payment", null, {
+    party: "Abena",
+    obligationId: "opening-abena",
+    date: "2026-10-14",
+  });
+  expect(settlementRemainder(w, batch(w, [first, editing]), editing)).toBe(
+    "350.00",
+  );
+});
+
+it("restores the original payment's effect before offering a correction's full amount", () => {
+  const w = fixture();
+  const original = w.records.find(
+    (record) => record.kind === "receivable_payment",
+  )!;
+  const editing = { ...original, id: crypto.randomUUID() };
+  expect(
+    settlementRemainder(w, batch(w, [editing], [original.id]), editing),
+  ).toBe("600.00");
+  expect(original.amount).toBe("200.00");
+});
+
+it("offers the amount of a valid proposed earlier balance without posting it", () => {
+  const w = fixture();
+  const opening = event("opening_receivable", "100.00", "Mabel opening", null, {
+    party: "Mabel",
+    date: "2026-10-12",
+  });
+  const payment = event("receivable_payment", "", "Mabel payment", null, {
+    party: "Mabel",
+    obligationId: opening.id,
+  });
+  expect(settlementRemainder(w, batch(w, [opening, payment]), payment)).toBe(
+    "100.00",
+  );
+  expect(w.records.some((record) => record.id === opening.id)).toBe(false);
+});
+
+it("does not offer a full amount when other draft changes are invalid", () => {
+  const w = fixture();
+  const editing = event("receivable_payment", "", "Payment", null, {
+    obligationId: "opening-abena",
+  });
+  const excessive = event(
+    "receivable_payment",
+    "401.00",
+    "Overpayment",
+    "cash",
+    { party: "Abena", obligationId: "opening-abena" },
+  );
+  expect(
+    settlementRemainder(w, batch(w, [excessive, editing]), editing),
+  ).toBeNull();
+});
+
+it("keeps supplier settlements distinct from loan-principal repayments", () => {
+  const w = fixture();
+  const payment = event("loan_principal", "", "Repayment", null, {
+    obligationId: "opening-supplier",
+  });
+  expect(settlementRemainder(w, batch(w, []), payment)).toBeNull();
+  expect(
+    settlementRemainder(w, batch(w, []), {
+      ...payment,
+      obligationId: "opening-loan",
+    }),
+  ).toBe("1000.00");
 });

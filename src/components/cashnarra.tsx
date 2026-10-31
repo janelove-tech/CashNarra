@@ -29,6 +29,7 @@ import { planUsageModel } from "@/domain/customer-plans";
 import ReportTrace from "./report-trace";
 import WorkspaceTools from "./workspace-tools";
 import DraftBackup from "./draft-backup";
+import { RecordsTabContext } from "@/lib/records-context";
 import StoryLog from "./story-log";
 import { draftBackup } from "@/lib/draft-backup";
 import { debtDate } from "@/domain/planning";
@@ -176,6 +177,8 @@ export default function CashNarra() {
   const loadRevision = useRef(0);
   // Reading positions stay in this tab and are scoped to the workspace.
   const recordsPosition = useRef<Record<string, { top: number; recordId?: string }>>({});
+  const [recordsTab] = useState(() => new RecordsTabContext());
+  const [recordsContextUnavailable, setRecordsContextUnavailable] = useState(false);
   const w = spaces.find((w) => w.id === wid);
   const goal = w?.goals.find((g) => g.id === goalId);
   const refresh = useCallback(async (target: string) => {
@@ -185,11 +188,13 @@ export default function CashNarra() {
       }),
       data = await res.json();
     if (!res.ok) throw Object.assign(new Error(data.error), { session: res.status === 401 });
+    if (request !== loadRevision.current) return data;
+    const allowed = data.workspaces.map((workspace: WorkspaceSummary) => workspace.id);
     const selectedId = data.workspaces.some(
       (x: WorkspaceSummary) => x.id === target,
     )
       ? target
-      : (data.workspaces[0]?.id ?? "");
+      : (recordsTab.preferredWorkspace(data.userId, allowed) || data.workspaces[0]?.id || "");
     let selected: Workspace | null = null;
     if (selectedId) {
       const response = await fetch(
@@ -201,6 +206,17 @@ export default function CashNarra() {
       selected = state.workspace;
     }
     if (request !== loadRevision.current) return data;
+    if (selected) {
+      const switched = !recordsTab.matches(data.userId, selected.id);
+      const context = recordsTab.activate(data.userId, selected, allowed);
+      if (switched) {
+        setSearch(context.search);
+        setFilter(context.filter);
+        setAccountFilter(context.accountId);
+        setEvidence(context.range);
+        recordsPosition.current[selected.id] = { top: context.top, recordId: context.recordId };
+      }
+    } else recordsTab.clear();
     setSpaceSummaries(data.workspaces);
     setSpaces(selected ? [selected] : []);
     setOwner(data.userId);
@@ -213,7 +229,7 @@ export default function CashNarra() {
     );
     setWid(selectedId);
     return data;
-  }, []);
+  }, [recordsTab]);
   const composeWanted = useRef(false);
   useEffect(() => {
     Promise.resolve()
@@ -226,7 +242,10 @@ export default function CashNarra() {
       })
       .catch((e) => {
         setOpeningFailed(!e.session);
-        if (e.session) setError("Sign in again to open your records.");
+        if (e.session) {
+          recordsTab.clear();
+          setError("Sign in again to open your records.");
+        }
       })
       .finally(() => setLoaded(true));
     if ("serviceWorker" in navigator)
@@ -249,7 +268,7 @@ export default function CashNarra() {
           );
         })
         .catch(() => {});
-  }, [refresh]);
+  }, [refresh, recordsTab]);
   useEffect(() => {
     // Installed launches and the browser's own install offer.
     const media = window.matchMedia("(display-mode: standalone)");
@@ -328,6 +347,8 @@ export default function CashNarra() {
   useEffect(() => {
     const channel = new BroadcastChannel("cashnarra-session");
     channel.onmessage = () => {
+      recordsTab.clear();
+      recordsPosition.current = {};
       loadRevision.current++;
       setSpaceSummaries([]);
       revisionRef.current++;
@@ -346,7 +367,7 @@ export default function CashNarra() {
       setRetryOperation(null);
     };
     return () => channel.close();
-  }, []);
+  }, [recordsTab]);
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
@@ -368,19 +389,45 @@ export default function CashNarra() {
     return () => cancelAnimationFrame(frame);
   }, [page, wid, lastSaved]);
   useEffect(() => {
-    if (page !== "records" || modal || !wid) return;
-    const remember = () => { recordsPosition.current[wid] = { ...recordsPosition.current[wid], top: window.scrollY }; };
+    if (!owner || !wid || !w || w.id !== wid) return;
+    let cancelled = false;
+    Promise.resolve().then(() => {
+      if (cancelled) return;
+      const kept = recordsTab.save(owner, wid, { search, filter, accountId: accountFilter, range: evidence, top: recordsPosition.current[wid]?.top ?? 0, recordId: recordsPosition.current[wid]?.recordId });
+      setRecordsContextUnavailable(!kept);
+    });
+    return () => { cancelled = true; };
+  }, [owner, wid, w, search, filter, accountFilter, evidence, page, recordsTab]);
+  useEffect(() => {
+    if (page !== "records" || modal || !owner || !wid) return;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const save = () => {
+      recordsTab.save(owner, wid, { search, filter, accountId: accountFilter, range: evidence, top: recordsPosition.current[wid]?.top ?? 0, recordId: recordsPosition.current[wid]?.recordId });
+    };
+    const remember = () => {
+      recordsPosition.current[wid] = { ...recordsPosition.current[wid], top: window.scrollY };
+      clearTimeout(timer);
+      timer = setTimeout(save, 200);
+    };
+    const leaving = () => { remember(); clearTimeout(timer); save(); };
     window.addEventListener("scroll", remember, { passive: true });
-    return () => window.removeEventListener("scroll", remember);
-  }, [page, wid, modal]);
+    window.addEventListener("pagehide", leaving);
+    return () => {
+      clearTimeout(timer);
+      save();
+      window.removeEventListener("scroll", remember);
+      window.removeEventListener("pagehide", leaving);
+    };
+  }, [page, wid, modal, owner, search, filter, accountFilter, evidence, recordsTab]);
   useEffect(() => {
     if (page === "records" && modal === "detail" && selected) {
       recordsPosition.current[wid] = {
         top: window.scrollY,
         recordId: selected.id,
       };
+      recordsTab.save(owner, wid, { search, filter, accountId: accountFilter, range: evidence, top: window.scrollY, recordId: selected.id });
     }
-  }, [page, wid, modal, selected]);
+  }, [page, wid, modal, selected, owner, search, filter, accountFilter, evidence, recordsTab]);
   useEffect(() => {
     // "Tell", "Type your story" and the home-screen shortcut land in the box.
     if (page !== "today" || modal || !composeWanted.current) return;
@@ -527,7 +574,7 @@ export default function CashNarra() {
     } catch (e) {
       const session = (e as Error & { session?: boolean }).session;
       setOpeningFailed(!session);
-      if (session) setError("Sign in again to open your records.");
+      if (session) { recordsTab.clear(); setError("Sign in again to open your records."); }
     }
     finally { setLoaded(true); }
   }
@@ -558,6 +605,7 @@ export default function CashNarra() {
         }),
         data = await res.json();
       if (res.status === 401) {
+        recordsTab.clear();
         const failure = new Error(
           "Sign in again to finish. This draft stays here until you sign in again.",
         ) as Error & { rejected?: boolean; session?: boolean };
@@ -1828,6 +1876,7 @@ export default function CashNarra() {
                     <div className={s.toolbar}>
                       <input
                         aria-label="Search records"
+                        maxLength={300}
                         placeholder="Search person, amount or description"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
@@ -1885,6 +1934,7 @@ export default function CashNarra() {
                       {filtered.length} of {active.length} saved {active.length === 1 ? "record" : "records"} shown
                       {accountFilter ? " · account filter applied" : " · all accounts"}.
                     </p>
+                    {recordsContextUnavailable && <p role="status" className={s.hint}>Your filters are kept for now, but refreshing this page will reset them.</p>}
                     {Object.entries(
                       filtered.reduce<Record<string, typeof filtered>>(
                         (groups, record) => {
@@ -1994,9 +2044,9 @@ export default function CashNarra() {
                                                   )
                                                 ? "loan_principal"
                                                 : "payable_payment",
-                                            o.remaining,
+                                            "",
                                             `${o.party} balance payment`,
-                                            w.accounts[0]?.id ?? null,
+                                            null,
                                             {
                                               date,
                                               party: o.party,
@@ -2878,6 +2928,8 @@ export default function CashNarra() {
           <RecordForm
             initial={editing}
             workspace={w}
+            draft={{ events, replaceIds, reason, allowDuplicates }}
+            hidden={hidden}
             onCancel={() => setModal("")}
             onSave={(e) => {
               setEvents((current) =>
@@ -3636,6 +3688,8 @@ export default function CashNarra() {
                     throw new Error(
                       "Sign-out did not finish. You are still signed in. Try again.",
                     );
+                  recordsTab.clear();
+                  recordsPosition.current = {};
                   await clearDrafts();
                   const channel = new BroadcastChannel("cashnarra-session");
                   channel.postMessage("signed-out");
@@ -3806,6 +3860,11 @@ function ExportDialog({
     scope === "this" ||
     (scope === "another" && others.some((item) => item.id === otherId)) ||
     (scope === "all" && others.length > 0);
+  const scopeLabel = scope === "all"
+    ? `${known.length} workspaces · one file for each`
+    : hidden
+      ? scope === "this" ? "This workspace" : "Another workspace"
+      : scope === "this" ? workspace.name : others.find(item => item.id === otherId)?.name ?? "Choose a workspace";
   async function download(type: "csv" | "pdf" | "xlsx") {
     if (!dates.from || !dates.to || !ready) return;
     setBusy(true);
@@ -3984,11 +4043,13 @@ function ExportDialog({
               </div>
             )}
           </fieldset>
-          <p className={s.exportNote}>{dates.label}</p>
+          <section className={s.exportSummary} aria-label="Export scope">
+            <strong>{scopeLabel}</strong>
+            <p>{dates.label}</p>
+            <p>All accounts are included. The Records search, account and type filters are not applied to this report.</p>
+          </section>
           <p className={s.exportNote}>
-            {others.length
-              ? "All downloads a separate file for each of your workspaces. The records are not mixed into one ledger. The same dates are used for every file."
-              : "You only have this workspace."}{" "}
+            {scope === "all" && "The same dates are used for each file. Workspace records stay separate. "}
             PDF is for reading or printing, Excel for working with the numbers,
             and CSV for importing records into another tool.
           </p>

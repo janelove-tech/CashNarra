@@ -1,6 +1,56 @@
 import { applyBatch, obligations } from "./ledger";
 import { D } from "./money";
-import type { Batch, Obligation, Workspace } from "./types";
+import type { Batch, EventInput, Obligation, Workspace } from "./types";
+
+export type DraftChanges = Pick<
+  Batch,
+  "events" | "replaceIds" | "reason" | "allowDuplicates"
+>;
+
+/** Amount that can settle this balance after the other valid draft changes. */
+export function settlementRemainder(
+  w: Workspace,
+  draft: DraftChanges,
+  editing: Pick<EventInput, "id" | "kind" | "obligationId">,
+): string | null {
+  if (
+    !editing.obligationId ||
+    !["receivable_payment", "payable_payment", "loan_principal"].includes(
+      editing.kind,
+    )
+  )
+    return null;
+  try {
+    const others = draft.events.filter((record) => record.id !== editing.id);
+    const proposed =
+      others.length || draft.replaceIds.length
+        ? applyBatch(w, {
+            ...draft,
+            events: others,
+            requestId: "payment-amount-preview",
+            revision: 0,
+            expectedVersion: w.version,
+            source: "Preview of the other proposed changes",
+          })
+        : w;
+    const balance = obligations(proposed).find(
+      (item) => item.id === editing.obligationId,
+    );
+    const direction =
+      editing.kind === "receivable_payment" ? "receivable" : "payable";
+    const loan = ["loan_received", "opening_loan"].includes(
+      proposed.records.find((record) => record.id === editing.obligationId)
+        ?.kind ?? "",
+    );
+    if (direction === "payable" && (editing.kind === "loan_principal") !== loan)
+      return null;
+    return balance?.direction === direction && D(balance.remaining).gt(0)
+      ? balance.remaining
+      : null;
+  } catch {
+    return null;
+  }
+}
 
 export type ReviewImpact = Pick<Obligation, "id" | "party" | "direction"> & {
   before: string;

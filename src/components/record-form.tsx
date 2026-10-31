@@ -1,19 +1,25 @@
 "use client";
-import { useState, useRef, useId } from "react";
+import { useState, useRef, useId, useMemo } from "react";
 import type { EventInput, Workspace } from "@/domain/types";
 import { kindLabel, obligations, posting } from "@/domain/ledger";
 import { money, parseEntryAmount } from "@/domain/money";
 import { kinds } from "@/domain/types";
-import { Button } from "./ui";
+import { reviewObligations } from "@/domain/review-create";
+import { settlementRemainder, type DraftChanges } from "@/domain/review-impact";
+import { Button, Amount } from "./ui";
 import s from "./app.module.css";
 export default function RecordForm({
   initial,
   workspace,
+  draft = { events: [], replaceIds: [], reason: "", allowDuplicates: false },
+  hidden = false,
   onSave,
   onCancel,
 }: {
   initial: EventInput;
   workspace: Workspace;
+  draft?: DraftChanges;
+  hidden?: boolean;
   onSave: (e: EventInput) => void;
   onCancel: () => void;
 }) {
@@ -22,13 +28,54 @@ export default function RecordForm({
   const errorId = useId();
   const errorSummary = useRef<HTMLParagraphElement>(null);
   const [amountInvalid, setAmountInvalid] = useState(false);
+  const payment = [
+    "receivable_payment",
+    "payable_payment",
+    "loan_principal",
+  ].includes(e.kind);
+  const incoming = e.kind === "receivable_payment";
+  const balances = useMemo(
+    () =>
+      reviewObligations(
+        workspace,
+        draft.events.filter((record) => record.id !== e.id),
+      ),
+    [workspace, draft, e.id],
+  );
+  const recordedBalances = useMemo(() => obligations(workspace), [workspace]);
+  const recordedBalance = recordedBalances.find(
+    (balance) => balance.id === e.obligationId,
+  );
+  const fullAmount = useMemo(
+    () =>
+      settlementRemainder(workspace, draft, {
+        id: e.id,
+        kind: e.kind,
+        obligationId: e.obligationId,
+      }),
+    [workspace, draft, e.id, e.kind, e.obligationId],
+  );
+  const selectableBalances =
+    recordedBalance &&
+    !balances.some((balance) => balance.id === recordedBalance.id)
+      ? [...balances, recordedBalance]
+      : balances;
   const update = (key: keyof EventInput, value: string | null) => {
     const next = { ...e, [key]: value };
     setError("");
     setAmountInvalid(false);
+    if (key === "obligationId")
+      next.party =
+        balances.find((balance) => balance.id === value)?.party ?? null;
     if (key === "kind") {
       next.toAccountId = null;
       next.obligationId = null;
+      if (
+        ["receivable_payment", "payable_payment", "loan_principal"].includes(
+          value ?? "",
+        )
+      )
+        next.accountId = null;
       if (
         [
           "credit_sale",
@@ -66,6 +113,24 @@ export default function RecordForm({
         }
       }}
     >
+      {payment && (
+        <div className={s.paymentContext}>
+          <p>
+            {incoming ? "Record money received" : "Record money paid"}
+            {e.party && !hidden ? ` · ${e.party}` : ""}
+          </p>
+          {recordedBalance && (
+            <p className={s.hint}>
+              Current recorded balance:{" "}
+              <Amount value={recordedBalance.remaining} hidden={hidden} />.
+            </p>
+          )}
+          <p className={s.hint}>
+            Enter the amount {incoming ? "received" : "paid"} and choose the
+            account. You will review it before saving.
+          </p>
+        </div>
+      )}
       <label htmlFor="description">Description</label>
       <input
         id="description"
@@ -86,6 +151,19 @@ export default function RecordForm({
             onChange={(x) => update("amount", x.target.value)}
             required
           />
+          {payment && fullAmount && (
+            <>
+              <Button quiet onClick={() => update("amount", fullAmount)}>
+                Use full balance
+              </Button>
+              {fullAmount !== recordedBalance?.remaining && (
+                <p className={s.hint}>
+                  Full balance after the other proposed changes:{" "}
+                  <Amount value={fullAmount} hidden={hidden} />.
+                </p>
+              )}
+            </>
+          )}
         </div>
         <div>
           <label htmlFor="date">Date</label>
@@ -138,10 +216,17 @@ export default function RecordForm({
       <label htmlFor="account">Account</label>
       <select
         id="account"
+        required={payment}
         value={e.accountId ?? ""}
         onChange={(x) => update("accountId", x.target.value || null)}
       >
-        <option value="">No money account / choose one</option>
+        <option value="">
+          {payment
+            ? incoming
+              ? "Choose where the money arrived"
+              : "Choose which account paid"
+            : "No money account / choose one"}
+        </option>
         {workspace.accounts.map((a) => (
           <option key={a.id} value={a.id}>
             {a.name}
@@ -191,14 +276,16 @@ export default function RecordForm({
             onChange={(x) => update("obligationId", x.target.value || null)}
           >
             <option value="">Choose the balance being paid</option>
-            {obligations(workspace)
+            {selectableBalances
               .filter(
                 (o) =>
                   o.direction ===
                   (e.kind === "receivable_payment" ? "receivable" : "payable"),
               )
               .filter((o) => {
-                const debt = workspace.records.find((r) => r.id === o.id);
+                const debt =
+                  workspace.records.find((r) => r.id === o.id) ??
+                  draft.events.find((record) => record.id === o.id);
                 return (
                   e.kind === "receivable_payment" ||
                   (e.kind === "loan_principal") ===
