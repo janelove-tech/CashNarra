@@ -13,7 +13,7 @@ test("a failed opening is retriable and does not claim an empty workspace", asyn
   await page.route("**/api/workspaces?view=summaries", route => route.abort("failed"), { times: 1 });
   await page.reload();
   await expect(page.getByRole("heading", { name: "Your records couldn’t load." })).toBeVisible();
-  await expect(page.getByRole("alert")).toContainText("does not mean your records are empty");
+  await expect(page.getByRole("main").getByRole("alert")).toContainText("does not mean your records are empty");
   await expect(page.getByRole("heading", { name: "No saved records yet" })).toHaveCount(0);
   await page.getByRole("button", { name: "Try loading records again" }).click();
   await expect(page.getByRole("heading", { name: "What happened with your money?" })).toBeVisible();
@@ -36,7 +36,7 @@ test("a committed save with a lost response checks its receipt and adds the reco
   await page.getByLabel("Amount · GHS", { exact: true }).fill("3.00");
   await page.getByRole("button", { name: "Review this record" }).click();
   await page.getByRole("button", { name: "Save this record", exact: true }).click();
-  await expect(page.getByRole("alert")).toContainText("couldn’t confirm the save");
+  await expect(page.getByRole("main").getByRole("alert")).toContainText("couldn’t confirm the save");
   await expect(page.getByRole("button", { name: "Check save result", exact: true })).toBeEnabled();
   await page.getByRole("button", { name: "Check save result", exact: true }).click();
   await expect(page.getByRole("status")).toContainText("records confirmed");

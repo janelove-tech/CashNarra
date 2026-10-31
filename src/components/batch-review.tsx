@@ -1,9 +1,10 @@
 "use client";
-import type { ReactNode, RefObject } from "react";
+import { useMemo, type ReactNode, type RefObject } from "react";
 import type { EventInput, Workspace } from "@/domain/types";
 import type { Extraction } from "@/server/ai";
 import { duplicates } from "@/domain/ledger";
 import { readingDate } from "@/domain/periods";
+import { reviewImpacts } from "@/domain/review-impact";
 import {
   accountCreatePrompt,
   accountTypeForName,
@@ -95,29 +96,86 @@ export default function BatchReview({
       events.some((e) => e.id === c.recordId) &&
       questions.some((q) => q.recordId === c.recordId && q.field === "amount"),
   );
+  const dates = [
+    ...new Set(
+      (events.length
+        ? events
+        : w.records.filter((record) => replaceIds.includes(record.id))
+      ).map((record) => record.date),
+    ),
+  ].sort();
+  const impacts = useMemo(() => {
+    if (
+      pending ||
+      busy ||
+      questions.length ||
+      needsFreshReview ||
+      calculations.some((calculation) => calculation.version !== w.version)
+    )
+      return [];
+    try {
+      return reviewImpacts(w, {
+        requestId: "review-preview",
+        revision: 0,
+        expectedVersion: w.version,
+        source: text || "Manually reviewed record",
+        events,
+        replaceIds,
+        reason,
+        allowDuplicates,
+      });
+    } catch {
+      // A preview never overrides Save's validation or claims an invalid result.
+      return [];
+    }
+  }, [
+    w,
+    events,
+    replaceIds,
+    reason,
+    text,
+    allowDuplicates,
+    pending,
+    busy,
+    questions.length,
+    needsFreshReview,
+    calculations,
+  ]);
   return (
     <section className={s.flow}>
+      <div className={s.reviewScope} aria-label="Review context">
+        <span>
+          {hidden ? "Workspace" : w.name} · {w.type} · {w.currency}
+        </span>
+        {dates.length === 1 && <span>{readingDate(dates[0])}</span>}
+        {dates.length > 1 && <span>Multiple activity dates</span>}
+      </div>
       <h1 ref={heading} tabIndex={-1}>
         {checking
           ? "Check this amount."
           : questions.length
-            ? "One thing to fill in."
+            ? questions.length === 1
+              ? "One thing to fill in."
+              : `${questions.length} details to check`
             : events.length === 1
               ? "Check this record"
               : events.length
                 ? `Check these ${events.length} records`
                 : "Nothing to save yet."}
       </h1>
-      <p>
+      <p className={s.reviewIntro}>
         {checking
-          ? "Nothing is saved until you use the amount."
+          ? "Choose the amount for your draft, then review the record before saving."
           : questions.length
             ? "This changes the record."
-            : "Check every record. Use Change beside a row, or select the row."}
+            : "Check the details and change anything that needs correcting."}
       </p>
       <div className={s.reviewTools}>
         <Button quiet onClick={() => onBack()}>
           Back to words
+        </Button>
+        <Button quiet onClick={() => manual()} disabled={pending || busy}>
+          Add record
         </Button>
         <Button quiet onClick={() => onDiscard()}>
           Discard draft
@@ -346,27 +404,12 @@ export default function BatchReview({
                   </Button>
                 </form>
               )}
-              <Button
-                onClick={() => manual(record)}
-                disabled={pending}
-              >
+              <Button onClick={() => manual(record)} disabled={pending}>
                 Edit the full record
               </Button>
             </div>
           );
         })}
-      <span className={s.badge}>
-        {events.length} proposed {events.length === 1 ? "record" : "records"}
-        {questions.length
-          ? ` · ${questions.length} still to answer`
-          : ""}{" "}
-        · not saved yet
-      </span>
-      {events.length > 1 && (
-        <p>
-          Every proposed record is on this page. Saving sends them together.
-        </p>
-      )}
       {replaceIds.length > 0 && (
         <div className={s.notice}>
           This updates {replaceIds.length} saved record(s). You can still see
@@ -384,21 +427,56 @@ export default function BatchReview({
         </div>
       )}
       {text.trim() && (
-        <Said
-          hidden={hidden}
-          meta={
-            <>
-              <span>From your story</span>
-              <button type="button" onClick={() => onBack()}>
-                Change the words
-              </button>
-            </>
-          }
-        >
-          {text}
-        </Said>
+        <details className={s.reviewSource}>
+          <summary>Your words</summary>
+          <Said
+            hidden={hidden}
+            meta={
+              <>
+                <span>From your story</span>
+                <button type="button" onClick={() => onBack()}>
+                  Change the words
+                </button>
+              </>
+            }
+          >
+            {text}
+          </Said>
+        </details>
       )}
-      <div className={s.proposals}>{recordRows}</div>
+      <div
+        className={`${s.proposals} ${s.reviewList}`}
+        role="group"
+        aria-label="Proposed records"
+      >
+        {recordRows}
+      </div>
+      {impacts.length > 0 && (
+        <section className={s.reviewEffect} aria-label="After saving">
+          <h2>After saving</h2>
+          {impacts.map((impact) => (
+            <div key={impact.id}>
+              <p>
+                {impact.after === "0.00" ? (
+                  `${hidden ? "This person’s" : `${impact.party}’s`} recorded balance would be settled.`
+                ) : (
+                  <>
+                    {impact.direction === "receivable"
+                      ? `${hidden ? "This person" : impact.party} would owe you `
+                      : `You would owe ${hidden ? "this person" : impact.party} `}
+                    <Amount value={impact.after} hidden={hidden} /> on this
+                    balance.
+                  </>
+                )}
+              </p>
+              <p className={s.hint}>
+                Current recorded balance:{" "}
+                <Amount value={impact.before} hidden={hidden} />
+              </p>
+            </div>
+          ))}
+        </section>
+      )}
       {events.length === 0 && (
         <p className={s.empty}>
           {replaceIds.length
@@ -441,7 +519,9 @@ export default function BatchReview({
                     : "Original stories of the saved records"}
                 </summary>
                 {stories.map((story) => (
-                  <blockquote key={story}>{hidden ? "Hidden" : story}</blockquote>
+                  <blockquote key={story}>
+                    {hidden ? "Hidden" : story}
+                  </blockquote>
                 ))}
               </details>
             );
@@ -456,14 +536,16 @@ export default function BatchReview({
           </label>
         </div>
       )}
-      {!checking && (
-        <p className={s.notice}>
-          {events.length === 1
-            ? "This record is saved when you confirm."
-            : "These records are saved together when you confirm."}
+      <div className={s.reviewActions}>
+        <p className={s.reviewSaveHint}>
+          {pending
+            ? "Save result not confirmed"
+            : questions.length
+              ? `${questions.length} ${questions.length === 1 ? "detail" : "details"} still to check · not saved yet`
+              : events.length > 1
+                ? `${events.length} records · saved together when you confirm`
+                : "Not saved yet"}
         </p>
-      )}
-      <div className={`${s.actions} ${s.reviewActions}`}>
         {pending ? (
           <Button primary onClick={recover} disabled={busy}>
             {busy ? "Checking save…" : "Check save result"}
@@ -479,16 +561,15 @@ export default function BatchReview({
               (!events.length && !replaceIds.length)
             }
           >
-            {busy ? "Saving…" : events.length === 1
-              ? "Save this record"
-              : events.length
-                ? `Save ${events.length} records`
-                : "Save removal"}
+            {busy
+              ? "Saving…"
+              : events.length === 1
+                ? "Save this record"
+                : events.length
+                  ? `Save ${events.length} records`
+                  : "Save removal"}
           </Button>
         )}
-        <Button quiet onClick={() => manual()} disabled={!!pending}>
-          Add record
-        </Button>
       </div>
     </section>
   );
@@ -521,7 +602,8 @@ function AccountCreate({
 }) {
   const suggested = suggestion?.trim() || null;
   const exists =
-    !!suggested && accounts.some((account) => sameName(account.name, suggested));
+    !!suggested &&
+    accounts.some((account) => sameName(account.name, suggested));
   const field = `create-account-${formId}`;
   // A story that names an account this workspace does not have opens the
   // form straight away. Otherwise the choices above are enough, and the
@@ -533,71 +615,78 @@ function AccountCreate({
           ? `Create ${suggested}`
           : "Use an account that is not listed"}
       </summary>
-    <form
-      onSubmit={(event) => {
-        event.preventDefault();
-        const form = new FormData(event.currentTarget);
-        onCreate({
-          name: String(form.get("name") ?? ""),
-          type: String(form.get("type") ?? ""),
-          opening: form.get("unknown") ? null : String(form.get("amount") ?? ""),
-          openingDate: String(form.get("date") ?? ""),
-          recordDate,
-        });
-      }}
-    >
-      <p>{accountCreatePrompt(suggested, exists)}</p>
-      <label htmlFor={`${field}-name`}>Account nickname</label>
-      <input
-        id={`${field}-name`}
-        name="name"
-        required
-        maxLength={80}
-        defaultValue={exists ? "" : (suggested ?? "")}
-        disabled={disabled}
-      />
-      <label htmlFor={`${field}-type`}>Type</label>
-      <select
-        id={`${field}-type`}
-        name="type"
-        defaultValue={accountTypeForName(suggested ?? "")}
-        disabled={disabled}
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          const form = new FormData(event.currentTarget);
+          onCreate({
+            name: String(form.get("name") ?? ""),
+            type: String(form.get("type") ?? ""),
+            opening: form.get("unknown")
+              ? null
+              : String(form.get("amount") ?? ""),
+            openingDate: String(form.get("date") ?? ""),
+            recordDate,
+          });
+        }}
       >
-        <option>Cash</option>
-        <option>Bank</option>
-        <option>MoMo</option>
-      </select>
-      <label htmlFor={`${field}-opening`}>Starting amount · GHS</label>
-      <input
-        id={`${field}-opening`}
-        name="amount"
-        inputMode="decimal"
-        placeholder="Only if you know the starting balance"
-        disabled={disabled}
-      />
-      <label className={s.checkLabel}>
-        <input type="checkbox" name="unknown" defaultChecked disabled={disabled} />
-        I don’t know the starting balance yet
-      </label>
-      <label htmlFor={`${field}-date`}>Starting date</label>
-      <input
-        id={`${field}-date`}
-        name="date"
-        type="date"
-        required
-        defaultValue={recordDate}
-        disabled={disabled}
-      />
-      <p>
-        The account is saved now. This record stays a draft until you save the
-        story.
-      </p>
-      <div className={s.actions}>
-        <Button type="submit" disabled={disabled}>
-          Create account and use it
-        </Button>
-      </div>
-    </form>
+        <p>{accountCreatePrompt(suggested, exists)}</p>
+        <label htmlFor={`${field}-name`}>Account nickname</label>
+        <input
+          id={`${field}-name`}
+          name="name"
+          required
+          maxLength={80}
+          defaultValue={exists ? "" : (suggested ?? "")}
+          disabled={disabled}
+        />
+        <label htmlFor={`${field}-type`}>Type</label>
+        <select
+          id={`${field}-type`}
+          name="type"
+          defaultValue={accountTypeForName(suggested ?? "")}
+          disabled={disabled}
+        >
+          <option>Cash</option>
+          <option>Bank</option>
+          <option>MoMo</option>
+        </select>
+        <label htmlFor={`${field}-opening`}>Starting amount · GHS</label>
+        <input
+          id={`${field}-opening`}
+          name="amount"
+          inputMode="decimal"
+          placeholder="Only if you know the starting balance"
+          disabled={disabled}
+        />
+        <label className={s.checkLabel}>
+          <input
+            type="checkbox"
+            name="unknown"
+            defaultChecked
+            disabled={disabled}
+          />
+          I don’t know the starting balance yet
+        </label>
+        <label htmlFor={`${field}-date`}>Starting date</label>
+        <input
+          id={`${field}-date`}
+          name="date"
+          type="date"
+          required
+          defaultValue={recordDate}
+          disabled={disabled}
+        />
+        <p>
+          The account is saved now. This record stays a draft until you save the
+          story.
+        </p>
+        <div className={s.actions}>
+          <Button type="submit" disabled={disabled}>
+            Create account and use it
+          </Button>
+        </div>
+      </form>
     </details>
   );
 }
@@ -630,52 +719,51 @@ function BalanceCreate({
           ? `Add the balance ${suggested} already had`
           : "Add a balance that is not listed"}
       </summary>
-    <form
-      onSubmit={(event) => {
-        event.preventDefault();
-        const form = new FormData(event.currentTarget);
-        onCreate({
-          name: String(form.get("name") ?? ""),
-          amount: String(form.get("amount") ?? ""),
-          date: String(form.get("date") ?? ""),
-        });
-      }}
-    >
-      <p>{balanceCreatePrompt(record.kind, suggested, exists)}</p>
-      <label htmlFor={`${field}-name`}>Name</label>
-      <input
-        id={`${field}-name`}
-        name="name"
-        required
-        maxLength={80}
-        defaultValue={exists ? "" : (suggested ?? "")}
-        disabled={disabled}
-      />
-      <label htmlFor={`${field}-amount`}>{amountLabel}</label>
-      <input
-        id={`${field}-amount`}
-        name="amount"
-        inputMode="decimal"
-        required
-        disabled={disabled}
-      />
-      <label htmlFor={`${field}-date`}>Balance date</label>
-      <input
-        id={`${field}-date`}
-        name="date"
-        type="date"
-        required
-        defaultValue={record.date}
-        disabled={disabled}
-      />
-      <p>Both stay drafts until you save the story.</p>
-      <div className={s.actions}>
-        <Button type="submit" disabled={disabled}>
-          Create balance and use it
-        </Button>
-      </div>
-    </form>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          const form = new FormData(event.currentTarget);
+          onCreate({
+            name: String(form.get("name") ?? ""),
+            amount: String(form.get("amount") ?? ""),
+            date: String(form.get("date") ?? ""),
+          });
+        }}
+      >
+        <p>{balanceCreatePrompt(record.kind, suggested, exists)}</p>
+        <label htmlFor={`${field}-name`}>Name</label>
+        <input
+          id={`${field}-name`}
+          name="name"
+          required
+          maxLength={80}
+          defaultValue={exists ? "" : (suggested ?? "")}
+          disabled={disabled}
+        />
+        <label htmlFor={`${field}-amount`}>{amountLabel}</label>
+        <input
+          id={`${field}-amount`}
+          name="amount"
+          inputMode="decimal"
+          required
+          disabled={disabled}
+        />
+        <label htmlFor={`${field}-date`}>Balance date</label>
+        <input
+          id={`${field}-date`}
+          name="date"
+          type="date"
+          required
+          defaultValue={record.date}
+          disabled={disabled}
+        />
+        <p>Both stay drafts until you save the story.</p>
+        <div className={s.actions}>
+          <Button type="submit" disabled={disabled}>
+            Create balance and use it
+          </Button>
+        </div>
+      </form>
     </details>
   );
 }
-

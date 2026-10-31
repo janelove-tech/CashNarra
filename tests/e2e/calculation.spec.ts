@@ -56,7 +56,8 @@ test("shows included records and requires confirmation before accepting a percen
   await expect(
     page.getByRole("button", { name: /Synthetic percentage payment/ }),
   ).toContainText("−GH₵480.00");
-  // The original words stay open on the review screen.
+  // The original words remain available without dominating the proposed record.
+  await page.getByText("Your words", { exact: true }).click();
   await expect(page.getByText("From your story", { exact: true })).toBeVisible();
   await expect(page.getByRole("blockquote")).toContainText(
     "2400.00 × 20.00% = 480.00",
