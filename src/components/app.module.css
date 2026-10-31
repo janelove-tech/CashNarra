@@ -18,7 +18,8 @@
   font-size: 14px;
   line-height: 20px;
   text-decoration: none;
-  transition: background var(--cn-motion-control) var(--cn-motion-ease),
+  transition:
+    background var(--cn-motion-control) var(--cn-motion-ease),
     border-color var(--cn-motion-control) var(--cn-motion-ease);
 }
 .button:hover {
@@ -214,7 +215,8 @@
   align-items: center;
   gap: 20px;
   min-height: 64px;
-  padding: env(safe-area-inset-top, 0px) max(28px, env(safe-area-inset-right, 0px)) 0
+  padding: env(safe-area-inset-top, 0px)
+    max(28px, env(safe-area-inset-right, 0px)) 0
     max(28px, env(safe-area-inset-left, 0px));
   background: var(--cn-surface);
   border-bottom: 1px solid var(--cn-border);
@@ -1538,6 +1540,149 @@
 .dialogExit .actions {
   margin-top: 0;
 }
+.dialogIssue {
+  margin: 4px 0 12px;
+  outline-offset: -3px;
+}
+.recordDetail {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.recordDetail p {
+  margin: 0;
+}
+.recordDetail p + p {
+  margin-top: 8px;
+}
+.recordDetail h3 {
+  margin-bottom: 8px;
+}
+.recordDetail blockquote {
+  margin: 0;
+}
+.recordDetail > .actions {
+  margin-top: 0;
+}
+.formBody {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.formBody > form > p {
+  margin: 0;
+}
+.formBody > form > p + p,
+.formBody > form > .formContext {
+  margin-bottom: 8px;
+}
+.formBody > form > .notice,
+.formBody > form > details {
+  margin-top: 16px;
+}
+.formContext {
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--cn-text-secondary);
+  overflow-wrap: anywhere;
+}
+.allocationFacts {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--cn-surface-subtle);
+}
+.allocationFacts > p:first-child {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.allocationFacts dl {
+  margin: 0;
+}
+.allocationFacts dl > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--cn-border);
+}
+.allocationFacts dt {
+  font-size: 14px;
+  color: var(--cn-text-secondary);
+}
+.allocationFacts dd {
+  margin: 0;
+  max-width: 100%;
+  font-weight: 600;
+}
+.allocationFacts .amount {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.workspaceTools > h3 {
+  margin: 28px 0 8px;
+  font-size: 18px;
+  line-height: 26px;
+  scroll-margin-block: 8px;
+  outline-offset: 0;
+}
+.workspaceTools > h3:first-child {
+  margin-top: 0;
+}
+.workspaceTools form {
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--cn-border);
+}
+.workspaceTools form > .button {
+  align-self: flex-start;
+  margin-top: 16px;
+}
+.workspaceTools form > .button + .button {
+  margin-top: 8px;
+}
+.toolFeedback {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--cn-success-bg);
+  color: var(--cn-success);
+  font-size: 14px;
+  line-height: 20px;
+}
+.moveFields {
+  display: flex;
+  flex-direction: column;
+}
+.moveFields > label {
+  margin: 20px 0 8px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+.moveFields > label:first-child {
+  margin-top: 0;
+}
+.moveForm > p:first-child {
+  font-weight: 600;
+}
 .dialogExit > .button {
   min-width: 44px;
   padding-inline: 12px;
@@ -1814,7 +1959,8 @@
   .appbar {
     min-height: 60px;
     gap: 8px;
-    padding: env(safe-area-inset-top, 0px) max(16px, env(safe-area-inset-right, 0px)) 0
+    padding: env(safe-area-inset-top, 0px)
+      max(16px, env(safe-area-inset-right, 0px)) 0
       max(16px, env(safe-area-inset-left, 0px));
   }
   .content {
@@ -1848,7 +1994,8 @@
     border-top: 1px solid var(--cn-border);
     z-index: 10;
     padding: 4px max(8px, env(safe-area-inset-right, 0px))
-      max(4px, env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px));
+      max(4px, env(safe-area-inset-bottom, 0px))
+      max(8px, env(safe-area-inset-left, 0px));
     justify-content: space-between;
   }
   .navTell {
@@ -1863,7 +2010,9 @@
     mask: url("/brand/cashnarra-symbol.svg") center / contain no-repeat;
   }
   .reviewActions {
-    bottom: calc(var(--cn-layout-bottomNavigation) + env(safe-area-inset-bottom, 0px));
+    bottom: calc(
+      var(--cn-layout-bottomNavigation) + env(safe-area-inset-bottom, 0px)
+    );
   }
   .bottomNav .navLink {
     flex: 1;
@@ -2117,4 +2266,3 @@
   margin: 0;
   flex: 1 1 16em;
 }
-

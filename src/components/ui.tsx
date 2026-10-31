@@ -86,6 +86,7 @@ export function Dialog({
   wide = false,
   actions,
   footer,
+  error,
 }: {
   title: string;
   children: ReactNode;
@@ -93,9 +94,11 @@ export function Dialog({
   wide?: boolean;
   actions?: ReactNode;
   footer?: ReactNode;
+  error?: string;
 }) {
   const ref = useRef<HTMLDialogElement>(null),
-    titleId = useId();
+    titleId = useId(),
+    errorRegion = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const previous = document.activeElement as HTMLElement;
     const dialog = ref.current;
@@ -105,6 +108,11 @@ export function Dialog({
       previous?.focus();
     };
   }, []);
+  useEffect(() => {
+    if (!error) return;
+    errorRegion.current?.focus({ preventScroll: true });
+    errorRegion.current?.scrollIntoView({ block: "nearest" });
+  }, [error]);
   return (
     <dialog
       ref={ref}
@@ -121,7 +129,12 @@ export function Dialog({
             "a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled])",
           ),
         ].filter((el) => {
-          if (el.tabIndex < 0 || el.closest("[hidden], [aria-hidden='true']"))
+          if (
+            el.tabIndex < 0 ||
+            el.matches(":disabled") ||
+            !el.getClientRects().length ||
+            el.closest("[hidden], [aria-hidden='true']")
+          )
             return false;
           return true;
         });
@@ -154,7 +167,19 @@ export function Dialog({
           <X size={20} />
         </button>
       </div>
-      <div className={s.dialogBody}>{children}</div>
+      <div className={s.dialogBody} data-dialog-content>
+        {error && (
+          <div
+            ref={errorRegion}
+            role="alert"
+            tabIndex={-1}
+            className={`${s.notice} ${s.error} ${s.dialogIssue}`}
+          >
+            {error}
+          </div>
+        )}
+        {children}
+      </div>
       <div className={s.dialogExit}>
         {footer ?? (
           <>
@@ -164,6 +189,70 @@ export function Dialog({
         )}
       </div>
     </dialog>
+  );
+}
+export function FormDialog({
+  title,
+  formId,
+  actionLabel,
+  children,
+  onClose,
+  busy,
+  error,
+  recover,
+}: {
+  title: string;
+  formId: string;
+  actionLabel: string;
+  children: ReactNode;
+  onClose: () => void;
+  busy: boolean;
+  error?: string;
+  recover?: () => void;
+}) {
+  const issue =
+    error ||
+    (recover
+      ? "An earlier change is not confirmed. Check its original request before making another change."
+      : "");
+  const label = busy
+    ? recover
+      ? "Checking change…"
+      : "Saving…"
+    : recover
+      ? "Check change result"
+      : actionLabel;
+  return (
+    <Dialog
+      title={title}
+      onClose={onClose}
+      error={issue}
+      footer={
+        <>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button
+            primary
+            type={recover ? "button" : "submit"}
+            form={recover ? undefined : formId}
+            disabled={busy}
+            onClick={recover}
+          >
+            {label}
+          </Button>
+        </>
+      }
+    >
+      <span role="status" className={s.srOnly}>
+        {busy ? label : ""}
+      </span>
+      <fieldset
+        className={s.formBody}
+        disabled={busy || !!recover}
+        aria-label={`${title} details`}
+      >
+        {children}
+      </fieldset>
+    </Dialog>
   );
 }
 function rowDate(iso: string) {

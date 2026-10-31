@@ -3,22 +3,38 @@ import type { Workspace } from "@/domain/types";
 import { obligations } from "@/domain/ledger";
 import { debtDate } from "@/domain/planning";
 import { Button, Amount } from "./ui";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { sum } from "@/domain/money";
+import s from "./app.module.css";
 export default function WorkspaceTools({
   w,
   save: onSave,
   busy,
   hidden,
+  startAt = "people",
+  errorHandledByDialog = false,
 }: {
   w: Workspace;
   save: (action: string, data: Record<string, unknown>) => Promise<void>;
   busy: boolean;
   hidden: boolean;
+  startAt?: "people" | "goals";
+  errorHandledByDialog?: boolean;
 }) {
   const [error, setError] = useState("");
   const [feedback, setFeedback] = useState("");
   const [search, setSearch] = useState("");
+  const peopleHeading = useRef<HTMLHeadingElement>(null);
+  const goalHeading = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      const heading =
+        startAt === "goals" ? goalHeading.current : peopleHeading.current;
+      heading?.focus({ preventScroll: true });
+      heading?.scrollIntoView({ block: "start" });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [startAt]);
   const today = new Date().toISOString().slice(0, 10);
   const people = (w.contacts ?? []).filter((c) =>
     c.name.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()),
@@ -38,7 +54,7 @@ export default function WorkspaceTools({
       await onSave(action, data);
       setFeedback("Changes saved.");
     } catch (e) {
-      setError((e as Error).message);
+      if (!errorHandledByDialog) setError((e as Error).message);
     }
   };
   const submit =
@@ -51,10 +67,16 @@ export default function WorkspaceTools({
       });
     };
   return (
-    <>
-      <p role="alert">{error}</p>
-      <p aria-live="polite">{feedback}</p>
-      <h3>People you record money with</h3>
+    <div className={s.workspaceTools}>
+      {error && <p role="alert">{error}</p>}
+      {feedback && (
+        <p role="status" className={s.toolFeedback}>
+          {feedback}
+        </p>
+      )}
+      <h3 ref={peopleHeading} tabIndex={-1}>
+        People you record money with
+      </h3>
       <p>
         Save a name or nickname to reuse when recording. CashNarra does not
         contact anyone.
@@ -121,7 +143,9 @@ export default function WorkspaceTools({
                   defaultValue={c.role}
                 >
                   <option value="Customer">
-                    {w.type === "Personal" ? "Someone who pays you" : "Customer"}
+                    {w.type === "Personal"
+                      ? "Someone who pays you"
+                      : "Customer"}
                   </option>
                   <option value="Supplier">
                     {w.type === "Personal" ? "Someone you pay" : "Supplier"}
@@ -220,7 +244,9 @@ export default function WorkspaceTools({
             })}
         </details>
       )}
-      <h3>Change a goal</h3>
+      <h3 ref={goalHeading} tabIndex={-1}>
+        Change a goal
+      </h3>
       <p>
         Changing a target changes the estimate, not the money you have already
         marked for this goal.
@@ -390,6 +416,6 @@ export default function WorkspaceTools({
             </p>
           ))}
       </details>
-    </>
+    </div>
   );
 }
