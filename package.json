@@ -16,6 +16,7 @@
     "test:db": "tsx scripts/test-db.ts",
     "test:e2e": "playwright test",
     "test:supabase": "tsx scripts/test-supabase.ts",
+    "measure:workspaces": "node --import tsx scripts/measure-workspaces.ts",
     "eval:narration": "tsx scripts/score-narration.ts",
     "eval:capture": "tsx scripts/capture-narration.ts",
     "eval:voice-intake": "tsx scripts/check-voice-intake.ts",
