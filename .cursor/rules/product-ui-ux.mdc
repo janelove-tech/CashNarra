@@ -33,8 +33,9 @@ The owner authorised a complete redesign on 21 October 2026. The shipped directi
 - Shell: a top app bar with Home, Records, Money Stories and Plan; the account button opens workspaces, Manage accounts, Plan and usage, Settings and privacy and Sign out; a bottom bar on phones.
 - Home: the composer ("What happened with your money?", date, Understand my story, Speak, quiet Add a manual record, Draft backup), then the story log (each day: the words on the apricot quote surface, then its rows, then in/out), with an "in brief" column (balances, money in/out, net, people, goal, rhythm).
 - Records has three views in one place: Records, People (People owe you / You owe), Accounts.
-- Review: the question card first, the words on the quote surface with "Change the words", rows with Change, duplicates listed once, only Save N records pinned.
+- Review: workspace, currency and activity date stay visible. Material questions come before the proposed records. The original quote and "Change the words" are available behind "Your words"; rows keep Change, duplicates are listed once, and only Save N records or the original-request recovery action is pinned. A projected balance is explicitly "After saving" and uses the existing ledger validation; it never confirms persistence.
 - After a save, Home shows a saved panel with the rows, a consequence such as a remaining balance, and Read the day's story.
+- Use the confirmed records' activity dates for that result. A multi-date result shows each row's date and opens Records filtered to the saved range. Under extreme enlargement, sticky controls may return to document flow to keep the content reachable.
 - The person's words are quoted, never bubbled; CashNarra never replies in prose; it asks one material question and shows rows. Nothing reads as saved before the receipt.
 - Public page: hero "Say what happened. Know where you stand.", the fictional day as a log card (See the records, one question, three rows, totals), three steps, the ink "answer" band, the fictional goal with Explore what-if, control list, Free and Plus cards, questions, close band.
 

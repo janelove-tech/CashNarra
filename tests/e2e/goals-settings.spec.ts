@@ -20,7 +20,7 @@ test("a goal shows the marked amount and remaining without moving money", async 
   await expect(page.getByText("Set aside", { exact: true })).toBeVisible();
   await expect(page.getByText("Remaining", { exact: true })).toBeVisible();
   await expect(
-    page.getByText("This does not move or reserve money in your bank or MoMo."),
+    page.getByText(/A mark does not move or reserve money/),
   ).toBeVisible();
   await page.getByRole("button", { name: "Explore what-if" }).click();
   await expect(page.getByRole("dialog")).toContainText(
@@ -48,7 +48,7 @@ test("a goal shows the marked amount and remaining without moving money", async 
   await expect(
     page.getByRole("button", { name: "Delete original stories" }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Shared device" }).click();
+  await page.getByRole("button", { name: "Clear stored drafts" }).click();
   await expect(
     page.getByRole("dialog", { name: "Clear drafts on this device?" }),
   ).toBeVisible();

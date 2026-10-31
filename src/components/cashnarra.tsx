@@ -352,11 +352,14 @@ export default function CashNarra() {
   }, [theme]);
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
+      if (page === "today" && composeWanted.current) return;
       const position = recordsPosition.current[wid];
       const row = page === "records" && position?.recordId
         ? document.querySelector<HTMLElement>(`[data-record-id="${CSS.escape(position.recordId)}"]`)
         : null;
       const target = row ?? (page === "today" && lastSaved ? savedPanel.current : heading.current);
+      const currentFocus = document.activeElement;
+      if (currentFocus instanceof HTMLElement && currentFocus.matches("input, textarea, select") && currentFocus.closest("#main")) return;
       target?.focus({ preventScroll: true });
       if (page === "records")
         window.scrollTo({ top: position?.top ?? 0, behavior: "instant" });
@@ -371,13 +374,24 @@ export default function CashNarra() {
     return () => window.removeEventListener("scroll", remember);
   }, [page, wid, modal]);
   useEffect(() => {
+    if (page === "records" && modal === "detail" && selected) {
+      recordsPosition.current[wid] = {
+        top: window.scrollY,
+        recordId: selected.id,
+      };
+    }
+  }, [page, wid, modal, selected]);
+  useEffect(() => {
     // "Tell", "Type your story" and the home-screen shortcut land in the box.
     if (page !== "today" || modal || !composeWanted.current) return;
-    const box = document.getElementById("today-story");
-    if (!(box instanceof HTMLTextAreaElement) || box.disabled) return;
-    composeWanted.current = false;
-    box.focus();
-    box.scrollIntoView({ block: "center" });
+    const frame = requestAnimationFrame(() => {
+      const box = document.getElementById("today-story");
+      if (!(box instanceof HTMLTextAreaElement) || box.disabled) return;
+      composeWanted.current = false;
+      box.focus({ preventScroll: true });
+      box.scrollIntoView({ block: "center", behavior: "instant" });
+    });
+    return () => cancelAnimationFrame(frame);
   }, [page, modal, loaded, owner, wid]);
 
   useEffect(() => {
@@ -836,23 +850,17 @@ export default function CashNarra() {
     w && lastSaved
       ? w.records.filter((r) => lastSaved.ids.includes(r.id) && !r.removed)
       : [];
+  const savedDates = [...new Set(savedRecords.map((record) => record.date))].sort();
+  const savedBalanceIds = new Set(savedRecords.flatMap((record) => record.obligationId ? [record.obligationId] : []));
   const savedConsequences = w
-    ? savedRecords.flatMap((r) => {
-        if (!r.obligationId) return [];
-        const balance = obligations(w).find((o) => o.id === r.obligationId);
-        if (!balance) return [];
+    ? obligations(w).filter((balance) => savedBalanceIds.has(balance.id)).map((balance) => {
         const name = hidden ? "This person" : balance.party.replace(/\s*(?:\.{3}|…)+$/u, "");
-        if (balance.direction === "receivable")
-          return [
-            D(balance.remaining).gt(0)
-              ? `${name} now owes you ${hidden ? "an amount" : formatMoney(balance.remaining)}.`
-              : `${name} has now paid everything that was owed.`,
-          ];
-        return [
-          D(balance.remaining).gt(0)
-            ? `You now owe ${name} ${hidden ? "an amount" : formatMoney(balance.remaining)}.`
-            : `You have now paid ${name} in full.`,
-        ];
+        const line = D(balance.remaining).gt(0)
+          ? balance.direction === "receivable"
+            ? `${name} now owes you ${hidden ? "an amount" : formatMoney(balance.remaining)} on this balance.`
+            : `You now owe ${name} ${hidden ? "an amount" : formatMoney(balance.remaining)} on this balance.`
+          : `This recorded balance with ${hidden ? "this person" : name} is now settled.`;
+        return { id: balance.id, line };
       })
     : [];
   const filtered = active
@@ -918,7 +926,6 @@ export default function CashNarra() {
         onClick={() => {
           if (draft) manual(record);
           else {
-            if (page === "records") recordsPosition.current[wid] = { top: window.scrollY, recordId: record.id };
             setSelected(record as RecordEvent);
             setModal("detail");
           }
@@ -1000,7 +1007,7 @@ export default function CashNarra() {
       </main>
     );
   return (
-    <>
+    <div className={s.appShell}>
       <a className={s.skip} href="#main">
         Skip to content
       </a>
@@ -1200,26 +1207,36 @@ export default function CashNarra() {
                             {savedRecords.length === 1
                               ? "1 record"
                               : `${savedRecords.length} records`}{" "}
-                            for {readingDate(lastSaved.date)}
+                            for {savedDates.length > 1
+                              ? rangeLabel(savedDates[0], savedDates[savedDates.length - 1])
+                              : readingDate(savedDates[0] ?? lastSaved.date)}
                           </h2>
                           <p className={s.muted}>
                             They now count in your records and Money Stories.
                           </p>
-                          {rows(savedRecords, false, false)}
-                          {savedConsequences.map((line) => (
-                            <p key={line} className={s.hint}>
-                              {line}
+                          {rows(savedRecords, false, savedDates.length > 1)}
+                          {savedConsequences.map((result) => (
+                            <p key={result.id} className={s.savedConsequence}>
+                              {result.line}
                             </p>
                           ))}
                           <div className={s.actions}>
                             <Button
                               onClick={() => {
-                                setStoryDate(lastSaved.date);
-                                setPeriod("day");
-                                navigate("stories");
+                                if (savedDates.length > 1) {
+                                  setSearch("");
+                                  setFilter("all");
+                                  setAccountFilter("");
+                                  setEvidence({ from: savedDates[0], to: savedDates[savedDates.length - 1] });
+                                  navigate("records");
+                                } else {
+                                  setStoryDate(savedDates[0] ?? lastSaved.date);
+                                  setPeriod("day");
+                                  navigate("stories");
+                                }
                               }}
                             >
-                              Read the day’s story
+                              {savedDates.length > 1 ? "View activity for these dates" : "Read the day’s story"}
                             </Button>
                             <Button quiet onClick={() => setLastSaved(null)}>
                               Done
@@ -1635,7 +1652,7 @@ export default function CashNarra() {
                     text={text}
                     w={w}
                     allowDuplicates={allowDuplicates}
-                    recordRows={rows(events, true)}
+                    recordRows={rows(events, true, new Set(events.map((record) => record.date)).size !== 1)}
                     manual={manual}
                     needsFreshReview={needsFreshReview}
                     acceptFreshReview={() => setNeedsFreshReview(false)}
@@ -1864,6 +1881,10 @@ export default function CashNarra() {
                         </Button>
                       </p>
                     )}
+                    <p className={s.recordsSummary}>
+                      {filtered.length} of {active.length} saved {active.length === 1 ? "record" : "records"} shown
+                      {accountFilter ? " · account filter applied" : " · all accounts"}.
+                    </p>
                     {Object.entries(
                       filtered.reduce<Record<string, typeof filtered>>(
                         (groups, record) => {
@@ -1884,10 +1905,6 @@ export default function CashNarra() {
                           {rows(records, false, false)}
                         </section>
                       ))}
-                    <p className={s.hint}>
-                      {filtered.length} of {active.length} saved {active.length === 1 ? "record" : "records"} shown
-                      {accountFilter ? " · account filter applied" : " · all accounts"}.
-                    </p>
                     {!filtered.length && (
                       <section className={s.empty} aria-label="Records result">
                         <h2>{active.length ? "No matching records" : "No saved records yet"}</h2>
@@ -2487,10 +2504,10 @@ export default function CashNarra() {
                       return (
                         <div className={s.goalGrid} key={g.id}>
                           <section className={s.panel}>
-                            <span className={s.badge}>
-                              Tracked here, not moved
-                            </span>
-                            <h2 style={{ marginTop: 18 }}>{g.name}</h2>
+                            <div className={s.goalHeader}>
+                              <h2>{g.name}</h2>
+                              <span className={s.goalMarker}>Tracked here, not moved</span>
+                            </div>
                             <dl className={s.goalFacts}>
                               <div>
                                 <dt>Target</dt>
@@ -2525,10 +2542,6 @@ export default function CashNarra() {
                                   ? "The share of the target is hidden with the amounts."
                                   : `${percent}% of the target is marked.`}
                             </p>
-                            <p>
-                              This does not move or reserve money in your bank
-                              or MoMo.
-                            </p>
                             <progress
                               aria-label={`${g.name} progress`}
                               max={100}
@@ -2557,6 +2570,7 @@ export default function CashNarra() {
                                 Explore what-if
                               </Button>
                               <Button
+                                quiet
                                 onClick={() => {
                                   setGoalId(g.id);
                                   setModal("goal-review");
@@ -2565,9 +2579,9 @@ export default function CashNarra() {
                                 Review history
                               </Button>
                             </div>
-                            <hr />
+                            <div className={s.goalForecast}>
                             <small>If you keep adding money at this pace</small>
-                            <h3 style={{ marginTop: 10 }}>
+                            <h3>
                               {f.count === null
                                 ? f.reason.startsWith("Check the last three")
                                   ? "A pace estimate needs three reviewed full months."
@@ -2597,6 +2611,7 @@ export default function CashNarra() {
                               </p>
                             )}
                             <p>{f.reason}</p>
+                            </div>
                             <details>
                               <summary>How we worked this out</summary>
                               <p>
@@ -2712,17 +2727,16 @@ export default function CashNarra() {
                       <h2>Recording and drafts</h2>
                       <div className={s.settingsRow}>
                         <div>
-                          <strong>Shared device</strong>
+                          <strong>Drafts on this device</strong>
                           <p>
                             {persistent
-                              ? "Keep unfinished stories on this device."
+                              ? "Unfinished stories are kept on this device."
                               : "Unfinished stories are not kept on this device."}{" "}
-                            Turning this on clears stored drafts. Saved records
-                            stay.
+                            Clearing device drafts keeps your saved financial records.
                           </p>
                         </div>
                         <Button onClick={() => setModal("shared-device")}>
-                          Shared device
+                          Clear stored drafts
                         </Button>
                       </div>
                       <div className={s.settingsRow}>
@@ -2799,15 +2813,31 @@ export default function CashNarra() {
                       <p>
                         <Link href="/privacy">How your information is used</Link>
                       </p>
-                      <div className={s.actions}>
+                      <div className={s.settingsRow}>
+                        <div>
+                          <strong>Private export</strong>
+                          <p>Choose the dates and format for a file you download.</p>
+                        </div>
                         <Button onClick={() => setModal("export")}>
                           Private export
                         </Button>
+                      </div>
+                      <div className={s.settingsRow}>
+                        <div>
+                          <strong>Copy of your data</strong>
+                          <p>Record a request for a copy of your account data.</p>
+                        </div>
                         <Button
                           onClick={() => simple("request", { kind: "access" })}
                         >
                           Request a copy of my data
                         </Button>
+                      </div>
+                      <div className={s.settingsRow}>
+                        <div>
+                          <strong>Account-data deletion</strong>
+                          <p>Review what a deletion request includes before confirming.</p>
+                        </div>
                         <Button onClick={() => setModal("deletion")}>
                           Request account-data deletion
                         </Button>
@@ -2818,8 +2848,8 @@ export default function CashNarra() {
                         </p>
                       ))}
                       <p className={s.notice}>
-                        A request is recorded. No records are automatically
-                        erased or emailed.
+                        Submitting a request adds it for review. No data is
+                        automatically erased or emailed.
                       </p>
                     </section>
                     <section className={s.settingsGroup}>
@@ -3734,7 +3764,7 @@ export default function CashNarra() {
           onError={setError}
         />
       )}
-    </>
+    </div>
   );
 }
 
