@@ -17,7 +17,7 @@ import {
   ChevronDown,
   Mic,
 } from "lucide-react";
-import { Button, Amount, Dialog, RecordRow } from "./ui";
+import { Button, Amount, Dialog, FormDialog, RecordRow } from "./ui";
 import ProfitReview from "./profit-review";
 import RecordForm from "./record-form";
 import BatchReview from "./batch-review";
@@ -132,7 +132,9 @@ export default function CashNarra() {
     [busy, setBusy] = useState(false),
     [hidden, setHidden] = useState(false),
     [theme, setTheme] = useState("light"),
-    [modal, setModal] = useState(""),
+    [modalState, setModalState] = useState({ name: "", revision: 0 }),
+    [errorDialog, setErrorDialog] = useState<number | null>(null),
+    [toolSection, setToolSection] = useState<"people" | "goals">("people"),
     [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(
       null,
     ),
@@ -181,6 +183,57 @@ export default function CashNarra() {
   const [recordsContextUnavailable, setRecordsContextUnavailable] = useState(false);
   const w = spaces.find((w) => w.id === wid);
   const goal = w?.goals.find((g) => g.id === goalId);
+  const modal = modalState.name;
+  const setModal = useCallback((name: string) => {
+    setModalState((current) =>
+      current.name === name ? current : { name, revision: current.revision + 1 },
+    );
+  }, []);
+  function reportError(message: string) {
+    setError(message);
+    setErrorDialog(message && modal ? modalState.revision : null);
+  }
+  const formModal = [
+    "account",
+    "goal",
+    "opening",
+    "allocation",
+    "goal-review",
+    "checkin",
+  ].includes(modal);
+  const dialogError = errorDialog === modalState.revision ? error : "";
+  const dialogRecovery =
+    retryOperation && retryOperation.action !== "batch"
+      ? () => {
+          void checkChangeResult();
+        }
+      : undefined;
+  const formDialogProps = {
+    busy,
+    error: dialogError,
+    recover: dialogRecovery,
+    onClose: () => setModal(""),
+  };
+  const recoveryFooter = dialogRecovery ? (
+    <>
+      <Button onClick={() => setModal("")}>Close</Button>
+      <Button primary disabled={busy} onClick={dialogRecovery}>
+        {busy ? "Checking change…" : "Check change result"}
+      </Button>
+    </>
+  ) : undefined;
+  const recoveryDialog = [
+    "workspace",
+    "deletion",
+    "retention-now",
+    "logout",
+    "discard",
+  ].includes(modal);
+  const recoveryError =
+    dialogError ||
+    (dialogRecovery
+      ? "An earlier change is not confirmed. Check its original request before making another change."
+      : "");
   const refresh = useCallback(async (target: string) => {
     const request = ++loadRevision.current;
     const res = await fetch("/api/workspaces?view=summaries", {
@@ -325,7 +378,7 @@ export default function CashNarra() {
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
-  }, []);
+  }, [setModal]);
   useEffect(() => {
     if (!owner) return;
     const current: HistoryEntry = window.history.state ?? {};
@@ -367,7 +420,7 @@ export default function CashNarra() {
       setRetryOperation(null);
     };
     return () => channel.close();
-  }, [recordsTab]);
+  }, [recordsTab, setModal]);
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
@@ -593,10 +646,11 @@ export default function CashNarra() {
     });
   }
   async function perform(operation: Operation) {
-    if (retryOperation && retryOperation.key !== operation.key)
-      throw new Error(
-        "Resolve the unconfirmed action before making another change.",
-      );
+    if (retryOperation && retryOperation.key !== operation.key) {
+      const message = "Resolve the unconfirmed action before making another change.";
+      reportError(message);
+      throw new Error(message);
+    }
     setBusy(true);
     setError("");
     try {
@@ -631,7 +685,7 @@ export default function CashNarra() {
         setRetryOperation(operation);
       else setRetryOperation(null);
       const failure = e as Error & { rejected?: boolean; session?: boolean };
-      setError(failure.rejected || failure.session
+      reportError(failure.rejected || failure.session
         ? failure.message
         : operation.action === "batch"
           ? "We couldn’t confirm the save. Your reviewed work is still here. Choose Check save result to check the original request safely."
@@ -651,6 +705,14 @@ export default function CashNarra() {
         key: crypto.randomUUID(),
         ...data,
       });
+      setModal("");
+    } catch {}
+  }
+  async function checkChangeResult() {
+    if (!retryOperation) return;
+    try {
+      await perform(retryOperation);
+      showReceipt("Saved · original action receipt confirmed");
       setModal("");
     } catch {}
   }
@@ -1151,7 +1213,7 @@ export default function CashNarra() {
                 </Button>
               </div>
             )}
-            {error && (
+            {error && !formModal && modal !== "move" && modal !== "workspace-tools" && !(modal && dialogError) && (
               <p role="alert" className={`${s.notice} ${s.error}`}>
                 {error}
                 {/marked for/i.test(error) && (
@@ -1168,7 +1230,7 @@ export default function CashNarra() {
                 )}
               </p>
             )}
-            {retryOperation && retryOperation.action !== "batch" && (
+            {retryOperation && retryOperation.action !== "batch" && !formModal && !recoveryDialog && modal !== "move" && modal !== "workspace-tools" && (
               <div className={s.notice}>
                 <p>
                   The last action is not confirmed. Its original request is
@@ -1176,12 +1238,7 @@ export default function CashNarra() {
                 </p>
                 <Button
                   disabled={busy}
-                  onClick={async () => {
-                    try {
-                      await perform(retryOperation);
-                      showReceipt("Saved · original action receipt confirmed");
-                    } catch {}
-                  }}
+                  onClick={() => { void checkChangeResult(); }}
                 >
                   {busy ? "Checking change…" : "Check change result"}
                 </Button>
@@ -1850,7 +1907,7 @@ export default function CashNarra() {
                         </div>
                       )}
                       {page === "people" && (
-                        <Button onClick={() => setModal("workspace-tools")}>
+                        <Button onClick={() => { setToolSection("people"); setModal("workspace-tools"); }}>
                           Add a person or a due date
                         </Button>
                       )}
@@ -2541,18 +2598,17 @@ export default function CashNarra() {
                         </p>
                       </div>
                       <div className={s.actions}>
-                        <Button onClick={() => setModal("goal")}>
+                        {!w.accounts.length ? <Button primary onClick={() => setModal("account")}>Add account</Button> : <Button primary={!w.goals.length} onClick={() => setModal("goal")}>
                           New goal
-                        </Button>
-                        <Button onClick={() => setModal("workspace-tools")}>
+                        </Button>}
+                        {!!w.goals.length && <Button onClick={() => { setToolSection("goals"); setModal("workspace-tools"); }}>
                           Edit goals
-                        </Button>
+                        </Button>}
                       </div>
                     </div>
                     {!w.goals.length && (
                       <p className={s.empty}>
-                        Goals are optional. Start with a name and a fixed
-                        target.
+                        {w.accounts.length ? "Goals are optional. Start with a name and a fixed target." : "Goals are optional. Add an account first so you can track the money you mark for a goal."}
                       </p>
                     )}
                     {w.goals.map((g) => {
@@ -2863,7 +2919,7 @@ export default function CashNarra() {
                             months you have checked for a goal.
                           </p>
                         </div>
-                        <Button onClick={() => setModal("workspace-tools")}>
+                        <Button onClick={() => { setToolSection("people"); setModal("workspace-tools"); }}>
                           Edit people and dates
                         </Button>
                       </div>
@@ -2969,7 +3025,12 @@ export default function CashNarra() {
         </Dialog>
       )}
       {modal === "workspace" && (
-        <Dialog title="Your account" onClose={() => setModal("")}>
+        <Dialog
+          title="Your account"
+          onClose={() => setModal("")}
+          error={recoveryError}
+          footer={recoveryFooter}
+        >
           <span className={s.eyebrow}>Workspaces</span>
           <div className={s.menuList}>
             {spaceSummaries.map((x) => (
@@ -2988,14 +3049,22 @@ export default function CashNarra() {
                   }
                   void refresh(x.id)
                     .then(() => navigate("today"))
-                    .catch((e) => setError(e.message));
+                    .catch((e) =>
+                      reportError(
+                        e.session
+                          ? e.message
+                          : "That workspace could not be opened. Choose it again to retry. Your saved records are still here.",
+                      ),
+                    );
                 }}
               >
                 {hidden ? "Workspace" : x.name} · {x.type}
               </button>
             ))}
           </div>
-          <p className={s.hint}>One plan covers every workspace on this account.</p>
+          <p className={s.hint}>
+            One plan covers every workspace on this account.
+          </p>
           <span className={s.eyebrow}>This account</span>
           <div className={s.menuList}>
             <Button onClick={() => navigate("accounts")}>Manage accounts</Button>
@@ -3020,8 +3089,8 @@ export default function CashNarra() {
                 </Button>
               </div>
               <p className={s.hint}>
-                Opens CashNarra like an app. Your records stay on the account,
-                not on the phone.
+                Opens CashNarra like an app. Your records stay on the account, not
+                on the phone.
               </p>
             </>
           )}
@@ -3053,7 +3122,7 @@ export default function CashNarra() {
                 <option>Personal</option>
               </select>
               <div className={s.actions}>
-                <Button primary type="submit" disabled={busy}>
+                <Button primary type="submit" disabled={busy || !!dialogRecovery}>
                   Create workspace
                 </Button>
               </div>
@@ -3062,17 +3131,11 @@ export default function CashNarra() {
         </Dialog>
       )}
       {modal === "account" && (
-        <Dialog
+        <FormDialog
           title="Track an account"
-          onClose={() => setModal("")}
-          footer={
-            <>
-              <Button onClick={() => setModal("")}>Cancel</Button>
-              <Button primary type="submit" form="cashnarra-account-form" disabled={busy}>
-                Add account
-              </Button>
-            </>
-          }
+          formId="cashnarra-account-form"
+          actionLabel="Add account"
+          {...formDialogProps}
         >
           <form
             id="cashnarra-account-form"
@@ -3106,8 +3169,8 @@ export default function CashNarra() {
               placeholder="Enter a known starting amount"
             />
             <label className={s.checkLabel}>
-              <input type="checkbox" name="unknown" defaultChecked />I don’t
-              know the starting balance yet
+              <input type="checkbox" name="unknown" defaultChecked />I don’t know
+              the starting balance yet
             </label>
             <label htmlFor="opening-date">Starting date</label>
             <input
@@ -3119,7 +3182,7 @@ export default function CashNarra() {
             />
             <p>Choose a date before the activity you want to record.</p>
           </form>
-        </Dialog>
+        </FormDialog>
       )}
       {modal === "trace" && w && view.from && view.to && (
         <Dialog title="Behind these figures" onClose={() => setModal("")}>
@@ -3136,112 +3199,135 @@ export default function CashNarra() {
         </Dialog>
       )}
       {modal === "detail" && selected && w && (
-        <Dialog title={selected.description} onClose={() => setModal("")}>
-          <Amount value={selected.amount} hidden={hidden} large />
-          <p>
-            {labels[selected.kind]} · {readingDate(selected.date)}
-            {selected.accountId
-              ? ` · ${hidden ? "Account hidden" : (w.accounts.find((a) => a.id === selected.accountId)?.name ?? "")}`
-              : ""}
-            {selected.party && !hidden ? ` · ${selected.party}` : ""}
-          </p>
-          <h3>From your story</h3>
-          <blockquote>
-            {hidden
-              ? "Source hidden"
-              : (w.sources.find((s) => s.id === selected.sourceId)?.text ??
-                "Original words removed according to your privacy setting")}
-          </blockquote>
-          {(() => {
-            const changes = w.history.filter(
-              (h) =>
-                h.before.id === selected.id ||
-                h.replacementIds.includes(selected.id),
-            );
-            return (
-              <>
-                <h3>Correction history</h3>
-                {changes.length ? (
-                  changes.map((h, i) => (
-                    <p key={i}>
-                      {readingDate(h.at.slice(0, 10))} · {h.reason}
-                      <br />
-                      Previous amount:{" "}
-                      <Amount value={h.before.amount} hidden={hidden} />
-                    </p>
-                  ))
-                ) : (
-                  <p className={s.muted}>No corrections yet.</p>
-                )}
-              </>
-            );
-          })()}
-          <details className={s.reference}>
-            <summary>Reference</summary>
-            <small>Record {selected.id}</small>
-          </details>
-          {!w.records.find((r) => r.id === selected.id)?.removed && (
-            <div className={s.actions}>
-              <Button onClick={() => beginCorrection(selected)}>
-                Correct record
-              </Button>
-              <Button
-                onClick={() => {
-                  beginCorrection(selected);
-                  setEvents([]);
-                  setReason("Incorrect effect removed");
-                }}
-              >
-                Remove incorrect effect
-              </Button>
-              <Button
-                disabled={D(selected.amount).lt("0.02")}
-                onClick={() => {
-                  beginCorrection(selected);
-                  const half = D(selected.amount).div(2).toDecimalPlaces(2);
-                  setEvents([
-                    {
-                      ...selected,
-                      id: crypto.randomUUID(),
-                      amount: half.toFixed(2),
-                      description: selected.description + " · first part",
-                    },
-                    {
-                      ...selected,
-                      id: crypto.randomUUID(),
-                      amount: D(selected.amount).minus(half).toFixed(2),
-                      description: selected.description + " · second part",
-                    },
-                  ]);
-                  setReason("Split record");
-                }}
-              >
-                Split record
-              </Button>
-              <Button onClick={() => setModal("move")}>Move workspace</Button>
+        <Dialog
+          title={hidden ? "Selected record" : selected.description}
+          onClose={() => setModal("")}
+          footer={
+            <>
+              <Button onClick={() => setModal("")}>Close</Button>
+              {!w.records.find((r) => r.id === selected.id)?.removed && (
+                <Button primary onClick={() => beginCorrection(selected)}>
+                  Correct record
+                </Button>
+              )}
+            </>
+          }
+        >
+          <div className={s.recordDetail}>
+            <div>
+              <Amount value={selected.amount} hidden={hidden} large />
+              <p>
+                {labels[selected.kind]} · {readingDate(selected.date)}
+                {selected.accountId
+                  ? ` · ${hidden ? "Account hidden" : (w.accounts.find((a) => a.id === selected.accountId)?.name ?? "")}`
+                  : ""}
+                {selected.party && !hidden ? ` · ${selected.party}` : ""}
+              </p>
             </div>
-          )}
+            <section>
+              <h3>From your story</h3>
+              <blockquote>
+                {hidden
+                  ? "Source hidden"
+                  : (w.sources.find((s) => s.id === selected.sourceId)?.text ??
+                    "Original words removed according to your privacy setting")}
+              </blockquote>
+            </section>
+            <section>
+              {(() => {
+                const changes = w.history.filter(
+                  (h) =>
+                    h.before.id === selected.id ||
+                    h.replacementIds.includes(selected.id),
+                );
+                return (
+                  <>
+                    <h3>Correction history</h3>
+                    {changes.length ? (
+                      changes.map((h, i) => (
+                        <p key={i}>
+                          {readingDate(h.at.slice(0, 10))} ·{" "}
+                          {hidden ? "Reason hidden" : h.reason}
+                          <br />
+                          Previous amount:{" "}
+                          <Amount value={h.before.amount} hidden={hidden} />
+                        </p>
+                      ))
+                    ) : (
+                      <p className={s.muted}>No corrections yet.</p>
+                    )}
+                  </>
+                );
+              })()}
+            </section>
+            <details className={s.reference}>
+              <summary>Reference</summary>
+              <small>Record {selected.id}</small>
+            </details>
+            {!w.records.find((r) => r.id === selected.id)?.removed && (
+              <div className={s.actions}>
+                <Button
+                  onClick={() => {
+                    beginCorrection(selected);
+                    setEvents([]);
+                    setReason("Incorrect effect removed");
+                  }}
+                >
+                  Remove incorrect effect
+                </Button>
+                <Button
+                  disabled={D(selected.amount).lt("0.02")}
+                  onClick={() => {
+                    beginCorrection(selected);
+                    const half = D(selected.amount).div(2).toDecimalPlaces(2);
+                    setEvents([
+                      {
+                        ...selected,
+                        id: crypto.randomUUID(),
+                        amount: half.toFixed(2),
+                        description: selected.description + " · first part",
+                      },
+                      {
+                        ...selected,
+                        id: crypto.randomUUID(),
+                        amount: D(selected.amount).minus(half).toFixed(2),
+                        description: selected.description + " · second part",
+                      },
+                    ]);
+                    setReason("Split record");
+                  }}
+                >
+                  Split record
+                </Button>
+                <Button onClick={() => setModal("move")}>Move workspace</Button>
+              </div>
+            )}
+          </div>
         </Dialog>
       )}
       {modal === "move" && selected && w && (
-        <Dialog title="Move a record safely" onClose={() => setModal("")}>
-          <MoveForm
-            source={w}
-            spaces={spaceSummaries}
-            record={selected}
-            onMove={async (data) => {
-              await perform(data as Operation);
-              setModal("");
-            }}
-          />
-        </Dialog>
+        <MoveForm
+          source={w}
+          spaces={spaceSummaries}
+          record={selected}
+          hidden={hidden}
+          originalRequest={retryOperation}
+          onClose={() => setModal("")}
+          onMove={async (data) => {
+            await perform(data as Operation);
+            setModal("");
+          }}
+        />
       )}
       {modal === "opening" && w && (
-        <Dialog
+        <FormDialog
           title="Check your starting balance"
-          onClose={() => setModal("")}
+          formId="cashnarra-opening-form"
+          actionLabel="Save starting balance"
+          {...formDialogProps}
         >
           <form
+            id="cashnarra-opening-form"
             onSubmit={(e) => {
               e.preventDefault();
               const f = new FormData(e.currentTarget);
@@ -3252,10 +3338,19 @@ export default function CashNarra() {
               });
             }}
           >
+            <p className={s.formContext}>
+              {hidden ? "Workspace" : w.name} ·{" "}
+              {hidden
+                ? "Account"
+                : w.accounts.find((a) => a.id === accountId)?.name}{" "}
+              · {w.currency}
+              {w.accounts.find((a) => a.id === accountId)?.openingDate
+                ? ` · ${readingDate(w.accounts.find((a) => a.id === accountId)!.openingDate)}`
+                : ""}
+            </p>
             <p>
-              This changes the starting balance you entered for{" "}
-              {w.accounts.find((a) => a.id === accountId)?.openingDate},
-              including affected earlier reports. It is not new income.
+              This changes the starting balance for this account and affected
+              earlier reports. It is not new income.
             </p>
             <label htmlFor="opening-correction">
               Correct amount · GHS (blank if unknown)
@@ -3270,32 +3365,24 @@ export default function CashNarra() {
             />
             <label htmlFor="opening-reason">Reason for this correction</label>
             <input id="opening-reason" name="reason" required maxLength={300} />
-            <Button primary type="submit" disabled={busy}>
-              Save starting balance
-            </Button>
             {w.openingHistory
               ?.filter((h) => h.before.id === accountId)
               .map((h, i) => (
                 <p key={i}>
-                  {h.at} · {h.reason}: <Amount value={h.before.opening} /> →{" "}
-                  <Amount value={h.after.opening} />
+                  {h.at} · {hidden ? "Reason hidden" : h.reason}:{" "}
+                  <Amount value={h.before.opening} hidden={hidden} /> →{" "}
+                  <Amount value={h.after.opening} hidden={hidden} />
                 </p>
               ))}
           </form>
-        </Dialog>
+        </FormDialog>
       )}{" "}
       {modal === "goal" && w && (
-        <Dialog
+        <FormDialog
           title="What are you working towards?"
-          onClose={() => setModal("")}
-          footer={
-            <>
-              <Button onClick={() => setModal("")}>Cancel</Button>
-              <Button primary type="submit" form="cashnarra-goal-form" disabled={busy}>
-                Create goal
-              </Button>
-            </>
-          }
+          formId="cashnarra-goal-form"
+          actionLabel="Create goal"
+          {...formDialogProps}
         >
           <form
             id="cashnarra-goal-form"
@@ -3329,14 +3416,17 @@ export default function CashNarra() {
               account.
             </p>
           </form>
-        </Dialog>
+        </FormDialog>
       )}
       {modal === "allocation" && goal && w && (
-        <Dialog
+        <FormDialog
           title={`Mark money · ${goal.name}`}
-          onClose={() => setModal("")}
+          formId="cashnarra-allocation-form"
+          actionLabel="Save mark"
+          {...formDialogProps}
         >
           <form
+            id="cashnarra-allocation-form"
             onSubmit={(e) => {
               e.preventDefault();
               const f = new FormData(e.currentTarget);
@@ -3354,11 +3444,20 @@ export default function CashNarra() {
                   date: f.get("date"),
                 });
               } catch (err) {
-                setError((err as Error).message);
+                reportError((err as Error).message);
               }
             }}
           >
-            <label htmlFor="allocation-direction">What should this mark do?</label>
+            <p className={s.formContext}>
+              {hidden ? "Workspace" : w.name} ·{" "}
+              {hidden
+                ? "Account"
+                : w.accounts.find((a) => a.id === goal.accountId)?.name}{" "}
+              · {w.currency}
+            </p>
+            <label htmlFor="allocation-direction">
+              What should this mark do?
+            </label>
             <select id="allocation-direction" name="direction" defaultValue="put">
               <option value="put">Put towards this goal</option>
               <option value="take">Take off this goal</option>
@@ -3373,40 +3472,66 @@ export default function CashNarra() {
               defaultValue={date}
               required
             />
-            <p className={s.notice}>
-              {(() => {
-                const account = w.accounts.find(
-                  (item) => item.id === goal.accountId,
-                );
-                const available = account
-                  ? accountBalance(w, account.id)
-                  : null;
-                const markedHere = sum(goal.allocations.map((item) => item.amount));
-                const markedElsewhere = sum(
-                  w.goals
-                    .filter(
-                      (item) =>
-                        item.id !== goal.id &&
-                        item.accountId === goal.accountId,
-                    )
-                    .flatMap((item) =>
-                      item.allocations.map((entry) => entry.amount),
-                    ),
-                );
-                return `${account?.name ?? "This account"} has ${
-                  available === null ? "an unknown balance" : formatMoney(available)
-                }. ${formatMoney(markedHere)} is already marked for this goal, and ${formatMoney(markedElsewhere)} is marked for other goals on the same account. A mark is a note. It does not move money or protect savings at the bank.`;
-              })()}
-            </p>
-            <Button primary type="submit" disabled={busy}>
-              Save mark
-            </Button>
+            {(() => {
+              const account = w.accounts.find(
+                (item) => item.id === goal.accountId,
+              );
+              const available = account ? accountBalance(w, account.id) : null;
+              const markedHere = sum(goal.allocations.map((item) => item.amount));
+              const markedElsewhere = sum(
+                w.goals
+                  .filter(
+                    (item) =>
+                      item.id !== goal.id && item.accountId === goal.accountId,
+                  )
+                  .flatMap((item) =>
+                    item.allocations.map((entry) => entry.amount),
+                  ),
+              );
+              return (
+                <section
+                  className={s.allocationFacts}
+                  aria-label="Goal mark context"
+                >
+                  <p>On this account</p>
+                  <dl>
+                    <div>
+                      <dt>Recorded balance</dt>
+                      <dd>
+                        <Amount value={available} hidden={hidden} />
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Marked for this goal</dt>
+                      <dd>
+                        <Amount value={markedHere} hidden={hidden} />
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Marked for other goals</dt>
+                      <dd>
+                        <Amount value={markedElsewhere} hidden={hidden} />
+                      </dd>
+                    </div>
+                  </dl>
+                  <p className={s.hint}>
+                    A mark is a note. It does not move or reserve money.
+                  </p>
+                </section>
+              );
+            })()}
           </form>
-        </Dialog>
+        </FormDialog>
       )}
       {modal === "goal-review" && goal && (
-        <Dialog title="Review a month for this goal" onClose={() => setModal("")}>
+        <FormDialog
+          title="Review a month for this goal"
+          formId="cashnarra-goal-review-form"
+          actionLabel="Record review"
+          {...formDialogProps}
+        >
           <form
+            id="cashnarra-goal-review-form"
             onSubmit={(e) => {
               e.preventDefault();
               const f = new FormData(e.currentTarget);
@@ -3417,6 +3542,7 @@ export default function CashNarra() {
               });
             }}
           >
+            <p className={s.formContext}>{goal.name}</p>
             <label htmlFor="review-month">
               Month checked, even if you added no money
             </label>
@@ -3446,25 +3572,22 @@ export default function CashNarra() {
                   different from not knowing.
                 </li>
                 <li>
-                  Check unpaid balances and other payments you need to make
-                  before setting more money aside.
+                  Check unpaid balances and other payments you need to make before
+                  setting more money aside.
                 </li>
               </ol>
               <p>
-                CashNarra uses the middle amount from the last three full
-                months you checked. It cannot confirm that your records are
-                complete or that you can afford the next amounts.
+                CashNarra uses the middle amount from the last three full months
+                you checked. It cannot confirm that your records are complete or
+                that you can afford the next amounts.
               </p>
               <p>
                 Missing months are not zero. This confirms review, not
                 affordability.
               </p>
             </details>
-            <Button primary type="submit" disabled={busy}>
-              Record review
-            </Button>
           </form>
-        </Dialog>
+        </FormDialog>
       )}
       {modal === "scenario" && goal && (
         <Dialog
@@ -3551,11 +3674,14 @@ export default function CashNarra() {
         </Dialog>
       )}
       {modal === "checkin" && (
-        <Dialog
+        <FormDialog
           title="Start with the day you remember"
-          onClose={() => setModal("")}
+          formId="cashnarra-checkin-form"
+          actionLabel="Record check-in"
+          {...formDialogProps}
         >
           <form
+            id="cashnarra-checkin-form"
             onSubmit={(e) => {
               e.preventDefault();
               const f = new FormData(e.currentTarget);
@@ -3577,121 +3703,212 @@ export default function CashNarra() {
               <option value="rest">Rest / business closed</option>
             </select>
             <p>
-              Anything else to add? I’m done for today is optional. You can
-              catch up on another day later. A check-in does not mean your
-              finances are complete.
+              Anything else to add? I’m done for today is optional. You can catch
+              up on another day later. A check-in does not mean your finances are
+              complete.
             </p>
-            <Button primary type="submit">
-              Record check-in
-            </Button>
           </form>
-        </Dialog>
+        </FormDialog>
       )}
       {modal === "workspace-tools" && w && (
         <Dialog
           title="People, due dates and goals"
           onClose={() => setModal("")}
+          error={
+            dialogError ||
+            (dialogRecovery
+              ? "An earlier change is not confirmed. Check its original request before editing these details."
+              : "")
+          }
+          footer={recoveryFooter}
         >
-          <WorkspaceTools
-            w={w}
-            hidden={hidden}
-            busy={busy}
-            save={async (action, data) => {
-              await perform({
-                action,
-                workspaceId: w.id,
-                expectedVersion: w.version,
-                key: crypto.randomUUID(),
-                ...data,
-              });
-            }}
-          />
+          <fieldset
+            className={s.formBody}
+            disabled={busy || !!dialogRecovery}
+            aria-label="Workspace details"
+          >
+            <WorkspaceTools
+              w={w}
+              hidden={hidden}
+              busy={busy}
+              startAt={toolSection}
+              errorHandledByDialog
+              save={async (action, data) => {
+                await perform({
+                  action,
+                  workspaceId: w.id,
+                  expectedVersion: w.version,
+                  key: crypto.randomUUID(),
+                  ...data,
+                });
+              }}
+            />
+          </fieldset>
         </Dialog>
       )}
       {modal === "discard" && (
-        <Dialog title="Discard this draft?" onClose={() => setModal("")}>
+        <Dialog
+          title="Discard this draft?"
+          onClose={() => setModal("")}
+          error={recoveryError}
+          footer={
+            recoveryFooter ?? (
+              <>
+                <Button onClick={() => setModal("")}>Cancel</Button>
+                <Button
+                  disabled={busy || !!dialogRecovery}
+                  onClick={async () => {
+                    if (pending || retryOperation) {
+                      setError("Check the unconfirmed action before discarding.");
+                      setModal("");
+                      return;
+                    }
+                    setText("");
+                    setEvents([]);
+                    setReplaceIds([]);
+                    setQuestions([]);
+                    await draftStorage("delete", owner, wid).catch((e) =>
+                      setError(e.message),
+                    );
+                    setModal("");
+                    setPage("today");
+                    setStatus("Draft discarded.");
+                  }}
+                >
+                  Discard unsaved draft
+                </Button>
+              </>
+            )
+          }
+        >
           <p>
             Your confirmed records stay intact. Copy any unsaved words you need
             first.
           </p>
-          <Button
-            onClick={async () => {
-              if (pending || retryOperation) {
-                setError("Check the unconfirmed action before discarding.");
-                setModal("");
-                return;
-              }
-              setText("");
-              setEvents([]);
-              setReplaceIds([]);
-              setQuestions([]);
-              await draftStorage("delete", owner, wid).catch((e) =>
-                setError(e.message),
-              );
-              setModal("");
-              setPage("today");
-              setStatus("Draft discarded.");
-            }}
-          >
-            Discard unsaved draft
-          </Button>
         </Dialog>
       )}
       {modal === "deletion" && (
         <Dialog
           title="Request account-data deletion"
           onClose={() => setModal("")}
+          error={recoveryError}
+          footer={
+            recoveryFooter ?? (
+              <>
+                <Button onClick={() => setModal("")}>Cancel</Button>
+                <Button
+                  primary
+                  disabled={busy || !!dialogRecovery}
+                  onClick={() => simple("request", { kind: "deletion" })}
+                >
+                  Record deletion request
+                </Button>
+              </>
+            )
+          }
         >
           <p>
-            This records your request. It does not delete your records now.
-            Some financial records may need to be kept by law.
+            This records your request. It does not delete your records now. Some
+            financial records may need to be kept by law.
           </p>
-          <Button
-            primary
-            onClick={() => simple("request", { kind: "deletion" })}
-          >
-            Record deletion request
-          </Button>
         </Dialog>
       )}
       {modal === "shared-device" && (
         <Dialog
           title="Clear drafts on this device?"
           onClose={() => setModal("")}
+          error={dialogError}
+          footer={
+            <>
+              <Button onClick={() => setModal("")}>Stay</Button>
+              <Button
+                primary
+                onClick={async () => {
+                  setPersistent(false);
+                  await clearDrafts()
+                    .then(() =>
+                      setStatus("Shared-device mode. Stored drafts cleared."),
+                    )
+                    .catch((e) => setError(e.message));
+                  setModal("");
+                }}
+              >
+                Clear drafts and use shared-device mode
+              </Button>
+            </>
+          }
         >
           <p>
-            Shared-device mode stops keeping unfinished stories on this device
-            and clears the ones already stored here. Saved records stay.
+            Shared-device mode stops keeping unfinished stories on this device and
+            clears the ones already stored here. Saved records stay.
           </p>
-          <div className={s.actions}>
-            <Button onClick={() => setModal("")}>Stay</Button>
-            <Button
-              primary
-              onClick={async () => {
-                setPersistent(false);
-                await clearDrafts()
-                  .then(() =>
-                    setStatus("Shared-device mode. Stored drafts cleared."),
-                  )
-                  .catch((e) => setError(e.message));
-                setModal("");
-              }}
-            >
-              Clear drafts and use shared-device mode
-            </Button>
-          </div>
         </Dialog>
       )}
       {modal === "logout" && (
-        <Dialog title="Sign out of this device?" onClose={() => setModal("")}>
+        <Dialog
+          title="Sign out of this device?"
+          onClose={() => setModal("")}
+          error={recoveryError}
+          footer={
+            recoveryFooter ?? (
+              <>
+                {" "}
+                <Button onClick={() => setModal("")}>Stay</Button>
+                <Button
+                  primary
+                  disabled={busy || !!dialogRecovery}
+                  onClick={async () => {
+                    if (pending || retryOperation) {
+                      setError(
+                        "Check the unconfirmed action before signing out.",
+                      );
+                      setModal("");
+                      return;
+                    }
+                    setBusy(true);
+                    try {
+                      if (!demo) {
+                        const { error: signOutError } =
+                          await supabase().auth.signOut();
+                        if (signOutError) throw signOutError;
+                      }
+                      const response = await fetch("/api/logout", {
+                        method: "POST",
+                      });
+                      if (!response.ok)
+                        throw new Error(
+                          "Sign-out did not finish. You are still signed in. Try again.",
+                        );
+                      recordsTab.clear();
+                      recordsPosition.current = {};
+                      await clearDrafts();
+                      const channel = new BroadcastChannel("cashnarra-session");
+                      channel.postMessage("signed-out");
+                      channel.close();
+                      setText("");
+                      setEvents([]);
+                      location.href = "/";
+                    } catch (e) {
+                      reportError(
+                        (e as Error).message ||
+                          "Sign-out did not finish. Your unfinished story is still on this device.",
+                      );
+                    } finally {
+                      setBusy(false);
+                    }
+                  }}
+                >
+                  Sign out
+                </Button>
+              </>
+            )
+          }
+        >
           <p>
-            A complete draft file keeps edited records as well as your words.
-            Keep the file private and restore it in the same account and
-            workspace.
+            A complete draft file keeps edited records as well as your words. Keep
+            the file private and restore it in the same account and workspace.
           </p>
-          <Button onClick={downloadCompleteDraft}>
-            Download complete draft
-          </Button>
+          <Button onClick={downloadCompleteDraft}>Download complete draft</Button>
           <p>
             {text || events.length || pending
               ? "Some work has not been saved. Copy it first, or stay and finish it."
@@ -3702,52 +3919,10 @@ export default function CashNarra() {
               onClick={() =>
                 navigator.clipboard
                   .writeText(text)
-                  .catch(() => setError("Select and copy the draft manually."))
+                  .catch(() => reportError("Select and copy the draft manually."))
               }
             >
               Copy draft
-            </Button>
-            <Button onClick={() => setModal("")}>Stay</Button>
-            <Button
-              primary
-              disabled={busy}
-              onClick={async () => {
-                if (pending || retryOperation) {
-                  setError("Check the unconfirmed action before signing out.");
-                  setModal("");
-                  return;
-                }
-                setBusy(true);
-                try {
-                  if (!demo) {
-                    const { error: signOutError } = await supabase().auth.signOut();
-                    if (signOutError) throw signOutError;
-                  }
-                  const response = await fetch("/api/logout", { method: "POST" });
-                  if (!response.ok)
-                    throw new Error(
-                      "Sign-out did not finish. You are still signed in. Try again.",
-                    );
-                  recordsTab.clear();
-                  recordsPosition.current = {};
-                  await clearDrafts();
-                  const channel = new BroadcastChannel("cashnarra-session");
-                  channel.postMessage("signed-out");
-                  channel.close();
-                  setText("");
-                  setEvents([]);
-                  location.href = "/";
-                } catch (e) {
-                  setError(
-                    (e as Error).message ||
-                      "Sign-out did not finish. Your unfinished story is still on this device.",
-                  );
-                } finally {
-                  setBusy(false);
-                }
-              }}
-            >
-              Sign out
             </Button>
           </div>
         </Dialog>
@@ -3812,22 +3987,27 @@ export default function CashNarra() {
         <Dialog
           title="Remove the original words now?"
           onClose={() => setModal("")}
+          error={recoveryError}
+          footer={
+            recoveryFooter ?? (
+              <>
+                <Button onClick={() => setModal("")}>Cancel</Button>
+                <Button
+                  primary
+                  disabled={busy || !!dialogRecovery}
+                  onClick={() => simple("retention", { days: 0 })}
+                >
+                  Remove original words now
+                </Button>
+              </>
+            )
+          }
         >
           <p>
             This removes the saved narration in this workspace. The financial
             records and correction history stay. You can cancel and keep the
             words.
           </p>
-          <div className={s.actions}>
-            <Button onClick={() => setModal("")}>Cancel</Button>
-            <Button
-              primary
-              disabled={busy}
-              onClick={() => simple("retention", { days: 0 })}
-            >
-              Remove original words now
-            </Button>
-          </div>
         </Dialog>
       )}
       {modal === "profit" && w && view.from && view.to && (

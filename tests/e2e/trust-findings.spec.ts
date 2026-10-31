@@ -10,7 +10,9 @@ async function demo(page: Page) {
   ).toBeVisible();
 }
 function visible(page: Page, name: string) {
-  return page.getByRole("button", { name, exact: true }).filter({ visible: true });
+  return page
+    .getByRole("button", { name, exact: true })
+    .filter({ visible: true });
 }
 
 test("Today keeps its day when Money Stories changes period and date", async ({
@@ -33,19 +35,25 @@ test("Today keeps its day when Money Stories changes period and date", async ({
   await expect(page.getByText("Abena opening balance")).toHaveCount(0);
 });
 
-test("an open month says so far and separates later dates", async ({ page }) => {
+test("an open month says so far and separates later dates", async ({
+  page,
+}) => {
   await demo(page);
   await visible(page, "Money Stories").click();
   await page.getByLabel("Story date").fill("2026-10-19");
   await page.getByLabel("Story period").selectOption("month");
   const today = new Date().toISOString().slice(0, 10);
   const view = storyWindow("2026-10-19", "month", today);
-  await expect(page.getByText(view.heading)).toBeVisible();
+  await expect(
+    page.locator("main small").filter({ hasText: view.heading }),
+  ).toBeVisible();
   if (view.status === "so-far") {
     await expect(page.getByText("You owe on 31 Oct 2026")).toHaveCount(0);
     await expect(page.getByText(view.oweLabel!)).toBeVisible();
     await expect(
-      page.getByText(`No saved records are dated after ${view.heading.split("through ")[1]}`),
+      page.getByText(
+        `No saved records are dated after ${view.heading.split("through ")[1]}`,
+      ),
     ).toBeVisible();
   } else {
     await expect(page.getByText(view.oweLabel!)).toBeVisible();
@@ -68,9 +76,9 @@ test("Today’s story field keeps the words and explains transcription first", a
   await page
     .getByLabel("Your money story", { exact: true })
     .fill("Synthetic composer note");
-  await expect(page.getByLabel("Your money story", { exact: true })).toHaveValue(
-    "Synthetic composer note",
-  );
+  await expect(
+    page.getByLabel("Your money story", { exact: true }),
+  ).toHaveValue("Synthetic composer note");
   await visible(page, "Home").click();
   await page.getByRole("button", { name: "Speak", exact: true }).click();
   await expect(
@@ -87,14 +95,20 @@ test("a saved story does not stay saved on a new empty story", async ({
 }) => {
   await demo(page);
   await page.getByRole("button", { name: "Add a manual record" }).click();
-  await page.getByLabel("Description", { exact: true }).fill("Synthetic trust receipt");
+  await page
+    .getByLabel("Description", { exact: true })
+    .fill("Synthetic trust receipt");
   await page.getByLabel("Amount · GHS", { exact: true }).fill("3.00");
   await page.getByRole("button", { name: "Review this record" }).click();
   await page.getByRole("button", { name: "Save this record" }).click();
   await expect(page.getByRole("status")).toContainText("records confirmed");
   await visible(page, "Home").click();
-  await expect(page.getByLabel("Your money story", { exact: true })).toHaveValue("");
-  await expect(page.getByRole("status").filter({ hasText: "Saved" })).toHaveCount(0);
+  await expect(
+    page.getByLabel("Your money story", { exact: true }),
+  ).toHaveValue("");
+  await expect(
+    page.getByRole("status").filter({ hasText: "Saved" }),
+  ).toHaveCount(0);
 });
 
 test("a day with no records does not show zero money movement", async ({
