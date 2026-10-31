@@ -1,6 +1,9 @@
 import { test, expect, type Page } from "@playwright/test";
 import { openSampleWorkspace } from "./demo-entry";
 
+// Service workers can bypass route mocks and invalidate lost-response checks.
+test.use({ serviceWorkers: "block" });
+
 async function demo(page: Page) {
   await openSampleWorkspace(page);
   await expect(page.getByRole("heading", { name: "What happened with your money?" })).toBeVisible();

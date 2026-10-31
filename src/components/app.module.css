@@ -162,6 +162,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
+  align-items: start;
 }
 .formGrid label {
   margin-top: 0;
@@ -169,7 +170,7 @@
 }
 .actions {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
   flex-wrap: wrap;
   margin-top: 16px;
@@ -200,6 +201,10 @@
 /* ---------- shell ---------- */
 .appShell {
   container: cashnarra / inline-size;
+}
+/* Keep text and control surfaces in the same frame when the theme changes. */
+.appShell button {
+  transition: none;
 }
 .appbar {
   position: sticky;
@@ -311,7 +316,7 @@
 .page {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 300px;
-  gap: 40px;
+  gap: 24px 40px;
   align-items: start;
 }
 .pageMain,
@@ -332,10 +337,13 @@
 .pageIntro {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   gap: 16px 24px;
   flex-wrap: wrap;
   margin-bottom: 20px;
+}
+.pageIntro > .actions {
+  margin-top: 0;
 }
 .pageIntro h1 {
   font-size: 28px;
@@ -355,8 +363,8 @@
   margin: 28px 0 8px;
 }
 .sectionHead h2 {
-  font-size: 18px;
-  line-height: 26px;
+  font-size: 20px;
+  line-height: 28px;
   margin: 0;
 }
 
@@ -504,6 +512,10 @@
 .log {
   margin-top: 28px;
 }
+.pageLog .log,
+.pageLog .log > :first-child .dayHead {
+  margin-top: 0;
+}
 .dayHead {
   display: flex;
   justify-content: space-between;
@@ -544,16 +556,18 @@
 .paymentContext {
   overflow-wrap: anywhere;
   margin-bottom: 18px;
-  padding: 14px 16px;
+  padding: 12px 16px;
   border-radius: 12px;
   background: var(--cn-surface-subtle);
 }
 .paymentContext > p:first-child {
   margin: 0;
   font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
 }
 .paymentContext .hint {
-  margin-top: 6px;
+  margin-top: 8px;
   font-size: 14px;
 }
 .exportSummary {
@@ -607,14 +621,14 @@
 }
 .rowText strong {
   display: block;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
-  line-height: 24px;
+  line-height: 22px;
 }
 .rowText small,
 .rowRight small {
   display: block;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 20px;
   color: var(--cn-text-secondary);
 }
@@ -633,14 +647,14 @@
 .rowWithAction {
   display: flex;
   align-items: stretch;
-  gap: 4px;
+  gap: 12px;
   border-bottom: 1px solid var(--cn-border);
 }
 .rowWithAction .row {
   flex: 1;
   min-width: 0;
-  min-height: 80px;
-  padding-block: 14px;
+  min-height: 72px;
+  padding-block: 12px;
   border-bottom: 0;
 }
 .quietAction {
@@ -795,6 +809,10 @@
 /* ---------- review ---------- */
 .flow {
   max-width: 760px;
+}
+.flow > h1 {
+  font-size: 28px;
+  line-height: 36px;
 }
 .reviewScope {
   display: flex;
@@ -1041,6 +1059,10 @@
   max-width: 100%;
   min-height: 44px;
 }
+.toolbar input:is([type="date"], [type="month"]) {
+  flex: 0 1 16rem;
+  min-width: 0;
+}
 .recordsSummary {
   margin: -8px 0 16px;
   color: var(--cn-text-secondary);
@@ -1060,12 +1082,15 @@
   margin-top: 4px;
 }
 .debtGroup h3 {
-  margin: 24px 0 0;
+  margin: 8px 0 0;
   font-family: var(--font-inter), sans-serif;
-  font-size: 13px;
-  line-height: 20px;
-  font-weight: 600;
-  color: var(--cn-text-secondary);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 700;
+  color: var(--cn-text);
+}
+.debtGroup > div + div > h3 {
+  margin-top: 28px;
 }
 .debtRow {
   display: grid;
@@ -1078,7 +1103,7 @@
 .debtRow strong {
   display: block;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 22px;
   overflow-wrap: anywhere;
 }
@@ -1089,7 +1114,7 @@
   line-height: 20px;
 }
 .debtRow .amount {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   text-align: right;
 }
@@ -1110,25 +1135,37 @@
   margin: 8px 0 20px;
 }
 .accountGrid .large {
+  display: block;
+  margin-top: 12px;
   font-size: 26px;
   line-height: 34px;
 }
 .accountGrid h2 {
   font-size: 20px;
-  margin: 10px 0 2px;
+  line-height: 28px;
+  margin: 0;
 }
 .accountGrid p {
   color: var(--cn-text-secondary);
   font-size: 13px;
   margin: 4px 0 8px;
 }
-.accountMark {
+.accountHeading {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
-  font-size: 13px;
-  font-weight: 700;
+  color: var(--cn-text);
+}
+.accountHeading h2 {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.accountHeading svg {
+  margin-top: 4px;
   color: var(--cn-text-secondary);
+}
+.accountGrid details {
+  margin: 12px 0 8px;
 }
 .chapter {
   padding: 32px 0;
@@ -1142,8 +1179,13 @@
   max-width: 720px;
   color: var(--cn-text-secondary);
 }
-.chapter .button {
-  margin-right: 8px;
+.chapter p .amountLink {
+  min-height: 24px;
+  padding-block: 0;
+  vertical-align: baseline;
+}
+.chapter .actions + details {
+  margin-top: 12px;
 }
 
 /* ---------- money stories ---------- */
@@ -1327,8 +1369,8 @@
 }
 .goalHeader h2 {
   margin: 0;
-  font-size: 22px;
-  line-height: 30px;
+  font-size: 20px;
+  line-height: 28px;
 }
 .goalMarker {
   color: var(--cn-text-secondary);
@@ -1336,14 +1378,17 @@
   line-height: 20px;
 }
 .goalForecast {
-  margin-top: 24px;
-  padding-top: 20px;
+  margin-top: 20px;
+  padding-top: 16px;
   border-top: 1px solid var(--cn-border);
 }
 .goalForecast h3 {
   margin: 6px 0 10px;
-  font-size: 20px;
-  line-height: 28px;
+  font-size: 18px;
+  line-height: 26px;
+}
+.goalForecast > :first-child {
+  margin-top: 0;
 }
 .goalForecast > p:last-child {
   margin-bottom: 0;
@@ -1377,9 +1422,9 @@
   max-width: 760px;
 }
 .settingsGroup h2 {
-  margin: 0 0 4px;
-  font-size: 18px;
-  line-height: 26px;
+  margin: 0 0 8px;
+  font-size: 20px;
+  line-height: 28px;
 }
 .settingsRow {
   padding: 18px 0;
@@ -1407,6 +1452,7 @@
 }
 .settingsRow strong {
   overflow-wrap: anywhere;
+  font-weight: 600;
 }
 .settingsRow p {
   margin: 2px 0 0;
@@ -1463,6 +1509,7 @@
 .dialog .sectionHead {
   flex-shrink: 0;
   margin: 0 0 20px;
+  align-items: flex-start;
 }
 .dialog .sectionHead h2 {
   font-size: 20px;
@@ -1473,6 +1520,7 @@
   min-height: 0;
   overflow: auto;
   padding-right: 4px;
+  scroll-padding-block: 8px 16px;
 }
 .dialogBody > p:last-child {
   margin-bottom: 0;
@@ -1490,6 +1538,10 @@
 .dialogExit .actions {
   margin-top: 0;
 }
+.dialogExit > .button {
+  min-width: 44px;
+  padding-inline: 12px;
+}
 .dialog form,
 .content form,
 .panel form {
@@ -1499,12 +1551,50 @@
 .dialog form > label,
 .content form > label,
 .panel form > label {
-  margin: 18px 0 6px;
+  margin: 20px 0 8px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
 }
 .dialog form > label:first-child,
 .content form > label:first-child,
 .panel form > label:first-child {
   margin-top: 0;
+}
+.recordEditor {
+  gap: 20px;
+}
+.field {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  align-content: start;
+}
+.field > label,
+.formGrid .field > label {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+.field > .button {
+  justify-self: start;
+}
+.field > .quiet {
+  padding-inline: 0;
+}
+.recordEditor .paymentContext,
+.recordEditor .actions,
+.recordEditor > .hint,
+.recordEditor .field > .hint,
+.recordEditor .error {
+  margin: 0;
+}
+.recordEditor .formGrid {
+  gap: 20px;
+}
+.dialogBody :is(input, textarea, select, button, summary) {
+  scroll-margin-block: 8px 16px;
 }
 .dialog textarea {
   min-height: 96px;
@@ -1680,7 +1770,7 @@
 @media (max-width: 1100px) {
   .page {
     grid-template-columns: minmax(0, 1fr) 260px;
-    gap: 28px;
+    gap: 24px 28px;
   }
   .appbar {
     padding: 0 20px;
@@ -1809,6 +1899,23 @@
     font-size: 24px;
     line-height: 30px;
   }
+  .flow > h1 {
+    font-size: 24px;
+    line-height: 30px;
+  }
+  .recordFilters > input {
+    flex-basis: 100%;
+  }
+  .recordFilters > select {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .toolbar input:is([type="date"], [type="month"]) {
+    flex: 1 1 12rem;
+  }
+  .dialogExit > .primary {
+    flex: 1;
+  }
   .row {
     gap: 10px;
   }
@@ -1916,6 +2023,12 @@
   }
 }
 @media (max-width: 350px) {
+  .dialogExit > .button {
+    padding-inline: 8px;
+  }
+  .recordFilters > select {
+    flex-basis: 100%;
+  }
   .content {
     padding-inline: 14px;
   }
@@ -1943,6 +2056,22 @@
   }
   .reviewList .quietAction {
     margin: -8px 0 4px auto;
+  }
+}
+
+@media (max-height: 500px) {
+  .dialog .sectionHead {
+    margin-bottom: 16px;
+  }
+  .recordEditor,
+  .recordEditor .formGrid {
+    gap: 16px;
+  }
+  .recordEditor .paymentContext {
+    padding: 8px;
+  }
+  .paymentContext > p:first-child {
+    font-size: 13px;
   }
 }
 
