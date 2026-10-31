@@ -6,16 +6,12 @@ for (const width of [320, 390, 1280]) {
   }) => {
     await page.setViewportSize({ width, height: 640 });
     await page.goto("/pricing");
-    const free = page
-      .locator("article")
-      .filter({
-        has: page.getByRole("heading", { name: "Free", exact: true }),
-      });
-    const plus = page
-      .locator("article")
-      .filter({
-        has: page.getByRole("heading", { name: "Plus", exact: true }),
-      });
+    const free = page.locator("article").filter({
+      has: page.getByRole("heading", { name: "Free", exact: true }),
+    });
+    const plus = page.locator("article").filter({
+      has: page.getByRole("heading", { name: "Plus", exact: true }),
+    });
     await expect(
       free.getByText("30 AI stories a month", { exact: true }),
     ).toBeVisible();
@@ -28,7 +24,7 @@ for (const width of [320, 390, 1280]) {
       }),
     ).toBeVisible();
     await expect(
-      plus.getByText("3 voice notes a day, up to 2 minutes each", {
+      plus.getByText("6 voice notes a day, up to 2 minutes each", {
         exact: true,
       }),
     ).toBeVisible();

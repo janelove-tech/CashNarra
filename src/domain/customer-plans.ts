@@ -856,7 +856,7 @@ export type UsageMessageCode =
 
 export function messageFor(
   code: UsageMessageCode,
-  detail: { remaining?: number; reset?: string } = {},
+  detail: { remaining?: number; reset?: string; limit?: number } = {},
 ) {
   const reset = detail.reset ?? "the next reset";
   switch (code) {
@@ -867,7 +867,7 @@ export function messageFor(
     case "ai_exhausted":
       return "You've used this month's AI stories. You can still add records yourself.";
     case "voice_exhausted":
-      return `You've used today's 3 voice notes. You can still type your story. Voice resets at ${reset}.`;
+      return `You've used today's ${detail.limit ?? launchPlans.plans.free.voiceNotesPerDay} voice notes. You can still type your story. Voice resets at ${reset}.`;
     case "voice_upstream":
       return "Voice is busy right now. Keep your recording and try later, or type your story.";
     case "voice_off":

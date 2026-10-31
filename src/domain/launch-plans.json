@@ -12,7 +12,7 @@
     "plus": {
       "activeWorkspaces": 10,
       "aiStoriesPerMonth": 300,
-      "voiceNotesPerDay": 3,
+      "voiceNotesPerDay": 6,
       "voiceNoteSeconds": 120,
       "reportPacksPerMonth": 30
     }

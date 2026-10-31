@@ -230,7 +230,7 @@ it("shows the finished Free and Plus comparison and keeps Unlimited private", ()
     "300 AI stories a month",
   );
   expect(plus?.perks.map((perk) => perk.headline)).toContain(
-    "3 voice notes a day, up to 2 minutes each",
+    "6 voice notes a day, up to 2 minutes each",
   );
   expect(preview.plans[0]?.perks.map((perk) => perk.headline)).toContain(
     "3 voice notes a day, up to 1 minute each",

@@ -420,3 +420,39 @@ it("enforces the revised shared story and report allowances while reusing genera
     expect(usedUnits(account, "report_pack", month)).toBe(reports);
   }
 });
+
+it("gives Plus six daily voice notes and reports the right limit across workspaces", () => {
+  for (const [planId, limit] of [
+    ["free", 3],
+    ["plus", 6],
+  ] as const) {
+    let account = emptyUsage("acct", planId, true);
+    for (let index = 0; index < limit; index++) {
+      const step = reserve(account, {
+        operationKey: `voice-${index}`,
+        kind: "voice_note",
+        at: october,
+        workspaceId: index % 2 ? "shop" : "personal",
+      });
+      expect(step.created).toBe(true);
+      account = settle(step.account, step.attempt!.id);
+    }
+    const blocked = reserve(account, {
+      operationKey: "voice-extra",
+      kind: "voice_note",
+      at: october,
+      workspaceId: "another",
+    });
+    expect(blocked.code).toBe("exhausted");
+    expect(blocked.providerSubmission).toBe("none");
+    expect(blocked.message).toContain(`today's ${limit} voice notes`);
+    const tomorrow = reserve(account, {
+      operationKey: "voice-tomorrow",
+      kind: "voice_note",
+      at: new Date("2026-10-22T00:00:00.000Z"),
+      workspaceId: "shop",
+    });
+    expect(tomorrow.created).toBe(true);
+    expect(usedUnits(account, "voice_note", "2026-10-21")).toBe(limit);
+  }
+});
