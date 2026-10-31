@@ -384,6 +384,8 @@ export default function CashNarra() {
       target?.focus({ preventScroll: true });
       if (page === "records")
         window.scrollTo({ top: position?.top ?? 0, behavior: "instant" });
+      else if (page === "today" && !lastSaved)
+        window.scrollTo({ top: 0, behavior: "instant" });
       else target?.scrollIntoView({ block: "start", behavior: "instant" });
     });
     return () => cancelAnimationFrame(frame);
@@ -1840,7 +1842,12 @@ export default function CashNarra() {
                         </p>
                       </div>
                       {page === "records" && (
-                        <Button onClick={() => setModal("export")}>Export</Button>
+                        <div className={s.actions}>
+                          <Button onClick={() => setModal("export")}>Export</Button>
+                          <Button primary onClick={() => manual()}>
+                            <Plus size={16} /> Add record
+                          </Button>
+                        </div>
                       )}
                       {page === "people" && (
                         <Button onClick={() => setModal("workspace-tools")}>
@@ -1873,8 +1880,13 @@ export default function CashNarra() {
                     </nav>
                     {page === "records" && (
                       <>
-                    <div className={s.toolbar}>
+                    <div
+                      className={`${s.toolbar} ${s.recordFilters}`}
+                      role="search"
+                      aria-label="Records filters"
+                    >
                       <input
+                        type="search"
                         aria-label="Search records"
                         maxLength={300}
                         placeholder="Search person, amount or description"
@@ -1905,10 +1917,6 @@ export default function CashNarra() {
                         <option value="credit_sale">Credit sales</option>
                         <option value="credit_expense">Unpaid expenses</option>
                       </select>
-                      <Button primary onClick={() => manual()}>
-                        <Plus size={17} />
-                        Add record
-                      </Button>
                       {(search || filter !== "all" || accountFilter || evidence) && (
                         <Button
                           onClick={() => {
@@ -2118,7 +2126,7 @@ export default function CashNarra() {
                     <div className={s.accountGrid}>
                       {w.accounts.map((a) => (
                         <article key={a.id} className={s.panel}>
-                          <span className={s.accountMark}>
+                          <div className={s.accountHeading}>
                             {a.type === "Cash" ? (
                               <Wallet size={20} aria-hidden />
                             ) : a.type === "MoMo" ? (
@@ -2126,13 +2134,11 @@ export default function CashNarra() {
                             ) : (
                               <Landmark size={20} aria-hidden />
                             )}
-                            <span>
-                              {a.type === "Bank" ? "Bank account" : a.type}
-                            </span>
-                          </span>
-                          <h2 style={{ marginTop: 12 }}>
-                            {hidden ? "Account" : a.name}
-                          </h2>
+                            <h2>{hidden ? "Account" : a.name}</h2>
+                          </div>
+                          {(hidden || a.name.trim().toLocaleLowerCase() !== a.type.toLocaleLowerCase()) && (
+                            <p>{a.type === "Bank" ? "Bank account" : a.type}</p>
+                          )}
                           <Amount
                             value={accountBalance(w, a.id)}
                             hidden={hidden}
@@ -2361,6 +2367,7 @@ export default function CashNarra() {
                     {storyReport && (
                       <section className={s.chapter}>
                         <h2>Supporting records</h2>
+                        <div className={s.actions}>
                         <Button
                           onClick={() => {
                             setFilter("in");
@@ -2385,6 +2392,7 @@ export default function CashNarra() {
                         >
                           See money paid out
                         </Button>
+                        </div>
                         <details>
                           <summary>How we worked this out</summary>
                           <p>
@@ -2503,6 +2511,7 @@ export default function CashNarra() {
                             ? "Money in minus money out is not profit. Profit stays unknown until you review the cost of what was sold and anything else the records do not contain."
                             : "This personal workspace does not calculate profit. It shows money in, money out and what is still owed."}
                         </p>
+                        <div className={s.actions}>
                         {w.type === "Business" && view.from && view.to && (
                           <Button onClick={() => setModal("profit")}>
                             Review profit or loss
@@ -2514,6 +2523,7 @@ export default function CashNarra() {
                         <Button onClick={() => setModal("checkin")}>
                           Review this period’s activity
                         </Button>
+                        </div>
                       </section>
                     )}
                   </>
@@ -2924,8 +2934,21 @@ export default function CashNarra() {
       </main>
       {navigation(true)}
       {modal === "record" && editing && w && (
-        <Dialog title="Check this record" onClose={() => setModal("")}>
+        <Dialog
+          title="Check this record"
+          onClose={() => setModal("")}
+          footer={
+            <>
+              <Button onClick={() => setModal("")}>Cancel</Button>
+              <Button primary type="submit" form="cashnarra-record-editor">
+                Review this record
+              </Button>
+            </>
+          }
+        >
           <RecordForm
+            formId="cashnarra-record-editor"
+            showActions={false}
             initial={editing}
             workspace={w}
             draft={{ events, replaceIds, reason, allowDuplicates }}
@@ -3039,8 +3062,20 @@ export default function CashNarra() {
         </Dialog>
       )}
       {modal === "account" && (
-        <Dialog title="Track an account" onClose={() => setModal("")}>
+        <Dialog
+          title="Track an account"
+          onClose={() => setModal("")}
+          footer={
+            <>
+              <Button onClick={() => setModal("")}>Cancel</Button>
+              <Button primary type="submit" form="cashnarra-account-form" disabled={busy}>
+                Add account
+              </Button>
+            </>
+          }
+        >
           <form
+            id="cashnarra-account-form"
             onSubmit={(e) => {
               e.preventDefault();
               const f = new FormData(e.currentTarget);
@@ -3083,9 +3118,6 @@ export default function CashNarra() {
               required
             />
             <p>Choose a date before the activity you want to record.</p>
-            <Button primary type="submit" disabled={busy}>
-              Add account
-            </Button>
           </form>
         </Dialog>
       )}
@@ -3256,8 +3288,17 @@ export default function CashNarra() {
         <Dialog
           title="What are you working towards?"
           onClose={() => setModal("")}
+          footer={
+            <>
+              <Button onClick={() => setModal("")}>Cancel</Button>
+              <Button primary type="submit" form="cashnarra-goal-form" disabled={busy}>
+                Create goal
+              </Button>
+            </>
+          }
         >
           <form
+            id="cashnarra-goal-form"
             onSubmit={(e) => {
               e.preventDefault();
               const f = new FormData(e.currentTarget);
@@ -3287,9 +3328,6 @@ export default function CashNarra() {
               You can mark money for this goal later. It will stay in your
               account.
             </p>
-            <Button primary type="submit" disabled={busy}>
-              Create goal
-            </Button>
           </form>
         </Dialog>
       )}
@@ -3489,6 +3527,7 @@ export default function CashNarra() {
                     )}
                   </div>
                 </div>
+                <div className={s.field}>
                 <label htmlFor="scenario">
                   Try a different amount{w ? ` · ${w.currency}` : ""}
                 </label>
@@ -3500,6 +3539,7 @@ export default function CashNarra() {
                   onChange={(e) => setScenario(e.target.value)}
                 />
                 {tried && <p className={s.hint}>{tried.reason}</p>}
+                </div>
               </>
             );
           })()}

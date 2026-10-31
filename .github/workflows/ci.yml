@@ -57,13 +57,13 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run build
-      - name: Test browser recovery, payment entry, export scope and Records context
-        run: npx playwright test tests/e2e/public-sample.spec.ts tests/e2e/experience-recovery.spec.ts tests/e2e/security-boundaries.spec.ts tests/e2e/payment-export-context.spec.ts
+      - name: Test app layout, recovery and authorization boundaries
+        run: npx playwright test tests/e2e/public-sample.spec.ts tests/e2e/experience-recovery.spec.ts tests/e2e/security-boundaries.spec.ts tests/e2e/payment-export-context.spec.ts tests/e2e/layout-rhythm.spec.ts tests/e2e/contrast.spec.ts
       - name: Report remaining release gates
         if: always()
         run: |
           echo '### CashNarra release verification scope' >> "$GITHUB_STEP_SUMMARY"
-          echo '- Browser smoke: public example, synthetic recovery, origin checks, payment entry, export scope and Records context (see job result).' >> "$GITHUB_STEP_SUMMARY"
+          echo '- Browser smoke: public example, synthetic recovery, origin checks, payment entry, export scope, Records context, app layout and text contrast (see job result).' >> "$GITHUB_STEP_SUMMARY"
           echo '- Supabase Auth/RLS service integration: NOT RUN by this job (requires isolated local Supabase).' >> "$GITHUB_STEP_SUMMARY"
           echo '- Physical Android, human screen reader and representative voice: EXTERNAL.' >> "$GITHUB_STEP_SUMMARY"
           echo '- Phase 08 remains INCOMPLETE; Phase 09 remains EXTERNAL.' >> "$GITHUB_STEP_SUMMARY"

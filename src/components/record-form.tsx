@@ -13,6 +13,8 @@ export default function RecordForm({
   workspace,
   draft = { events: [], replaceIds: [], reason: "", allowDuplicates: false },
   hidden = false,
+  formId,
+  showActions = true,
   onSave,
   onCancel,
 }: {
@@ -20,6 +22,8 @@ export default function RecordForm({
   workspace: Workspace;
   draft?: DraftChanges;
   hidden?: boolean;
+  formId?: string;
+  showActions?: boolean;
   onSave: (e: EventInput) => void;
   onCancel: () => void;
 }) {
@@ -92,6 +96,8 @@ export default function RecordForm({
   };
   return (
     <form
+      id={formId}
+      className={s.recordEditor}
       aria-describedby={error ? errorId : undefined}
       onSubmit={(ev) => {
         ev.preventDefault();
@@ -121,26 +127,24 @@ export default function RecordForm({
           </p>
           {recordedBalance && (
             <p className={s.hint}>
-              Current recorded balance:{" "}
+              Recorded balance:{" "}
               <Amount value={recordedBalance.remaining} hidden={hidden} />.
             </p>
           )}
-          <p className={s.hint}>
-            Enter the amount {incoming ? "received" : "paid"} and choose the
-            account. You will review it before saving.
-          </p>
         </div>
       )}
-      <label htmlFor="description">Description</label>
-      <input
-        id="description"
-        value={e.description}
-        maxLength={300}
-        onChange={(x) => update("description", x.target.value)}
-        required
-      />
+      <div className={s.field}>
+        <label htmlFor="description">Description</label>
+        <input
+          id="description"
+          value={e.description}
+          maxLength={300}
+          onChange={(x) => update("description", x.target.value)}
+          required
+        />
+      </div>
       <div className={s.formGrid}>
-        <div>
+        <div className={s.field}>
           <label htmlFor="amount">Amount · GHS</label>
           <input
             id="amount"
@@ -165,7 +169,7 @@ export default function RecordForm({
             </>
           )}
         </div>
-        <div>
+        <div className={s.field}>
           <label htmlFor="date">Date</label>
           <input
             id="date"
@@ -176,65 +180,69 @@ export default function RecordForm({
           />
         </div>
       </div>
-      <label htmlFor="kind">What happened?</label>
-      <select
-        id="kind"
-        value={e.kind}
-        onChange={(x) => update("kind", x.target.value)}
-      >
-        {(workspace.type === "Personal"
-          ? [
-              "income",
-              "expense",
-              "transfer",
-              "loan_received",
-              "loan_principal",
-              "receivable_payment",
-              "payable_payment",
-              "credit_sale",
-              ...kinds.filter(
-                (kind) =>
-                  ![
-                    "income",
-                    "expense",
-                    "transfer",
-                    "loan_received",
-                    "loan_principal",
-                    "receivable_payment",
-                    "payable_payment",
-                    "credit_sale",
-                  ].includes(kind),
-              ),
-            ]
-          : kinds
-        ).map((k) => (
-          <option key={k} value={k}>
-            {kindLabel(k as EventInput["kind"], workspace.type)}
+      <div className={s.field}>
+        <label htmlFor="kind">What happened?</label>
+        <select
+          id="kind"
+          value={e.kind}
+          onChange={(x) => update("kind", x.target.value)}
+        >
+          {(workspace.type === "Personal"
+            ? [
+                "income",
+                "expense",
+                "transfer",
+                "loan_received",
+                "loan_principal",
+                "receivable_payment",
+                "payable_payment",
+                "credit_sale",
+                ...kinds.filter(
+                  (kind) =>
+                    ![
+                      "income",
+                      "expense",
+                      "transfer",
+                      "loan_received",
+                      "loan_principal",
+                      "receivable_payment",
+                      "payable_payment",
+                      "credit_sale",
+                    ].includes(kind),
+                ),
+              ]
+            : kinds
+          ).map((k) => (
+            <option key={k} value={k}>
+              {kindLabel(k as EventInput["kind"], workspace.type)}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className={s.field}>
+        <label htmlFor="account">Account</label>
+        <select
+          id="account"
+          required={payment}
+          value={e.accountId ?? ""}
+          onChange={(x) => update("accountId", x.target.value || null)}
+        >
+          <option value="">
+            {payment
+              ? incoming
+                ? "Choose where the money arrived"
+                : "Choose which account paid"
+              : "No money account / choose one"}
           </option>
-        ))}
-      </select>
-      <label htmlFor="account">Account</label>
-      <select
-        id="account"
-        required={payment}
-        value={e.accountId ?? ""}
-        onChange={(x) => update("accountId", x.target.value || null)}
-      >
-        <option value="">
-          {payment
-            ? incoming
-              ? "Choose where the money arrived"
-              : "Choose which account paid"
-            : "No money account / choose one"}
-        </option>
-        {workspace.accounts.map((a) => (
-          <option key={a.id} value={a.id}>
-            {a.name}
-          </option>
-        ))}
-      </select>
+          {workspace.accounts.map((a) => (
+            <option key={a.id} value={a.id}>
+              {a.name}
+            </option>
+          ))}
+        </select>
+      </div>
       {e.kind === "transfer" && (
-        <>
+        <div className={s.field}>
           <label htmlFor="to">Moved to</label>
           <select
             id="to"
@@ -248,27 +256,29 @@ export default function RecordForm({
               </option>
             ))}
           </select>
-        </>
+        </div>
       )}
-      <label htmlFor="party">Person or business (when money is owed)</label>
-      <input
-        id="party"
-        list="saved-people"
-        value={e.party ?? ""}
-        onChange={(x) => update("party", x.target.value || null)}
-        maxLength={100}
-      />
-      <datalist id="saved-people">
-        {workspace.contacts?.map((c) => (
-          <option key={c.id} value={c.name}>
-            {c.role}
-          </option>
-        ))}
-      </datalist>
+      <div className={s.field}>
+        <label htmlFor="party">Person or business (when money is owed)</label>
+        <input
+          id="party"
+          list="saved-people"
+          value={e.party ?? ""}
+          onChange={(x) => update("party", x.target.value || null)}
+          maxLength={100}
+        />
+        <datalist id="saved-people">
+          {workspace.contacts?.map((c) => (
+            <option key={c.id} value={c.name}>
+              {c.role}
+            </option>
+          ))}
+        </datalist>
+      </div>
       {["receivable_payment", "payable_payment", "loan_principal"].includes(
         e.kind,
       ) && (
-        <>
+        <div className={s.field}>
           <label htmlFor="debt">Existing balance</label>
           <select
             id="debt"
@@ -298,23 +308,27 @@ export default function RecordForm({
                 </option>
               ))}
           </select>
-        </>
+        </div>
       )}
-      <p
-        id={errorId}
-        ref={errorSummary}
-        tabIndex={-1}
-        className={s.error}
-        role="alert"
-      >
-        {error}
-      </p>
-      <div className={s.actions}>
-        <Button onClick={onCancel}>Cancel</Button>
-        <Button primary type="submit">
-          Review this record
-        </Button>
-      </div>
+      {error && (
+        <p
+          id={errorId}
+          ref={errorSummary}
+          tabIndex={-1}
+          className={s.error}
+          role="alert"
+        >
+          {error}
+        </p>
+      )}
+      {showActions && (
+        <div className={s.actions}>
+          <Button onClick={onCancel}>Cancel</Button>
+          <Button primary type="submit">
+            Review this record
+          </Button>
+        </div>
+      )}
     </form>
   );
 }

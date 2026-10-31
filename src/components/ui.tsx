@@ -19,6 +19,7 @@ export function Button({
   quiet = false,
   disabled = false,
   type = "button",
+  form,
 }: {
   children: ReactNode;
   onClick?: () => void;
@@ -27,10 +28,12 @@ export function Button({
   quiet?: boolean;
   disabled?: boolean;
   type?: "submit" | "button";
+  form?: string;
 }) {
   return (
     <button
       type={type}
+      form={form}
       className={`${s.button} ${primary ? s.primary : ""} ${quiet ? s.quiet : ""}`}
       onClick={onClick}
       disabled={disabled}
@@ -82,12 +85,14 @@ export function Dialog({
   onClose,
   wide = false,
   actions,
+  footer,
 }: {
   title: string;
   children: ReactNode;
   onClose: () => void;
   wide?: boolean;
   actions?: ReactNode;
+  footer?: ReactNode;
 }) {
   const ref = useRef<HTMLDialogElement>(null),
     titleId = useId();
@@ -151,8 +156,12 @@ export function Dialog({
       </div>
       <div className={s.dialogBody}>{children}</div>
       <div className={s.dialogExit}>
-        {actions}
-        <Button onClick={onClose}>Close</Button>
+        {footer ?? (
+          <>
+            {actions}
+            <Button onClick={onClose}>Close</Button>
+          </>
+        )}
       </div>
     </dialog>
   );
@@ -256,4 +265,3 @@ export function RecordRow({
     </div>
   );
 }
-
