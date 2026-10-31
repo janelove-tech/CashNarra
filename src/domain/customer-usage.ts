@@ -191,7 +191,8 @@ export function reserve(
       created: false,
       providerSubmission: "none",
       code: "reused",
-      message: "This story is already understood. No additional AI story was used.",
+      message:
+        "This story is already understood. No additional AI story was used.",
     };
   if (input.kind === "ai_story" && input.changed && !input.explicitReinterpret)
     return {
@@ -213,7 +214,8 @@ export function reserve(
       created: false,
       providerSubmission: "none",
       code: "pack_exists",
-      message: "This report pack is already available. Downloading it uses no extra pack.",
+      message:
+        "This report pack is already available. Downloading it uses no extra pack.",
     };
   if (
     fingerprint &&
@@ -229,7 +231,10 @@ export function reserve(
       message: messageFor("company_daily_guard"),
     };
   const key = input.periodKey ?? periodKey(input.kind, input.at);
-  if (usedUnits(account, input.kind, key) >= allowanceFor(account.planId, input.kind))
+  if (
+    usedUnits(account, input.kind, key) >=
+    allowanceFor(account.planId, input.kind)
+  )
     return {
       account,
       attempt: null,
@@ -238,7 +243,10 @@ export function reserve(
       code: "exhausted",
       message:
         input.kind === "voice_note"
-          ? messageFor("voice_exhausted", { reset: "00:00 Accra time" })
+          ? messageFor("voice_exhausted", {
+              reset: "00:00 Accra time",
+              limit: allowanceFor(account.planId, "voice_note"),
+            })
           : input.kind === "ai_story"
             ? messageFor("ai_exhausted")
             : messageFor("reports_exhausted"),
@@ -360,7 +368,8 @@ export function markTimeout(account: UsageAccount, attemptId: string) {
     throw new Error("Only a pending attempt can stay unresolved.");
   return noteProviderCost(account, attemptId, {
     status: "uncertain",
-    usd: account.costs.find((cost) => cost.attemptId === attemptId)?.usd ?? null,
+    usd:
+      account.costs.find((cost) => cost.attemptId === attemptId)?.usd ?? null,
   });
 }
 

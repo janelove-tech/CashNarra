@@ -1,19 +1,18 @@
 import Decimal from "decimal.js";
 import { formatMoney } from "@/domain/money";
+import launchPlans from "./launch-plans.json" with { type: "json" };
 
 /** Prepared plan specification. Dates stay unset and nothing here can be bought. */
-export const PLAN_SPEC_VERSION = "2026-10-21";
+export const PLAN_SPEC_VERSION = launchPlans.version;
+export const CURRENT_PLUS_OFFER_USD = "2.99";
+const CURRENT_PLUS_OFFER_ID = "plus-enrolment-2026-10-31";
 export const COMPANY_DAILY_READER_CALLS = 10;
 export const ACCOUNT_TIMEZONE = "Africa/Accra";
 
 export type PlanId = "free" | "plus" | "unlimited";
 export type Visibility = "public" | "preview" | "private";
 export type CampaignStatus =
-  | "draft"
-  | "scheduled"
-  | "active"
-  | "ended"
-  | "paused";
+  "draft" | "scheduled" | "active" | "ended" | "paused";
 
 export type PriceVersion = {
   id: string;
@@ -174,6 +173,22 @@ const SHIPPED: Catalogue = {
       createdAt: preparedAt,
     },
     {
+      id: "plus-regular-2026-10-31",
+      planId: "plus",
+      kind: "regular",
+      usd: launchPlans.regularPlusUsd,
+      label: "Standard price",
+      createdAt: "2026-10-31T00:00:00.000Z",
+    },
+    {
+      id: CURRENT_PLUS_OFFER_ID,
+      planId: "plus",
+      kind: "enrolment",
+      usd: CURRENT_PLUS_OFFER_USD,
+      label: "Launch price",
+      createdAt: "2026-10-31T00:00:00.000Z",
+    },
+    {
       id: "unlimited-regular-2026-10-21",
       planId: "unlimited",
       kind: "regular",
@@ -195,7 +210,7 @@ const SHIPPED: Catalogue = {
       id: "plus-launch-2026-10-21",
       planId: "plus",
       status: "draft",
-      enrolmentPriceVersionId: "plus-enrolment-2026-10-21",
+      enrolmentPriceVersionId: CURRENT_PLUS_OFFER_ID,
       startsAt: null,
       endsAt: null,
       timezone: ACCOUNT_TIMEZONE,
@@ -221,12 +236,12 @@ const SHIPPED: Catalogue = {
       campaignId: null,
       allowances: {
         owners: 1,
-        activeWorkspaces: 3,
+        activeWorkspaces: launchPlans.plans.free.activeWorkspaces,
         financialRecords: "unlimited",
-        aiStoriesPerMonth: 100,
-        voiceNotesPerDay: 3,
-        voiceNoteSeconds: 60,
-        reportPacksPerMonth: 10,
+        aiStoriesPerMonth: launchPlans.plans.free.aiStoriesPerMonth,
+        voiceNotesPerDay: launchPlans.plans.free.voiceNotesPerDay,
+        voiceNoteSeconds: launchPlans.plans.free.voiceNoteSeconds,
+        reportPacksPerMonth: launchPlans.plans.free.reportPacksPerMonth,
         csvExport: "unmetered",
         overageCharges: false,
         quotasApproved: true,
@@ -238,16 +253,16 @@ const SHIPPED: Catalogue = {
       visibility: "preview",
       purchasable: false,
       launchStatus: "draft",
-      regularPriceVersionId: "plus-regular-2026-10-21",
+      regularPriceVersionId: "plus-regular-2026-10-31",
       campaignId: "plus-launch-2026-10-21",
       allowances: {
         owners: 1,
-        activeWorkspaces: 10,
+        activeWorkspaces: launchPlans.plans.plus.activeWorkspaces,
         financialRecords: "unlimited",
-        aiStoriesPerMonth: 500,
-        voiceNotesPerDay: 3,
-        voiceNoteSeconds: 120,
-        reportPacksPerMonth: 100,
+        aiStoriesPerMonth: launchPlans.plans.plus.aiStoriesPerMonth,
+        voiceNotesPerDay: launchPlans.plans.plus.voiceNotesPerDay,
+        voiceNoteSeconds: launchPlans.plans.plus.voiceNoteSeconds,
+        reportPacksPerMonth: launchPlans.plans.plus.reportPacksPerMonth,
         csvExport: "unmetered",
         overageCharges: false,
         quotasApproved: false,
@@ -728,14 +743,41 @@ export function publicPricingModel(
   const free = planById(SHIPPED, "free");
   const plus = planById(SHIPPED, "plus");
   const plusRegular = priceById(SHIPPED, plus.regularPriceVersionId);
-  const plusOffer = priceById(SHIPPED, "plus-enrolment-2026-10-21");
+  const plusOffer = priceById(SHIPPED, CURRENT_PLUS_OFFER_ID);
   const cedi = (usd: string) => (fx ? cedisFromUsd(usd, fx.ghsPerUsd) : null);
   const storySupport =
     "Tell CashNarra what you earned, spent, or still owe. Review the suggested records before saving. One story can contain several records.";
   const voiceSupport =
     "Speak instead of typing. Check and edit the words before continuing.";
   const reportSupport =
-    "A neatly arranged financial report in PDF and Excel. Downloading the same pack again does not use another pack.";
+    "A neatly arranged financial report in PDF and Excel. Both formats count as one pack; downloading that same pack again uses no extra pack. CSV downloads are unlimited.";
+  const perksFor = (plan: PlanDefinition): PublicPerk[] => [
+    {
+      headline: `${plan.allowances.aiStoriesPerMonth} AI stories a month`,
+      support: storySupport,
+    },
+    {
+      headline: `${plan.allowances.activeWorkspaces} workspaces`,
+      support: "Keep your personal money and each business separate.",
+    },
+    {
+      headline: `${plan.allowances.voiceNotesPerDay} voice notes a day, up to ${minutesLabel(plan.allowances.voiceNoteSeconds)} each`,
+      support: voiceSupport,
+    },
+    {
+      headline: `${plan.allowances.reportPacksPerMonth} PDF/Excel report packs a month`,
+      support: reportSupport,
+    },
+    {
+      headline: "Unlimited financial records",
+      support:
+        "Add as many money records as you need. Manual entries use no AI stories.",
+    },
+    {
+      headline: "Unlimited CSV downloads",
+      support: "Download your underlying records without using a report pack.",
+    },
+  ];
   const plans: PublicPlanCard[] = [
     {
       id: "free",
@@ -745,29 +787,7 @@ export function publicPricingModel(
       standardUsd: null,
       offerUsd: null,
       actionLabel: "Start free",
-      perks: [
-        {
-          headline: "Unlimited financial records",
-          support:
-            "Add as many money records as you need. Enter them yourself or create them from a story you review.",
-        },
-        {
-          headline: `${free.allowances.activeWorkspaces} workspaces`,
-          support: "Keep your personal money and each business separate.",
-        },
-        {
-          headline: `${free.allowances.aiStoriesPerMonth} AI stories a month`,
-          support: storySupport,
-        },
-        {
-          headline: `${free.allowances.voiceNotesPerDay} voice notes a day, up to ${minutesLabel(free.allowances.voiceNoteSeconds)} each`,
-          support: voiceSupport,
-        },
-        {
-          headline: `${free.allowances.reportPacksPerMonth} report packs a month`,
-          support: reportSupport,
-        },
-      ],
+      perks: perksFor(free),
     },
     {
       id: "plus",
@@ -777,29 +797,7 @@ export function publicPricingModel(
       standardUsd: plusRegular.usd,
       offerUsd: plusOffer.usd,
       actionLabel: "Choose Plus",
-      perks: [
-        {
-          headline: "Unlimited financial records",
-          support:
-            "Add as many money records as you need. Enter them yourself or create them from a story you review.",
-        },
-        {
-          headline: `${plus.allowances.activeWorkspaces} workspaces`,
-          support: "Keep your personal money and each business separate.",
-        },
-        {
-          headline: `${plus.allowances.aiStoriesPerMonth} AI stories a month`,
-          support: storySupport,
-        },
-        {
-          headline: `${plus.allowances.voiceNotesPerDay} voice notes a day, up to ${minutesLabel(plus.allowances.voiceNoteSeconds)} each`,
-          support: voiceSupport,
-        },
-        {
-          headline: `${plus.allowances.reportPacksPerMonth} report packs a month`,
-          support: reportSupport,
-        },
-      ],
+      perks: perksFor(plus),
     },
   ];
   return {
@@ -826,7 +824,7 @@ export function publicPricingModel(
     notes: [
       "Your allowances are shared across your workspaces.",
       "A voice story uses one voice note and one AI story when both steps finish successfully.",
-      "Basic CSV downloads are included.",
+      "Unlimited CSV downloads are included in both plans.",
       "No automatic charges for extra usage.",
       "Your dollar price stays fixed. The cedi equivalent may change with the exchange rate.",
     ],
@@ -858,7 +856,7 @@ export type UsageMessageCode =
 
 export function messageFor(
   code: UsageMessageCode,
-  detail: { remaining?: number; reset?: string } = {},
+  detail: { remaining?: number; reset?: string; limit?: number } = {},
 ) {
   const reset = detail.reset ?? "the next reset";
   switch (code) {
@@ -869,7 +867,7 @@ export function messageFor(
     case "ai_exhausted":
       return "You've used this month's AI stories. You can still add records yourself.";
     case "voice_exhausted":
-      return `You've used today's 3 voice notes. You can still type your story. Voice resets at ${reset}.`;
+      return `You've used today's ${detail.limit ?? launchPlans.plans.free.voiceNotesPerDay} voice notes. You can still type your story. Voice resets at ${reset}.`;
     case "voice_upstream":
       return "Voice is busy right now. Keep your recording and try later, or type your story.";
     case "voice_off":
@@ -970,11 +968,11 @@ function planPhase(phase: SubscriptionPhase) {
 
 export function subscriptionView(facts: SubscriptionFacts) {
   const plan = planById(SHIPPED, planPhase(facts.phase));
-  const price = facts.agreedUsd ?? (plan.id === "free" ? "0" : "0.99");
-  const voice =
-    facts.voiceEnabled
-      ? `${counted(facts.usage.voiceUsedToday, plan.allowances.voiceNotesPerDay, "voice notes today")} · up to ${minutesLabel(plan.allowances.voiceNoteSeconds)} each`
-      : "Voice is not available yet.";
+  const price =
+    facts.agreedUsd ?? (plan.id === "free" ? "0" : CURRENT_PLUS_OFFER_USD);
+  const voice = facts.voiceEnabled
+    ? `${counted(facts.usage.voiceUsedToday, plan.allowances.voiceNotesPerDay, "voice notes today")} · up to ${minutesLabel(plan.allowances.voiceNoteSeconds)} each`
+    : "Voice is not available yet.";
   const lines = [
     `${facts.workspaceCount} of ${plan.allowances.activeWorkspaces} workspaces`,
     counted(
@@ -1017,7 +1015,9 @@ export function subscriptionView(facts: SubscriptionFacts) {
   } else if (facts.phase === "plus_recurring") {
     title = `Plus · $${price} a month`;
     summary = `Agreed price $${price} a month. Plus is paid through ${facts.paidThrough}. The next renewal is ${facts.renewalOn}.`;
-    cancelCopy = cancelPlusConfirmation(facts.paidThrough ?? "the paid-through date");
+    cancelCopy = cancelPlusConfirmation(
+      facts.paidThrough ?? "the paid-through date",
+    );
     actions.push(
       {
         id: "cancel",
@@ -1031,8 +1031,18 @@ export function subscriptionView(facts: SubscriptionFacts) {
     title = `Plus · $${price} a month`;
     summary = `Agreed price $${price} a month. Plus lasts until ${facts.paidThrough}. It does not renew by itself.`;
     actions.push(
-      { id: "renew", label: "Renew Plus", href: "/pricing/plus", primary: true },
-      { id: "switch_free", label: "Switch to Free", href: null, primary: false },
+      {
+        id: "renew",
+        label: "Renew Plus",
+        href: "/pricing/plus",
+        primary: true,
+      },
+      {
+        id: "switch_free",
+        label: "Switch to Free",
+        href: null,
+        primary: false,
+      },
       { id: "history", label: "Payment history", href: null, primary: false },
     );
   } else if (facts.phase === "cancel_scheduled") {
@@ -1050,7 +1060,12 @@ export function subscriptionView(facts: SubscriptionFacts) {
     title = "Plus has ended";
     summary = `The agreed price was $${price} a month. That agreement is still on record. The account is using Free.`;
     actions.push(
-      { id: "renew", label: "Renew Plus", href: "/pricing/plus", primary: true },
+      {
+        id: "renew",
+        label: "Renew Plus",
+        href: "/pricing/plus",
+        primary: true,
+      },
       { id: "use_free", label: "Use Free", href: "/pricing", primary: false },
     );
   } else {
@@ -1070,10 +1085,7 @@ export function subscriptionView(facts: SubscriptionFacts) {
   }
   if (facts.paymentReference && facts.phase.startsWith("plus"))
     lines.push(`Payment reference ${facts.paymentReference}.`);
-  else if (
-    facts.phase === "plus_recurring" ||
-    facts.phase === "plus_manual"
-  )
+  else if (facts.phase === "plus_recurring" || facts.phase === "plus_manual")
     lines.push("No payments are recorded on this account.");
   return { title, summary, lines, actions, cancelCopy };
 }
@@ -1082,7 +1094,9 @@ export function cancelPlusConfirmation(paidThrough: string) {
   return `Cancel Plus? You'll keep Plus until ${paidThrough}. After that, your account returns to Free. Your records will stay available.`;
 }
 
-export function scheduleEndOfPlus(subscription: PaidSubscription): PaidSubscription {
+export function scheduleEndOfPlus(
+  subscription: PaidSubscription,
+): PaidSubscription {
   if (subscription.phase !== "active")
     throw new Error("Plus is not active, so there is nothing to stop.");
   return { ...subscription, phase: "cancel_scheduled" };
@@ -1091,7 +1105,11 @@ export function scheduleEndOfPlus(subscription: PaidSubscription): PaidSubscript
 export function keepPlus(subscription: PaidSubscription): PaidSubscription {
   if (subscription.phase !== "cancel_scheduled")
     throw new Error("Plus is not scheduled to end.");
-  return { ...subscription, phase: "active", agreementId: subscription.agreementId };
+  return {
+    ...subscription,
+    phase: "active",
+    agreementId: subscription.agreementId,
+  };
 }
 
 export function workspacesAfterFreeLimit(
@@ -1099,11 +1117,12 @@ export function workspacesAfterFreeLimit(
   keepActive: string[],
 ) {
   const ids = [...new Set(workspaceIds)];
-  if (ids.length <= 3) return { active: ids, readable: [] as string[] };
+  const limit = planById(SHIPPED, "free").allowances.activeWorkspaces;
+  if (ids.length <= limit) return { active: ids, readable: [] as string[] };
   const keep = [...new Set(keepActive)];
-  if (keep.length !== 3 || keep.some((id) => !ids.includes(id)))
+  if (keep.length !== limit || keep.some((id) => !ids.includes(id)))
     throw new Error(
-      "Choose 3 workspaces to keep active. The others stay readable.",
+      `Choose ${limit} workspaces to keep active. The others stay readable.`,
     );
   return {
     active: keep,
@@ -1142,13 +1161,14 @@ export function planUsageModel(input: {
     csvLine: "Basic CSV downloads remain available.",
     chargesLine: "No automatic extra charges.",
     resetLine: `Monthly allowances reset ${reset}.`,
-    voiceResetLine: "Your daily voice allowance resets at midnight, Accra time.",
+    voiceResetLine:
+      "Your daily voice allowance resets at midnight, Accra time.",
     sampleLabel: "Example usage",
     sampleLines: [
-      "2 of 3 workspaces active",
-      "63 of 100 AI stories remaining",
+      "1 of 2 workspaces active",
+      "23 of 30 AI stories remaining",
       "2 of 3 voice notes remaining today · up to 1 minute each",
-      "7 of 10 formatted report packs remaining",
+      "1 of 2 formatted report packs remaining",
       `Monthly allowances reset ${reset}.`,
       "No automatic extra charges.",
     ],

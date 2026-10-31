@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import {
+  CURRENT_PLUS_OFFER_USD,
   formatPlanCedis,
   type PublicPricing,
 } from "@/domain/customer-plans";
@@ -22,7 +23,10 @@ export function PlusReview({ model }: { model: PublicPricing }) {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ planId: "plus" }),
       });
-      const body = (await response.json()) as { code?: string; message?: string };
+      const body = (await response.json()) as {
+        code?: string;
+        message?: string;
+      };
       setMessage(
         body.code === "checkout_disabled"
           ? "Plus is not started. Payment is not connected, so your Free plan stays as it is."
@@ -55,7 +59,7 @@ export function PlusReview({ model }: { model: PublicPricing }) {
         <article className={s.panel}>
           <h2>Plus</h2>
           <p className={s.offer}>
-            ${plus?.offerUsd ?? "0.99"} <span>/ month</span>
+            ${plus?.offerUsd ?? CURRENT_PLUS_OFFER_USD} <span>/ month</span>
           </p>
           <p className={s.cedis}>
             {plus?.cediAmount

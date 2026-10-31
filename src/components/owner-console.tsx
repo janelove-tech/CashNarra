@@ -1,8 +1,5 @@
 import Link from "next/link";
-import {
-  formatPlanCedis,
-  ownerConsoleModel,
-} from "@/domain/customer-plans";
+import { formatPlanCedis, ownerConsoleModel } from "@/domain/customer-plans";
 import s from "./billing.module.css";
 
 export function OwnerConsole({
@@ -66,7 +63,8 @@ export function OwnerConsole({
               {model.plans.map((plan) => (
                 <article className={s.card} key={plan.id}>
                   <p className={s.kicker}>
-                    {plan.visibility} · {plan.purchasable ? "purchasable" : "not for sale"} ·{" "}
+                    {plan.visibility} ·{" "}
+                    {plan.purchasable ? "purchasable" : "not for sale"} ·{" "}
                     {plan.campaignStatus}
                   </p>
                   <h3>{plan.name}</h3>
@@ -95,7 +93,11 @@ export function OwnerConsole({
                   <p className={s.note}>
                     Enrolment start: {plan.enrolmentStart ?? "Not configured"}.
                     Enrolment end: {plan.enrolmentEnd ?? "Not configured"}.
-                    Quotas {plan.quotasApproved ? "are in the design" : "are not approved"}.
+                    Quotas{" "}
+                    {plan.quotasApproved
+                      ? "are in the design"
+                      : "are not approved"}
+                    .
                   </p>
                 </article>
               ))}
@@ -113,23 +115,19 @@ export function OwnerConsole({
               customer allowance does not erase a provider hold.
             </p>
             <p className={s.note}>
-              The current daily processing guard is 10 calls. The drafted Plus
-              quantity of 500 stories a month is not reachable under that guard.
-              That note stays in this console. The public page still shows the
-              finished 500-story offer.
+              The local evaluation guard remains 10 calls a day. The current
+              Plus design allows 300 stories per account each month; that
+              allowance still needs hosted account-wide admission and measured
+              cost validation. Checkout stays disabled until those are ready.
             </p>
             {readiness && (
               <ul>
-                <li>
-                  Groq key: {readiness.groqKey ? "present" : "missing"}.
-                </li>
+                <li>Groq key: {readiness.groqKey ? "present" : "missing"}.</li>
                 <li>
                   Free-plan confirmation file:{" "}
                   {readiness.freePlanFile ? "present" : "missing"}.
                 </li>
-                <li>
-                  Voice switch: {readiness.voiceSwitch ? "on" : "off"}.
-                </li>
+                <li>Voice switch: {readiness.voiceSwitch ? "on" : "off"}.</li>
                 <li>Checkout: off.</li>
                 <li>
                   Story reading pause file:{" "}

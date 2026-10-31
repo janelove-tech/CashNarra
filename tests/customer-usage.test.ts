@@ -19,7 +19,11 @@ import {
 const october = new Date("2026-10-21T12:00:00.000Z");
 const month = "2026-10";
 
-function story(account = emptyUsage("acct"), key = "story-1", fingerprint = "same") {
+function story(
+  account = emptyUsage("acct"),
+  key = "story-1",
+  fingerprint = "same",
+) {
   return reserve(account, {
     operationKey: key,
     kind: "ai_story",
@@ -48,9 +52,9 @@ it("shares one allowance across workspaces and devices", () => {
     account = settle(step.account, step.attempt!.id, { recordCount: 1 });
   }
   expect(usedUnits(account, "ai_story", month)).toBe(3);
-  expect(new Set(account.attempts.map((attempt) => attempt.workspaceId)).size).toBe(
-    3,
-  );
+  expect(
+    new Set(account.attempts.map((attempt) => attempt.workspaceId)).size,
+  ).toBe(3);
 });
 
 it("settles one AI story when that story creates twelve records", () => {
@@ -102,9 +106,13 @@ it("reopens a stored interpretation for free and asks before a changed story", (
     explicitReinterpret: true,
   });
   expect(confirmed.code).toBe("reserved");
-  expect(usedUnits(settle(confirmed.account, confirmed.attempt!.id), "ai_story", month)).toBe(
-    2,
-  );
+  expect(
+    usedUnits(
+      settle(confirmed.account, confirmed.attempt!.id),
+      "ai_story",
+      month,
+    ),
+  ).toBe(2);
 });
 
 it("keeps the voice note when understanding fails, and does not transcribe again", () => {
@@ -142,9 +150,9 @@ it("keeps the voice note when understanding fails, and does not transcribe again
     workspaceId: "shop",
   });
   expect(replay.providerSubmission).toBe("none");
-  expect(account.attempts.filter((attempt) => attempt.kind === "voice_note")).toHaveLength(
-    1,
-  );
+  expect(
+    account.attempts.filter((attempt) => attempt.kind === "voice_note"),
+  ).toHaveLength(1);
 });
 
 it("returns the customer slot after a definite failure without clearing provider cost", () => {
@@ -185,7 +193,9 @@ it("counts one report pack for both formats and not for a repeat download", () =
     workspaceId: "shop",
     packKey: pack,
   });
-  const settled = settle(reserved.account, reserved.attempt!.id, { packKey: pack });
+  const settled = settle(reserved.account, reserved.attempt!.id, {
+    packKey: pack,
+  });
   expect(downloadPack(settled, pack, "pdf").additionalUnits).toBe(0);
   expect(downloadPack(settled, pack, "xlsx").additionalUnits).toBe(0);
   expect(
@@ -204,9 +214,13 @@ it("counts one report pack for both formats and not for a repeat download", () =
     workspaceId: "shop",
     packKey: "shop|2026-10-01|2026-10-21|all|activity|snap-2",
   });
-  expect(usedUnits(settle(changed.account, changed.attempt!.id), "report_pack", month)).toBe(
-    2,
-  );
+  expect(
+    usedUnits(
+      settle(changed.account, changed.attempt!.id),
+      "report_pack",
+      month,
+    ),
+  ).toBe(2);
 });
 
 it("lets only one request take the last slot", () => {
@@ -324,10 +338,14 @@ it("checks the workspace limit without deleting a workspace", () => {
     deleteWorkspaces: false,
   });
   expect(canActivateWorkspace("free", ["a", "b", "c"], "a").ok).toBe(true);
-  expect(canActivateWorkspace("free", ["a", "b"], "c").ok).toBe(true);
-  expect(canActivateWorkspace("plus", Array.from({ length: 10 }, (_, index) => String(index)), "extra").ok).toBe(
-    false,
-  );
+  expect(canActivateWorkspace("free", ["a"], "b").ok).toBe(true);
+  expect(
+    canActivateWorkspace(
+      "plus",
+      Array.from({ length: 10 }, (_, index) => String(index)),
+      "extra",
+    ).ok,
+  ).toBe(false);
   expect(downgradePolicy(4)).toEqual({
     deleteWorkspaces: false,
     chooseActiveWorkspaces: true,
@@ -341,4 +359,100 @@ it("checks the workspace limit without deleting a workspace", () => {
       workspaceId: "shop",
     }).code,
   ).toBe("voice_off");
+});
+
+it("enforces the revised shared story and report allowances while reusing generated packs", () => {
+  for (const [planId, stories, reports] of [
+    ["free", 30, 2],
+    ["plus", 300, 30],
+  ] as const) {
+    let account = emptyUsage("acct", planId);
+    for (let index = 0; index < stories; index++) {
+      const step = reserve(account, {
+        operationKey: `story-${index}`,
+        kind: "ai_story",
+        at: october,
+        workspaceId: index % 2 ? "shop" : "personal",
+        fingerprint: `story-${index}`,
+      });
+      expect(step.created).toBe(true);
+      account = settle(step.account, step.attempt!.id);
+    }
+    const full = reserve(account, {
+      operationKey: "one-too-many",
+      kind: "ai_story",
+      at: october,
+      workspaceId: "another",
+      fingerprint: "new",
+    });
+    expect(full.code).toBe("exhausted");
+    expect(full.providerSubmission).toBe("none");
+    expect(full.account).toBe(account);
+    for (let index = 0; index < reports; index++) {
+      const step = reserve(account, {
+        operationKey: `report-${index}`,
+        kind: "report_pack",
+        at: october,
+        workspaceId: "shop",
+        packKey: `pack-${index}`,
+      });
+      expect(step.created).toBe(true);
+      account = settle(step.account, step.attempt!.id);
+    }
+    const fullReport = reserve(account, {
+      operationKey: "report-extra",
+      kind: "report_pack",
+      at: october,
+      workspaceId: "personal",
+      packKey: "new-pack",
+    });
+    expect(fullReport.code).toBe("exhausted");
+    const again = reserve(account, {
+      operationKey: "report-again",
+      kind: "report_pack",
+      at: october,
+      workspaceId: "shop",
+      packKey: "pack-0",
+    });
+    expect(again.code).toBe("pack_exists");
+    expect(downloadPack(account, "pack-0", "pdf").additionalUnits).toBe(0);
+    expect(downloadPack(account, "pack-0", "xlsx").additionalUnits).toBe(0);
+    expect(usedUnits(account, "report_pack", month)).toBe(reports);
+  }
+});
+
+it("gives Plus six daily voice notes and reports the right limit across workspaces", () => {
+  for (const [planId, limit] of [
+    ["free", 3],
+    ["plus", 6],
+  ] as const) {
+    let account = emptyUsage("acct", planId, true);
+    for (let index = 0; index < limit; index++) {
+      const step = reserve(account, {
+        operationKey: `voice-${index}`,
+        kind: "voice_note",
+        at: october,
+        workspaceId: index % 2 ? "shop" : "personal",
+      });
+      expect(step.created).toBe(true);
+      account = settle(step.account, step.attempt!.id);
+    }
+    const blocked = reserve(account, {
+      operationKey: "voice-extra",
+      kind: "voice_note",
+      at: october,
+      workspaceId: "another",
+    });
+    expect(blocked.code).toBe("exhausted");
+    expect(blocked.providerSubmission).toBe("none");
+    expect(blocked.message).toContain(`today's ${limit} voice notes`);
+    const tomorrow = reserve(account, {
+      operationKey: "voice-tomorrow",
+      kind: "voice_note",
+      at: new Date("2026-10-22T00:00:00.000Z"),
+      workspaceId: "shop",
+    });
+    expect(tomorrow.created).toBe(true);
+    expect(usedUnits(account, "voice_note", "2026-10-21")).toBe(limit);
+  }
 });

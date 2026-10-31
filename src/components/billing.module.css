@@ -186,3 +186,14 @@
     display: none;
   }
 }
+
+.plusCard {
+  border-color: var(--cn-action);
+  box-shadow: inset 0 3px 0 var(--cn-action);
+}
+.planPurpose {
+  margin: 0 0 16px;
+  color: var(--cn-text-secondary);
+  font-size: 13px;
+  line-height: 20px;
+}

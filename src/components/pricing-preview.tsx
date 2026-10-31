@@ -18,8 +18,16 @@ export function PricingPreview({ model }: { model: PublicPricing }) {
         <p className={s.kicker}>{model.sharedAllowance}</p>
         <div className={s.grid}>
           {model.plans.map((plan) => (
-            <article className={s.card} key={plan.id}>
+            <article
+              className={`${s.card} ${plan.id === "plus" ? s.plusCard : ""}`}
+              key={plan.id}
+            >
               <h2>{plan.name}</h2>
+              <p className={s.planPurpose}>
+                {plan.id === "free"
+                  ? "Build your everyday money habit."
+                  : "More help for busier days."}
+              </p>
               <p className={s.offer}>
                 ${plan.id === "free" ? "0" : plan.offerUsd} <span>/ month</span>
               </p>
