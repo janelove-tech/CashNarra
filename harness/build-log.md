@@ -1017,3 +1017,39 @@ Outside Phase 08. Run directory: `marketing/video/campaign-runs/20261029-171750-
 ## Published the working branch — 2026-10-29 — Cursor
 
 The user asked for GitHub to receive the current changes and for `marketing/video` to stay on this machine. The handoff, build log, and phone sign-in checklist are included. `main` stays at the earlier snapshot. NOT V1 COMPLETE.
+
+
+
+## Experience and recovery checkpoint — 2026-10-30
+
+Agent: Codex. Base: `397256dd00ba7fbb35b86a79fd380b855fc1965f`. Review branch: `codex/experience-recovery-20261030`.
+
+- Added retriable initial-load failure distinct from no saved records and no search matches. A 401 still leads to sign-in.
+- Clarified uncertain save/change recovery; retained the original request identity and existing receipt-first batch recovery. Added saving/checking feedback and focus on the confirmed result.
+- Retained Records scroll position and row focus by workspace in this tab. Added Back to records during correction without discarding the draft. Search/account/type/date filters retain their existing React state.
+- Added explicit saved-result counts and restricted the no-unpaid-balances statement to saved records.
+- Added four main-app regressions for failed initial load/retry, committed save with lost response, correction/filter/draft retention and no-match/reset. TypeScript syntax transform PASS. Main-app typecheck, Next build and e2e execution NOT RUN: this environment contains selected files, not the full runnable app. These remain required before merge.
+- Separate demo verification PASS: the exact modified shared components bundled successfully; 58 existing/new deterministic Node tests pass; Worker artifact validates after build. Managed browser: desktop and 390×640 prepared save/clarification, GH₵600 → GH₵400 only after save, voice-preview disclosure/draft preservation, correction return and no-match/reset. Original row focus restored visibly on the phone list. Broader physical-device, assistive-technology and main-app service testing remain unverified.
+- No live provider call, paid test, real email, production app write, database migration/reset, pricing change or shared-branch merge. Phase verdict unchanged: INCOMPLETE / NOT V1 COMPLETE.
+
+## App interface refinements — 2026-10-31 (Codex)
+
+Base: `ff7285c5400ddd7a58343779672654e646abac59` on `codex/experience-recovery-20261030`. Review branch: `codex/app-ui-polish-20261031`. The owner approved the app visual implementation after the experience research.
+
+- Implemented review context, optional original words, readable shared rows, quiet correction actions and one primary save/recovery action. Added a proposed consequence through the existing detached-copy ledger validation, explicitly scoped to one balance. No posting rule changed.
+- Confirmed results use the records' activity dates and one consequence per affected balance; multiple dates open the correct filtered range. Improved Settings rows/device-draft/request language, phone active navigation, goal hierarchy and net-movement emphasis. Fixed Tell focus sequencing and retained user-selected input focus. Added narrow-content reflow and review focus scroll margins.
+- PASS: `npm ci`; `npm run lint`; `npm run typecheck`; `npm test` — 35 files, 214 tests; `npm run build` — six pre-existing dynamic-filesystem tracing warnings, also observed on the unchanged baseline.
+- PASS: 54 production browser tests in accessibility, calculation, contrast, experience-recovery, goals-settings, hierarchy, journeys, non-text-contrast, phone-app, review-create and ui-polish. Runner: local Chromium 153 with installed fallback fonts, ignored local config and `npm run start -- --port 3100`. AI/voice flags disabled; fictional data and mocked interpretation. No production dependency added for the runner.
+- PASS: three-proposal correction retains the other records, calls interpretation once and posts once only after confirmation; payment/debt-correction preview tests; multiple debts to one person; one saved result for multiple payments; actual dates/multi-date drilldown; source editing/privacy; original-request recovery; Records search/account/row/draft retention; CSV/PDF/XLSX downloads; navigation, Back, keyboard, reduced motion and offline fallback.
+- PASS: review/shared pages at 320×640 light, 390×640 dark, 768×640 light and 1440×640 dark; 390×380 keyboard focus above the review footer; 390×640 CSS enlargement 2; maximum accepted amount and long description. Existing Home/dialog and contrast/non-text suites cover 320–1440 in both themes; phone action check includes 360×380. Review and Settings text contrast checked in the new matrix. Final 390px/1440px dark review and 320px light Settings screenshots inspected. Full-page captures include sticky controls at the captured viewport position; the independent focus/action checks establish reachability.
+- Verification setup: reused Turbopack persistence in this managed environment could fail with `invalid digit found in string`. A fresh generated `.next` cache produced the passing build. Browser verification used the production server; no product configuration workaround was committed.
+- NOT RUN / EXTERNAL: physical phone keyboard, human screen-reader session, native Edge browser zoom, Supabase auth/recovery/RLS services, live reader/voice and representative speech quality. Emulation and automated contrast are not accessibility certification or live-service evidence.
+- No email, paid provider call, production write, database migration/reset, pricing change, deployment or merge. Phase 08 INCOMPLETE / NOT V1 COMPLETE; Phase 09 EXTERNAL. Next: review the isolated UI branch, then resume the recorded physical-phone port-forward handoff. Design and evidence: `docs/ux/UI_REFINEMENTS_2026-10-31.md`.
+- BLOCKED: automatic approval review rejected `github.create_tree` before uploading, stating that the UI implementation request did not explicitly authorize uploading the code and internal handoff/build documentation to GitHub. No remote tree/ref/PR was created. All local implementation and verification work is complete. Next delivery step: explicit owner approval to upload `codex/app-ui-polish-20261031` to `janelove-tech/CashNarra` and open a draft PR against `codex/experience-recovery-20261030`. Do not bypass or retry the rejection without that approval.
+
+## Repository publication and merge authorization — 2026-10-31 (Codex)
+
+- The owner replied to the explicit GitHub publication request: "yes.. you can even merge it". The earlier automatic approval block is resolved for uploading the implementation/internal handoff notes and merging the app changes.
+- Integration route: UI pull request into `codex/experience-recovery-20261030`, then the existing recovery PR into `work/cashnarra-v1`. Require successful CI and expected-head checks on each merge. GitHub PR states and merge commits provide the delivery receipts; the source branch names remain available for traceability.
+- The verified app source is unchanged from local `d0acd63`; this follow-up changes authorization/handoff documentation only. Local evidence remains 214 unit tests, 54 production browser checks, lint, typecheck and build PASS. The CI workflow adds its disposable PostgreSQL journal checks.
+- After integration, resume the physical-phone port-forward handoff. Phase 08 stays INCOMPLETE / NOT V1 COMPLETE; Phase 09 EXTERNAL. Repository integration is separate from a production deployment, provider activation, or live-service quality approval.

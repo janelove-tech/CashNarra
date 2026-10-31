@@ -38,7 +38,7 @@ test("review offers to create a missing account and balance", async ({ page }) =
   );
   await page.getByLabel("Your money story", { exact: true }).fill("Packaging and Mabel");
   await page.getByRole("button", { name: "Understand my story" }).click();
-  await expect(page.getByRole("heading", { name: "One thing to fill in." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "2 details to check" })).toBeVisible();
   await expect(
     page.getByText("Shop cash is not in this workspace. Create it and use it for this record?"),
   ).toBeVisible();

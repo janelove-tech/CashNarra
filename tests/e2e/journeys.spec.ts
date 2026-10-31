@@ -101,6 +101,7 @@ test("mock clarification and unsupported input remain drafts", async ({
   await expect(
     page.getByRole("heading", { name: /Check these \d+ records/ }),
   ).toBeVisible();
+  await page.getByText("Your words", { exact: true }).click();
   await expect(page.getByText("From your story")).toBeVisible();
   await expect(page.getByRole("button", { name: "Change" }).first()).toBeVisible();
   await expect(page.getByText("This may already be recorded.")).toBeVisible();
@@ -176,7 +177,7 @@ test("lost save response recovers the records confirmed without posting twice", 
   await page.getByRole("button", { name: "Save this record" }).click();
   await expect(page.getByRole("status")).toContainText("Save not confirmed");
   await page
-    .getByRole("button", { name: "Check original save request" })
+    .getByRole("button", { name: "Check save result", exact: true })
     .click();
   await expect(page.getByRole("status")).toContainText("records confirmed");
   const state = await (await page.request.get("/api/workspaces")).json();

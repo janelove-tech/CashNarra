@@ -198,6 +198,9 @@
 }
 
 /* ---------- shell ---------- */
+.appShell {
+  container: cashnarra / inline-size;
+}
 .appbar {
   position: sticky;
   top: 0;
@@ -295,6 +298,15 @@
   max-width: 1120px;
   margin: 0 auto;
   padding: 28px 28px 72px;
+  font-size: 16px;
+  line-height: 24px;
+}
+.content h1,
+.savedPanel {
+  scroll-margin-top: 88px;
+}
+.content :is(button, input, select, textarea, summary) {
+  scroll-margin-block: 88px 100px;
 }
 .page {
   display: grid;
@@ -333,6 +345,7 @@
 .pageIntro p {
   margin: 4px 0 0;
   color: var(--cn-text-secondary);
+  max-width: 48ch;
 }
 .sectionHead {
   display: flex;
@@ -364,6 +377,11 @@
 }
 .composerHead .eyebrow {
   margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
 }
 .dateField {
   display: inline-flex;
@@ -524,8 +542,8 @@
 
 /* ---------- rows ---------- */
 .row {
-  display: grid;
-  grid-template-columns: 36px minmax(0, 1fr) auto;
+  display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   align-items: center;
   width: 100%;
@@ -540,6 +558,7 @@
   color: var(--cn-action);
 }
 .recordIcon {
+  flex: 0 0 36px;
   width: 36px;
   height: 36px;
   display: flex;
@@ -554,53 +573,63 @@
   color: var(--cn-money-out);
 }
 .rowText {
-  min-width: 0;
+  flex: 1 1 8rem;
+  min-width: min(100%, 8rem);
   overflow-wrap: anywhere;
 }
 .rowText strong {
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 22px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
 }
 .rowText small,
 .rowRight small {
   display: block;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 20px;
   color: var(--cn-text-secondary);
 }
 .rowRight {
+  margin-inline-start: auto;
+  max-width: 100%;
   text-align: right;
 }
 .rowRight .amount {
-  font-size: 15px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-size: 16px;
   font-weight: 600;
   line-height: 22px;
 }
 .rowWithAction {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: stretch;
+  gap: 4px;
+  border-bottom: 1px solid var(--cn-border);
 }
 .rowWithAction .row {
   flex: 1;
   min-width: 0;
+  min-height: 80px;
+  padding-block: 14px;
+  border-bottom: 0;
 }
 .quietAction {
+  align-self: center;
   flex: 0 0 auto;
-  min-height: 40px;
-  padding: 8px 12px;
-  border: 1px solid var(--cn-border-control);
+  min-height: 44px;
+  min-width: 60px;
+  padding: 8px 4px;
+  border: 0;
   border-radius: 10px;
-  background: var(--cn-surface);
-  color: var(--cn-text);
-  font-weight: 600;
-  font-size: 13px;
+  background: transparent;
+  color: var(--cn-action);
+  font-weight: 500;
+  font-size: 14px;
+}
+.quietAction:hover {
+  background: var(--cn-brand-soft);
 }
 
 /* ---------- aside: today so far, people, goal ---------- */
@@ -711,9 +740,10 @@
   margin-top: 20px;
   padding: 18px 20px;
   border-radius: 16px;
-  background: var(--cn-success-bg);
+  background: var(--cn-surface);
   color: var(--cn-text);
-  border: 1px solid color-mix(in srgb, var(--cn-success) 25%, transparent);
+  border: 1px solid var(--cn-border);
+  border-top: 3px solid var(--cn-success);
 }
 .savedPanel h2 {
   font-size: 20px;
@@ -727,16 +757,86 @@
 .savedPanel .actions {
   margin-top: 12px;
 }
+.savedConsequence {
+  margin: 16px 0 0;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+}
 
 /* ---------- review ---------- */
 .flow {
   max-width: 760px;
 }
+.reviewScope {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin: 0 0 16px;
+  color: var(--cn-text-secondary);
+  font-size: 14px;
+  line-height: 20px;
+}
+.reviewIntro {
+  margin: 6px 0 0;
+  color: var(--cn-text-secondary);
+}
 .reviewTools {
   display: flex;
   flex-wrap: wrap;
   gap: 0 4px;
-  margin: 4px 0 8px -10px;
+  margin: 8px 0 12px -10px;
+}
+.reviewSource {
+  margin: 16px 0 8px;
+}
+.reviewSource > summary {
+  color: var(--cn-text-secondary);
+  font-size: 14px;
+  line-height: 24px;
+}
+.reviewSource[open] > summary {
+  color: var(--cn-text);
+}
+.reviewSource .said {
+  margin-top: 0;
+  font-size: 16px;
+  line-height: 24px;
+}
+.reviewList {
+  border-top: 1px solid var(--cn-border);
+}
+.flow :is(button, input, select, summary) {
+  scroll-margin-block: 100px 180px;
+}
+.reviewEffect {
+  margin: 20px 0;
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: var(--cn-surface-subtle);
+}
+.reviewEffect h2 {
+  margin: 0 0 6px;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--cn-text-secondary);
+}
+.reviewEffect > div + div {
+  margin-top: 14px;
+}
+.reviewEffect p {
+  margin: 0;
+}
+.reviewEffect .amount {
+  font-weight: 600;
+}
+.reviewEffect .hint {
+  margin-top: 4px;
+  font-size: 14px;
 }
 .ask {
   margin: 20px 0 8px;
@@ -777,6 +877,11 @@
   margin-top: 8px;
 }
 .reviewActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 20px;
   position: sticky;
   bottom: 0;
   z-index: 3;
@@ -784,6 +889,17 @@
   margin-top: 8px;
   background: var(--cn-background);
   border-top: 1px solid var(--cn-border);
+}
+.reviewActions > .button {
+  min-height: 48px;
+  min-width: min(100%, 200px);
+}
+.reviewSaveHint {
+  flex: 1 1 12rem;
+  margin: 0;
+  color: var(--cn-text-secondary);
+  font-size: 14px;
+  line-height: 20px;
 }
 .dupList {
   list-style: none;
@@ -896,6 +1012,12 @@
   width: auto;
   max-width: 100%;
   min-height: 44px;
+}
+.recordsSummary {
+  margin: -8px 0 16px;
+  color: var(--cn-text-secondary);
+  font-size: 14px;
+  line-height: 20px;
 }
 .dayHeading {
   margin: 24px 0 0;
@@ -1042,6 +1164,14 @@
   line-height: 36px;
   white-space: nowrap;
 }
+.movement [data-metric="net"] .amount {
+  font-size: 32px;
+  line-height: 40px;
+}
+.movement [data-metric="net"] > span:first-child {
+  color: var(--cn-story-text);
+  font-weight: 600;
+}
 .movement [data-metric="received"] .amount,
 .movement [data-metric="net"][data-sign="in"] .amount {
   color: var(--cn-story-money-in);
@@ -1160,6 +1290,36 @@
   font-size: 18px;
   white-space: nowrap;
 }
+.goalHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+.goalHeader h2 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 30px;
+}
+.goalMarker {
+  color: var(--cn-text-secondary);
+  font-size: 13px;
+  line-height: 20px;
+}
+.goalForecast {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--cn-border);
+}
+.goalForecast h3 {
+  margin: 6px 0 10px;
+  font-size: 20px;
+  line-height: 28px;
+}
+.goalForecast > p:last-child {
+  margin-bottom: 0;
+}
 .compare {
   display: grid;
   gap: 12px;
@@ -1185,7 +1345,7 @@
 
 /* ---------- settings ---------- */
 .settingsGroup {
-  margin: 24px 0 8px;
+  margin: 32px 0 8px;
   max-width: 760px;
 }
 .settingsGroup h2 {
@@ -1196,16 +1356,25 @@
 .settingsRow {
   padding: 18px 0;
   border-bottom: 1px solid var(--cn-border);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 240px);
+  align-items: center;
+  gap: 12px 28px;
 }
 .settingsDanger {
   margin-top: 8px;
 }
+.settingsDanger > .button {
+  color: var(--cn-error);
+  border-color: var(--cn-error);
+}
+.settingsRow > .button,
+.settingsRow > select {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
 .settingsRow > div:first-child {
-  flex: 1;
   min-width: 0;
 }
 .settingsRow strong {
@@ -1214,9 +1383,8 @@
 .settingsRow p {
   margin: 2px 0 0;
   color: var(--cn-text-secondary);
-}
-.settingsRow select {
-  width: auto;
+  font-size: 14px;
+  line-height: 22px;
 }
 .usageRows {
   list-style: none;
@@ -1255,6 +1423,8 @@
   padding: 24px 28px 20px;
   border-radius: 24px;
   box-shadow: var(--cn-elevation-overlay);
+  font-size: 16px;
+  line-height: 24px;
 }
 .dialogWide {
   max-width: 680px;
@@ -1587,7 +1757,7 @@
     border-radius: 10px;
   }
   .bottomNav .navLink[aria-current="page"] {
-    background: none;
+    background: var(--cn-brand-soft);
   }
   .composer {
     padding: 18px 16px 16px;
@@ -1615,11 +1785,11 @@
     gap: 10px;
   }
   .rowRight .amount {
-    font-size: 14px;
+    font-size: 16px;
   }
   .rowWithAction .quietAction {
-    padding: 8px 10px;
-    font-size: 13px;
+    padding: 8px 4px;
+    font-size: 14px;
   }
   .formGrid {
     grid-template-columns: 1fr;
@@ -1672,7 +1842,30 @@
     font-size: 20px;
   }
   .goalFacts {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .goalFacts div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 4px 16px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--cn-border);
+  }
+  .settingsRow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .settingsRow > .button {
+    justify-self: start;
+    width: auto;
+  }
+  .reviewActions > .button {
+    flex: 1 1 100%;
+  }
+  .reviewSaveHint {
+    text-align: center;
   }
   .segmented {
     width: 100%;
@@ -1684,6 +1877,14 @@
   .said {
     font-size: 15px;
     line-height: 23px;
+  }
+}
+@media (max-width: 480px) {
+  .reviewList .recordIcon {
+    display: none;
+  }
+  .panel {
+    padding: 20px 16px;
   }
 }
 @media (max-width: 350px) {
@@ -1700,14 +1901,52 @@
   .topActions {
     gap: 0;
   }
-  .row {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
   .recordIcon {
     display: none;
   }
   .goalFacts {
     grid-template-columns: 1fr;
+  }
+  .reviewList .rowWithAction {
+    flex-wrap: wrap;
+  }
+  .reviewList .rowWithAction .row {
+    flex-basis: 100%;
+  }
+  .reviewList .quietAction {
+    margin: -8px 0 4px auto;
+  }
+}
+
+/* Very narrow content under enlargement: let controls use document space. */
+@container cashnarra (max-width: 300px) {
+  .appbar {
+    position: static;
+    flex-wrap: wrap;
+    padding-bottom: 8px;
+  }
+  .topActions {
+    flex-shrink: 0;
+  }
+  .bottomNav {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .content {
+    padding-bottom: 28px;
+  }
+  .reviewActions {
+    position: static;
+  }
+  .reviewList .rowWithAction {
+    flex-wrap: wrap;
+  }
+  .reviewList .rowWithAction .row {
+    flex-basis: 100%;
+  }
+  .reviewList .quietAction {
+    margin-inline-start: auto;
   }
 }
 
@@ -1721,3 +1960,4 @@
   margin: 0;
   flex: 1 1 16em;
 }
+

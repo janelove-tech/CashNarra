@@ -1,14 +1,40 @@
 # CashNarra current development handoff
 
-Updated: 2026-10-29 — character-led day and report films plus symbol ident (first cuts); earlier: marketing film final cleanup, v02 accepted, three new first cuts (product handoff unchanged since 2026-10-23: first phone recording: sign-in never reaches the local account service)
+Updated: 2026-10-31 — verified app interface refinements; prior update: 2026-10-30 — bounded experience/recovery pass. The earlier physical-phone and marketing handoffs remain below.
 Prior update: 2026-10-21 — Claude Code, fresh UI and UX pass (after Cursor, publish the working branch)
-Branch: redesign/words-to-records, checked out at 020a6ae (same commit as local work/cashnarra-v1)
+Branch: codex/app-ui-polish-20261031, based on codex/experience-recovery-20261030 at ff7285c5400ddd7a58343779672654e646abac59
 Baseline: 3b4d1f89fed8c079cc3571aeff6276bfe5f04d92
 Reconciled starting HEAD: 70d99415a84c779e453c2b475067654ef4cbf9f6
 Current HEAD: the commit containing this handoff; resolve with git rev-parse HEAD.
 Current phase: 08 — release verification; Phase 09 remains EXTERNAL
 Status: INCOMPLETE — review findings 1–23 and 25 are implemented in product code; 24 and 26 stay unmeasured
 Verdict: NOT V1 COMPLETE
+
+## App interface refinements — 2026-10-31 (Codex)
+
+The owner approved implementing the app UI direction after the research and review prototype. This bounded pass refines the actual Next.js app on `codex/app-ui-polish-20261031`, stacked on the recovery branch. On 31 October 2026 the owner subsequently explicitly approved GitHub publication and merge. Integrate the UI into the recovery branch, then the combined changes into `work/cashnarra-v1` through the existing pull-request workflow. The separate public demo and the release verdict remain as recorded.
+
+Implemented: review context (workspace/type/currency/date), optional original words, fully wrapping shared record rows and quiet Change actions, one save/recovery action, and an explicitly proposed balance result using the existing ledger on a detached copy. Balance wording is scoped to one recorded balance. Confirmed results use actual record dates, show one consequence per balance, and open the correct day or multi-date range. Settings uses consistent rows and accurate device-draft/request copy. Phone navigation, net-movement emphasis and goal hierarchy are clearer. Tell/page-focus sequencing and short-screen scroll margins preserve the person's input focus. Extreme enlargement returns controls to document flow.
+
+PASS: full `npm ci`, lint, typecheck, 35 unit files / 214 tests, production build, and 54 browser regressions across 11 suites against that production build. This supersedes the prior section's NOT RUN main-app compilation/browser status for these exercised paths. The build retains six baseline dynamic-filesystem tracing warnings. Local Turbopack persistence required a fresh generated cache; no product configuration was changed.
+
+PASS: single interpretation while editing one of three proposals; no write before Save; corrected debt preview and authoritative result; original-request recovery after a committed save loses its response; retained Records filters/row focus/draft; actual dates and multi-date drilldown; privacy masking; long amounts; reduced motion, keyboard containment, phone navigation/Back, short viewport and offline fallback. Review/shared-screen layout checks cover 320×640 light, 390×640 dark, 768×640 light and 1440×640 dark, with review/Settings text contrast. Existing Home/dialog/contrast checks cover 320–1440 in both themes. Final review and Settings screenshots were inspected. See `docs/ux/UI_REFINEMENTS_2026-10-31.md` for the exact scope and evidence.
+
+NOT RUN / EXTERNAL: physical phone software keyboard, human screen-reader use, native Edge 200% browser zoom, Supabase authentication/recovery/RLS service checks, live narration/transcription and representative speech quality. CSS enlargement 2 and resized viewports are emulation, not substitutes for those checks. No provider, email, production data write, migration/reset, pricing change, production deployment or merge. Phase 08 remains INCOMPLETE / NOT V1 COMPLETE; Phase 09 EXTERNAL.
+
+Publication block RESOLVED: the owner explicitly authorized uploading the implementation and internal handoff notes and also authorized merge. The earlier rejected action did not upload anything. Publish the verified UI branch, require passing GitHub CI, merge its pull request into the recovery branch and then the combined recovery pull request into `work/cashnarra-v1`. GitHub's PR states and merge commits are the publication/integration receipts. After that authorized integration, resume the physical-phone port-forward handoff below. The automated UI checkpoint is complete; it is not a V1 release verdict.
+
+## Experience and recovery pass — 2026-10-30 (Codex)
+
+The owner approved the first experience batch after the discussion research. This is a bounded product change on `codex/experience-recovery-20261030`, based on `397256dd00ba7fbb35b86a79fd380b855fc1965f`. Both published working branches matched that baseline at the start. The earlier phase verdict and phone sign-in port handoff below remain in force.
+
+Implemented: distinct initial-load failure with a retry and separate sign-in handling; clearer unconfirmed-save recovery using the original request; saving/checking button feedback; focus on the confirmed saved result; same-page Tell/composer focus; retained Records reading position and original-row focus across a correction; an explicit Back to records action that retains the correction draft; saved result counts, no-match versus no-record copy, and scoped unpaid-balance wording.
+
+The separate public demo includes these shared components plus a guided prepared payment, a clearly named Voice preview, and protection against replacing/concatenating an unfinished story with another sample. The real app's recording path is unchanged. Purple brand assets, decimal ledger, journal rules, request identity, revisions and existing server behavior are unchanged.
+
+Evidence: the exact shared components build in the separate deterministic demo. Its 58 tests pass, including receipt recovery after a lost response and reload. Managed-browser desktop and 390×640 checks exercised prepared save/clarification, GH₵600 → GH₵400 after save, retained correction work, no-match/reset and return to the original visible Records row. No provider was called and no email was sent. Four focused main-app regression tests were added in `tests/e2e/experience-recovery.spec.ts` and syntax-checked. Full main-app typecheck/build/e2e are NOT RUN here because only the selected files were materialized, not a full runnable Next/Supabase checkout. Do not treat demo evidence as a full app release check.
+
+Next for this branch: run the repository's typecheck, build and focused e2e in the full checkout with the normal local demo services; inspect keyboard restoration, load failure, authorization failure and a lost save response. Keep the PR in draft until that evidence is recorded. This does not authorize a main-app production deployment or merge. Phase 08 remains INCOMPLETE; Phase 09 EXTERNAL; NOT V1 COMPLETE. The earlier phone port-forward check remains a separate outstanding item.
 
 ## Marketing: "7:15. Two evenings." v04 performance repair — 2026-10-29 (Claude Code)
 
@@ -288,6 +314,8 @@ The user asked to update GitHub with the current changes and to leave `marketing
 
 ## Exact next action
 
+Complete the owner-authorized GitHub integration of `codex/app-ui-polish-20261031` through the recovery branch into `work/cashnarra-v1`, checking the PR merge receipts. Once integrated, resume the physical-phone port-forward action below. The following restrictions belong to that separate physical-phone release stage; it has not been repeated or completed by this UI pass.
+
 **Add the 58321 port forward, then repeat phone sign-in. Do not change application code for the "Failed to fetch" result.** The first physical recording (23 October 2026, Chrome on the phone, `http://127.0.0.1:3100`) loaded the public page and then Sign in. The account service was already running: GoTrue health returned 200, and a desktop password sign-in at 10:29 UTC reached Kong and returned 200. The phone's Sign in did not. The served client calls `http://127.0.0.1:58321/auth/v1/token?grant_type=password` directly. Kong has no password grant at the time of the recording. Port 3100 is forwarded; port 58321 is not, so the phone calls itself and the form shows "Failed to fetch". The address is already `127.0.0.1`, the same host as the page. Sign-in inputs already use `email` and `current-password`. Forward `58321` to `127.0.0.1:58321` in the same Chrome port-forwarding list. Do not forward `58322`. Follow `docs/ux/ANDROID_DEVICE_CHECKLIST_2026-10-23.md`. Do not push, deploy, package a Trusted Web Activity, or publish. Do not downgrade ESLint to clear the separate braces advisory. When a commit is requested, keep the Story Log and this phone pass as coherent commits and do not discard the other uncommitted work. Auth and recovery browser specs stay NOT RUN until the local Supabase stack is already running; do not start or reset that database just to run them. Real-device APP rows stay NOT RUN. Do not set `VOICE_QUALITY_APPROVED`, call a provider, or start checkout. The reported Next.js security upgrade was not run.
 
 ## Phase 1 phone pass — 2026-10-23
@@ -393,3 +421,4 @@ External release work still requires one of these from the user:
 Do not invent consent, spend beyond the remaining allowance, enable production providers, push, deploy, or reset a database.
 
 INCOMPLETE — DO NOT TREAT AS PHASE COMPLETE.
+
