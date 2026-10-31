@@ -1,4 +1,4 @@
-import launchPlans from "@/domain/launch-plans.json";
+import launchPlans from "@/domain/launch-plans.json" with { type: "json" };
 
 export const FREE_VOICE_SECONDS = launchPlans.plans.free.voiceNoteSeconds;
 export const PLUS_VOICE_SECONDS = launchPlans.plans.plus.voiceNoteSeconds;

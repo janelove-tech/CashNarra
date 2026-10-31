@@ -1,6 +1,6 @@
 import Decimal from "decimal.js";
 import { formatMoney } from "@/domain/money";
-import launchPlans from "./launch-plans.json";
+import launchPlans from "./launch-plans.json" with { type: "json" };
 
 /** Prepared plan specification. Dates stay unset and nothing here can be bought. */
 export const PLAN_SPEC_VERSION = launchPlans.version;
