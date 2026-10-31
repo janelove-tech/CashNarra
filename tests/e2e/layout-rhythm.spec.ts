@@ -148,13 +148,21 @@ test("the record editor keeps its action visible while native validation and key
   ).toBeEnabled();
 });
 
-test("a short payment editor shows its balance and first field together", async ({
+test("a short payment editor shows its balance and first field with a scrollbar gutter", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 320, height: 380 });
   await openSampleWorkspace(page);
   await nav(page, "Records").click();
   await page.getByRole("button", { name: "People", exact: true }).click();
+  // Exercise at least 15px of gutter, including runtimes with overlay scrollbars.
+  const gutter = await page.evaluate(
+    () => innerWidth - document.documentElement.clientWidth,
+  );
+  await page.setViewportSize({
+    width: 320 - Math.max(0, 15 - gutter),
+    height: 380,
+  });
   await page
     .locator("strong")
     .filter({ hasText: /^Abena$/ })

@@ -1539,8 +1539,8 @@
   margin-top: 0;
 }
 .dialogExit > .button {
-  min-width: 0;
-  padding-inline: 14px;
+  min-width: 44px;
+  padding-inline: 12px;
 }
 .dialog form,
 .content form,
@@ -2023,6 +2023,9 @@
   }
 }
 @media (max-width: 350px) {
+  .dialogExit > .button {
+    padding-inline: 8px;
+  }
   .recordFilters > select {
     flex-basis: 100%;
   }
@@ -2065,7 +2068,7 @@
     gap: 16px;
   }
   .recordEditor .paymentContext {
-    padding: 8px 12px;
+    padding: 8px;
   }
   .paymentContext > p:first-child {
     font-size: 13px;

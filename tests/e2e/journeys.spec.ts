@@ -1,5 +1,8 @@
 import { test, expect, type Page } from "@playwright/test";
 import { openSampleWorkspace } from "./demo-entry";
+
+// The service-worker/offline-page lifecycle has its own phone-app suite.
+test.use({ serviceWorkers: "block" });
 async function demo(page: Page) {
   await page.goto("/");
   await openSampleWorkspace(page);
